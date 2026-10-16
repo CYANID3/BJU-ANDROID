@@ -5,16 +5,17 @@
 <meta name="build" content="%VITE_BUILD%">
 <title>БЖУ — дневник питания</title>
 <style>
-:root{--bg:#f5f6f8;--card:#fff;--tx:#1d2330;--mu:#6b7280;--bd:#e3e6ec;--ac:#2f7de1;--p:#2f7de1;--f:#e8a32b;--c:#35a66b;--dg:#d64545;--on:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--kb:0px;--kbd:220ms}
+:root{--bg:#f5f6f8;--card:#fff;--tx:#1d2330;--mu:#6b7280;--bd:#e3e6ec;--ac:#2f7de1;--p:#2f7de1;--f:#e8a32b;--c:#35a66b;--dg:#d64545;--on:#fff;box-sizing:border-box;padding-top:var(--sat);padding-bottom:var(--sab)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171c;--card:#1e232b;--tx:#eceff4;--mu:#98a1b0;--bd:#2c333d;--ac:#5b9cf0;--p:#5b9cf0;--f:#f0b94d;--c:#4cc48a;--dg:#ef6b6b}}
 :root[data-theme="dark"]{--bg:#14171c;--card:#1e232b;--tx:#eceff4;--mu:#98a1b0;--bd:#2c333d;--ac:#5b9cf0;--p:#5b9cf0;--f:#f0b94d;--c:#4cc48a;--dg:#ef6b6b}
-html{background:var(--bg);overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-action:pan-y;overflow-x:clip;scroll-padding-top:env(safe-area-inset-top,0px)}
+html{background:var(--bg);overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-action:pan-y;overflow-x:clip;scroll-padding-top:var(--sat)}
 *{box-sizing:border-box}.ur{display:grid;grid-template-columns:1fr 104px 44px;gap:8px;align-items:start}.ur input{margin-bottom:8px}.ur .x{height:46px}#app{will-change:transform,opacity;backface-visibility:hidden}.it{transition:background .15s}.it:active{background:var(--bg)}.nav button:active,.add:active{transform:scale(.9)}
 body{margin:0 auto;background:var(--bg);color:var(--tx);font:16px/1.35 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;max-width:520px;padding:12px 12px 40px;overflow-x:clip}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;transition:transform .12s,opacity .12s;-webkit-user-select:none;user-select:none}button:active{transform:scale(.96);opacity:.85}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px}
 .sn{padding:10px 14px}
-.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:3;background:var(--bg);padding:4px 0 8px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}body::before{content:"";position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:4}
+.nav{position:sticky;top:var(--sat);z-index:3;background:var(--bg);padding:4px 0 8px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}body::before{content:"";position:fixed;left:0;right:0;top:0;height:var(--sat);background:var(--bg);z-index:4}
 .nav button{width:44px;height:44px;border-radius:12px;background:var(--card);border:1px solid var(--bd);font-size:20px}
 .nav b{font-size:17px;text-align:center}
 .big{display:flex;align-items:baseline;justify-content:space-between}.big span{font-size:34px;font-weight:700}.mu{color:var(--mu);font-size:14px}
@@ -28,7 +29,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;transi
 .x{width:36px;height:36px;color:var(--mu);font-size:18px}
 .bn{background:var(--card);border:1px solid var(--ac);border-radius:12px;padding:10px 12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px}.bn button{color:var(--act,var(--ac));font-weight:600;white-space:nowrap}
 #ov{position:fixed;left:0;right:0;top:0;height:100%;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:5;opacity:0;visibility:hidden;transition:opacity .22s,visibility 0s .22s,height .18s ease-out,top .18s ease-out}#ov.on{opacity:1;visibility:visible;transition:opacity .22s,height .18s ease-out,top .18s ease-out}
-.sh{background:var(--card);width:100%;max-width:520px;max-height:92%;overflow:auto;overscroll-behavior:contain;transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.sh{background:var(--card);width:100%;max-width:520px;max-height:calc(min(92%,100% - var(--sat) - 12px) - var(--kb));overflow:auto;overscroll-behavior:contain;transform:translateY(100%);translate:0 calc(-1*var(--kb));transition:transform .3s cubic-bezier(.2,.8,.2,1),translate var(--kbd) cubic-bezier(.2,0,0,1),max-height var(--kbd) cubic-bezier(.2,0,0,1);border-radius:20px 20px 0 0;padding:16px 16px calc(16px + var(--sab))}
 .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 input{width:100%;font:inherit;padding:12px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);margin-bottom:8px}
 .pk{display:block;width:100%;text-align:left;padding:10px 4px;border-top:1px solid var(--bd)}
@@ -42,11 +43,11 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
 #ov.on .sh{transform:none}.sh::before{content:"";display:block;width:36px;height:4px;border-radius:2px;background:var(--bd);margin:-6px auto 10px}
 .fi{animation:fi .2s ease-out}@keyframes fi{from{opacity:0;transform:translateY(8px)}}
 .chips{display:flex;gap:8px;margin-bottom:8px}.chips button{flex:1;padding:10px 0;border-radius:10px;background:var(--bg);border:1px solid var(--bd)}
-.tt{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:496px;margin:0 auto;background:#272d38;color:#fff;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px;z-index:9;transform:translateY(150%);opacity:0;transition:transform .25s,opacity .25s;pointer-events:none}.tt.on{transform:none;opacity:1;pointer-events:auto}.tt button{color:#8ab8ff;font-weight:600}
+.tt{position:fixed;left:12px;right:12px;bottom:calc(16px + max(var(--sab),var(--kb)));max-width:496px;margin:0 auto;background:#272d38;color:#fff;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px;z-index:9;transform:translateY(150%);opacity:0;transition:transform .25s,opacity .25s;pointer-events:none}.tt.on{transform:none;opacity:1;pointer-events:auto}.tt button{color:#8ab8ff;font-weight:600}
 #dt small{display:block;font-weight:400;color:var(--mu);font-size:12px;line-height:1.25}
 .cg{height:332px;grid-template-rows:repeat(6,1fr)}.cd{aspect-ratio:auto}#cs{min-height:20px}
 .mc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.mc button{padding:7px 11px;border-radius:999px;background:var(--bg);border:1px solid var(--bd);font-size:13px}.mc button.on{background:var(--ac);border-color:var(--ac);color:var(--on)}
-.pu{position:fixed;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;z-index:6;opacity:0;transform:translateY(24px);transition:opacity .15s,transform .15s}
+.pu{position:fixed;left:0;right:0;bottom:calc(14px + var(--sab));display:flex;justify-content:center;pointer-events:none;z-index:6;opacity:0;transform:translateY(24px);transition:opacity .15s,transform .15s}
 .pi{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:var(--card);color:var(--tx);border:1px solid var(--bd);padding:12px 18px 14px;border-radius:999px;font-weight:600;font-size:15px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 .pi b{font-size:20px;line-height:1;width:18px;text-align:center}.pi i{position:absolute;left:0;bottom:0;height:3px;background:var(--ac);width:calc(var(--p,0)*100%)}
 .pu.rdy .pi{background:var(--ac);border-color:var(--ac);color:var(--on)}.pu.rdy .pi i{background:var(--on)}
@@ -55,7 +56,10 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
 .cc{display:flex;align-items:center;justify-content:space-between;margin-top:16px;font-size:15px;color:var(--tx)}input[type=color]{width:64px;height:40px;padding:2px;margin:0;cursor:pointer}
 #dg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10;padding:24px}#dg.on{display:flex}.dc{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;width:100%;max-width:360px;animation:fi .15s ease-out}#dgm{white-space:pre-line;line-height:1.4}.dbs{display:flex;gap:8px}.dbs .pb{flex:1;margin-top:14px}#di .it{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}#di .it:active{background:var(--bg)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-.it{-webkit-user-select:none;user-select:none}:root{color-scheme:light dark}:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}.x{width:44px;height:44px}.cd small{font-size:11px}label.pb{font-size:16px;color:var(--tx)}.hint{margin:-2px 4px 14px;font-size:13px}[hidden]{display:none!important}.bn{padding:8px 12px;margin-bottom:8px}.tt{border:1px solid var(--ac)}.pu.tp{bottom:auto;top:calc(64px + env(safe-area-inset-top,0px))}</style><script>window.BJU_NATIVE_READY=new Promise(r=>window.BJU_NATIVE_READY_RESOLVE=r)</script><script type="module" src="./capacitor-bridge.js"></script></head><body>
+.it{-webkit-user-select:none;user-select:none}:root{color-scheme:light dark}:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}.x{width:44px;height:44px}.cd small{font-size:11px}label.pb{font-size:16px;color:var(--tx)}.hint{margin:-2px 4px 14px;font-size:13px}[hidden]{display:none!important}.bn{padding:8px 12px;margin-bottom:8px}.tt{border:1px solid var(--ac)}.pu.tp{bottom:auto;top:calc(64px + var(--sat))}
+/* APK: без выделения текста и «лупы» по долгому нажатию, как в нативных приложениях */
+.native body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.native input{-webkit-user-select:text;user-select:text}
+.cg{will-change:transform}.sh{will-change:transform}</style><script>window.BJU_NATIVE_READY=new Promise(r=>window.BJU_NATIVE_READY_RESOLVE=r)</script><script type="module" src="./capacitor-bridge.js"></script></head><body>
 <div class="nav"><button onclick="go(-1)" aria-label="Назад">‹</button><b id="dt" role="button" tabindex="0" onkeydown="if(event.key==='Enter')cal()" onclick="event.target.dataset.t?(cur=today,render(),head()):cal()" style="cursor:pointer;flex:1">&nbsp;</b><button onclick="go(1)" aria-label="Вперёд">›</button></div>
 <div id="app"></div>
 <div class="bt"><button onclick="goals()"><span>🎯</span>Норма</button><button onclick="mng()"><span>📋</span>Продукты</button><button onclick="fp()"><span>💾</span>Файл</button><button onclick="sets()"><span>⚙️</span>Настройки</button></div>
@@ -68,7 +72,7 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
  <div id="v6" hidden><div class="hd" style="justify-content:center"><button class="x" onclick="mv(-1)" aria-label="Предыдущий месяц">‹</button><div style="flex:1;text-align:center"><button id="cmn" class="ct"></button><button id="cy" class="ct"></button></div><button class="x" onclick="mv(1)" aria-label="Следующий месяц">›</button></div><div id="cwk" class="cw"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div></div><div id="cg" class="cg"></div><div id="cs" class="mu" style="text-align:center;margin-top:10px"></div><button class="ln" style="width:100%" onclick="pd(today)">Сегодня</button></div>
  <div id="v8" hidden><input id="dn" placeholder="Название блюда"><div id="di"></div><div id="dh" class="mu" style="font-size:12px"></div><button class="ln" onclick="dring()">+ Ингредиент</button><label for="dw">Вес готового блюда, г (пусто — сумма ингредиентов)</label><input id="dw" type="text" inputmode="decimal" autocomplete="off" oninput="dsum()"><div id="ds" class="mu"></div><button class="pb" onclick="dsv()">Сохранить блюдо</button><button id="ddl" class="ln" style="color:var(--dg);width:100%" onclick="rm()">Удалить блюдо</button></div>
  <div id="v7" hidden><div class="mu" style="margin-bottom:8px">Жест: потянуть вверх в самом конце экрана</div><div id="sgm" class="seg"></div><div class="mu" style="margin:18px 0 10px">Жест: потянуть вниз в самом верху экрана</div><div id="dwm" class="seg"></div><div id="dwd" class="mu" style="margin-top:8px;font-size:13px"></div><div class="mu" style="margin:18px 0 10px">Вибрация</div><div id="hpm" class="seg"></div><div class="mu" style="margin-top:8px;font-size:13px">Отклик при жестах и действиях. «Кроме дней» отключает вибрацию только при перелистывании дней.</div><div class="mu" style="margin:18px 0 10px">Тема</div><div id="thm" class="seg"></div><div class="mu" style="margin:18px 0 10px">Акцентный цвет</div><div id="swc" class="swc"></div><label class="cc">Свой цвет<input id="cp" type="color" oninput="setAc(this.value,1)"></label></div>
- <div id="v5" hidden><div id="fi" class="mu" style="margin-bottom:12px"></div><button class="pb" onclick="fc2()">Создать файл данных</button><button class="pb g" onclick="fo2()">Открыть существующий файл</button><input id="fin" type="file" accept=".json,.txt,application/json,text/plain" hidden onchange="im(this)"></div>
+ <div id="v5" hidden><div id="fi" class="mu" style="margin-bottom:12px"></div><button class="pb" onclick="fc2()">Создать файл данных</button><button class="pb g" onclick="fo2()">Открыть существующий файл</button><button id="foff" class="ln" style="width:100%;color:var(--dg)" onclick="nfOff()" hidden>Отключить файл</button><input id="fin" type="file" accept=".json,.txt,application/json,text/plain" hidden onchange="im(this)"></div>
 </div></div>
 <div id="dg"><div class="dc" role="alertdialog" aria-modal="true" aria-labelledby="dgm"><div id="dgm"></div><div class="dbs"><button id="dgn" class="pb g">Отмена</button><button id="dgy" class="pb">ОК</button></div></div></div>
 <div id="pu" class="pu"><div class="pi"><b id="pa">↑</b><span id="pt"></span><i></i></div></div>
@@ -76,23 +80,56 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
 <script>
 const BASE=[["Куриная грудка (сырая)",23.6,1.9,.4],["Говядина (сырая)",18.9,12.4,0],["Лосось",20,13,0],["Минтай",16,.9,0],["Яйцо куриное",12.7,11.5,.7],["Творог 5%",17,5,1.8],["Молоко 2,5%",2.8,2.5,4.7],["Кефир 1%",3,1,4],["Йогурт натуральный",5,3.2,3.5],["Сметана 15%",2.6,15,3],["Сыр твёрдый",23,30,0],["Гречка (сухая)",12.6,3.3,62.1],["Рис (сухой)",7,1,74],["Овсяные хлопья",12.3,6.1,59.5],["Макароны (сухие)",11,1.3,70],["Хлеб пшеничный",8.1,1,48.8],["Картофель",2,.4,16.3],["Морковь",1.3,.1,6.9],["Огурец",.8,.1,2.5],["Помидор",.9,.2,3.8],["Яблоко",.4,.4,9.8],["Банан",1.5,.2,21.8],["Масло оливковое",0,99.8,0],["Масло сливочное 82,5%",.5,82.5,.8],["Миндаль",18.6,57.7,13.6],["Сахар",0,0,99.7]];
 const MEALS=["Завтрак","Перекус","Обед","Перекус","Ужин","Перекус"],SN=[0,1,0,1,0,1];
+const NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());if(NATIVE)document.documentElement.classList.add("native");
 const VER=2,BUILD=(document.querySelector('meta[name="build"]')||{}).content||"dev";let S={g:{p:120,f:70,c:250},db:BASE.map(x=>x.slice()),d:{},dirty:0,saved:0};
 function adopt(o){if(!o||!o.d||!o.g)return false;if(!o.db)o.db=[...(o.cu||[]),...BASE.map(x=>x.slice())];S=Object.assign({g:{p:120,f:70,c:250},db:[],d:{},saved:0},o);S.v=VER;S.dirty=0;applyAc();return true}
 try{const r=localStorage.getItem("bju2");if(r)adopt(JSON.parse(r))}catch(e){}
 let serr=0;const store=()=>{try{localStorage.setItem("bju2",JSON.stringify(S));serr=0}catch(e){if(!serr)try{toast("Не удалось сохранить данные!")}catch(x){}serr=1}};
 let H=null,perm=true,tm,mode="add",ed=-1,IX=[],am=0,sel=null;
-let nativeSaveTimer=0;
-function queueNativeSave(){if(!window.BJU_NATIVE||!window.BJU_NATIVE.native)return;clearTimeout(nativeSaveTimer);nativeSaveTimer=setTimeout(async()=>{try{S.saved=Date.now();await window.BJU_NATIVE.writeData(JSON.stringify(S));S.dirty=0;store()}catch(e){try{toast("Не удалось сохранить файл данных")}catch(_){}}},350)}
+// ===== APK: хранение данных =====
+// 1) localStorage, 2) внутренний файл приложения, 3) основной файл, выбранный пользователем (MF, постоянный доступ через SAF).
+let nativeSaveTimer=0,MF=null,mfOk=true;
+try{MF=JSON.parse(localStorage.getItem("bju_file"))||null}catch(e){}
+const NX=()=>window.BJU_NATIVE&&window.BJU_NATIVE.native?window.BJU_NATIVE:null;
+const dnc=d=>Object.keys(d).filter(k=>d[k].length).length;
+function setMF(f){const N=NX();if(MF&&N&&(!f||f.uri!==MF.uri))N.file.release(MF.uri).catch(()=>{});MF=f;mfOk=true;try{f?localStorage.setItem("bju_file",JSON.stringify(f)):localStorage.removeItem("bju_file")}catch(e){}}
+async function nativeFlush(){clearTimeout(nativeSaveTimer);nativeSaveTimer=0;const N=NX();if(!N)return;
+ S.saved=Date.now();const t=JSON.stringify(S);let ok=true;
+ try{await N.writeLocal(t)}catch(e){ok=false}
+ if(MF&&N.file.available){const was=mfOk;try{await N.file.write(MF.uri,t);mfOk=true}catch(e){mfOk=false;ok=false}if(was!==mfOk)render()}
+ if(ok)S.dirty=0;store()}
+function queueNativeSave(){if(!NX())return;clearTimeout(nativeSaveTimer);nativeSaveTimer=setTimeout(nativeFlush,300)}
+window.BJU_onPause=()=>{if(nativeSaveTimer)nativeFlush()};
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&nativeSaveTimer)nativeFlush()});
+async function initNative(){const N=NX();if(!N)return;const cand=[];
+ const add=(t,src)=>{if(!t)return;try{cand.push({o:chk(JSON.parse(t)),src})}catch(e){}};
+ add(await N.readLocal(),"local");
+ if(MF&&N.file.available){try{const c=await N.file.check(MF.uri);if(c.read){add(await N.file.read(MF.uri),"file");if(c.name)MF.name=c.name;mfOk=!!c.write}else mfOk=false}catch(e){mfOk=false}}
+ if(!cand.length)add(await N.readLegacy(),"legacy");
+ let best=null;for(const c of cand)if(!best||(c.o.saved||0)>(best.o.saved||0))best=c;
+ if(best&&(best.o.saved||0)>(S.saved||0)){if(S.dirty&&dnc(S.d))bk();adopt(best.o);store()}
+ // кто-то отстаёт (или файла ещё нет) — дописываем актуальные данные везде
+ if(!cand.some(c=>c.src==="local")||cand.some(c=>(c.o.saved||0)!==(S.saved||0))||(MF&&mfOk&&!cand.some(c=>c.src==="file")))await nativeFlush();
+ render()}
+async function nfCreate(){const N=NX();if(!N||!N.file.available)return say("Выбор файла недоступен в этой сборке");let r;try{r=await N.file.create("bju-data.json")}catch(e){return}
+ setMF({uri:r.uri,name:r.name});await nativeFlush();cl();render();toast(mfOk?"Файл «"+r.name+"» создан · автосохранение включено":"Не удалось записать в файл «"+r.name+"»")}
+async function nfOpen(){const N=NX();if(!N||!N.file.available)return $("fin").click();let r,o;try{r=await N.file.open()}catch(e){return}
+ try{o=chk(JSON.parse(await N.file.read(r.uri)))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}
+ const a=dnc(S.d),b=dnc(o.d);
+ if(a&&JSON.stringify(o.d)!==JSON.stringify(S.d)&&!await ask("Заменить текущие данные (дней с записями: "+a+") данными из файла «"+r.name+"» (дней: "+b+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;
+ if(a)bk();adopt(o);store();setMF(r.writable?{uri:r.uri,name:r.name}:null);await nativeFlush();cl();render();
+ toast(r.writable?"Файл «"+r.name+"» подключён как основной · автосохранение включено":"Данные загружены, но файл доступен только для чтения")}
+async function nfOff(){if(!MF)return;if(!await ask("Отключить файл «"+MF.name+"»?\nДанные останутся в приложении, но файл перестанет обновляться.","Отключить"))return;setMF(null);fp();render()}
 function save(){S.dirty=(S.dirty||0)+1;store();queueNativeSave();if(H){clearTimeout(tm);tm=setTimeout(wr,400)}}
 function saveq(){store();queueNativeSave();if(H){clearTimeout(tm);tm=setTimeout(wr,400)}}
 async function wr(){try{if((await H.queryPermission({mode:"readwrite"}))!=="granted"){perm=false;render();return}const w=await H.createWritable();S.saved=Date.now();await w.write(JSON.stringify(S));await w.close();perm=true;S.dirty=0;store();render()}catch(e){perm=false;render()}}
 let rq=0;async function resume(){if(rq)return;rq=1;try{if((await H.requestPermission({mode:"readwrite"}))==="granted"){perm=true;await wr()}}catch(e){}rq=0}
 const idb=(m,v)=>new Promise((ok,no)=>{const q=indexedDB.open("bju",1);q.onupgradeneeded=()=>q.result.createObjectStore("h");q.onsuccess=()=>{const s=q.result.transaction("h",m==="get"?"readonly":"readwrite").objectStore("h"),r=m==="get"?s.get("f"):s.put(v,"f");r.onsuccess=()=>ok(r.result);r.onerror=()=>no()};q.onerror=()=>no()});
 const FT={types:[{description:"Данные БЖУ",accept:{"application/json":[".json"]}}]};
-async function initH(){try{await Promise.race([window.BJU_NATIVE_READY,new Promise(r=>setTimeout(r,3000))]);if(window.BJU_NATIVE&&window.BJU_NATIVE.native){const raw=await window.BJU_NATIVE.readData();if(raw){const o=chk(JSON.parse(raw));if((o.saved||0)>(S.saved||0)){adopt(o);store()}else if((S.saved||0)>(o.saved||0)){await window.BJU_NATIVE.writeData(JSON.stringify(S))}}else{await window.BJU_NATIVE.writeData(JSON.stringify(S))}render();return}}catch(e){try{toast("Не удалось прочитать локальный файл")}catch(_){}}try{const h=await idb("get");if(!h)return;H=h;perm=(await h.queryPermission({mode:"readwrite"}))==="granted";if(perm){const o=chk(JSON.parse(await(await h.getFile()).text()));if(!S.dirty&&(o.saved||0)>(S.saved||0)){adopt(o);store()}else if(S.dirty){if((o.saved||0)>(S.saved||0)&&await ask("Файл данных новее, чем данные в браузере, а в браузере есть несохранённые изменения.\nВзять данные из файла? Если отказаться, файл будет перезаписан данными браузера.","Взять из файла")){bk();adopt(o);store()}else wr()}}render()}catch(e){}}
+async function initH(){try{await Promise.race([window.BJU_NATIVE_READY,new Promise(r=>setTimeout(r,3000))]);if(NATIVE){tc();await initNative();return}}catch(e){try{toast("Не удалось прочитать данные")}catch(_){}if(NATIVE)return}try{const h=await idb("get");if(!h)return;H=h;perm=(await h.queryPermission({mode:"readwrite"}))==="granted";if(perm){const o=chk(JSON.parse(await(await h.getFile()).text()));if(!S.dirty&&(o.saved||0)>(S.saved||0)){adopt(o);store()}else if(S.dirty){if((o.saved||0)>(S.saved||0)&&await ask("Файл данных новее, чем данные в браузере, а в браузере есть несохранённые изменения.\nВзять данные из файла? Если отказаться, файл будет перезаписан данными браузера.","Взять из файла")){bk();adopt(o);store()}else wr()}}render()}catch(e){}}
 async function pf(){try{H=await showSaveFilePicker({suggestedName:"bju-data.json",...FT});await idb("put",H);await wr();cl();toast("Файл создан: "+H.name+". Автосохранение включено")}catch(e){}}
 async function of(){try{const[h]=await showOpenFilePicker(FT);let o;try{o=chk(JSON.parse(await(await h.getFile()).text()))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}const dn=d=>Object.keys(d).filter(k=>d[k].length).length;if(dn(S.d)&&!await ask("Подключить файл и заменить текущие данные (дней с записями: "+dn(S.d)+") данными из файла (дней: "+dn(o.d)+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;if(dn(S.d))bk();adopt(o);H=h;await idb("put",h);store();cl();render();toast("Файл подключён: "+h.name+" · дней с записями: "+dn(o.d))}catch(e){}}
-async function sh(){try{if(window.BJU_NATIVE&&window.BJU_NATIVE.native){S.saved=Date.now();const pub=await window.BJU_NATIVE.writeData(JSON.stringify(S));S.dirty=0;store();render();toast(pub?"Копия сохранена в Documents/BJU/bju-data.json":"Сохранено в памяти приложения (доступ к Documents запрещён)");return}const f=new File([JSON.stringify(S)],"bju-data.json",{type:"text/plain"});if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else{const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download="bju-data.json";a.click()}S.dirty=0;S.saved=Date.now();store();render();toast("Копия сохранена")}catch(e){say("Не удалось сохранить копию: "+(e.message||e))}}
+async function sh(){try{if(NATIVE)return nfCreate();const f=new File([JSON.stringify(S)],"bju-data.json",{type:"text/plain"});if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else{const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download="bju-data.json";a.click()}S.dirty=0;S.saved=Date.now();store();render();toast("Копия сохранена")}catch(e){say("Не удалось сохранить копию: "+(e.message||e))}}
 function im(el){const f=el.files[0];el.value="";if(!f)return;f.text().then(async t=>{let o;try{o=chk(JSON.parse(t))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}
  const dn=d=>Object.keys(d).filter(k=>d[k].length).length;
  if(!await ask("Заменить текущие данные (дней с записями: "+dn(S.d)+") данными из файла (дней: "+dn(o.d)+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;
@@ -100,10 +137,12 @@ function im(el){const f=el.files[0];el.value="";if(!f)return;f.text().then(async
 let fch=0,cpm=-1,oa=0;
 function cm1(mi){cpm=mi;cal();$("st").textContent="Копировать «"+MEALS[mi]+"» в день:"}
 async function rb(){let o;try{o=chk(JSON.parse(localStorage.getItem("bju2bak")))}catch(e){return say("Резервная копия недоступна")}if(!await ask("Восстановить данные из резервной копии браузера? Текущие данные будут заменены.","Восстановить",1))return;adopt(o);store();queueNativeSave();if(H)wr();cl();render();toast("Резервная копия восстановлена")}
-function fc2(){window.showSaveFilePicker?pf():sh()}
-function fo2(){window.showSaveFilePicker?of():$("fin").click()}
+function fc2(){if(NATIVE)return nfCreate();window.showSaveFilePicker?pf():sh()}
+function fo2(){if(NATIVE)return nfOpen();window.showSaveFilePicker?of():$("fin").click()}
 function fp(){const t=S.saved?new Date(S.saved).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"ещё не сохранялось";
- $("fi").textContent=(H?(perm?"Автосохранение включено · ":"Автосохранение на паузе · ")+(H.name||"файл"):"Файл не подключён")+" · "+t+" · сборка "+BUILD;sv(5,"Файл с данными");show()}
+ $("fi").textContent=NATIVE?(MF?(mfOk?"Основной файл: «"+MF.name+"» · автосохранение включено":"Нет доступа к файлу «"+MF.name+"» — выберите его заново"):"Файл не выбран: данные хранятся только внутри приложения и пропадут при его удалении")+" · сохранено "+t+" · версия "+BUILD
+  :(H?(perm?"Автосохранение включено · ":"Автосохранение на паузе · ")+(H.name||"файл"):"Файл не подключён")+" · "+t+" · сборка "+BUILD;
+ $("foff").hidden=!(NATIVE&&MF);sv(5,"Файл с данными");show()}
 const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
 let today=iso(new Date());let cur=today;
 const $=id=>document.getElementById(id);
@@ -121,6 +160,7 @@ function render(){if(RDEF)return;
  let h="";
  {const q=new Date(cur+"T12:00:00");q.setDate(q.getDate()-1);const pk=iso(q);if(!E.length&&(S.d[pk]||[]).length)h+=`<div class="bn"><span>Повторить предыдущий день?</span><button onclick="cpy('${pk}')">Копировать</button></div>`}
  if(serr)h+=`<div class="bn" style="border-color:var(--dg)"><span>Не удалось сохранить данные в браузере</span><button onclick="fp()">В файл</button></div>`;
+ else if(NATIVE){if(MF&&!mfOk)h+=`<div class="bn" style="border-color:var(--dg)"><span>Нет доступа к файлу «${esc(MF.name)}»</span><button onclick="fo2()">Выбрать</button></div>`}
  else if(H&&!perm&&S.dirty>0)h+=`<div class="bn"><span>Автосохранение на паузе · не в файле: ${S.dirty} изм.</span><button onclick="resume()">Продолжить</button></div>`;
  else if(!H&&S.dirty>=10)h+=`<div class="bn"><span>Не сохранено в файл: ${S.dirty} изм.</span><button onclick="${window.showSaveFilePicker?"fp()":"sh()"}">${window.showSaveFilePicker?"Настроить":"Сохранить"}</button></div>`;
  h+=`<div class="card"><div class="big"><span>${k}</span><span class="mu">из ${gk} ккал</span></div><div class="bar"><i style="width:${Math.min(100,gk?k/gk*100:0)}%;background:${left<0?'var(--dg)':'var(--ac)'}"></i></div><div class="mu" style="margin-bottom:12px">${left>=0?"Осталось "+left:"Перебор "+(-left)} ккал</div>${bar("Белки",t.p,G.p,"var(--p)",1)}${bar("Жиры",t.f,G.f,"var(--f)")}${bar("Углеводы",t.c,G.c,"var(--c)")}${shr(t)}${wk()}</div>`;
@@ -134,7 +174,8 @@ function cpy(k){S.d[cur]=(S.d[k]||[]).map(e=>({...e}));save();render();toast("С
 function del(i){const[e]=S.d[cur].splice(i,1);lastDel={e,i,k:cur};save();render();toast("Удалено: "+e.n,1)}
 function undo(){if(!lastDel)return;const{e,i,k}=lastDel;(S.d[k]=S.d[k]||[]).splice(i,0,e);lastDel=null;save();render();$("tt").classList.remove("on")}
 function toast(m,u){$("tm").textContent=m;$("tt").querySelector("button").style.display=u?"":"none";$("tt").classList.add("on");clearTimeout(tmr);tmr=setTimeout(()=>$("tt").classList.remove("on"),4500)}
-function sv(n,t){for(let i=1;i<=8;i++){const el=$("v"+i);el.hidden=i!==n;if(i===n&&isOpen){el.classList.remove("fi");void el.offsetWidth;el.classList.add("fi")}}$("st").textContent=t||""}
+function sv(n,t){const sh_=document.querySelector("#ov .sh"),h0=isOpen?sh_.offsetHeight:0;for(let i=1;i<=8;i++){const el=$("v"+i);el.hidden=i!==n;if(i===n&&isOpen){el.classList.remove("fi");void el.offsetWidth;el.classList.add("fi")}}$("st").textContent=t||"";
+ if(h0&&!RM()&&sh_.animate){const h1=sh_.offsetHeight;if(Math.abs(h1-h0)>4)try{sh_.animate([{height:h0+"px"},{height:h1+"px"}],{duration:240,easing:"cubic-bezier(.2,.8,.2,1)"})}catch(e){}}}
 const LBL=["Завтрак","Перекус 1","Обед","Перекус 2","Ужин","Перекус 3"];
 function autoMeal(){const h=new Date().getHours()+new Date().getMinutes()/60;return h<11?0:h<12.5?1:h<15?2:h<18?3:h<21?4:5}
 function drawMc(){$("mc").style.display=mode==="add"?"":"none";$("dbn").textContent=mode==="ing"?"← К блюду":"+ Новое блюдо";$("mc").innerHTML=LBL.map((m,i)=>`<button class="${i===am?"on":""}" onclick="sm(${i})">${m}</button>`).join("")}
@@ -143,16 +184,16 @@ function op(m){am=m;mode="add";$("q").value="";lst();drawMc();sv(1,"Добави
 function mng(){mode="mng";$("q").value="";lst();drawMc();sv(1,"Все продукты ("+S.db.length+")");show()}
 const num=v=>parseFloat(String(v).replace(",","."))||0,nn=v=>Math.max(0,num(v));
 let ei=-1,lastDel=null,tmr,isOpen=false;
-function show(){if(!isOpen){isOpen=true;oa=Date.now();try{history.pushState({o:1},"")}catch(e){}}$("ov").classList.add("on");document.documentElement.classList.add("lk")}
+function show(){if(!isOpen){isOpen=true;oa=Date.now();if(!NATIVE)try{history.pushState({o:1},"")}catch(e){}}$("ov").classList.add("on");document.documentElement.classList.add("lk")}
 function closeUI(){if(!isOpen)return;fch=0;cpm=-1;isOpen=false;if(mode==="ing")mode=pmode;ik=-1;$("ov").classList.remove("on");document.documentElement.classList.remove("lk");ei=-1;try{document.activeElement.blur()}catch(e){}}
 async function xcl(){if(!$("v8").hidden&&($("dn").value.trim()||dr.i.length)&&!await ask("Закрыть без сохранения блюда?","Закрыть",1))return;cl()}
-function cl(){const was=isOpen;closeUI();if(was){try{if(history.state&&history.state.o)history.back()}catch(e){}}}
+function cl(){const was=isOpen;closeUI();if(was&&!NATIVE){try{if(history.state&&history.state.o)history.back()}catch(e){}}}
 function lst(){const q=W($("q").value);IX=[];S.db.forEach((p,i)=>{if(q.every(t=>W(p[0]).some(w=>w.startsWith(t))))IX.push(i)});if(mode==="add"){const u=S.uc||{};IX.sort((a,b)=>(u[S.db[b][0]]||0)-(u[S.db[a][0]]||0))}IX=IX.slice(0,80);
  $("ls").innerHTML=IX.length?IX.map((i,k)=>{const p=S.db[i];return `<button class="pk" onclick="pc(${k})">${p[5]?"🍲 ":""}${esc(p[0])}<div class="mu">${kc(p[1],p[2],p[3])} ккал · Б ${p[1]} · Ж ${p[2]} · У ${p[3]}</div></button>`}).join(""):'<div class="mu" style="padding:8px 0">Ничего не найдено.</div>'}
 function pc(k){const i=IX[k];if(mode==="mng")return edit(i);sel=S.db[i];const u=sel[4]&&sel[4].length?0:-1;gv(mode==="ing"?"Ингредиент":MEALS[am],u<0?(S.lg||{})[sel[0]]:"",u)}
 const UM=()=>uu<0?1:sel[4][uu][1];
 function pv(){const g=num($("gr").value)*UM();$("pvw").textContent=g>0?(uu>=0?r1(g)+" г · ":"")+`Б ${r1(sel[1]*g/100)} · Ж ${r1(sel[2]*g/100)} · У ${r1(sel[3]*g/100)} · ${kc(sel[1]*g/100,sel[2]*g/100,sel[3]*g/100)} ккал`:""}
-function gv(t,v,u){uu=u==null?-1:u;$("pn").textContent=sel[0];$("gr").value=v||"";$("ab").textContent=ei>=0||ik>=0?"Сохранить":"Добавить";drawU();sv(2,t);setTimeout(()=>{$("gr").focus();$("gr").select()},320)}
+function gv(t,v,u){uu=u==null?-1:u;$("pn").textContent=sel[0];$("gr").value=v||"";$("ab").textContent=ei>=0||ik>=0?"Сохранить":"Добавить";drawU();sv(2,t);requestAnimationFrame(()=>{const g=$("gr");try{g.focus({preventScroll:true})}catch(e){g.focus()}g.select()})}
 function drawU(){$("em").innerHTML=ei>=0?LBL.map((m,i)=>`<button class="${i===am?"on":""}" onclick="am=${i};drawU()">${m}</button>`).join(""):"";const us=sel[4]||[],lg=(S.lg||{})[sel[0]];$("un").innerHTML=us.length?[["г"],...us].map((x,i)=>`<button class="${i-1===uu?"on":""}" onclick="su(${i-1})">${esc(x[0])}</button>`).join(""):"";$("gr").placeholder=uu<0?"Масса, г":"Количество, "+sel[4][uu][0];$("ch").innerHTML=(uu<0?[...new Set([lg,50,100,150,200].filter(Boolean))].slice(0,5):[1,2,3,4]).map(g=>`<button onclick="qg(${g})">${g}</button>`).join("");pv()}
 function su(i){uu=i;$("gr").value="";drawU()}
 function qg(g){$("gr").value=g;pv()}
@@ -166,7 +207,7 @@ function unDraw(a){$("unr").innerHTML=(a&&a.length?a:[["",""]]).map(x=>unRow(x[0
 function unAdd(){$("unr").insertAdjacentHTML("beforeend",unRow("",""));$("unr").lastElementChild.firstElementChild.focus()}
 function unDel(b){const r=b.closest(".ur");if($("unr").children.length>1)r.remove();else r.querySelectorAll("input").forEach(i=>i.value="")}
 function unGet(){return[...$("unr").children].map(r=>{const i=r.querySelectorAll("input");return[i[0].value.trim(),num(i[1].value)]}).filter(x=>x[0]&&x[1]>0)}
-function nw(){ed=-1;["nn","np","nf","nc"].forEach(i=>$(i).value="");unDraw();nkc();$("dl").hidden=true;sv(3,"Новый продукт")}
+function nw(){ed=-1;["nn","np","nf","nc"].forEach(i=>$(i).value="");unDraw();nkc();$("dl").hidden=true;sv(3,"Новый продукт");requestAnimationFrame(()=>{try{$("nn").focus({preventScroll:true})}catch(e){}})}
 function edit(i){const p0=S.db[i];if(p0[5]){ed=i;pmode=mode;ik=-1;dr={n:p0[0],i:p0[5].i.map(x=>({...x})),w:p0[5].w};return drawDish()}ed=i;const p=S.db[i];$("nn").value=p[0];$("np").value=p[1];$("nf").value=p[2];$("nc").value=p[3];unDraw(p[4]);nkc();$("dl").hidden=false;sv(3,"Изменить продукт")}
 async function mk(){const n=$("nn").value.trim();if(!n){$("nn").focus();return toast("Введите название")}const a=[n,nn($("np").value),nn($("nf").value),nn($("nc").value)],un=unGet();if(un.length)a[4]=un;
  if(a[1]+a[2]+a[3]>100.5&&!await ask("Б+Ж+У больше 100 г на 100 г. Сохранить как есть?","Сохранить"))return;
@@ -182,7 +223,7 @@ let cv=0,cb=0;
 const MN=Array.from({length:12},(_,i)=>cap(new Date(2000,i,1).toLocaleDateString("ru-RU",{month:"long"})));
 function cal(){const d=new Date(cur+"T12:00:00");cm=[d.getFullYear(),d.getMonth()];cv=0;drawCal();sv(6,"");show()}
 function vw(v){cb=cv;cv=v;drawCal();fade($("cg"))}
-function mv(n){slide($("cg"),n,()=>{if(cv===0){cm[1]+=n;if(cm[1]<0){cm[1]=11;cm[0]--}if(cm[1]>11){cm[1]=0;cm[0]++}}else if(cv===1)cm[0]+=n;else cm[0]+=n*12;drawCal()})}
+function mv(n){const el=$("cg");if(RM()||!el.animate){calStep(n);drawCal();return}if(el._co){el._co.finish()}calFlip(el,n,0,1)}
 function pm(i){cm[1]=i;cv=0;drawCal();fade($("cg"))}
 function py(y){cm[0]=y;cv=cb===1?1:0;drawCal();fade($("cg"))}
 function drawCal(){const[y,m]=cm,gk=kc(S.g.p,S.g.f,S.g.c),g=$("cg"),ty=+today.slice(0,4),tmn=+today.slice(5,7)-1,mm=i=>String(i+1).padStart(2,"0");let h="";
@@ -201,8 +242,21 @@ function drawCal(){const[y,m]=cm,gk=kc(S.g.p,S.g.f,S.g.c),g=$("cg"),ty=+today.sl
   $("cy").textContent=st+"–"+(st+11);$("cy").onclick=()=>{cv=cb===1?1:0;drawCal();fade($("cg"))};$("cs").textContent=""}
  g.innerHTML=h}
 function pd(k){if(cpm>=0){const mi=cpm,it=(S.d[cur]||[]).filter(e=>e.m===mi).map(e=>({...e}));cpm=-1;if(k===cur){cl();return}(S.d[k]=S.d[k]||[]).push(...it);cl();cur=k;save();render();toast("Скопировано записей: "+it.length);return}if(k===cur){cl();return}const dir=k>cur?1:-1;cl();NABS=1;slide($("app"),dir,()=>{cur=k})}
-$("v6").addEventListener("touchstart",e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
-$("v6").addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;tx=null;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)mv(dx<0?1:-1)});
+(()=>{const v=$("v6");let x0=null,y0=0,dx=0,md=0,lx=0,lt=0,vx=0;
+ v.addEventListener("touchstart",e=>{if(e.touches.length>1){x0=null;return}x0=e.touches[0].clientX;y0=e.touches[0].clientY;dx=0;md=0;vx=0;lx=x0;lt=performance.now()},{passive:true});
+ v.addEventListener("touchmove",e=>{if(x0===null)return;const t=e.touches[0],ddx=t.clientX-x0,ddy=t.clientY-y0,el=$("cg");
+  if(!md){if(Math.abs(ddx)>10&&Math.abs(ddx)>Math.abs(ddy)*1.2){md=1;x0=t.clientX;if(el._ca){el._ca.cancel();el._ca=null}el.style.transition="none"}else if(Math.abs(ddy)>10){x0=null;return}else return}
+  dx=t.clientX-x0;const n=performance.now();vx=(t.clientX-lx)/Math.max(1,n-lt);lx=t.clientX;lt=n;
+  el.style.transform=`translateX(${dx}px)`;el.style.opacity=1-Math.min(.6,Math.abs(dx)/(el.offsetWidth*1.2||400))},{passive:true});
+ const end=()=>{x0=null;if(!md)return;md=0;const el=$("cg"),w=el.offsetWidth||300;
+  if(Math.abs(dx)>w*.22||(Math.abs(vx)>.35&&Math.abs(dx)>20)){hap(6,1);calFlip(el,dx<0?1:-1,dx,parseFloat(el.style.opacity)||1)}
+  else{el.style.transition="transform .25s cubic-bezier(.2,.8,.2,1),opacity .25s";el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!md)el.style.transition=""},260)}};
+ v.addEventListener("touchend",end);v.addEventListener("touchcancel",()=>{dx=0;vx=0;end()})})();
+function calStep(n){if(cv===0){cm[1]+=n;if(cm[1]<0){cm[1]=11;cm[0]--}if(cm[1]>11){cm[1]=0;cm[0]++}}else if(cv===1)cm[0]+=n;else cm[0]+=n*12}
+function calFlip(el,dir,from,op){const w=el.offsetWidth||300;el.style.transition="";el.style.transform="";el.style.opacity="";
+ if(el._co){el._co.cancel();el._co=null}if(el._ca){el._ca.cancel();el._ca=null}
+ const out=el.animate([{transform:`translateX(${from}px)`,opacity:op},{transform:`translateX(${-dir*w*.5}px)`,opacity:0}],{duration:Math.max(90,160*(1-Math.abs(from)/w)),easing:"cubic-bezier(.4,0,1,1)",fill:"forwards"});el._co=out;
+ out.onfinish=()=>{calStep(dir);drawCal();out.cancel();el._co=null;el._ca=el.animate([{transform:`translateX(${dir*w*.5}px)`,opacity:0},{transform:"none",opacity:1}],{duration:260,easing:"cubic-bezier(.16,1,.3,1)"})}}
 let NAV=0,RDEF=0,NF=[],NB=0,ND=1,NP=null,NABS=0,GQ=0;const RM=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;
 function curX(el){try{const t=getComputedStyle(el).transform;return t&&t!=="none"?new DOMMatrix(t).m41:0}catch(e){return 0}}
 function slide(el,n,fn){
@@ -228,7 +282,16 @@ addEventListener("popstate",async()=>{if(!isOpen)return;
  if(!$("v8").hidden&&($("dn").value.trim()||dr.i.length)){if(await ask("Закрыть без сохранения блюда?","Закрыть",1))closeUI();else try{history.pushState({o:1},"")}catch(e){}return}
  if(step()){try{history.pushState({o:1},"")}catch(e){}return}
  closeUI()});
-const vv=window.visualViewport;function fit(){if(!vv)return;const o=$("ov");o.style.top=vv.offsetTop+"px";o.style.height=vv.height+"px"}
+// Системная кнопка/жест «Назад» в APK: диалог → шаг назад внутри листа → закрыть лист → свернуть приложение
+window.BJU_onBack=()=>{if($("dg").classList.contains("on")){($("dgn").style.display==="none"?$("dgy"):$("dgn")).click();return true}
+ if(isOpen){if(!step())xcl();return true}
+ return false};
+// Клавиатура в APK: лист поднимается вместе с ней (CSS --kb), поле ввода остаётся видимым
+function ensureVis(){const a=document.activeElement,s=document.querySelector("#ov .sh");if(!a||a.tagName!=="INPUT"||!s.contains(a))return;const r=a.getBoundingClientRect(),q=s.getBoundingClientRect();
+ if(r.bottom>q.bottom-12)s.scrollBy({top:r.bottom-q.bottom+28,behavior:"smooth"});else if(r.top<q.top+8)s.scrollBy({top:r.top-q.top-28,behavior:"smooth"})}
+let kbH=0;window.BJU_onKeyboard=(h,d)=>{const was=kbH;kbH=h;if(h>0&&h!==was)setTimeout(ensureVis,d+20)};
+document.addEventListener("focusin",()=>{if(kbH>0)requestAnimationFrame(ensureVis)});
+const vv=NATIVE?null:window.visualViewport;function fit(){if(!vv)return;const o=$("ov");o.style.top=vv.offsetTop+"px";o.style.height=vv.height+"px"}
 if(vv){vv.addEventListener("resize",fit);vv.addEventListener("scroll",fit)}
 let sx=0,sy=0,gd=0,ab=0,at=0,st=0,dgd=0,dgx=0;
 function drag(dx){const el=$("app");if(NB)return;if(el._a){el._a.cancel();el._a=null}if(!dgd)dgx=0;dgd=1;if(!dgx&&Math.abs(dx)>56){dgx=1;hap(8,1)}else if(dgx&&Math.abs(dx)<=56)dgx=0;clearTimeout(el._w);el._w=setTimeout(()=>undrag(),1200);el.style.transition="none";el.style.transform=`translateX(${dx*.35}px)`;el.style.opacity=1-Math.min(.35,Math.abs(dx)/500)}
@@ -237,7 +300,7 @@ addEventListener("touchstart",e=>{if(dgd)undrag(1);bindT(e.target);if(isOpen)ret
 function lum(h){const n=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4)};return .2126*f(n>>16&255)+.7152*f(n>>8&255)+.0722*f(n&255)}
 function act(a){const d=(document.documentElement.dataset.theme||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"))==="dark",n=parseInt(a.slice(1),16),m=d?(lum(a)<.15?255:-1):(lum(a)>.3?0:-1);return m<0?a:"#"+[n>>16&255,n>>8&255,n&255].map(v=>Math.round(v*.45+m*.55).toString(16).padStart(2,"0")).join("")}
 function applyAc(){applyTh();const r=document.documentElement,a=S.set&&S.set.ac;if(a&&/^#[0-9a-f]{6}$/i.test(a)){r.style.setProperty("--ac",a);r.style.setProperty("--act",act(a));r.style.setProperty("--on",lum(a)>.45?"#1d2330":"#fff");tc(a)}else{r.style.removeProperty("--ac");r.style.removeProperty("--act");r.style.removeProperty("--on");tc("#2f7de1")}}
-function tc(){const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#f5f6f8")}
+function tc(){const m=document.querySelector('meta[name="theme-color"]'),bg=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#f5f6f8";if(m)m.setAttribute("content",bg);const N=NX();if(N&&/^#[0-9a-f]{6}$/i.test(bg))N.bars(bg,lum(bg)>.5)}
 function swAct(){return(S.set&&S.set.sw)||"off"}
 function swipeAct(){if(swAct()==="prod"){mode="mng";drawMc();nw();show()}else op(autoMeal())}
 const PRE=["","#22a06b","#14b8a6","#6366f1","#8b5cf6","#e5589a","#e5484d","#f08a24","#f5c518","#64748b"],SWL=[["meal","Приём пищи"],["prod","Новый продукт"],["off","Выкл."]];
@@ -270,13 +333,15 @@ const onEn2=e=>{if(e._f)return;e._f=1;if(dgd&&!e.touches.length){gd=0;undrag()}}
 // Поэтому слушаем касание ещё и на самом элементе-старте.
 function bindT(t){if(!t||!t.addEventListener||t===document||t===window)return;const rm=()=>{t.removeEventListener("touchmove",onMv);t.removeEventListener("touchend",fin);t.removeEventListener("touchcancel",fin)};const fin=e=>{onEn(e);onEn2(e);if(e.type==="touchcancel")onCn();if(!e.touches.length)rm()};t.addEventListener("touchmove",onMv,{passive:true});t.addEventListener("touchend",fin);t.addEventListener("touchcancel",fin)}
 addEventListener("blur",()=>undrag(1));document.addEventListener("visibilitychange",()=>undrag(1));
-(()=>{const h=document.querySelector("#ov .hd"),s=document.querySelector("#ov .sh");let y0=null,dy=0;
- h.addEventListener("touchstart",e=>{y0=e.touches[0].clientY;dy=0;s.style.transition="none"},{passive:true});
- h.addEventListener("touchmove",e=>{if(y0===null)return;dy=Math.max(0,e.touches[0].clientY-y0);s.style.transform=`translateY(${dy}px)`},{passive:true});
- h.addEventListener("touchcancel",()=>{y0=null;s.style.transition="";s.style.transform=""});
- h.addEventListener("touchend",()=>{if(y0===null)return;y0=null;s.style.transition="";if(dy>90)cl();s.style.transform=""})})();
+(()=>{const s=document.querySelector("#ov .sh");let y0=null,x0=0,dy=0,on=0,st0=0,ly=0,lt=0,v=0;
+ s.addEventListener("touchstart",e=>{if(e.touches.length>1){y0=null;return}const t=e.touches[0];y0=t.clientY;x0=t.clientX;dy=0;on=0;v=0;ly=y0;lt=performance.now();st0=s.scrollTop},{passive:true});
+ s.addEventListener("touchmove",e=>{if(y0===null)return;const t=e.touches[0],ddy=t.clientY-y0,ddx=t.clientX-x0;
+  if(!on){if(Math.abs(ddx)>10&&Math.abs(ddx)>Math.abs(ddy)){y0=null;return}
+   if(ddy>8&&st0<=0&&s.scrollTop<=0){on=1;y0=t.clientY;s.style.transition="none"}else if(Math.abs(ddy)>8){y0=null;return}else return}
+  dy=Math.max(0,t.clientY-y0);const n=performance.now();v=(t.clientY-ly)/Math.max(1,n-lt);ly=t.clientY;lt=n;s.style.transform=`translateY(${dy}px)`},{passive:true});
+ const end=()=>{y0=null;if(!on)return;on=0;s.style.transition="";s.style.transform="";if(dy>110||(v>.45&&dy>24)){hap(6);xcl()}};
+ s.addEventListener("touchend",end);s.addEventListener("touchcancel",()=>{dy=0;v=0;end()})})();
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
-const NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
 if(!NATIVE&&"serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
 else if(NATIVE&&navigator.serviceWorker)navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister())).catch(()=>{});
 const nz=s=>String(s).toLowerCase().replace(/ё/g,"е"),W=s=>nz(s).split(/[\s,()%.\-]+/).filter(Boolean),isN=x=>typeof x==="number"&&isFinite(x)&&x>=0;
@@ -291,7 +356,7 @@ function chk(o){if(!o||typeof o!=="object"||!o.g||!o.d||typeof o.d!=="object")th
  for(const k in o.d){if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||!Array.isArray(o.d[k]))throw Error("неверная дата "+k);o.d[k].forEach(e=>{if(!e||typeof e.n!=="string"||!(e.m>=0&&e.m<6)||![e.g,e.p,e.f,e.c].every(isN))throw Error("неверная запись за "+k)})}
  if(o.db&&(!Array.isArray(o.db)||!o.db.every(p=>Array.isArray(p)&&typeof p[0]==="string"&&[p[1],p[2],p[3]].every(isN)&&(p[4]==null||Array.isArray(p[4])&&p[4].every(u=>Array.isArray(u)&&typeof u[0]==="string"&&u[1]>0))&&(p[5]==null||Array.isArray(p[5].i)))))throw Error("неверный список продуктов");
  return o}
-function bk(){const j=JSON.stringify(S);try{localStorage.setItem("bju2bak",j)}catch(e){}if(window.BJU_NATIVE&&window.BJU_NATIVE.native){window.BJU_NATIVE.writeBackup(j).catch(()=>{});return}try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([j],{type:"application/json"}));a.download="bju-backup-"+today+".json";a.click()}catch(e){}}
+function bk(){const j=JSON.stringify(S);try{localStorage.setItem("bju2bak",j)}catch(e){}if(NATIVE){const N=NX();if(N)N.writeBackup(j).catch(()=>{});return}try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([j],{type:"application/json"}));a.download="bju-backup-"+today+".json";a.click()}catch(e){}}
 function nkc(){const p=num($("np").value),f=num($("nf").value),c=num($("nc").value),s=p+f+c;$("nk").innerHTML=s?`≈ ${kc(p,f,c)} ккал на 100 г`+(s>100.5?` <span style="color:var(--dg)">· Б+Ж+У = ${r1(s)} г, больше 100 г — проверьте</span>`:""):""}
 const dtot=()=>dr.i.reduce((a,x)=>({g:a.g+x.g,p:a.p+x.p,f:a.f+x.f,c:a.c+x.c}),{g:0,p:0,f:0,c:0});
 function dbt(){if(mode==="ing"){drawDish();return}ed=-1;pmode=mode;ik=-1;dr={n:"",i:[],w:0};drawDish()}

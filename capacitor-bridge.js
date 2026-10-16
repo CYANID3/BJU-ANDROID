@@ -1,15 +1,16 @@
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { App } from '@capacitor/app';
 
 const native = Capacitor.isNativePlatform();
+// Собственный нативный плагин (native/android/BjuNativePlugin.java)
+const Bju = registerPlugin('BjuNative');
+const hasBju = native && Capacitor.isPluginAvailable('BjuNative');
+
 const DIR = 'BJU';
 const dataPath = `${DIR}/bju-data.json`;
 const backupPath = `${DIR}/bju-backup.json`;
-// Documents — видно пользователю (можно скопировать файл). Data — приватная папка приложения:
-// туда запись проходит всегда, даже если Android запретил доступ к Documents
-// (например, файл создан прошлой установкой приложения).
-const PLACES = [Directory.Documents, Directory.Data];
 
 async function read(path, directory) {
   try {
@@ -17,28 +18,26 @@ async function read(path, directory) {
     return typeof r.data === 'string' ? r.data : null;
   } catch { return null; }
 }
-async function write(path, directory, data) {
-  await Filesystem.writeFile({ path, directory, data, encoding: Encoding.UTF8, recursive: true });
-}
-const savedAt = t => { try { return JSON.parse(t).saved || 0; } catch { return -1; } };
+const write = (path, data) =>
+  Filesystem.writeFile({ path, directory: Directory.Data, data, encoding: Encoding.UTF8, recursive: true });
 
-// Возвращает самую свежую из найденных копий
-async function readData() {
-  if (!native) return null;
-  const all = (await Promise.all(PLACES.map(d => read(dataPath, d)))).filter(Boolean);
-  if (!all.length) return null;
-  return all.reduce((a, b) => (savedAt(b) > savedAt(a) ? b : a));
-}
-// Пишет во все места; ошибка — только если не удалось записать никуда.
-// Возвращает true, если удалось записать в Documents.
-async function writeAll(path, text) {
-  if (!native) return false;
-  const res = await Promise.allSettled(PLACES.map(d => write(path, d, text)));
-  if (res.every(r => r.status === 'rejected')) throw res[0].reason;
-  return res[0].status === 'fulfilled';
-}
-const writeData = text => writeAll(dataPath, text);
-const writeBackup = text => writeAll(backupPath, text);
+// Внутренняя копия в приватной папке приложения — пишется всегда.
+const readLocal = () => (native ? read(dataPath, Directory.Data) : Promise.resolve(null));
+const writeLocal = text => (native ? write(dataPath, text) : Promise.resolve());
+const writeBackup = text => (native ? write(backupPath, text) : Promise.resolve());
+// Файл из старых версий приложения (Documents/BJU) — только чтение, для переноса данных.
+const readLegacy = () => (native ? read(dataPath, Directory.Documents) : Promise.resolve(null));
+
+// Основной файл, выбранный пользователем через системный диалог (постоянный доступ).
+const file = {
+  available: hasBju,
+  create: name => Bju.createFile({ name }),
+  open: () => Bju.openFile(),
+  read: uri => Bju.readFile({ uri }).then(r => r.data),
+  write: (uri, data) => Bju.writeFile({ uri, data }),
+  check: uri => Bju.checkFile({ uri }),
+  release: uri => Bju.releaseFile({ uri })
+};
 
 async function haptic(ms) {
   if (!native) return false;
@@ -46,5 +45,30 @@ async function haptic(ms) {
   try { await Haptics.impact({ style }); return true; } catch { return false; }
 }
 
-window.BJU_NATIVE = { native, readData, writeData, writeBackup, haptic };
+// Системные отступы и клавиатура → CSS-переменные
+function applyInsets(i) {
+  if (!i || i.top == null) return;
+  const r = document.documentElement.style;
+  r.setProperty('--sat', i.top + 'px');
+  r.setProperty('--sab', i.bottom + 'px');
+  r.setProperty('--kbd', (i.duration || 220) + 'ms');
+  r.setProperty('--kb', i.keyboard + 'px');
+  window.BJU_onKeyboard?.(i.keyboard, i.duration || 220);
+}
+if (hasBju) {
+  document.documentElement.classList.add('native');
+  Bju.addListener('insets', applyInsets);
+  Bju.getInsets().then(applyInsets).catch(() => {});
+}
+const bars = (color, light) => (hasBju ? Bju.setBars({ color, light }).catch(() => {}) : Promise.resolve());
+
+// Системная кнопка / жест «Назад»
+if (native) {
+  App.addListener('backButton', () => {
+    if (!(window.BJU_onBack && window.BJU_onBack())) App.minimizeApp();
+  });
+  App.addListener('pause', () => window.BJU_onPause?.());
+}
+
+window.BJU_NATIVE = { native, readLocal, writeLocal, writeBackup, readLegacy, file, haptic, bars };
 window.BJU_NATIVE_READY_RESOLVE?.();
