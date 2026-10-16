@@ -78,9 +78,38 @@ test('вес: строка внизу дня, запись, разница с п
   await a.ev(() => { cur = today; render(); });
   // отключение
   await a.ev(() => sets()); await a.wait(300);
-  await a.pg.click('#wtm button:nth-child(2)'); await a.wait(100);
+  await a.pg.click('#wtm button:nth-child(3)'); await a.wait(100);
   assert.equal(await a.pg.locator('#app .wtc').count(), 0);
   assert.equal(await a.ev(() => S.wt[cur]), 72.4, 'записи не удаляются');
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});
+
+test('вес «Динамика»: цифра нигде не видна, только изменение', async () => {
+  const wt = { [day(-14)]: 74.2, [day(-7)]: 73.6, [day(-3)]: 73.4 };
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(2, 'Рис', 100, 7, 1, 74)] }, wt, set: { wt: 'dyn' } } });
+  const card = a.pg.locator('#app .wtc');
+  assert.match(await card.textContent(), /Записать−0,2 за 4 дн\./, 'до записи — изменение у прошлой записи');
+  await card.click(); await a.wait(350);
+  assert.equal(await a.pg.locator('#v10 .wst:visible').count(), 0, 'без кнопок ±0,1');
+  assert.doesNotMatch(await a.pg.textContent('#wpv'), /73/);
+  await a.pg.fill('#wv', '73'); assert.match(await a.pg.textContent('#wpv'), /−0,4 кг/);
+  await a.pg.press('#wv', 'Enter'); await a.wait(350);
+  const t = await card.textContent();
+  assert.match(t, /−0,6 кг за неделю/); assert.doesNotMatch(t, /73/);
+  await card.click(); await a.wait(300);
+  assert.equal(await a.pg.inputValue('#wv'), '', 'поле не показывает записанный вес');
+  await a.ev(() => cl()); await a.wait(300);
+  await a.ev(() => togRep(true)); await a.wait(300);
+  assert.match(await a.pg.textContent('#app .rp-w'), /^−0,6 кгза неделю$/);
+  await a.ev(() => togRep(false)); await a.wait(200);
+  await a.ev(() => stats()); await a.wait(350);
+  const st = await a.pg.textContent('#stc .stb:has(#ch3)');
+  assert.match(st, /Изменение веса/); assert.doesNotMatch(st, /7[34][,.]\d/, 'в статистике нет килограммов');
+  await a.ev(() => sets()); await a.wait(300);
+  assert.equal(await a.pg.textContent('#wtm .on'), 'Динамика');
+  assert.equal(await a.ev(() => toFile(S).settings.weightTracking), 'changesOnly');
+  assert.equal(await a.ev(() => parseData(ser()).set.wt), 'dyn');
   assert.deepEqual(a.errors, []);
   await a.close();
 });
@@ -122,6 +151,15 @@ test('карточка дня: тройное касание, двойное н�
   await a.tapN('#app .sum', 3); await a.wait(500);
   assert.equal(await a.ev(() => !!REP), true);
   assert.equal(await a.pg.locator('#app .rep').count(), 1);
+  assert.equal(await a.pg.locator('#app .rp-w').count(), 0, 'без записи веса плашки нет');
+  await a.ev(() => { S.wt = { [today]: 72.4, [shiftDay(today, -2)]: 72.9 }; render(); });
+  assert.match(await a.pg.textContent('#app .rp-w'), /72,4 кг−0,5/);
+  await a.ev(() => { S.set = { ...S.set, wt: 'dyn' }; render(); });
+  assert.match(await a.pg.textContent('#app .rp-w'), /^−0,5 кгза 2 дн\.$/, 'динамика — только изменение');
+  await a.ev(() => { delete S.wt[today]; render(); });
+  assert.equal(await a.pg.locator('#app .rp-w').count(), 0, 'нет записи за день — нет плашки');
+  await a.ev(() => { S.set.wt = 'off'; render(); });
+  assert.equal(await a.pg.locator('#app .rp-w').count(), 0);
   assert.equal(await a.ev(() => BJU_onBack()), true);
   assert.equal(await a.ev(() => !!REP), false);
   assert.deepEqual(a.errors, []);

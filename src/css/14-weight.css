@@ -11,3 +11,4 @@
 .wst{width:52px;height:52px;flex:none;border-radius:16px;background:var(--sub);border:1px solid var(--bd);font-size:24px;font-weight:500;color:var(--tx);display:grid;place-items:center}
 .wst:active{background:var(--acs)}
 .wpv{min-height:20px;margin:8px 2px 0;font-size:13px}.wpv b{color:var(--tx);font-variant-numeric:tabular-nums}
+.wtf input::placeholder{font-size:18px;font-weight:500}

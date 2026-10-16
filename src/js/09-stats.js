@@ -64,7 +64,7 @@ const stFmt=x=>new Date(x.k+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeri
    if(!has(d)){t.innerHTML=`${stFmt(d)} · записей нет`;t.classList.add("on");mark(-1);return}t.innerHTML=tip(d);t.classList.add("on");mark(i)};
   w.addEventListener("pointerdown",e=>{at(e)});w.addEventListener("pointermove",e=>{if(e.pressure||e.buttons)at(e)});
   const off=()=>{clearTimeout(tm);tm=setTimeout(()=>{t.textContent=t.dataset.def;t.classList.remove("on");mark(-1)},1600)};w.addEventListener("pointerup",off);w.addEventListener("pointercancel",off)}
-function bindWt(days,W,c){stBind(days,W,"ch3","rd3",c,d=>`${stFmt(d)} · <b>${wFmt(d.w)}</b> кг`,i=>{const l=$("ch3").querySelector(".cx");$("ch3").querySelectorAll("circle").forEach(p=>p.setAttribute("r",+p.dataset.i===i?"5":"3.4"));if(i<0)l.setAttribute("opacity","0");else{const x=c.X(i);l.setAttribute("x1",x);l.setAttribute("x2",x);l.setAttribute("opacity",".6")}},d=>d.w)}
+function bindWt(days,W,c){stBind(days,W,"ch3","rd3",c,d=>wTip(d,c),i=>{const l=$("ch3").querySelector(".cx");$("ch3").querySelectorAll("circle").forEach(p=>p.setAttribute("r",+p.dataset.i===i?"5":"3.4"));if(i<0)l.setAttribute("opacity","0");else{const x=c.X(i);l.setAttribute("x1",x);l.setAttribute("x2",x);l.setAttribute("opacity",".6")}},d=>d.w)}
 // свайп по экрану статистики (кроме графиков) — соседний месяц
 (()=>{const v=$("v9");let x0=null,y0=0;v.addEventListener("touchstart",e=>{x0=e.target.closest(".chw")?null:e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
  v.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70*GF()&&Math.abs(dx)>Math.abs(dy)*1.6){hap(6,1);stMv(dx<0?1:-1)}},{passive:true})})();
