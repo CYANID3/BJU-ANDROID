@@ -45,7 +45,7 @@ public class BjuNativePlugin extends Plugin {
 
     private static final String MIME = "application/json";
     private JSObject lastInsets = null;
-    private long imeAnimDuration = 0;
+    private boolean imeAnimating = false;
 
     // ---------- Insets / клавиатура ----------
 
@@ -64,27 +64,51 @@ public class BjuNativePlugin extends Plugin {
 
         if (Build.VERSION.SDK_INT >= 30) {
             window.setDecorFitsSystemWindows(false);
+            final int barsMask = WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout();
+            // Высота клавиатуры передаётся на каждом кадре её анимации ("live"), поэтому лист
+            // движется вместе с клавиатурой, а не догоняет её после окончания анимации.
             webView.setWindowInsetsAnimationCallback(
                 new WindowInsetsAnimation.Callback(WindowInsetsAnimation.Callback.DISPATCH_MODE_STOP) {
                     @Override
                     public void onPrepare(WindowInsetsAnimation animation) {
-                        if ((animation.getTypeMask() & WindowInsets.Type.ime()) != 0) {
-                            imeAnimDuration = animation.getDurationMillis();
-                        }
+                        if ((animation.getTypeMask() & WindowInsets.Type.ime()) != 0) imeAnimating = true;
+                    }
+
+                    @Override
+                    public WindowInsetsAnimation.Bounds onStart(WindowInsetsAnimation animation, WindowInsetsAnimation.Bounds bounds) {
+                        return bounds;
                     }
 
                     @Override
                     public WindowInsets onProgress(WindowInsets insets, List<WindowInsetsAnimation> running) {
+                        if (imeAnimating) {
+                            Insets bars = insets.getInsets(barsMask);
+                            Insets ime = insets.getInsets(WindowInsets.Type.ime());
+                            sendInsets(bars.top, bars.bottom, bars.left, bars.right, Math.max(0, ime.bottom - bars.bottom), "live");
+                        }
                         return insets;
+                    }
+
+                    @Override
+                    public void onEnd(WindowInsetsAnimation animation) {
+                        if ((animation.getTypeMask() & WindowInsets.Type.ime()) == 0) return;
+                        imeAnimating = false;
+                        WindowInsets r = webView.getRootWindowInsets();
+                        if (r != null) {
+                            Insets bars = r.getInsets(barsMask);
+                            Insets ime = r.getInsets(WindowInsets.Type.ime());
+                            sendInsets(bars.top, bars.bottom, bars.left, bars.right, Math.max(0, ime.bottom - bars.bottom), "end");
+                        }
                     }
                 }
             );
             webView.setOnApplyWindowInsetsListener((v, insets) -> {
-                Insets bars = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
-                Insets ime = insets.getInsets(WindowInsets.Type.ime());
-                long dur = imeAnimDuration;
-                imeAnimDuration = 0;
-                sendInsets(bars.top, bars.bottom, bars.left, bars.right, Math.max(0, ime.bottom - bars.bottom), dur);
+                // во время анимации клавиатуры значения идут из onProgress/onEnd
+                if (!imeAnimating) {
+                    Insets bars = insets.getInsets(barsMask);
+                    Insets ime = insets.getInsets(WindowInsets.Type.ime());
+                    sendInsets(bars.top, bars.bottom, bars.left, bars.right, Math.max(0, ime.bottom - bars.bottom), "set");
+                }
                 return WindowInsets.CONSUMED;
             });
         } else {
@@ -104,7 +128,7 @@ public class BjuNativePlugin extends Plugin {
                     insets.getSystemWindowInsetLeft(),
                     insets.getSystemWindowInsetRight(),
                     ime,
-                    0
+                    "set"
                 );
                 return insets.consumeSystemWindowInsets();
             });
@@ -112,7 +136,8 @@ public class BjuNativePlugin extends Plugin {
         webView.requestApplyInsets();
     }
 
-    private void sendInsets(int top, int bottom, int left, int right, int ime, long duration) {
+    /** mode: "live" — кадр анимации клавиатуры, "end" — её конец, "set" — изменение без анимации. */
+    private void sendInsets(int top, int bottom, int left, int right, int ime, String mode) {
         float d = getContext().getResources().getDisplayMetrics().density;
         JSObject o = new JSObject();
         o.put("top", top / d);
@@ -120,9 +145,10 @@ public class BjuNativePlugin extends Plugin {
         o.put("left", left / d);
         o.put("right", right / d);
         o.put("keyboard", ime / d);
-        o.put("duration", duration > 0 ? duration : 220);
+        o.put("mode", mode);
+        o.put("duration", "set".equals(mode) ? 220 : 0);
         lastInsets = o;
-        notifyListeners("insets", o, true);
+        notifyListeners("insets", o, !"live".equals(mode));
     }
 
     @PluginMethod
@@ -170,7 +196,10 @@ public class BjuNativePlugin extends Plugin {
         e.putString("date", call.getString("date", ""));
         e.putInt("eaten", call.getInt("eaten", 0));
         e.putInt("goal", call.getInt("goal", 0));
-        e.putString("macros", call.getString("macros", ""));
+        for (String k : new String[] { "p", "f", "c", "gp", "gf", "gc" }) {
+            Float v = call.getFloat(k, 0f);
+            e.putFloat(k, v != null ? v : 0f);
+        }
         e.putBoolean("dark", Boolean.TRUE.equals(call.getBoolean("dark", true)));
         try {
             e.putInt("accent", Color.parseColor(call.getString("accent", "#22a565")));

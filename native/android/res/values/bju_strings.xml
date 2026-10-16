@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="bju_widget_desc">Остаток калорий на сегодня и быстрое добавление</string>
+    <string name="bju_widget_desc">БЖУ и калории за сегодня. Вид меняется в зависимости от размера</string>
     <string name="bju_sc_breakfast">Завтрак</string>
     <string name="bju_sc_breakfast_long">Добавить завтрак</string>
     <string name="bju_sc_lunch">Обед</string>

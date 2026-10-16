@@ -51,9 +51,12 @@ function applyInsets(i) {
   const r = document.documentElement.style;
   r.setProperty('--sat', i.top + 'px');
   r.setProperty('--sab', i.bottom + 'px');
-  r.setProperty('--kbd', (i.duration || 220) + 'ms');
+  // "live" — кадр анимации клавиатуры: значение ставится сразу, без CSS-перехода (лист идёт вместе с клавиатурой);
+  // "set" — изменение без анимации от системы: плавный CSS-переход
+  const live = i.mode === 'live' || i.mode === 'end';
+  r.setProperty('--kbd', live ? '0ms' : (i.duration || 220) + 'ms');
   r.setProperty('--kb', i.keyboard + 'px');
-  window.BJU_onKeyboard?.(i.keyboard, i.duration || 220);
+  window.BJU_onKeyboard?.(i.keyboard, i.mode === 'live' ? -1 : live ? 0 : i.duration || 220);
 }
 if (hasBju) {
   document.documentElement.classList.add('native');

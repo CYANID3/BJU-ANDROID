@@ -42,7 +42,7 @@ await patch('android/app/src/main/AndroidManifest.xml', s => {
   // Быстрые действия при долгом нажатии на иконку
   if (!s.includes('android.app.shortcuts')) s = s.replace('</activity>', '    <meta-data android:name="android.app.shortcuts" android:resource="@xml/bju_shortcuts" />\n        </activity>');
   // Виджет рабочего стола
-  if (!s.includes('.BjuWidget')) s = s.replace('</application>', `    <receiver android:name=".BjuWidget" android:exported="false" android:label="БЖУ: калории">
+  if (!s.includes('.BjuWidget')) s = s.replace('</application>', `    <receiver android:name=".BjuWidget" android:exported="false" android:label="БЖУ за сегодня">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
