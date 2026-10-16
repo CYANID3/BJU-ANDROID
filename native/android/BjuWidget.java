@@ -33,10 +33,13 @@ public class BjuWidget extends AppWidgetProvider {
     private static final int T1 = 0, N2 = 1, W3 = 2, W4 = 3, T2 = 4, S = 5, M = 6, L = 7;
     private static final int[] LAYOUT = {
         R.layout.bju_widget_t1, R.layout.bju_widget_n2, R.layout.bju_widget_w3, R.layout.bju_widget_w4,
-        R.layout.bju_widget_t2, R.layout.bju_widget_s, R.layout.bju_widget_m, R.layout.bju_widget
+        R.layout.bju_widget_t2, R.layout.bju_widget_s, R.layout.bju_widget_m, R.layout.bju_widget,
+        R.layout.bju_widget_t2x, R.layout.bju_widget_sx, R.layout.bju_widget_lx
     };
+    // увеличенные варианты (если лаунчер позволил растянуть выше двух строк) ведут себя как обычные
+    private static final int[] BASE = { 0, 1, 2, 3, 4, 5, 6, 7, 4, 5, 7 };
     // минимальный размер (dp), с которого включается раскладка
-    private static final float[][] MIN = { { 40, 40 }, { 95, 40 }, { 210, 40 }, { 270, 40 }, { 40, 115 }, { 95, 115 }, { 240, 115 }, { 250, 165 } };
+    private static final float[][] MIN = { { 40, 40 }, { 95, 40 }, { 210, 40 }, { 270, 40 }, { 40, 115 }, { 95, 115 }, { 240, 115 }, { 250, 165 }, { 40, 240 }, { 95, 240 }, { 250, 240 } };
 
     @Override
     public void onUpdate(Context ctx, AppWidgetManager mgr, int[] ids) {
@@ -119,8 +122,9 @@ public class BjuWidget extends AppWidgetProvider {
     private static final String[] SHORT = { "Б", "Ж", "У" };
     private static final String[] FULL = { "Белки", "Жиры", "Углеводы" };
 
-    static RemoteViews build(Context ctx, int kind, Data d) {
-        RemoteViews v = new RemoteViews(ctx.getPackageName(), LAYOUT[kind]);
+    static RemoteViews build(Context ctx, int layoutKind, Data d) {
+        RemoteViews v = new RemoteViews(ctx.getPackageName(), LAYOUT[layoutKind]);
+        int kind = BASE[layoutKind];
         // фон: цвет карточки приложения (с оттенком акцента, если он включён) + тонкая рамка
         v.setInt(R.id.bju_w_bg, "setColorFilter", d.bg);
         v.setInt(R.id.bju_w_bg, "setImageAlpha", d.dark ? 0xF2 : 0xF7);

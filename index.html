@@ -118,7 +118,7 @@ label{font-size:13px;color:var(--mu);display:block;margin:0 0 4px 2px}
 .rp-d{font-size:14px;color:var(--mu);font-weight:500}
 .rp-k{font-size:46px;font-weight:800;letter-spacing:-.03em;line-height:1;margin-top:8px;font-variant-numeric:tabular-nums}.rp-k span{font-size:15px;font-weight:500;color:var(--mu);letter-spacing:0;margin-left:6px}
 .rp-l{font-size:14px;margin-top:8px;color:var(--mu)}.rp-l b{color:var(--act,var(--ac))}.rp-l.ov b{color:var(--dg)}
-.rp-ring{width:116px;height:116px;flex:none;margin-left:auto}.rp-ring circle{fill:none;stroke-linecap:round}
+.rp-ring{position:relative;width:116px;height:116px;flex:none;margin-left:auto}.rp-ring::before{content:"";position:absolute;inset:0;border-radius:50%;background:var(--rg);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 13px),#000 calc(100% - 12px));mask:radial-gradient(farthest-side,transparent calc(100% - 13px),#000 calc(100% - 12px))}.rp-rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.rp-rc b{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}.rp-rc span{font-size:11px;color:var(--mu);margin-top:1px}
 .rp-m{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:20px 0 2px}
 .rp-m>div{background:var(--sub);border:1px solid var(--bd);border-radius:16px;padding:10px 11px 11px;min-width:0}
 .rp-m .nm{font-size:12.5px;font-weight:700;color:var(--cl)}.rp-m .v{font-size:19px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums;white-space:nowrap}.rp-m .v small{font-size:12px;font-weight:500;color:var(--mu);margin-left:2px}
@@ -127,6 +127,8 @@ label{font-size:13px;color:var(--mu);display:block;margin:0 0 4px 2px}
 .rp-sl{display:flex;justify-content:space-between;font-size:12px;color:var(--mu)}
 .rp-meal{margin-top:16px}.rp-mh{display:flex;align-items:baseline;gap:8px}.rp-mh b{font-size:15px;font-weight:700}.rp-mh .kp{margin-left:auto}.rp-mm{font-size:12px;color:var(--mu);margin:2px 0 6px}
 .rp-it{display:flex;gap:10px;align-items:baseline;font-size:13.5px;padding:5px 0;border-top:1px solid var(--bd)}.rp-mm+.rp-it{border-top:0}.rp-it span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rp-it em{font-style:normal;color:var(--mu);font-size:12.5px;white-space:nowrap}.rp-it b{font-variant-numeric:tabular-nums;min-width:52px;text-align:right}
+.rp-dl{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;line-height:1.35}.rp-dl span{white-space:nowrap}.rp-dl em{font-style:normal;color:var(--mu)}.rp-dl b{font-variant-numeric:tabular-nums}
+.rep.dense .rp-meal{margin-top:11px}.rep.dense .rp-mm{margin:1px 0 4px}.rep.dense .rp-m{margin-top:14px}
 .rp-empty{text-align:center;color:var(--mu);padding:26px 0 10px}
 .rp-f{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px;padding-top:12px;border-top:1px dashed var(--bd);font-size:12px;color:var(--mu)}.rp-f span:last-child{display:flex;align-items:center;gap:6px;font-weight:700;color:var(--tx)}.rp-f img{width:18px;height:18px;border-radius:5px}
 .rep-in{animation:repin .32s cubic-bezier(.22,1,.36,1)}@keyframes repin{from{opacity:0;transform:scale(.97)}}
@@ -272,7 +274,7 @@ function hap(ms,d){const v=hpv();if(v==="off"||(d&&v==="nodays"))return;try{if(w
 function go(n){if(!GQ)hap(6,1);if(!NABS){NP=shiftDay(NP||cur,n);head(NP)}slide($("app"),n,()=>{cur=shiftDay(cur,n)})}
 function bar(l,v,g,col,np){return `<div class="row" style="--dot:${col}"><span>${l}</span><span class="mu">${r1(v)} / ${g} г · ${v>g?"сверх "+r1(v-g):"осталось "+r1(g-v)}</span></div><div class="bar"><i style="width:${Math.min(100,g?v/g*100:0)}%;background:${v>g&&!np?'var(--dg)':col}"></i></div>`}
 function head(c){c=c||cur;const dd=new Date(c+"T12:00:00"),df=Math.round((dd-new Date(today+"T12:00:00"))/864e5);$("dt").innerHTML=cap(dd.toLocaleDateString("ru-RU",{weekday:"short"}))+", "+dd.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+"<span class=\"dd\">▾</span><small>"+(df!==0?"<span data-t=\"1\" style=\"color:var(--act,var(--ac));font-weight:600\">К сегодня</span> · ":"")+(df===0?"Сегодня":df===-1?"Вчера":df===1?"Завтра":dd.getFullYear()!==new Date().getFullYear()?dd.getFullYear():"&nbsp;")+"</small>"}
-function render(){if(RDEF)return;if(REP){head();$("app").innerHTML=repHTML();wUpd();return}
+function render(){if(RDEF)return;if(REP){head();$("app").innerHTML=repHTML();repFit();wUpd();return}
  const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
  head();
  let h="";
@@ -303,22 +305,30 @@ let lastU="",lastUT=0;window.BJU_onUrl=u=>{try{if(u===lastU&&Date.now()-lastUT<2
  if(isOpen)closeUI();if(cur!==today){cur=today;render()}op(m)}catch(e){}};
 // ===== Карточка дня: тройное касание по итогу дня — включить, по карточке — выключить =====
 let REP=0;
-function repHTML(){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
+// Карточка всегда целиком помещается на экран (чтобы её можно было снять одним скриншотом):
+// 1) продукты в каждом приёме — компактной строкой; 2) если всё ещё длинная — карточка уменьшается целиком
+function repFit(){const app=$("app");let c=app.querySelector(".rep");if(!c)return;const avail=innerHeight-(parseFloat(getComputedStyle(document.documentElement).paddingTop)||0)-(parseFloat(getComputedStyle(document.documentElement).paddingBottom)||0)-28;
+ if(c.offsetHeight>avail){app.innerHTML=repHTML(1);c=app.querySelector(".rep")}
+ if(c.offsetHeight>avail){const z=Math.max(.5,avail/c.offsetHeight);c.style.zoom=z}}
+function repHTML(dense){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
  const dd=new Date(cur+"T12:00:00"),title=cap(dd.toLocaleDateString("ru-RU",{weekday:"long"}))+", "+dd.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+(dd.getFullYear()!==new Date().getFullYear()?" "+dd.getFullYear():"");
- // кольцо: доли калорий Б/Ж/У (как на логотипе)
- const kp=[t.p*4,t.f*9,t.c*4],ks=kp[0]+kp[1]+kp[2],R0=46,C=2*Math.PI*R0,col=["var(--p)","var(--f)","var(--c)"];
- let ring=`<circle cx="58" cy="58" r="${R0}" stroke="var(--sub)" stroke-width="12"/>`;
- if(ks>0){let st=0;const gap=kp.filter(x=>x>0).length>1?C*.035:0;kp.forEach((v,i)=>{if(v<=0)return;const L=Math.max(.001,v/ks*C-gap);ring+=`<circle cx="58" cy="58" r="${R0}" stroke="${col[i]}" stroke-width="12" stroke-dasharray="${L} ${C}" stroke-dashoffset="${-st}" transform="rotate(-90 58 58)"/>`;st+=v/ks*C})}
- ring+=`<text x="58" y="56" text-anchor="middle" font-size="22" font-weight="800" fill="var(--tx)">${gk?Math.round(k/gk*100):0}%</text><text x="58" y="74" text-anchor="middle" font-size="11" fill="var(--mu)">нормы</text>`;
+ // кольцо: доли калорий Б/Ж/У одним цельным кругом, цвета плавно перетекают друг в друга (как на логотипе)
+ const kp=[t.p*4,t.f*9,t.c*4],ks=kp[0]+kp[1]+kp[2],col=["var(--p)","var(--f)","var(--c)"];
+ let grad="var(--sub)";
+ if(ks>0){const seg=kp.map((v,i)=>[v/ks*100,col[i]]).filter(x=>x[0]>0);if(seg.length===1)grad=seg[0][1];else{let st=0,parts=[];const bl=4;
+  seg.forEach(([w,c],j)=>{const a=st,b=st+w;parts.push(`${c} ${j?Math.min(b,a+bl/2):a}% ${j===seg.length-1?Math.max(a,b-bl/2):Math.max(a,b-bl/2)}%`);st=b});
+  parts.push(`${seg[0][1]} 100%`);grad=`conic-gradient(from 0deg,${parts.join(",")})`}}
+ const ring=`<div class="rp-ring" style="--rg:${grad}"><div class="rp-rc"><b>${gk?Math.round(k/gk*100):0}%</b><span>нормы</span></div></div>`;
  const M=[["Белки",t.p,G.p,"var(--p)"],["Жиры",t.f,G.f,"var(--f)"],["Углеводы",t.c,G.c,"var(--c)"]];
- let h=`<div class="rep rep-in"><div class="rp-h"><div><div class="rp-d">${esc(title)}</div><div class="rp-k">${k}<span>из ${gk} ккал</span></div><div class="rp-l${left<0?" ov":""}">${left>=0?`Осталось <b>${left}</b> ккал`:`Перебор <b>${-left}</b> ккал`}</div></div><svg class="rp-ring" viewBox="0 0 116 116" aria-hidden="true">${ring}</svg></div>`;
+ let h=`<div class="rep rep-in${dense?" dense":""}"><div class="rp-h"><div><div class="rp-d">${esc(title)}</div><div class="rp-k">${k}<span>из ${gk} ккал</span></div><div class="rp-l${left<0?" ov":""}">${left>=0?`Осталось <b>${left}</b> ккал`:`Перебор <b>${-left}</b> ккал`}</div></div>${ring}</div>`;
  h+=`<div class="rp-m">`+M.map(([n,v,g,c],i)=>`<div style="--cl:${c}"><div class="nm">${n}</div><div class="v">${r1(v)}<small>/ ${g} г</small></div><div class="bar"><i style="width:${Math.min(100,g?v/g*100:0)}%;background:${v>g&&i?"var(--dg)":c}"></i></div><div class="rpc">${g?Math.round(v/g*100):0}% нормы</div></div>`).join("")+`</div>`;
  if(ks>0)h+=`<div class="rp-sh">${kp.map((v,i)=>v>0?`<i style="flex:${v};background:${col[i]}"></i>`:"").join("")}</div><div class="rp-sl">${(()=>{const raw=kp.map(v=>v/ks*100),fl=raw.map(Math.floor);let d=100-fl.reduce((a,b)=>a+b,0);raw.map((v,i)=>[v-fl[i],i]).sort((a,b)=>b[0]-a[0]).forEach(([,i])=>{if(d>0){fl[i]++;d--}});return["Б","Ж","У"].map((n,i)=>`<span>${n} ${fl[i]}% ккал</span>`).join("")})()}</div>`;
  const meals=MEALS.map((m,mi)=>[m,E.filter(e=>e.m===mi),mi]).filter(x=>x[1].length);
  if(!meals.length)h+=`<div class="rp-empty">Записей за этот день нет</div>`;
- meals.forEach(([m,it,mi])=>{const s0=it.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0});
+ meals.forEach(([m,it,mi])=>{const s0=it.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),amt=e=>e.ul?e.q+" "+esc(e.ul):r1(e.g)+" г";
   h+=`<div class="rp-meal"><div class="rp-mh"><b>${LBL[mi].replace(/ \d$/,"")}</b><span class="kp">${kc(s0.p,s0.f,s0.c)} ккал</span></div><div class="rp-mm">Б ${r1(s0.p)} · Ж ${r1(s0.f)} · У ${r1(s0.c)} г</div>`+
-   it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${e.ul?e.q+" "+esc(e.ul):r1(e.g)+" г"}</em><b>${kc(e.p,e.f,e.c)}</b></div>`).join("")+`</div>`});
+   (dense?`<div class="rp-dl">${it.map(e=>`<span>${esc(e.n)} <em>${amt(e)}</em> <b>${kc(e.p,e.f,e.c)}</b></span>`).join("")}</div>`
+    :it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b></div>`).join(""))+`</div>`});
  h+=`<div class="rp-f"><span>Норма: ${gk} ккал · Б ${G.p} · Ж ${G.f} · У ${G.c} г</span><span><img src="icon-192.png" alt="">БЖУ</span></div></div>`;
  return h}
 function togRep(on){REP=on==null?!REP:on;document.documentElement.classList.toggle("repm",!!REP);hap(10);render();scrollTo(0,0);
