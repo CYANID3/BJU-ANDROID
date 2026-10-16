@@ -204,6 +204,13 @@ public class BjuNativePlugin extends Plugin {
         try {
             e.putInt("accent", Color.parseColor(call.getString("accent", "#22a565")));
         } catch (IllegalArgumentException ignored) {}
+        String bg = call.getString("bg", "");
+        try {
+            if (bg != null && !bg.isEmpty()) e.putInt("bg", Color.parseColor(bg));
+            else e.remove("bg");
+        } catch (IllegalArgumentException ignored) {
+            e.remove("bg");
+        }
         e.apply();
         BjuWidget.renderAll(getContext());
         call.resolve();

@@ -77,7 +77,7 @@ public class BjuWidget extends AppWidgetProvider {
     /** Данные за сегодня. Если сохранены за другой день — показывается пустой день. */
     static final class Data {
         final boolean dark;
-        final int accent, tx, mu, danger = 0xFFEF6B6B;
+        final int accent, bg, tx, mu, danger = 0xFFEF6B6B;
         final int kcal, kcalGoal;
         final float[] eaten = new float[3], goal = new float[3];
         final int[] color = new int[3];
@@ -88,6 +88,7 @@ public class BjuWidget extends AppWidgetProvider {
             boolean fresh = today.equals(p.getString("date", ""));
             dark = p.getBoolean("dark", true);
             accent = p.getInt("accent", 0xFF22A565);
+            bg = p.getInt("bg", dark ? 0xFF1A1E25 : 0xFFFFFFFF);
             tx = dark ? 0xFFEEF1F5 : 0xFF161A22;
             mu = dark ? 0xFF8F98A8 : 0xFF6A7282;
             kcalGoal = p.getInt("goal", 0);
@@ -112,7 +113,10 @@ public class BjuWidget extends AppWidgetProvider {
     static RemoteViews build(Context ctx, int kind, Data d) {
         int layout = kind == S ? R.layout.bju_widget_s : kind == W ? R.layout.bju_widget_w : kind == M ? R.layout.bju_widget_m : R.layout.bju_widget;
         RemoteViews v = new RemoteViews(ctx.getPackageName(), layout);
-        v.setInt(R.id.bju_w_root, "setBackgroundResource", d.dark ? R.drawable.bju_widget_bg_dark : R.drawable.bju_widget_bg_light);
+        // фон: цвет карточки приложения (с оттенком акцента, если он включён) + тонкая рамка
+        v.setInt(R.id.bju_w_bg, "setColorFilter", d.bg);
+        v.setInt(R.id.bju_w_bg, "setImageAlpha", d.dark ? 0xF2 : 0xF7);
+        v.setImageViewResource(R.id.bju_w_stroke, d.dark ? R.drawable.bju_widget_stroke_dark : R.drawable.bju_widget_stroke_light);
 
         for (int i = 0; i < 3; i++) {
             float e = d.eaten[i], g = d.goal[i];
