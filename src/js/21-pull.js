@@ -1,7 +1,7 @@
 // Жесты «потянуть вверх/вниз» и их индикатор
 // Жесты «потянуть»: индикатор-кольцо следует за пальцем; срабатывает по расстоянию или резкому рывку.
 // длина «потянуть вверх/вниз»: короткий ≈34 px, средний ≈96 px, длинный ≈230 px
-const PLV={short:[.35,.25,.2],mid:[1,.45,.45],long:[2.4,9,1]},PL=i=>PLV[slv()][i],THv=()=>96*PL(0);let rd=0,pAct=0,pDn=false,pbY=null,ptY=null,PS=[];
+const PLV={short:[.22,.15,.15],mid:[1,.45,.45],long:[3.4,9,1]},PL=i=>PLV[slv()][i],THv=()=>96*PL(0);let rd=0,pAct=0,pDn=false,pbY=null,ptY=null,PS=[];
 // скорость (px/мс) по последним ~100 мс жеста
 const pVel=()=>{const l=PS[PS.length-1];if(!l)return 0;let o=l;for(const q of PS)if(l[0]-q[0]<=100){o=q;break}return l[0]>o[0]?(l[1]-o[1])/(l[0]-o[0]):0};
 const atBot=()=>scrollY+innerHeight>=document.documentElement.scrollHeight-6;

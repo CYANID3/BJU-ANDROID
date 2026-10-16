@@ -134,3 +134,19 @@ test('нижняя панель открывает свои экраны', async
   }
   await a.close();
 });
+
+test('длина свайпа: один и тот же жест срабатывает по-разному на трёх уровнях', async () => {
+  const a = await openApp();
+  // медленное движение (без рывка) на d пикселей: перелистнулся ли день
+  const flips = async (lv, d) => {
+    await a.ev(v => { cur = today; render(); setSl(v); }, lv); await a.wait(200);
+    await a.drag(300, 500, 300 - d, 502, { steps: 12, ms: 45 }); await a.wait(700);
+    return a.ev(() => cur !== today);
+  };
+  assert.deepEqual([await flips('short', 40), await flips('mid', 40), await flips('long', 40)], [true, false, false], '40 px');
+  assert.deepEqual([await flips('mid', 90), await flips('long', 90)], [true, false], '90 px');
+  assert.equal(await flips('long', 200), true, '200 px');
+  // потянуть вверх в конце страницы: порог 21 / 96 / 326 px
+  assert.deepEqual(await a.ev(() => ['short', 'mid', 'long'].map(v => { S.set.sl = v; return Math.round(THv()); })), [21, 96, 326]);
+  await a.close();
+});
