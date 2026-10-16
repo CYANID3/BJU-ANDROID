@@ -2,7 +2,7 @@
 // Идемпотентно: можно запускать повторно.
 //   APP_VERSION_CODE — целое, растёт с каждой сборкой (иначе Android не даст обновиться)
 //   APP_VERSION_NAME — строка версии, видна в настройках Android
-import { readFile, writeFile, copyFile, readdir, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, copyFile, readdir, mkdir, cp } from 'node:fs/promises';
 
 const code = parseInt(process.env.APP_VERSION_CODE || '1', 10);
 const name = process.env.APP_VERSION_NAME || '1.0.' + code;
@@ -30,11 +30,25 @@ for (const f of await readdir('native/android')) {
   console.log('copied  ' + `${javaDir}/${f}`);
 }
 
-// 3. Манифест
+// 3. Ресурсы: виджет, ярлыки быстрых действий, иконки (имена с префиксом bju_, чтобы не пересекаться с шаблоном)
+await cp('native/android/res', 'android/app/src/main/res', { recursive: true });
+console.log('copied  native/android/res -> android/app/src/main/res');
+
+// 4. Манифест
 await patch('android/app/src/main/AndroidManifest.xml', s => {
   // Клавиатура: окно не сдвигается (adjustPan) — страница сама поднимает лист по отступам из BjuNative
   if (!s.includes('windowSoftInputMode')) s = s.replace('android:name=".MainActivity"', 'android:name=".MainActivity"\n            android:windowSoftInputMode="adjustResize"');
   if (!s.includes('screenOrientation')) s = s.replace('android:name=".MainActivity"', 'android:name=".MainActivity"\n            android:screenOrientation="portrait"');
+  // Быстрые действия при долгом нажатии на иконку
+  if (!s.includes('android.app.shortcuts')) s = s.replace('</activity>', '    <meta-data android:name="android.app.shortcuts" android:resource="@xml/bju_shortcuts" />\n        </activity>');
+  // Виджет рабочего стола
+  if (!s.includes('.BjuWidget')) s = s.replace('</application>', `    <receiver android:name=".BjuWidget" android:exported="false" android:label="БЖУ: калории">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/bju_widget_info" />
+        </receiver>
+    </application>`);
   return s;
 });
 

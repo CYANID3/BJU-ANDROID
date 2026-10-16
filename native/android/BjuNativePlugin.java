@@ -2,7 +2,9 @@ package kg.bju.app;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.UriPermission;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -158,6 +160,24 @@ public class BjuNativePlugin extends Plugin {
             }
             call.resolve();
         });
+    }
+
+    // ---------- Виджет рабочего стола ----------
+
+    @PluginMethod
+    public void updateWidget(PluginCall call) {
+        SharedPreferences.Editor e = getContext().getSharedPreferences(BjuWidget.PREFS, Context.MODE_PRIVATE).edit();
+        e.putString("date", call.getString("date", ""));
+        e.putInt("eaten", call.getInt("eaten", 0));
+        e.putInt("goal", call.getInt("goal", 0));
+        e.putString("macros", call.getString("macros", ""));
+        e.putBoolean("dark", Boolean.TRUE.equals(call.getBoolean("dark", true)));
+        try {
+            e.putInt("accent", Color.parseColor(call.getString("accent", "#22a565")));
+        } catch (IllegalArgumentException ignored) {}
+        e.apply();
+        BjuWidget.renderAll(getContext());
+        call.resolve();
     }
 
     // ---------- Файл данных (SAF) ----------

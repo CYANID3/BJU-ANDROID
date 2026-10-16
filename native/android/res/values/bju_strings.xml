@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bju_widget_desc">Остаток калорий на сегодня и быстрое добавление</string>
+    <string name="bju_sc_breakfast">Завтрак</string>
+    <string name="bju_sc_breakfast_long">Добавить завтрак</string>
+    <string name="bju_sc_lunch">Обед</string>
+    <string name="bju_sc_lunch_long">Добавить обед</string>
+    <string name="bju_sc_dinner">Ужин</string>
+    <string name="bju_sc_dinner_long">Добавить ужин</string>
+    <string name="bju_sc_snack">Перекус</string>
+    <string name="bju_sc_snack_long">Добавить перекус</string>
+</resources>

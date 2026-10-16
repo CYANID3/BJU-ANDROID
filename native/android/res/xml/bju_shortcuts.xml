@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut android:shortcutId="breakfast" android:enabled="true" android:icon="@drawable/bju_sc_breakfast"
+        android:shortcutShortLabel="@string/bju_sc_breakfast" android:shortcutLongLabel="@string/bju_sc_breakfast_long">
+        <intent android:action="android.intent.action.VIEW" android:data="bju://add?m=0"
+            android:targetPackage="kg.bju.app" android:targetClass="kg.bju.app.MainActivity" />
+    </shortcut>
+    <shortcut android:shortcutId="lunch" android:enabled="true" android:icon="@drawable/bju_sc_lunch"
+        android:shortcutShortLabel="@string/bju_sc_lunch" android:shortcutLongLabel="@string/bju_sc_lunch_long">
+        <intent android:action="android.intent.action.VIEW" android:data="bju://add?m=2"
+            android:targetPackage="kg.bju.app" android:targetClass="kg.bju.app.MainActivity" />
+    </shortcut>
+    <shortcut android:shortcutId="dinner" android:enabled="true" android:icon="@drawable/bju_sc_dinner"
+        android:shortcutShortLabel="@string/bju_sc_dinner" android:shortcutLongLabel="@string/bju_sc_dinner_long">
+        <intent android:action="android.intent.action.VIEW" android:data="bju://add?m=4"
+            android:targetPackage="kg.bju.app" android:targetClass="kg.bju.app.MainActivity" />
+    </shortcut>
+    <shortcut android:shortcutId="snack" android:enabled="true" android:icon="@drawable/bju_sc_snack"
+        android:shortcutShortLabel="@string/bju_sc_snack" android:shortcutLongLabel="@string/bju_sc_snack_long">
+        <intent android:action="android.intent.action.VIEW" android:data="bju://add?m=snack"
+            android:targetPackage="kg.bju.app" android:targetClass="kg.bju.app.MainActivity" />
+    </shortcut>
+</shortcuts>

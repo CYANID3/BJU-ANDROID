@@ -149,7 +149,7 @@ const NX=()=>window.BJU_NATIVE&&window.BJU_NATIVE.native?window.BJU_NATIVE:null;
 const dnc=d=>Object.keys(d).filter(k=>d[k].length).length;
 function setMF(f){const N=NX();if(MF&&N&&(!f||f.uri!==MF.uri))N.file.release(MF.uri).catch(()=>{});MF=f;mfOk=true;try{f?localStorage.setItem("bju_file",JSON.stringify(f)):localStorage.removeItem("bju_file")}catch(e){}}
 async function nativeFlush(){clearTimeout(nativeSaveTimer);nativeSaveTimer=0;const N=NX();if(!N)return;
- S.saved=Date.now();const t=JSON.stringify(S);let ok=true;
+ S.saved=Date.now();const t=ser();let ok=true;
  try{await N.writeLocal(t)}catch(e){ok=false}
  if(MF&&N.file.available){const was=mfOk;try{await N.file.write(MF.uri,t);mfOk=true}catch(e){mfOk=false;ok=false}if(was!==mfOk)render()}
  if(ok)S.dirty=0;store()}
@@ -157,7 +157,7 @@ function queueNativeSave(){if(!NX())return;clearTimeout(nativeSaveTimer);nativeS
 window.BJU_onPause=()=>{if(nativeSaveTimer)nativeFlush()};
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&nativeSaveTimer)nativeFlush()});
 async function initNative(){const N=NX();if(!N)return;const cand=[];
- const add=(t,src)=>{if(!t)return;try{cand.push({o:chk(JSON.parse(t)),src})}catch(e){}};
+ const add=(t,src)=>{if(!t)return;try{cand.push({o:parseData((t)),src})}catch(e){}};
  add(await N.readLocal(),"local");
  if(MF&&N.file.available){try{const c=await N.file.check(MF.uri);if(c.read){add(await N.file.read(MF.uri),"file");if(c.name)MF.name=c.name;mfOk=!!c.write}else mfOk=false}catch(e){mfOk=false}}
  if(!cand.length)add(await N.readLegacy(),"legacy");
@@ -169,7 +169,7 @@ async function initNative(){const N=NX();if(!N)return;const cand=[];
 async function nfCreate(){const N=NX();if(!N||!N.file.available)return say("Выбор файла недоступен в этой сборке");let r;try{r=await N.file.create("bju-data.json")}catch(e){return}
  setMF({uri:r.uri,name:r.name});await nativeFlush();cl();render();toast(mfOk?"Файл «"+r.name+"» создан · автосохранение включено":"Не удалось записать в файл «"+r.name+"»")}
 async function nfOpen(){const N=NX();if(!N||!N.file.available)return $("fin").click();let r,o;try{r=await N.file.open()}catch(e){return}
- try{o=chk(JSON.parse(await N.file.read(r.uri)))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}
+ try{o=parseData((await N.file.read(r.uri)))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}
  const a=dnc(S.d),b=dnc(o.d);
  if(a&&JSON.stringify(o.d)!==JSON.stringify(S.d)&&!await ask("Заменить текущие данные (дней с записями: "+a+") данными из файла «"+r.name+"» (дней: "+b+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;
  if(a)bk();adopt(o);store();setMF(r.writable?{uri:r.uri,name:r.name}:null);await nativeFlush();cl();render();
@@ -177,27 +177,70 @@ async function nfOpen(){const N=NX();if(!N||!N.file.available)return $("fin").cl
 async function nfOff(){if(!MF)return;if(!await ask("Отключить файл «"+MF.name+"»?\nДанные останутся в приложении, но файл перестанет обновляться.","Отключить"))return;setMF(null);fp();render()}
 function save(){S.dirty=(S.dirty||0)+1;store();queueNativeSave();if(H){clearTimeout(tm);tm=setTimeout(wr,400)}}
 function saveq(){store();queueNativeSave();if(H){clearTimeout(tm);tm=setTimeout(wr,400)}}
-async function wr(){try{if((await H.queryPermission({mode:"readwrite"}))!=="granted"){perm=false;render();return}const w=await H.createWritable();S.saved=Date.now();await w.write(JSON.stringify(S));await w.close();perm=true;S.dirty=0;store();render()}catch(e){perm=false;render()}}
+async function wr(){try{if((await H.queryPermission({mode:"readwrite"}))!=="granted"){perm=false;render();return}const w=await H.createWritable();S.saved=Date.now();await w.write(ser());await w.close();perm=true;S.dirty=0;store();render()}catch(e){perm=false;render()}}
 let rq=0;async function resume(){if(rq)return;rq=1;try{if((await H.requestPermission({mode:"readwrite"}))==="granted"){perm=true;await wr()}}catch(e){}rq=0}
 const idb=(m,v)=>new Promise((ok,no)=>{const q=indexedDB.open("bju",1);q.onupgradeneeded=()=>q.result.createObjectStore("h");q.onsuccess=()=>{const s=q.result.transaction("h",m==="get"?"readonly":"readwrite").objectStore("h"),r=m==="get"?s.get("f"):s.put(v,"f");r.onsuccess=()=>ok(r.result);r.onerror=()=>no()};q.onerror=()=>no()});
 const FT={types:[{description:"Данные БЖУ",accept:{"application/json":[".json"]}}]};
-async function initH(){try{await Promise.race([window.BJU_NATIVE_READY,new Promise(r=>setTimeout(r,3000))]);if(NATIVE){tc();await initNative();return}}catch(e){try{toast("Не удалось прочитать данные")}catch(_){}if(NATIVE)return}try{const h=await idb("get");if(!h)return;H=h;perm=(await h.queryPermission({mode:"readwrite"}))==="granted";if(perm){const o=chk(JSON.parse(await(await h.getFile()).text()));if(!S.dirty&&(o.saved||0)>(S.saved||0)){adopt(o);store()}else if(S.dirty){if((o.saved||0)>(S.saved||0)&&await ask("Файл данных новее, чем данные в браузере, а в браузере есть несохранённые изменения.\nВзять данные из файла? Если отказаться, файл будет перезаписан данными браузера.","Взять из файла")){bk();adopt(o);store()}else wr()}}render()}catch(e){}}
+async function initH(){try{await Promise.race([window.BJU_NATIVE_READY,new Promise(r=>setTimeout(r,3000))]);if(NATIVE){tc();await initNative();return}}catch(e){try{toast("Не удалось прочитать данные")}catch(_){}if(NATIVE)return}try{const h=await idb("get");if(!h)return;H=h;perm=(await h.queryPermission({mode:"readwrite"}))==="granted";if(perm){const o=parseData((await(await h.getFile()).text()));if(!S.dirty&&(o.saved||0)>(S.saved||0)){adopt(o);store()}else if(S.dirty){if((o.saved||0)>(S.saved||0)&&await ask("Файл данных новее, чем данные в браузере, а в браузере есть несохранённые изменения.\nВзять данные из файла? Если отказаться, файл будет перезаписан данными браузера.","Взять из файла")){bk();adopt(o);store()}else wr()}}render()}catch(e){}}
 async function pf(){try{H=await showSaveFilePicker({suggestedName:"bju-data.json",...FT});await idb("put",H);await wr();cl();toast("Файл создан: "+H.name+". Автосохранение включено")}catch(e){}}
-async function of(){try{const[h]=await showOpenFilePicker(FT);let o;try{o=chk(JSON.parse(await(await h.getFile()).text()))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}const dn=d=>Object.keys(d).filter(k=>d[k].length).length;if(dn(S.d)&&!await ask("Подключить файл и заменить текущие данные (дней с записями: "+dn(S.d)+") данными из файла (дней: "+dn(o.d)+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;if(dn(S.d))bk();adopt(o);H=h;await idb("put",h);store();cl();render();toast("Файл подключён: "+h.name+" · дней с записями: "+dn(o.d))}catch(e){}}
-async function sh(){try{if(NATIVE)return nfCreate();const f=new File([JSON.stringify(S)],"bju-data.json",{type:"text/plain"});if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else{const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download="bju-data.json";a.click()}S.dirty=0;S.saved=Date.now();store();render();toast("Копия сохранена")}catch(e){say("Не удалось сохранить копию: "+(e.message||e))}}
-function im(el){const f=el.files[0];el.value="";if(!f)return;f.text().then(async t=>{let o;try{o=chk(JSON.parse(t))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}
+async function of(){try{const[h]=await showOpenFilePicker(FT);let o;try{o=parseData((await(await h.getFile()).text()))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}const dn=d=>Object.keys(d).filter(k=>d[k].length).length;if(dn(S.d)&&!await ask("Подключить файл и заменить текущие данные (дней с записями: "+dn(S.d)+") данными из файла (дней: "+dn(o.d)+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;if(dn(S.d))bk();adopt(o);H=h;await idb("put",h);store();cl();render();toast("Файл подключён: "+h.name+" · дней с записями: "+dn(o.d))}catch(e){}}
+async function sh(){try{if(NATIVE)return nfCreate();const f=new File([ser()],"bju-data.json",{type:"text/plain"});if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else{const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download="bju-data.json";a.click()}S.dirty=0;S.saved=Date.now();store();render();toast("Копия сохранена")}catch(e){say("Не удалось сохранить копию: "+(e.message||e))}}
+function im(el){const f=el.files[0];el.value="";if(!f)return;f.text().then(async t=>{let o;try{o=parseData((t))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}
  const dn=d=>Object.keys(d).filter(k=>d[k].length).length;
  if(!await ask("Заменить текущие данные (дней с записями: "+dn(S.d)+") данными из файла (дней: "+dn(o.d)+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;
  bk();adopt(o);store();queueNativeSave();if(H)wr();cl();render()})}
 let fch=0,cpm=-1,oa=0;
 function cm1(mi){cpm=mi;cal();$("st").textContent="Копировать «"+MEALS[mi]+"» в день:"}
-async function rb(){let o;try{o=chk(JSON.parse(localStorage.getItem("bju2bak")))}catch(e){return say("Резервная копия недоступна")}if(!await ask("Восстановить данные из резервной копии браузера? Текущие данные будут заменены.","Восстановить",1))return;adopt(o);store();queueNativeSave();if(H)wr();cl();render();toast("Резервная копия восстановлена")}
+async function rb(){let o;try{o=parseData((localStorage.getItem("bju2bak")))}catch(e){return say("Резервная копия недоступна")}if(!await ask("Восстановить данные из резервной копии браузера? Текущие данные будут заменены.","Восстановить",1))return;adopt(o);store();queueNativeSave();if(H)wr();cl();render();toast("Резервная копия восстановлена")}
 function fc2(){if(NATIVE)return nfCreate();window.showSaveFilePicker?pf():sh()}
 function fo2(){if(NATIVE)return nfOpen();window.showSaveFilePicker?of():$("fin").click()}
 function fp(){const t=S.saved?new Date(S.saved).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"ещё не сохранялось";
  $("fi").textContent=NATIVE?(MF?(mfOk?"Основной файл: «"+MF.name+"» · автосохранение включено":"Нет доступа к файлу «"+MF.name+"» — выберите его заново"):"Файл не выбран: данные хранятся только внутри приложения и пропадут при его удалении")+" · сохранено "+t+" · версия "+BUILD
   :(H?(perm?"Автосохранение включено · ":"Автосохранение на паузе · ")+(H.name||"файл"):"Файл не подключён")+" · "+t+" · сборка "+BUILD;
  $("foff").hidden=!(NATIVE&&MF);sv(5,"Файл с данными");show()}
+// ===== Формат файла данных (версия 3): понятные имена, удобно править вручную =====
+// {
+//   "format": "bju-diary", "version": 3, "savedAt": "2026-10-16T11:00:00.000Z",
+//   "goals":    { "protein": 120, "fat": 70, "carbs": 250 },            — норма на день, г
+//   "products": [ { "name": "Творог 5%", "per100g": { "protein": 17, "fat": 5, "carbs": 1.8 },
+//                   "units": [ { "name": "пачка", "grams": 200 } ],      — необязательно
+//                   "dish": { "cookedWeight": 350, "ingredients": [ …как записи дневника… ] } } ],  — только у блюд
+//   "diary":    { "2026-10-16": { "breakfast": [ { "name": "Яблоко", "grams": 55, "protein": 0.2, "fat": 0.2, "carbs": 5.4,
+//                                                  "unit": { "name": "шт", "count": 1 } } ],
+//                                 "snack1": [], "lunch": [], "snack2": [], "dinner": [], "snack3": [] } },
+//   "settings": { "theme": "auto|light|dark", "accentColor": "#22a06b", "pullUpAction": "meal|product|off",
+//                 "pullDownAction": "calendar|today|off", "vibration": "on|exceptDays|off", "swipeLength": "short|medium|long" },
+//   "stats":    { "useCount": { "Яблоко": 12 }, "lastGrams": { "Яблоко": 55 } }   — для сортировки и подсказок
+// }
+// В products числа на 100 г можно не указывать (будет 0). Старые файлы (без "format") тоже открываются.
+const MK=["breakfast","snack1","lunch","snack2","dinner","snack3"];
+const STM={th:["theme",{}],ac:["accentColor",{}],sw:["pullUpAction",{prod:"product"}],dw:["pullDownAction",{cal:"calendar"}],hp:["vibration",{nodays:"exceptDays"}],sl:["swipeLength",{mid:"medium"}]};
+const r3=x=>Math.round(x*1000)/1000,fnum=(x,d)=>x==null||x===""?d:typeof x==="number"?x:parseFloat(String(x).replace(",","."));
+const entOut=e=>{const o={name:e.n,grams:r3(e.g),protein:r3(e.p),fat:r3(e.f),carbs:r3(e.c)};if(e.ul)o.unit={name:e.ul,count:e.q};return o};
+const entIn=(o,w)=>{if(!o||typeof o!=="object")throw Error(w+": запись должна быть объектом");if(!o.name)throw Error(w+": нет названия (name)");
+ const e={n:String(o.name),g:fnum(o.grams,NaN),p:fnum(o.protein,0),f:fnum(o.fat,0),c:fnum(o.carbs,0)};if(!(e.g>=0))throw Error(w+", «"+e.n+"»: нет массы (grams)");
+ if(o.unit&&o.unit.name){e.ul=String(o.unit.name);e.q=fnum(o.unit.count,1)}return e};
+function toFile(D){
+ const diary={};for(const k of Object.keys(D.d).sort()){const E=D.d[k];if(!E.length)continue;const day={};E.forEach(e=>(day[MK[e.m]]=day[MK[e.m]]||[]).push(entOut(e)));const o={};MK.forEach(m=>{if(day[m])o[m]=day[m]});diary[k]=o}
+ const settings={};for(const k in D.set||{}){const t=STM[k];if(t&&D.set[k]!=null)settings[t[0]]=t[1][D.set[k]]||D.set[k]}
+ return{format:"bju-diary",version:3,savedAt:D.saved?new Date(D.saved).toISOString():null,
+  goals:{protein:D.g.p,fat:D.g.f,carbs:D.g.c},
+  products:D.db.map(p=>{const o={name:p[0],per100g:{protein:p[1],fat:p[2],carbs:p[3]}};if(p[4]&&p[4].length&&!p[5])o.units=p[4].map(u=>({name:u[0],grams:u[1]}));if(p[5])o.dish={cookedWeight:p[5].w,ingredients:p[5].i.map(entOut)};return o}),
+  diary,settings,stats:{useCount:D.uc||{},lastGrams:D.lg||{}}}}
+function fromFile(o){if(!o||typeof o!=="object"||o.format!=="bju-diary")return o;
+ if(o.version>3)throw Error("файл создан в более новой версии приложения");
+ const g=o.goals||{},D={v:VER,g:{p:fnum(g.protein,0),f:fnum(g.fat,0),c:fnum(g.carbs,0)},db:[],d:{},saved:Date.parse(o.savedAt)||0,set:{},uc:(o.stats&&o.stats.useCount)||{},lg:(o.stats&&o.stats.lastGrams)||{}};
+ if(!Array.isArray(o.products||[]))throw Error("«products» должен быть списком");
+ (o.products||[]).forEach((p,i)=>{const w="продукт №"+(i+1);if(!p||!p.name)throw Error(w+": нет названия (name)");const h=p.per100g||{};
+  const a=[String(p.name),fnum(h.protein,0),fnum(h.fat,0),fnum(h.carbs,0)];
+  if(Array.isArray(p.units)&&p.units.length)a[4]=p.units.map((u,j)=>{if(!u||!u.name||!(fnum(u.grams,0)>0))throw Error(w+", единица №"+(j+1)+": нужны name и grams > 0");return[String(u.name),fnum(u.grams,0)]});
+  if(p.dish){const cw=fnum(p.dish.cookedWeight,0);a[4]=[["порция",cw]];a[5]={w:cw,i:(p.dish.ingredients||[]).map((x,j)=>entIn(x,w+", ингредиент №"+(j+1)))}}
+  D.db.push(a)});
+ for(const k in o.diary||{}){const day=o.diary[k]||{},bad=Object.keys(day).find(x=>!MK.includes(x));if(bad)throw Error("день "+k+": неизвестный приём пищи «"+bad+"» (можно: "+MK.join(", ")+")");
+  const E=[];MK.forEach((m,mi)=>(day[m]||[]).forEach((x,j)=>{const e=entIn(x,k+", "+m+" №"+(j+1));e.m=mi;E.push(e)}));D.d[k]=E}
+ const st=o.settings||{};for(const k in STM){const[nm,map]=STM[k];if(nm in st){const v=st[nm];D.set[k]=Object.keys(map).find(x=>map[x]===v)||v}}
+ return D}
+const ser=()=>JSON.stringify(toFile(S),null,2),parseData=t=>chk(fromFile(JSON.parse(t)));
 const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
 let today=iso(new Date());let cur=today;
 const $=id=>document.getElementById(id);
@@ -222,7 +265,7 @@ function render(){if(RDEF)return;
  MEALS.forEach((m,mi)=>{const it=E.map((e,i)=>[e,i]).filter(x=>x[0].m===mi),sk=dk(it.map(x=>x[0]));
   h+=`<section class="card meal${SN[mi]?' sn':''}"><div class="mh"><div class="mt"><b>${m}</b>${sk?`<span class="kp">${sk} ккал</span>`:""}</div><div class="ma">${it.length?`<button class="x" onclick="cm1(${mi})" aria-label="Копировать приём в другой день">${ic("copy")}</button>`:""}<button class="add" onclick="op(${mi})" aria-label="Добавить: ${LBL[mi]}">${ic("plus")}</button></div></div>`+
   (it.length?`<div class="il">`+it.map(([e,i])=>`<div class="it" data-i="${i}"><div><div class="n">${esc(e.n)}</div><div class="mu">${e.ul?e.q+" "+esc(e.ul)+" · ":""}${r1(e.g)} г · Б ${r1(e.p)} · Ж ${r1(e.f)} · У ${r1(e.c)}</div></div><b>${kc(e.p,e.f,e.c)}<small>ккал</small></b><button class="x" onclick="del(${i})" aria-label="Удалить">${ic("close")}</button></div>`).join("")+`</div>`:"")+`</section>`});
- if(dgd)undrag(1);const y=scrollY,old=[...document.querySelectorAll("#app .bar i")].map(i=>{const w=i.parentElement.getBoundingClientRect().width;return w?i.getBoundingClientRect().width/w*100:0});$("app").innerHTML=h;scrollTo(0,y);if(old.length)document.querySelectorAll("#app .bar i").forEach((el,k)=>{const nw=parseFloat(el.style.width);if(old[k]!=null&&Math.abs(old[k]-nw)>.5)try{el.animate([{width:old[k]+"%"},{width:nw+"%"}],{duration:380,delay:NAV&&!RM()?170:0,fill:"backwards",easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}})}
+ wUpd();if(dgd)undrag(1);const y=scrollY,old=[...document.querySelectorAll("#app .bar i")].map(i=>{const w=i.parentElement.getBoundingClientRect().width;return w?i.getBoundingClientRect().width/w*100:0});$("app").innerHTML=h;scrollTo(0,y);if(old.length)document.querySelectorAll("#app .bar i").forEach((el,k)=>{const nw=parseFloat(el.style.width);if(old[k]!=null&&Math.abs(old[k]-nw)>.5)try{el.animate([{width:old[k]+"%"},{width:nw+"%"}],{duration:380,delay:NAV&&!RM()?170:0,fill:"backwards",easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}})}
 // Подсветка нажатия: с небольшой задержкой (не мигает при прокрутке), снимается, как только палец сдвинулся
 (()=>{let el=null,tm=0,x0=0,y0=0;const SEL="#app .it,.pk,#di .it";
  const clr=d=>{clearTimeout(tm);if(!el)return;const e=el;el=null;d?setTimeout(()=>e.classList.remove("pr"),d):e.classList.remove("pr")};
@@ -230,6 +273,14 @@ function render(){if(RDEF)return;
  addEventListener("pointermove",e=>{if(el&&Math.hypot(e.clientX-x0,e.clientY-y0)>8)clr()},true);
  addEventListener("pointerup",()=>{if(el){el.classList.add("pr");clr(160)}},true);
  addEventListener("pointercancel",()=>clr(),true);addEventListener("scroll",()=>clr(),true)})();
+// Виджет рабочего стола: итог именно за сегодня, цвет акцента и тема приложения
+let wSig="";function wUpd(){const N=NX();if(!N||!N.widget)return;const E=S.d[today]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),G=S.g,cs=getComputedStyle(document.documentElement),bg=cs.getPropertyValue("--bg").trim(),ac=cs.getPropertyValue("--ac").trim();
+ const o={date:today,eaten:kc(t.p,t.f,t.c),goal:kc(G.p,G.f,G.c),macros:`Б ${Math.round(t.p)}/${G.p} · Ж ${Math.round(t.f)}/${G.f} · У ${Math.round(t.c)}/${G.c} г`,accent:/^#[0-9a-f]{6}$/i.test(ac)?ac:"#22a565",dark:/^#[0-9a-f]{6}$/i.test(bg)?lum(bg)<.5:true},sig=JSON.stringify(o);
+ if(sig!==wSig){wSig=sig;N.widget(o)}}
+// Ярлыки (долгое нажатие на иконку) и «+» на виджете: bju://add?m=0..5 | snack | auto
+let lastU="",lastUT=0;window.BJU_onUrl=u=>{try{if(u===lastU&&Date.now()-lastUT<2500)return;lastU=u;lastUT=Date.now();const q=new URL(u);if((q.hostname||q.pathname.replace(/\//g,""))!=="add")return;
+ const a=autoMeal();let m=q.searchParams.get("m");m=m==null||m==="auto"?a:m==="snack"?(a<=1?1:a<=3?3:5):+m;if(!(m>=0&&m<6))return;
+ if(isOpen)closeUI();if(cur!==today){cur=today;render()}op(m)}catch(e){}};
 let lt=0,lti=-1;function tp(i){const n=Date.now();if(lti===i&&n-lt<500){lt=0;lti=-1;ee(i)}else{lt=n;lti=i}}
 addEventListener("pointerup",e=>{if(isOpen||e.button>0)return;const t=e.target;if(!t.closest||t.closest("button"))return;const it=t.closest("#app .it");if(it)tp(+it.dataset.i)});
 function cpy(k){S.d[cur]=(S.d[k]||[]).map(e=>({...e}));save();render();toast("Скопировано записей: "+S.d[cur].length)}
@@ -374,7 +425,7 @@ addEventListener("touchstart",e=>{if(dgd)undrag(1);bindT(e.target);if(isOpen)ret
 function lum(h){const n=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4)};return .2126*f(n>>16&255)+.7152*f(n>>8&255)+.0722*f(n&255)}
 function act(a){const d=(document.documentElement.dataset.theme||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"))==="dark",n=parseInt(a.slice(1),16),m=d?(lum(a)<.15?255:-1):(lum(a)>.3?0:-1);return m<0?a:"#"+[n>>16&255,n>>8&255,n&255].map(v=>Math.round(v*.45+m*.55).toString(16).padStart(2,"0")).join("")}
 function applyAc(){applyTh();const r=document.documentElement,a=S.set&&S.set.ac;if(a&&/^#[0-9a-f]{6}$/i.test(a)){r.style.setProperty("--ac",a);r.style.setProperty("--act",act(a));r.style.setProperty("--on",lum(a)>.45?"#1d2330":"#fff");tc(a)}else{r.style.removeProperty("--ac");r.style.removeProperty("--act");r.style.removeProperty("--on");tc("#2f7de1")}}
-function tc(){const m=document.querySelector('meta[name="theme-color"]'),bg=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#f5f6f8";if(m)m.setAttribute("content",bg);const N=NX();if(N&&/^#[0-9a-f]{6}$/i.test(bg))N.bars(bg,lum(bg)>.5)}
+function tc(){const m=document.querySelector('meta[name="theme-color"]'),bg=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#f5f6f8";if(m)m.setAttribute("content",bg);const N=NX();if(N&&/^#[0-9a-f]{6}$/i.test(bg))N.bars(bg,lum(bg)>.5);try{wUpd()}catch(e){}}
 function swAct(){return(S.set&&S.set.sw)||"off"}
 function swipeAct(){if(swAct()==="prod"){mode="mng";drawMc();nw();show()}else op(autoMeal())}
 // Длина свайпа: множитель расстояния для всех жестов + порог скорости для резкого рывка
@@ -462,7 +513,7 @@ function chk(o){if(!o||typeof o!=="object"||!o.g||!o.d||typeof o.d!=="object")th
  for(const k in o.d){if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||!Array.isArray(o.d[k]))throw Error("неверная дата "+k);o.d[k].forEach(e=>{if(!e||typeof e.n!=="string"||!(e.m>=0&&e.m<6)||![e.g,e.p,e.f,e.c].every(isN))throw Error("неверная запись за "+k)})}
  if(o.db&&(!Array.isArray(o.db)||!o.db.every(p=>Array.isArray(p)&&typeof p[0]==="string"&&[p[1],p[2],p[3]].every(isN)&&(p[4]==null||Array.isArray(p[4])&&p[4].every(u=>Array.isArray(u)&&typeof u[0]==="string"&&u[1]>0))&&(p[5]==null||Array.isArray(p[5].i)))))throw Error("неверный список продуктов");
  return o}
-function bk(){const j=JSON.stringify(S);try{localStorage.setItem("bju2bak",j)}catch(e){}if(NATIVE){const N=NX();if(N)N.writeBackup(j).catch(()=>{});return}try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([j],{type:"application/json"}));a.download="bju-backup-"+today+".json";a.click()}catch(e){}}
+function bk(){const j=ser();try{localStorage.setItem("bju2bak",j)}catch(e){}if(NATIVE){const N=NX();if(N)N.writeBackup(j).catch(()=>{});return}try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([j],{type:"application/json"}));a.download="bju-backup-"+today+".json";a.click()}catch(e){}}
 function nkc(){const p=num($("np").value),f=num($("nf").value),c=num($("nc").value),s=p+f+c;$("nk").innerHTML=s?`≈ ${kc(p,f,c)} ккал на 100 г`+(s>100.5?` <span style="color:var(--dg)">· Б+Ж+У = ${r1(s)} г, больше 100 г — проверьте</span>`:""):""}
 const dtot=()=>dr.i.reduce((a,x)=>({g:a.g+x.g,p:a.p+x.p,f:a.f+x.f,c:a.c+x.c}),{g:0,p:0,f:0,c:0});
 function dbt(){if(mode==="ing"){drawDish();return}ed=-1;pmode=mode;ik=-1;dr={n:"",i:[],w:0};drawDish()}
