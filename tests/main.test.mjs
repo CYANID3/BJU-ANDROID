@@ -135,18 +135,19 @@ test('нижняя панель открывает свои экраны', async
   await a.close();
 });
 
-test('длина свайпа: один и тот же жест срабатывает по-разному на трёх уровнях', async () => {
+test('длина свайпа: «потянуть вверх/вниз» сильно различается, остальные жесты как раньше', async () => {
   const a = await openApp();
-  // медленное движение (без рывка) на d пикселей: перелистнулся ли день
-  const flips = async (lv, d) => {
-    await a.ev(v => { cur = today; render(); setSl(v); }, lv); await a.wait(200);
-    await a.drag(300, 500, 300 - d, 502, { steps: 12, ms: 45 }); await a.wait(700);
-    return a.ev(() => cur !== today);
+  const lv = f => a.ev(f => ['short', 'mid', 'long'].map(v => { S.set = { ...S.set, sl: v }; return Math.round(eval(f)); }), f);
+  // порог «потянуть»: 21 / 96 / 326 px (около трети экрана)
+  assert.deepEqual(await lv('THv()'), [21, 96, 326]);
+  // листание дней, календарь, смахивание листа — прежние множители
+  assert.deepEqual(await lv('56*GF()'), [28, 56, 101]);
+  // проверка вживую: медленное движение вверх в конце страницы на 150 px
+  const pull = async v => {
+    await a.ev(v => { S.set = { ...S.set, sl: v, sw: 'meal' }; scrollTo(0, 1e6); }, v); await a.wait(200);
+    await a.drag(200, 700, 200, 550, { steps: 15, ms: 40 }); await a.wait(500);
+    const o = await a.ev(() => isOpen); if (o) { await a.ev(() => cl()); await a.wait(350); } return o;
   };
-  assert.deepEqual([await flips('short', 40), await flips('mid', 40), await flips('long', 40)], [true, false, false], '40 px');
-  assert.deepEqual([await flips('mid', 90), await flips('long', 90)], [true, false], '90 px');
-  assert.equal(await flips('long', 200), true, '200 px');
-  // потянуть вверх в конце страницы: порог 21 / 96 / 326 px
-  assert.deepEqual(await a.ev(() => ['short', 'mid', 'long'].map(v => { S.set.sl = v; return Math.round(THv()); })), [21, 96, 326]);
+  assert.deepEqual([await pull('short'), await pull('mid'), await pull('long')], [true, true, false]);
   await a.close();
 });
