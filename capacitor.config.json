@@ -1,0 +1,8 @@
+{
+  "appId": "kg.bju.app",
+  "appName": "БЖУ",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false
+  }
+}
