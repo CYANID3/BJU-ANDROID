@@ -50,8 +50,8 @@ public class BjuWidget extends AppWidgetProvider {
     }
 
     static int pick(float w, float h) {
-        if (w >= 250 && h >= 170) return L;
-        if (w >= 200 && h >= 110) return M;
+        if (w >= 250 && h >= 165) return L;
+        if (w >= 200 && h >= 120) return M;
         if (w >= 200) return W;
         return S;
     }
@@ -63,8 +63,8 @@ public class BjuWidget extends AppWidgetProvider {
             Map<SizeF, RemoteViews> map = new HashMap<>();
             map.put(new SizeF(40f, 40f), build(ctx, S, d));
             map.put(new SizeF(200f, 40f), build(ctx, W, d));
-            map.put(new SizeF(200f, 110f), build(ctx, M, d));
-            map.put(new SizeF(250f, 170f), build(ctx, L, d));
+            map.put(new SizeF(200f, 120f), build(ctx, M, d));
+            map.put(new SizeF(250f, 165f), build(ctx, L, d));
             mgr.updateAppWidget(id, new RemoteViews(map));
         } else {
             Bundle o = mgr.getAppWidgetOptions(id);
@@ -138,12 +138,10 @@ public class BjuWidget extends AppWidgetProvider {
             v.setTextColor(R.id.bju_w_left, left < 0 ? d.danger : d.tx);
         }
         if (kind == L) {
-            v.setTextViewText(R.id.bju_w_label, left >= 0 ? "Осталось сегодня" : "Перебор сегодня");
+            v.setTextViewText(R.id.bju_w_label, (left >= 0 ? "Осталось" : "Перебор") + " · съедено " + d.kcal + " из " + d.kcalGoal);
             v.setTextColor(R.id.bju_w_label, d.mu);
             v.setTextViewText(R.id.bju_w_left, d.kcalGoal <= 0 ? "—" : Math.abs(left) + " ккал");
             v.setTextColor(R.id.bju_w_left, left < 0 ? d.danger : d.tx);
-            v.setTextViewText(R.id.bju_w_sub, "Съедено " + d.kcal + " из " + d.kcalGoal + " ккал");
-            v.setTextColor(R.id.bju_w_sub, d.mu);
             v.setProgressBar(R.id.bju_w_bar, 1000, d.kcalGoal > 0 ? Math.min(1000, Math.max(0, d.kcal) * 1000 / d.kcalGoal) : 0, false);
             if (Build.VERSION.SDK_INT >= 31) {
                 v.setColorStateList(R.id.bju_w_bar, "setProgressTintList", ColorStateList.valueOf(left < 0 ? d.danger : d.accent));

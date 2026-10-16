@@ -55,7 +55,9 @@ function applyInsets(i) {
   // "set" — изменение без анимации от системы: плавный CSS-переход
   const live = i.mode === 'live' || i.mode === 'end';
   r.setProperty('--kbd', live ? '0ms' : (i.duration || 250) + 'ms');
-  r.setProperty('--kb', i.keyboard + 'px');
+  // страница может «придержать» значение (например, не дать окну подскочить при закрытии клавиатуры)
+  const kb = window.BJU_kbFilter ? window.BJU_kbFilter(i.keyboard, i.mode) : i.keyboard;
+  r.setProperty('--kb', kb + 'px');
   window.BJU_onKeyboard?.(i.keyboard, i.mode === 'live' ? -1 : live ? 0 : i.duration || 220);
 }
 if (hasBju) {
