@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#2f7de1"><script>try{var a=JSON.parse(localStorage.getItem("bju2")).set.ac;if(/^#[0-9a-f]{6}$/i.test(a))document.querySelector('meta[name="theme-color"]').content=a}catch(e){}</script><script>try{var t=JSON.parse(localStorage.getItem("bju2")).set.th;if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="БЖУ"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#14171c"><script>try{var a=JSON.parse(localStorage.getItem("bju2")).set.ac;if(/^#[0-9a-f]{6}$/i.test(a))document.querySelector('meta[name="theme-color"]').content=a}catch(e){}</script><script>try{var t=JSON.parse(localStorage.getItem("bju2")).set.th;if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="БЖУ"><link rel="apple-touch-icon" href="/icon-180.png"><link rel="icon" type="image/png" sizes="48x48" href="/favicon.png"><link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<meta name="build" content="%VITE_BUILD%">
 <title>БЖУ — дневник питания</title>
 <style>
 :root{--bg:#f5f6f8;--card:#fff;--tx:#1d2330;--mu:#6b7280;--bd:#e3e6ec;--ac:#2f7de1;--p:#2f7de1;--f:#e8a32b;--c:#35a66b;--dg:#d64545;--on:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -36,7 +37,7 @@ input{width:100%;font:inherit;padding:12px;border-radius:12px;border:1px solid v
 .cw,.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cw div{text-align:center;font-size:12px;color:var(--mu);padding:4px 0}.cg{touch-action:pan-y}
 .cd{aspect-ratio:1/1.1;border-radius:10px;border:1px solid var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15px;background:var(--bg);padding:0}.cd small{font-size:10px;color:var(--mu);min-height:12px}.cd.e{visibility:hidden}.cd.t{border-color:var(--ac);border-width:2px}.cd.o small{color:var(--dg)}.cd.s{background:var(--ac);color:var(--on)}.cd.s small{color:var(--on)}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}label{font-size:13px;color:var(--mu)}
-html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollbar,body::-webkit-scrollbar,.sh::-webkit-scrollbar{display:none;width:0;height:0}html{overflow-y:scroll}
+html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollbar,body::-webkit-scrollbar,.sh::-webkit-scrollbar{display:none;width:0;height:0}html{overflow-y:scroll}html.lk{overflow:hidden}
 .ct{font-weight:700;font-size:17px;padding:8px 6px;border-radius:10px}.ct:active{background:var(--bg)}.cg.m{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:8px}.cg.m .cd{aspect-ratio:auto;font-size:16px}
 #ov.on .sh{transform:none}.sh::before{content:"";display:block;width:36px;height:4px;border-radius:2px;background:var(--bd);margin:-6px auto 10px}
 .fi{animation:fi .2s ease-out}@keyframes fi{from{opacity:0;transform:translateY(8px)}}
@@ -75,23 +76,23 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
 <script>
 const BASE=[["Куриная грудка (сырая)",23.6,1.9,.4],["Говядина (сырая)",18.9,12.4,0],["Лосось",20,13,0],["Минтай",16,.9,0],["Яйцо куриное",12.7,11.5,.7],["Творог 5%",17,5,1.8],["Молоко 2,5%",2.8,2.5,4.7],["Кефир 1%",3,1,4],["Йогурт натуральный",5,3.2,3.5],["Сметана 15%",2.6,15,3],["Сыр твёрдый",23,30,0],["Гречка (сухая)",12.6,3.3,62.1],["Рис (сухой)",7,1,74],["Овсяные хлопья",12.3,6.1,59.5],["Макароны (сухие)",11,1.3,70],["Хлеб пшеничный",8.1,1,48.8],["Картофель",2,.4,16.3],["Морковь",1.3,.1,6.9],["Огурец",.8,.1,2.5],["Помидор",.9,.2,3.8],["Яблоко",.4,.4,9.8],["Банан",1.5,.2,21.8],["Масло оливковое",0,99.8,0],["Масло сливочное 82,5%",.5,82.5,.8],["Миндаль",18.6,57.7,13.6],["Сахар",0,0,99.7]];
 const MEALS=["Завтрак","Перекус","Обед","Перекус","Ужин","Перекус"],SN=[0,1,0,1,0,1];
-const VER=2,BUILD="16.10-14";let S={g:{p:120,f:70,c:250},db:BASE.map(x=>x.slice()),d:{},dirty:0,saved:0};
+const VER=2,BUILD=(document.querySelector('meta[name="build"]')||{}).content||"dev";let S={g:{p:120,f:70,c:250},db:BASE.map(x=>x.slice()),d:{},dirty:0,saved:0};
 function adopt(o){if(!o||!o.d||!o.g)return false;if(!o.db)o.db=[...(o.cu||[]),...BASE.map(x=>x.slice())];S=Object.assign({g:{p:120,f:70,c:250},db:[],d:{},saved:0},o);S.v=VER;S.dirty=0;applyAc();return true}
 try{const r=localStorage.getItem("bju2");if(r)adopt(JSON.parse(r))}catch(e){}
 let serr=0;const store=()=>{try{localStorage.setItem("bju2",JSON.stringify(S));serr=0}catch(e){if(!serr)try{toast("Не удалось сохранить данные!")}catch(x){}serr=1}};
 let H=null,perm=true,tm,mode="add",ed=-1,IX=[],am=0,sel=null;
 let nativeSaveTimer=0;
-function queueNativeSave(){if(!window.BJU_NATIVE||!window.BJU_NATIVE.native)return;clearTimeout(nativeSaveTimer);nativeSaveTimer=setTimeout(async()=>{try{S.saved=Date.now();await window.BJU_NATIVE.writeData(JSON.stringify(S));S.dirty=0;store()}catch(e){try{toast("Не удалось сохранить файл в Documents")}catch(_){}}},350)}
+function queueNativeSave(){if(!window.BJU_NATIVE||!window.BJU_NATIVE.native)return;clearTimeout(nativeSaveTimer);nativeSaveTimer=setTimeout(async()=>{try{S.saved=Date.now();await window.BJU_NATIVE.writeData(JSON.stringify(S));S.dirty=0;store()}catch(e){try{toast("Не удалось сохранить файл данных")}catch(_){}}},350)}
 function save(){S.dirty=(S.dirty||0)+1;store();queueNativeSave();if(H){clearTimeout(tm);tm=setTimeout(wr,400)}}
 function saveq(){store();queueNativeSave();if(H){clearTimeout(tm);tm=setTimeout(wr,400)}}
 async function wr(){try{if((await H.queryPermission({mode:"readwrite"}))!=="granted"){perm=false;render();return}const w=await H.createWritable();S.saved=Date.now();await w.write(JSON.stringify(S));await w.close();perm=true;S.dirty=0;store();render()}catch(e){perm=false;render()}}
 let rq=0;async function resume(){if(rq)return;rq=1;try{if((await H.requestPermission({mode:"readwrite"}))==="granted"){perm=true;await wr()}}catch(e){}rq=0}
 const idb=(m,v)=>new Promise((ok,no)=>{const q=indexedDB.open("bju",1);q.onupgradeneeded=()=>q.result.createObjectStore("h");q.onsuccess=()=>{const s=q.result.transaction("h",m==="get"?"readonly":"readwrite").objectStore("h"),r=m==="get"?s.get("f"):s.put(v,"f");r.onsuccess=()=>ok(r.result);r.onerror=()=>no()};q.onerror=()=>no()});
 const FT={types:[{description:"Данные БЖУ",accept:{"application/json":[".json"]}}]};
-async function initH(){try{await window.BJU_NATIVE_READY; if(window.BJU_NATIVE&&window.BJU_NATIVE.native){const raw=await window.BJU_NATIVE.readData();if(raw){const o=chk(JSON.parse(raw));if((o.saved||0)>(S.saved||0)){adopt(o);store()}else if((S.saved||0)>(o.saved||0)){await window.BJU_NATIVE.writeData(JSON.stringify(S))}}else{await window.BJU_NATIVE.writeData(JSON.stringify(S))}render();return}}catch(e){try{toast("Не удалось прочитать локальный файл")}catch(_){}}try{const h=await idb("get");if(!h)return;H=h;perm=(await h.queryPermission({mode:"readwrite"}))==="granted";if(perm){const o=chk(JSON.parse(await(await h.getFile()).text()));if(!S.dirty&&(o.saved||0)>(S.saved||0)){adopt(o);store()}else if(S.dirty){if((o.saved||0)>(S.saved||0)&&await ask("Файл данных новее, чем данные в браузере, а в браузере есть несохранённые изменения.\nВзять данные из файла? Если отказаться, файл будет перезаписан данными браузера.","Взять из файла")){bk();adopt(o);store()}else wr()}}render()}catch(e){}}
+async function initH(){try{await Promise.race([window.BJU_NATIVE_READY,new Promise(r=>setTimeout(r,3000))]);if(window.BJU_NATIVE&&window.BJU_NATIVE.native){const raw=await window.BJU_NATIVE.readData();if(raw){const o=chk(JSON.parse(raw));if((o.saved||0)>(S.saved||0)){adopt(o);store()}else if((S.saved||0)>(o.saved||0)){await window.BJU_NATIVE.writeData(JSON.stringify(S))}}else{await window.BJU_NATIVE.writeData(JSON.stringify(S))}render();return}}catch(e){try{toast("Не удалось прочитать локальный файл")}catch(_){}}try{const h=await idb("get");if(!h)return;H=h;perm=(await h.queryPermission({mode:"readwrite"}))==="granted";if(perm){const o=chk(JSON.parse(await(await h.getFile()).text()));if(!S.dirty&&(o.saved||0)>(S.saved||0)){adopt(o);store()}else if(S.dirty){if((o.saved||0)>(S.saved||0)&&await ask("Файл данных новее, чем данные в браузере, а в браузере есть несохранённые изменения.\nВзять данные из файла? Если отказаться, файл будет перезаписан данными браузера.","Взять из файла")){bk();adopt(o);store()}else wr()}}render()}catch(e){}}
 async function pf(){try{H=await showSaveFilePicker({suggestedName:"bju-data.json",...FT});await idb("put",H);await wr();cl();toast("Файл создан: "+H.name+". Автосохранение включено")}catch(e){}}
 async function of(){try{const[h]=await showOpenFilePicker(FT);let o;try{o=chk(JSON.parse(await(await h.getFile()).text()))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}const dn=d=>Object.keys(d).filter(k=>d[k].length).length;if(dn(S.d)&&!await ask("Подключить файл и заменить текущие данные (дней с записями: "+dn(S.d)+") данными из файла (дней: "+dn(o.d)+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;if(dn(S.d))bk();adopt(o);H=h;await idb("put",h);store();cl();render();toast("Файл подключён: "+h.name+" · дней с записями: "+dn(o.d))}catch(e){}}
-async function sh(){try{if(window.BJU_NATIVE&&window.BJU_NATIVE.native){S.saved=Date.now();await window.BJU_NATIVE.writeData(JSON.stringify(S));S.dirty=0;store();render();toast("Копия сохранена в Documents/BJU/bju-data.json");return}const f=new File([JSON.stringify(S)],"bju-data.json",{type:"text/plain"});if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else{const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download="bju-data.json";a.click()}S.dirty=0;S.saved=Date.now();store();render();toast("Копия сохранена")}catch(e){say("Не удалось сохранить копию: "+(e.message||e))}}
+async function sh(){try{if(window.BJU_NATIVE&&window.BJU_NATIVE.native){S.saved=Date.now();const pub=await window.BJU_NATIVE.writeData(JSON.stringify(S));S.dirty=0;store();render();toast(pub?"Копия сохранена в Documents/BJU/bju-data.json":"Сохранено в памяти приложения (доступ к Documents запрещён)");return}const f=new File([JSON.stringify(S)],"bju-data.json",{type:"text/plain"});if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else{const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download="bju-data.json";a.click()}S.dirty=0;S.saved=Date.now();store();render();toast("Копия сохранена")}catch(e){say("Не удалось сохранить копию: "+(e.message||e))}}
 function im(el){const f=el.files[0];el.value="";if(!f)return;f.text().then(async t=>{let o;try{o=chk(JSON.parse(t))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}
  const dn=d=>Object.keys(d).filter(k=>d[k].length).length;
  if(!await ask("Заменить текущие данные (дней с записями: "+dn(S.d)+") данными из файла (дней: "+dn(o.d)+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;
@@ -142,8 +143,8 @@ function op(m){am=m;mode="add";$("q").value="";lst();drawMc();sv(1,"Добави
 function mng(){mode="mng";$("q").value="";lst();drawMc();sv(1,"Все продукты ("+S.db.length+")");show()}
 const num=v=>parseFloat(String(v).replace(",","."))||0,nn=v=>Math.max(0,num(v));
 let ei=-1,lastDel=null,tmr,isOpen=false;
-function show(){if(!isOpen){isOpen=true;oa=Date.now();try{history.pushState({o:1},"")}catch(e){}}$("ov").classList.add("on");document.body.style.overflow="hidden"}
-function closeUI(){if(!isOpen)return;fch=0;cpm=-1;isOpen=false;if(mode==="ing")mode=pmode;ik=-1;$("ov").classList.remove("on");document.body.style.overflow="";ei=-1;try{document.activeElement.blur()}catch(e){}}
+function show(){if(!isOpen){isOpen=true;oa=Date.now();try{history.pushState({o:1},"")}catch(e){}}$("ov").classList.add("on");document.documentElement.classList.add("lk")}
+function closeUI(){if(!isOpen)return;fch=0;cpm=-1;isOpen=false;if(mode==="ing")mode=pmode;ik=-1;$("ov").classList.remove("on");document.documentElement.classList.remove("lk");ei=-1;try{document.activeElement.blur()}catch(e){}}
 async function xcl(){if(!$("v8").hidden&&($("dn").value.trim()||dr.i.length)&&!await ask("Закрыть без сохранения блюда?","Закрыть",1))return;cl()}
 function cl(){const was=isOpen;closeUI();if(was){try{if(history.state&&history.state.o)history.back()}catch(e){}}}
 function lst(){const q=W($("q").value);IX=[];S.db.forEach((p,i)=>{if(q.every(t=>W(p[0]).some(w=>w.startsWith(t))))IX.push(i)});if(mode==="add"){const u=S.uc||{};IX.sort((a,b)=>(u[S.db[b][0]]||0)-(u[S.db[a][0]]||0))}IX=IX.slice(0,80);
@@ -177,7 +178,7 @@ function gk2(){$("gkc").textContent="≈ "+kc(nn($("gp").value),nn($("gf").value
 function goals(){$("gp").value=S.g.p;$("gf").value=S.g.f;$("gc").value=S.g.c;gk2();sv(4,"Норма на день");show()}
 function sg(){S.g={p:nn($("gp").value),f:nn($("gf").value),c:nn($("gc").value)};save();cl();render()}
 let cm=[0,0],tx=null,ty=0;const cap=s=>s[0].toUpperCase()+s.slice(1);
-let cv=0,cb=0,cH=0;
+let cv=0,cb=0;
 const MN=Array.from({length:12},(_,i)=>cap(new Date(2000,i,1).toLocaleDateString("ru-RU",{month:"long"})));
 function cal(){const d=new Date(cur+"T12:00:00");cm=[d.getFullYear(),d.getMonth()];cv=0;drawCal();sv(6,"");show()}
 function vw(v){cb=cv;cv=v;drawCal();fade($("cg"))}
@@ -221,9 +222,11 @@ const vt=()=>mode==="mng"?"Все продукты ("+S.db.length+")":mode==="in
 function step(){const on=i=>!$("v"+i).hidden;
  if(on(2)){if(ik>=0){ik=-1;drawDish();return 1}if(ei>=0)return 0;lst();drawMc();sv(1,vt());return 1}
  if(on(3)){$("q").value="";lst();drawMc();sv(1,vt());return 1}
- if(on(1)&&mode==="ing"){drawDish();return 1}return 0}
+ if(on(1)&&mode==="ing"){drawDish();return 1}
+ if(on(6)&&cv){cv=cb===1&&cv===2?1:0;drawCal();fade($("cg"));return 1}return 0}
 addEventListener("popstate",async()=>{if(!isOpen)return;
  if(!$("v8").hidden&&($("dn").value.trim()||dr.i.length)){if(await ask("Закрыть без сохранения блюда?","Закрыть",1))closeUI();else try{history.pushState({o:1},"")}catch(e){}return}
+ if(step()){try{history.pushState({o:1},"")}catch(e){}return}
  closeUI()});
 const vv=window.visualViewport;function fit(){if(!vv)return;const o=$("ov");o.style.top=vv.offsetTop+"px";o.style.height=vv.height+"px"}
 if(vv){vv.addEventListener("resize",fit);vv.addEventListener("scroll",fit)}
@@ -273,7 +276,9 @@ addEventListener("blur",()=>undrag(1));document.addEventListener("visibilitychan
  h.addEventListener("touchcancel",()=>{y0=null;s.style.transition="";s.style.transform=""});
  h.addEventListener("touchend",()=>{if(y0===null)return;y0=null;s.style.transition="";if(dy>90)cl();s.style.transform=""})})();
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
-if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+const NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
+if(!NATIVE&&"serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+else if(NATIVE&&navigator.serviceWorker)navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister())).catch(()=>{});
 const nz=s=>String(s).toLowerCase().replace(/ё/g,"е"),W=s=>nz(s).split(/[\s,()%.\-]+/).filter(Boolean),isN=x=>typeof x==="number"&&isFinite(x)&&x>=0;
 let uu=-1,ik=-1,pmode="add",dr={n:"",i:[],w:0};
 function applyTh(){const t=S.set&&S.set.th,r=document.documentElement;if(t==="light"||t==="dark")r.dataset.theme=t;else delete r.dataset.theme}

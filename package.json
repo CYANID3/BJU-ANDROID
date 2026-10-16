@@ -2,8 +2,12 @@
   "name": "bju-app",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
+    "icons": "node scripts/icons.mjs",
     "build": "vite build",
+    "dev": "vite",
+    "android:prepare": "npm run icons && npm run build && cap add android && npx capacitor-assets generate --android --iconBackgroundColor \"#091120\" --iconBackgroundColorDark \"#091120\" --splashBackgroundColor \"#091120\" --splashBackgroundColorDark \"#091120\" && node scripts/patch-android.mjs && cap sync android",
     "cap:sync": "cap sync android"
   },
   "dependencies": {
@@ -13,7 +17,9 @@
     "@capacitor/haptics": "^7.0.2"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^7.4.3",
+    "sharp": "^0.32.6",
     "vite": "^6.4.1"
   }
 }

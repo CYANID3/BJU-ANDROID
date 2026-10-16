@@ -2,6 +2,7 @@
   "appId": "kg.bju.app",
   "appName": "БЖУ",
   "webDir": "www",
+  "backgroundColor": "#14171c",
   "android": {
     "allowMixedContent": false
   }
