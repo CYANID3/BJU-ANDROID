@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Размер: от 1×1 до 4×2 ячеек (4 колонки — вся ширина 4-колоночной сетки; 230dp — две строки, третья уже не помещается) -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/bju_widget_desc"
     android:initialLayout="@layout/bju_widget"
     android:previewLayout="@layout/bju_widget"
-    android:minWidth="110dp"
+    android:minWidth="250dp"
     android:minHeight="110dp"
-    android:minResizeWidth="110dp"
-    android:minResizeHeight="100dp"
+    android:minResizeWidth="40dp"
+    android:minResizeHeight="40dp"
     android:targetCellWidth="4"
     android:targetCellHeight="2"
     android:resizeMode="horizontal|vertical"
     android:maxResizeWidth="420dp"
-    android:maxResizeHeight="260dp"
+    android:maxResizeHeight="230dp"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen" />

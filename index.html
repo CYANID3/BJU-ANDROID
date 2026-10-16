@@ -110,6 +110,26 @@ label{font-size:13px;color:var(--mu);display:block;margin:0 0 4px 2px}
 .pu.rdy .pc{background:var(--ac);border-color:var(--ac);color:var(--on);transform:scale(1.12)}.pu.rdy .pc svg.r circle{stroke:var(--on);opacity:.35}.pu.rdy .pl{background:var(--ac);border-color:var(--ac);color:var(--on)}
 .pu.go{opacity:0;transition:opacity .28s .05s}.pu.go .pc{transform:scale(1.6);transition:transform .32s cubic-bezier(.22,1,.36,1)}
 
+
+/* Карточка дня (тройное касание по итогу дня): для скриншота и отправки тренеру */
+.repm .nav,.repm .bt{display:none}.repm body{padding-top:16px}
+.rep{background:var(--card);border:1px solid var(--bd);border-radius:28px;padding:22px 18px 16px;margin:6px 0 12px;box-shadow:var(--shd)}
+.rp-h{display:flex;align-items:center;gap:14px}.rp-h>div{min-width:0}
+.rp-d{font-size:14px;color:var(--mu);font-weight:500}
+.rp-k{font-size:46px;font-weight:800;letter-spacing:-.03em;line-height:1;margin-top:8px;font-variant-numeric:tabular-nums}.rp-k span{font-size:15px;font-weight:500;color:var(--mu);letter-spacing:0;margin-left:6px}
+.rp-l{font-size:14px;margin-top:8px;color:var(--mu)}.rp-l b{color:var(--act,var(--ac))}.rp-l.ov b{color:var(--dg)}
+.rp-ring{width:116px;height:116px;flex:none;margin-left:auto}.rp-ring circle{fill:none;stroke-linecap:round}
+.rp-m{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:20px 0 2px}
+.rp-m>div{background:var(--sub);border:1px solid var(--bd);border-radius:16px;padding:10px 11px 11px;min-width:0}
+.rp-m .nm{font-size:12.5px;font-weight:700;color:var(--cl)}.rp-m .v{font-size:19px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums;white-space:nowrap}.rp-m .v small{font-size:12px;font-weight:500;color:var(--mu);margin-left:2px}
+.rp-m .bar{height:5px;margin:8px 0 6px;background:var(--card)}.rp-m .rpc{font-size:12px;color:var(--mu)}
+.rp-sh{display:flex;height:8px;border-radius:5px;overflow:hidden;gap:3px;margin:14px 0 6px}.rp-sh i{display:block;border-radius:5px}
+.rp-sl{display:flex;justify-content:space-between;font-size:12px;color:var(--mu)}
+.rp-meal{margin-top:16px}.rp-mh{display:flex;align-items:baseline;gap:8px}.rp-mh b{font-size:15px;font-weight:700}.rp-mh .kp{margin-left:auto}.rp-mm{font-size:12px;color:var(--mu);margin:2px 0 6px}
+.rp-it{display:flex;gap:10px;align-items:baseline;font-size:13.5px;padding:5px 0;border-top:1px solid var(--bd)}.rp-mm+.rp-it{border-top:0}.rp-it span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rp-it em{font-style:normal;color:var(--mu);font-size:12.5px;white-space:nowrap}.rp-it b{font-variant-numeric:tabular-nums;min-width:52px;text-align:right}
+.rp-empty{text-align:center;color:var(--mu);padding:26px 0 10px}
+.rp-f{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px;padding-top:12px;border-top:1px dashed var(--bd);font-size:12px;color:var(--mu)}.rp-f span:last-child{display:flex;align-items:center;gap:6px;font-weight:700;color:var(--tx)}.rp-f img{width:18px;height:18px;border-radius:5px}
+.rep-in{animation:repin .32s cubic-bezier(.22,1,.36,1)}@keyframes repin{from{opacity:0;transform:scale(.97)}}
 /* APK: без выделения текста и «лупы» по долгому нажатию */
 .native body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.native input{-webkit-user-select:text;user-select:text}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -252,7 +272,7 @@ function hap(ms,d){const v=hpv();if(v==="off"||(d&&v==="nodays"))return;try{if(w
 function go(n){if(!GQ)hap(6,1);if(!NABS){NP=shiftDay(NP||cur,n);head(NP)}slide($("app"),n,()=>{cur=shiftDay(cur,n)})}
 function bar(l,v,g,col,np){return `<div class="row" style="--dot:${col}"><span>${l}</span><span class="mu">${r1(v)} / ${g} г · ${v>g?"сверх "+r1(v-g):"осталось "+r1(g-v)}</span></div><div class="bar"><i style="width:${Math.min(100,g?v/g*100:0)}%;background:${v>g&&!np?'var(--dg)':col}"></i></div>`}
 function head(c){c=c||cur;const dd=new Date(c+"T12:00:00"),df=Math.round((dd-new Date(today+"T12:00:00"))/864e5);$("dt").innerHTML=cap(dd.toLocaleDateString("ru-RU",{weekday:"short"}))+", "+dd.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+"<span class=\"dd\">▾</span><small>"+(df!==0?"<span data-t=\"1\" style=\"color:var(--act,var(--ac));font-weight:600\">К сегодня</span> · ":"")+(df===0?"Сегодня":df===-1?"Вчера":df===1?"Завтра":dd.getFullYear()!==new Date().getFullYear()?dd.getFullYear():"&nbsp;")+"</small>"}
-function render(){if(RDEF)return;
+function render(){if(RDEF)return;if(REP){head();$("app").innerHTML=repHTML();wUpd();return}
  const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
  head();
  let h="";
@@ -261,7 +281,7 @@ function render(){if(RDEF)return;
  else if(NATIVE){if(MF&&!mfOk)h+=`<div class="bn er"><span>Нет доступа к файлу «${esc(MF.name)}»</span><button onclick="fo2()">Выбрать</button></div>`}
  else if(H&&!perm&&S.dirty>0)h+=`<div class="bn"><span>Автосохранение на паузе · не в файле: ${S.dirty} изм.</span><button onclick="resume()">Продолжить</button></div>`;
  else if(!H&&S.dirty>=10)h+=`<div class="bn"><span>Не сохранено в файл: ${S.dirty} изм.</span><button onclick="${window.showSaveFilePicker?"fp()":"sh()"}">${window.showSaveFilePicker?"Настроить":"Сохранить"}</button></div>`;
- {const ex=shr(t)+wk();h+=`<div class="card"><div class="big"><b>${k}</b><span class="mu">из ${gk} ккал</span></div><div class="bar k"><i style="width:${Math.min(100,gk?k/gk*100:0)}%;background:${left<0?'var(--dg)':'var(--ac)'}"></i></div><div class="lf${left<0?" ov":""}">${left>=0?`Осталось <b>${left}</b> ккал`:`Перебор <b>${-left}</b> ккал`}</div>${bar("Белки",t.p,G.p,"var(--p)",1)}${bar("Жиры",t.f,G.f,"var(--f)")}${bar("Углеводы",t.c,G.c,"var(--c)")}${ex?`<div class="ex">${ex}</div>`:""}</div>`}
+ {const ex=shr(t)+wk();h+=`<div class="card sum"><div class="big"><b>${k}</b><span class="mu">из ${gk} ккал</span></div><div class="bar k"><i style="width:${Math.min(100,gk?k/gk*100:0)}%;background:${left<0?'var(--dg)':'var(--ac)'}"></i></div><div class="lf${left<0?" ov":""}">${left>=0?`Осталось <b>${left}</b> ккал`:`Перебор <b>${-left}</b> ккал`}</div>${bar("Белки",t.p,G.p,"var(--p)",1)}${bar("Жиры",t.f,G.f,"var(--f)")}${bar("Углеводы",t.c,G.c,"var(--c)")}${ex?`<div class="ex">${ex}</div>`:""}</div>`}
  MEALS.forEach((m,mi)=>{const it=E.map((e,i)=>[e,i]).filter(x=>x[0].m===mi),sk=dk(it.map(x=>x[0]));
   h+=`<section class="card meal${SN[mi]?' sn':''}"><div class="mh"><div class="mt"><b>${m}</b>${sk?`<span class="kp">${sk} ккал</span>`:""}</div><div class="ma">${it.length?`<button class="x" onclick="cm1(${mi})" aria-label="Копировать приём в другой день">${ic("copy")}</button>`:""}<button class="add" onclick="op(${mi})" aria-label="Добавить: ${LBL[mi]}">${ic("plus")}</button></div></div>`+
   (it.length?`<div class="il">`+it.map(([e,i])=>`<div class="it" data-i="${i}"><div><div class="n">${esc(e.n)}</div><div class="mu">${e.ul?e.q+" "+esc(e.ul)+" · ":""}${r1(e.g)} г · Б ${r1(e.p)} · Ж ${r1(e.f)} · У ${r1(e.c)}</div></div><b>${kc(e.p,e.f,e.c)}<small>ккал</small></b><button class="x" onclick="del(${i})" aria-label="Удалить">${ic("close")}</button></div>`).join("")+`</div>`:"")+`</section>`});
@@ -281,12 +301,42 @@ let wSig="";function wUpd(){const N=NX();if(!N||!N.widget)return;const E=S.d[tod
 let lastU="",lastUT=0;window.BJU_onUrl=u=>{try{if(u===lastU&&Date.now()-lastUT<2500)return;lastU=u;lastUT=Date.now();const q=new URL(u);if((q.hostname||q.pathname.replace(/\//g,""))!=="add")return;
  const a=autoMeal();let m=q.searchParams.get("m");m=m==null||m==="auto"?a:m==="snack"?(a<=1?1:a<=3?3:5):+m;if(!(m>=0&&m<6))return;
  if(isOpen)closeUI();if(cur!==today){cur=today;render()}op(m)}catch(e){}};
+// ===== Карточка дня: тройное касание по итогу дня — включить, по карточке — выключить =====
+let REP=0;
+function repHTML(){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
+ const dd=new Date(cur+"T12:00:00"),title=cap(dd.toLocaleDateString("ru-RU",{weekday:"long"}))+", "+dd.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+(dd.getFullYear()!==new Date().getFullYear()?" "+dd.getFullYear():"");
+ // кольцо: доли калорий Б/Ж/У (как на логотипе)
+ const kp=[t.p*4,t.f*9,t.c*4],ks=kp[0]+kp[1]+kp[2],R0=46,C=2*Math.PI*R0,col=["var(--p)","var(--f)","var(--c)"];
+ let ring=`<circle cx="58" cy="58" r="${R0}" stroke="var(--sub)" stroke-width="12"/>`;
+ if(ks>0){let st=0;const gap=kp.filter(x=>x>0).length>1?C*.035:0;kp.forEach((v,i)=>{if(v<=0)return;const L=Math.max(.001,v/ks*C-gap);ring+=`<circle cx="58" cy="58" r="${R0}" stroke="${col[i]}" stroke-width="12" stroke-dasharray="${L} ${C}" stroke-dashoffset="${-st}" transform="rotate(-90 58 58)"/>`;st+=v/ks*C})}
+ ring+=`<text x="58" y="56" text-anchor="middle" font-size="22" font-weight="800" fill="var(--tx)">${gk?Math.round(k/gk*100):0}%</text><text x="58" y="74" text-anchor="middle" font-size="11" fill="var(--mu)">нормы</text>`;
+ const M=[["Белки",t.p,G.p,"var(--p)"],["Жиры",t.f,G.f,"var(--f)"],["Углеводы",t.c,G.c,"var(--c)"]];
+ let h=`<div class="rep rep-in"><div class="rp-h"><div><div class="rp-d">${esc(title)}</div><div class="rp-k">${k}<span>из ${gk} ккал</span></div><div class="rp-l${left<0?" ov":""}">${left>=0?`Осталось <b>${left}</b> ккал`:`Перебор <b>${-left}</b> ккал`}</div></div><svg class="rp-ring" viewBox="0 0 116 116" aria-hidden="true">${ring}</svg></div>`;
+ h+=`<div class="rp-m">`+M.map(([n,v,g,c],i)=>`<div style="--cl:${c}"><div class="nm">${n}</div><div class="v">${r1(v)}<small>/ ${g} г</small></div><div class="bar"><i style="width:${Math.min(100,g?v/g*100:0)}%;background:${v>g&&i?"var(--dg)":c}"></i></div><div class="rpc">${g?Math.round(v/g*100):0}% нормы</div></div>`).join("")+`</div>`;
+ if(ks>0)h+=`<div class="rp-sh">${kp.map((v,i)=>v>0?`<i style="flex:${v};background:${col[i]}"></i>`:"").join("")}</div><div class="rp-sl">${(()=>{const raw=kp.map(v=>v/ks*100),fl=raw.map(Math.floor);let d=100-fl.reduce((a,b)=>a+b,0);raw.map((v,i)=>[v-fl[i],i]).sort((a,b)=>b[0]-a[0]).forEach(([,i])=>{if(d>0){fl[i]++;d--}});return["Б","Ж","У"].map((n,i)=>`<span>${n} ${fl[i]}% ккал</span>`).join("")})()}</div>`;
+ const meals=MEALS.map((m,mi)=>[m,E.filter(e=>e.m===mi),mi]).filter(x=>x[1].length);
+ if(!meals.length)h+=`<div class="rp-empty">Записей за этот день нет</div>`;
+ meals.forEach(([m,it,mi])=>{const s0=it.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0});
+  h+=`<div class="rp-meal"><div class="rp-mh"><b>${LBL[mi].replace(/ \d$/,"")}</b><span class="kp">${kc(s0.p,s0.f,s0.c)} ккал</span></div><div class="rp-mm">Б ${r1(s0.p)} · Ж ${r1(s0.f)} · У ${r1(s0.c)} г</div>`+
+   it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${e.ul?e.q+" "+esc(e.ul):r1(e.g)+" г"}</em><b>${kc(e.p,e.f,e.c)}</b></div>`).join("")+`</div>`});
+ h+=`<div class="rp-f"><span>Норма: ${gk} ккал · Б ${G.p} · Ж ${G.f} · У ${G.c} г</span><span><img src="icon-192.png" alt="">БЖУ</span></div></div>`;
+ return h}
+function togRep(on){REP=on==null?!REP:on;document.documentElement.classList.toggle("repm",!!REP);hap(10);render();scrollTo(0,0);
+ if(!REP&&!RM())try{$("app").animate([{opacity:0,transform:"scale(.98)"},{opacity:1,transform:"none"}],{duration:280,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}
+ if(REP)toast("Карточка дня · три касания — назад",0,2200)}
+(()=>{let n=0,t=0,x=0,y=0,sw=0;
+ addEventListener("pointerdown",e=>{x=e.clientX;y=e.clientY},true);
+ addEventListener("pointerup",e=>{if(isOpen||e.button>0)return;if(Math.hypot(e.clientX-x,e.clientY-y)>12){n=0;return}
+  const el=e.target.closest&&e.target.closest(REP?"#app .rep":"#app .sum");if(!el){n=0;return}
+  const now=Date.now();n=now-t<450?n+1:1;t=now;if(n>=3){n=0;sw=now+500;togRep()}},true);
+ // клик от этого же касания не должен попасть в новую разметку под пальцем (например, в «+»)
+ addEventListener("click",e=>{if(Date.now()<sw){e.preventDefault();e.stopPropagation();sw=0}},true)})();
 let lt=0,lti=-1;function tp(i){const n=Date.now();if(lti===i&&n-lt<500){lt=0;lti=-1;ee(i)}else{lt=n;lti=i}}
 addEventListener("pointerup",e=>{if(isOpen||e.button>0)return;const t=e.target;if(!t.closest||t.closest("button"))return;const it=t.closest("#app .it");if(it)tp(+it.dataset.i)});
 function cpy(k){S.d[cur]=(S.d[k]||[]).map(e=>({...e}));save();render();toast("Скопировано записей: "+S.d[cur].length)}
 function del(i){const[e]=S.d[cur].splice(i,1);lastDel={e,i,k:cur};save();render();toast("Удалено: "+e.n,1)}
 function undo(){if(!lastDel)return;const{e,i,k}=lastDel;(S.d[k]=S.d[k]||[]).splice(i,0,e);lastDel=null;save();render();$("tt").classList.remove("on")}
-function toast(m,u){$("tm").textContent=m;$("tt").querySelector("button").style.display=u?"":"none";$("tt").classList.add("on");clearTimeout(tmr);tmr=setTimeout(()=>$("tt").classList.remove("on"),4500)}
+function toast(m,u,ms){$("tm").textContent=m;$("tt").querySelector("button").style.display=u?"":"none";$("tt").classList.add("on");clearTimeout(tmr);tmr=setTimeout(()=>$("tt").classList.remove("on"),ms||4500)}
 let svBack=0,svFocus=0;
 // Высота листа после смены экрана с учётом того, где окажется клавиатура (откроется / закроется / останется)
 let hPend=0,hT=0;
@@ -424,6 +474,7 @@ addEventListener("popstate",async()=>{if(!isOpen)return;
 // Системная кнопка/жест «Назад» в APK: диалог → шаг назад внутри листа → закрыть лист → свернуть приложение
 window.BJU_onBack=()=>{if($("dg").classList.contains("on")){($("dgn").style.display==="none"?$("dgy"):$("dgn")).click();return true}
  if(isOpen){backStep();return true}
+ if(REP){togRep(false);return true}
  return false};
 async function backStep(){if(!$("v3").hidden&&v3sig()!==v3snap&&!await ask("Продукт не сохранён. Выйти без сохранения?","Выйти",1))return;v3ok=1;try{if(!step())await xcl()}finally{v3ok=0}}
 // Клавиатура в APK: лист поднимается вместе с ней (CSS --kb), поле ввода остаётся видимым
@@ -466,9 +517,9 @@ function swAct(){return(S.set&&S.set.sw)||"off"}
 function swipeAct(){if(swAct()==="prod"){mode="mng";drawMc();nw();show()}else op(autoMeal())}
 // Длина свайпа: множитель расстояния для всех жестов + порог скорости для резкого рывка
 // [расстояние, скорость рывка px/мс, доля пути для рывка, старт распознавания px, строгость направления]
-const SLV={short:[.5,.25,.3,9,1.25,"Короткий","Хватает лёгкого движения: дни листаются коротким взмахом, жесты срабатывают с полпути."],
+const SLV={short:[.5,.25,.3,9,1.25,"Короткий","Хватает лёгкого движения: дни листаются коротким взмахом, жесты вверх и вниз срабатывают почти сразу."],
  mid:[1,.45,.45,14,1.5,"Средний","Баланс скорости и защиты от случайных срабатываний."],
- long:[1.8,1.1,.7,22,2,"Длинный","Нужно провести почти вдвое дальше и строго по направлению. Случайные касания не срабатывают."]};
+ long:[1.8,1.1,.7,22,2,"Длинный","Нужно провести дальше и строго по направлению, а вверх и вниз — потянуть почти на четверть экрана. Случайные касания не срабатывают."]};
 const slv=()=>{const v=S.set&&S.set.sl;return SLV[v]?v:"mid"},GF=()=>SLV[slv()][0],SL=i=>SLV[slv()][i];
 function setSl(v){S.set=Object.assign({},S.set,{sl:v});saveq();drawSet();hap(8)}
 const PRE=["","#22a06b","#14b8a6","#6366f1","#8b5cf6","#e5589a","#e5484d","#f08a24","#f5c518","#64748b"],SWL=[["meal","Приём пищи"],["prod","Новый продукт"],["off","Выкл."]];
@@ -483,19 +534,23 @@ function setHp(v){S.set=Object.assign({},S.set,{hp:v});saveq();drawSet();hap(10)
 function setSw(v){S.set=Object.assign({},S.set,{sw:v});saveq();drawSet()}
 function setAc(h,k){S.set=Object.assign({},S.set,{ac:h});saveq();applyAc();drawSet(k)}
 // Жесты «потянуть»: индикатор-кольцо следует за пальцем; срабатывает по расстоянию или резкому рывку.
-const THv=()=>96*GF();let rd=0,pAct=0,pDn=false,pbY=null,ptY=null,PS=[];
+// длина «потянуть вверх/вниз»: короткий ≈34 px, средний ≈96 px, длинный ≈230 px
+const PLV={short:[.35,.25,.2],mid:[1,.45,.45],long:[2.4,9,1]},PL=i=>PLV[slv()][i],THv=()=>96*PL(0);let rd=0,pAct=0,pDn=false,pbY=null,ptY=null,PS=[];
 // скорость (px/мс) по последним ~100 мс жеста
 const pVel=()=>{const l=PS[PS.length-1];if(!l)return 0;let o=l;for(const q of PS)if(l[0]-q[0]<=100){o=q;break}return l[0]>o[0]?(l[1]-o[1])/(l[0]-o[0]):0};
 const atBot=()=>scrollY+innerHeight>=document.documentElement.scrollHeight-6;
+// Индикатор «потянуть»: всегда идёт за пальцем в одном темпе (0.7 от движения, дальше — «резина»),
+// при движении назад так же плавно возвращается; исчезает только после отпускания пальца.
 function pull(v,dn){const u=$("pu"),w=u.firstElementChild,a=dn?(dwOn()?"on":"off"):swAct();dn=!!dn;
- if(v<=6||a==="off"){if(pAct)phide();return}
+ if(a==="off"){if(pAct)phide();return}
+ if(!pAct&&v<8)return;
  if(!pAct||pDn!==dn){pAct=1;pDn=dn;rd=0;u.classList.remove("go","rdy");u.classList.add("drag");u.classList.toggle("tp",dn);
   const k=dn?dwAct():swAct();$("pa").innerHTML=ic(dn?(k==="today"?"today":"cal"):(k==="prod"?"box":"plus"));
   $("pt").textContent=dn?(k==="today"?"К сегодня":"Календарь"):(k==="prod"?"Новый продукт":"Добавить: "+LBL[autoMeal()])}
- const TH=THv(),p=Math.min(1,v/TH),r=v>=TH,y=(1-p)*90-Math.min(v-TH>0?v-TH:0,160)*.16;// за порогом — лёгкое «резиновое» продолжение
- if(r!==rd){rd=r;u.classList.toggle("rdy",r);if(r)hap(12)}
- u.style.opacity=Math.min(1,p*2.2);w.style.transform=`translateY(${dn?-y:y}px)`;
- u.style.setProperty("--p",p);u.style.setProperty("--lo",Math.max(0,Math.min(1,(p-.3)/.45)))}
+ v=Math.max(0,v);const TH=THv(),p=Math.min(1,v/TH),CAP=120,off=v<=CAP?v*.7:CAP*.7+(v-CAP)*.12,y=90-off;
+ const r=rd?v>=TH*.92:v>=TH;if(r!==rd){rd=r;u.classList.toggle("rdy",r);if(r)hap(12)}
+ u.style.opacity=Math.min(1,off/36);w.style.transform=`translateY(${dn?-y:y}px)`;
+ u.style.setProperty("--p",p);u.style.setProperty("--lo",Math.max(0,Math.min(1,(off-24)/30)))}
 function phide(){const u=$("pu");pAct=0;rd=0;u.classList.remove("drag","rdy");u.style.opacity=0;u.firstElementChild.style.transform="";u.style.setProperty("--p",0);u.style.setProperty("--lo",0)}
 function pgo(){const u=$("pu");pAct=0;rd=0;u.classList.remove("drag");u.classList.add("rdy","go");u.style.setProperty("--p",1);u.style.opacity="";
  setTimeout(()=>{u.classList.remove("go","rdy");u.style.opacity=0;u.firstElementChild.style.transform="";u.style.setProperty("--p",0);u.style.setProperty("--lo",0)},360)}
@@ -514,13 +569,14 @@ const onMv=e=>{if(e._m)return;e._m=1;if(isOpen)return;const t=e.touches[0],dx=t.
  const up=pbY!==null?pbY-t.clientY:0,dn=ptY!==null?t.clientY-ptY:0,v=Math.max(up,dn,0);
  PS.push([e.timeStamp,v]);if(PS.length>8)PS.shift();
  if(Math.abs(dx)>Math.max(70,v*.9)/SL(4)*1.5){if(pAct)phide();return}
- if(up>0)pull(up);else if(dn>0&&dwOn())pull(dn,1);else if(pAct)phide()};addEventListener("touchmove",onMv,{passive:true});
+ if(REP){if(pAct)phide();return}
+ if(up>0)pull(up);else if(dn>0&&dwOn())pull(dn,1);else if(pAct)pull(0,pDn)};addEventListener("touchmove",onMv,{passive:true});
 const onEn=e=>{if(e._e)return;e._e=1;if(isOpen||!gd){if(pAct)phide();return}const t=e.changedTouches[0],dx=t.clientX-sx,g=gd;gd=0;
  if(g===1){if(pAct)phide();const gf=GF();if(Math.abs(dx)>56*gf||(Math.abs(dx)>56*gf*SL(2)&&Date.now()-st<(gf<1?320:gf>1?200:260))){GQ=dgx;go(dx<0?1:-1);GQ=0;undrag(1)}else undrag();return}
  if(!pAct)return;
  const ve=pDn?(ptY!==null?t.clientY-ptY:0):(pbY!==null?pbY-t.clientY:0);PS.push([e.timeStamp,ve]);
  // сработало: дотянули до порога или резко дёрнули (почти половина пути и > 0.45 px/мс)
- if(rd||(ve>THv()*SL(2)&&pVel()>SL(1))){const dn=pDn;if(!rd)hap(12);pgo();if(dn)dwDo();else swipeAct()}else phide()};addEventListener("touchend",onEn);
+ if(rd||(ve>THv()*PL(2)&&pVel()>PL(1))){const dn=pDn;if(!rd)hap(12);pgo();if(dn)dwDo();else swipeAct()}else phide()};addEventListener("touchend",onEn);
 const onCn=()=>{if(pAct)phide();gd=0;undrag()};addEventListener("touchcancel",onCn);
 const onEn2=e=>{if(e._f)return;e._f=1;if(dgd&&!e.touches.length){gd=0;undrag()}};addEventListener("touchend",onEn2,{passive:true});
 // render() пересобирает #app и удаляет элемент, где началось касание: события тогда не доходят до window.
