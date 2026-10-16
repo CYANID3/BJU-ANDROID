@@ -87,7 +87,7 @@ label{font-size:13px;color:var(--mu);display:block;margin:0 0 4px 2px}
 .sg{background:var(--sub);border:1px solid var(--bd);border-radius:18px;padding:14px;margin-bottom:10px}
 .sgt{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;margin-bottom:10px}.sgt span{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac))}.sgt svg.i{width:18px;height:18px}
 .srl{font-size:13px;color:var(--mu);margin:12px 2px 6px}.sgt+.sr .srl{margin-top:0}.sd{font-size:12.5px;color:var(--mu);margin:8px 2px 0;line-height:1.4}
-.slp{height:6px;margin:12px 2px 0;background:var(--card);border:1px solid var(--bd);border-radius:4px;overflow:hidden}.slp i{display:block;height:100%;width:71%;background:var(--ac);border-radius:4px;transition:width .4s var(--spring)}
+.slp{height:6px;margin:12px 2px 0;background:var(--card);border:1px solid var(--bd);border-radius:4px;overflow:hidden}.slp i{display:block;height:100%;width:56%;background:var(--ac);border-radius:4px;transition:width .4s var(--spring)}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:var(--card);border:1px solid var(--bd);border-radius:13px;padding:3px}.seg button{padding:10px 4px;border-radius:10px;font-size:13px;font-weight:600;color:var(--mu)}.seg button.on{background:var(--ac);color:var(--on);box-shadow:0 1px 4px rgba(0,0,0,.18)}
 .swc{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:4px 2px}.swc button{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;color:#fff}.swc button svg{opacity:0;width:20px;height:20px;transform:scale(.6);transition:opacity .15s,transform .2s var(--spring)}.swc button.on{box-shadow:0 0 0 3px var(--sub),0 0 0 5px var(--tx)}.swc button.on svg{opacity:1;transform:none}
 .cc{display:flex;align-items:center;justify-content:space-between;margin-top:14px;font-size:15px;color:var(--tx)}input[type=color]{width:56px;height:36px;padding:2px;margin:0;cursor:pointer;border-radius:10px}
@@ -317,7 +317,7 @@ function pd(k){if(cpm>=0){const mi=cpm,it=(S.d[cur]||[]).filter(e=>e.m===mi).map
   dx=t.clientX-x0;const n=performance.now();vx=(t.clientX-lx)/Math.max(1,n-lt);lx=t.clientX;lt=n;
   el.style.transform=`translateX(${dx}px)`;el.style.opacity=1-Math.min(.6,Math.abs(dx)/(el.offsetWidth*1.2||400))},{passive:true});
  const end=()=>{x0=null;if(!md)return;md=0;const el=$("cg"),w=el.offsetWidth||300;
-  if(Math.abs(dx)>w*.22*GF()||(Math.abs(vx)>SLV[slv()][1]*.8&&Math.abs(dx)>20*GF())){hap(6,1);calFlip(el,dx<0?1:-1,dx,parseFloat(el.style.opacity)||1)}
+  if(Math.abs(dx)>w*.22*GF()||(Math.abs(vx)>SL(1)*.8&&Math.abs(dx)>w*.22*GF()*SL(2))){hap(6,1);calFlip(el,dx<0?1:-1,dx,parseFloat(el.style.opacity)||1)}
   else{el.style.transition="transform .25s cubic-bezier(.2,.8,.2,1),opacity .25s";el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!md)el.style.transition=""},260)}};
  v.addEventListener("touchend",end);v.addEventListener("touchcancel",()=>{dx=0;vx=0;end()})})();
 function calStep(n){if(cv===0){cm[1]+=n;if(cm[1]<0){cm[1]=11;cm[0]--}if(cm[1]>11){cm[1]=0;cm[0]++}}else if(cv===1)cm[0]+=n;else cm[0]+=n*12}
@@ -368,7 +368,7 @@ let lastIH=innerHeight;addEventListener("resize",()=>{const h=innerHeight,d=h-la
 const vv=NATIVE?null:window.visualViewport;function fit(){if(!vv)return;const o=$("ov");o.style.top=vv.offsetTop+"px";o.style.height=vv.height+"px"}
 if(vv){vv.addEventListener("resize",fit);vv.addEventListener("scroll",fit)}
 let sx=0,sy=0,gd=0,ab=0,at=0,st=0,dgd=0,dgx=0;
-let dgb=0;function drag(dx){const el=$("app");if(NB)return;if(!dgd){dgx=0;dgb=0;if(el._a){dgb=curX(el);el._a.cancel();el._a=null}}dgd=1;const th=56*GF();if(!dgx&&Math.abs(dx)>th){dgx=1;hap(8,1)}else if(dgx&&Math.abs(dx)<=th)dgx=0;clearTimeout(el._w);el._w=setTimeout(()=>undrag(),1200);el.style.transition="none";el.style.transform=`translateX(${dgb+dx*.5}px)`;el.style.opacity=1-Math.min(.3,Math.abs(dx)/700)}
+let dgb=0;const gf0=()=>GF();function drag(dx){const el=$("app");if(NB)return;if(!dgd){dgx=0;dgb=0;if(el._a){dgb=curX(el);el._a.cancel();el._a=null}}dgd=1;const th=56*GF();if(!dgx&&Math.abs(dx)>th){dgx=1;hap(8,1)}else if(dgx&&Math.abs(dx)<=th)dgx=0;clearTimeout(el._w);el._w=setTimeout(()=>undrag(),1200);el.style.transition="none";el.style.transform=`translateX(${dgb+dx*(gf0()<1?.62:gf0()>1?.4:.5)}px)`;el.style.opacity=1-Math.min(.3,Math.abs(dx)/700)}
 function undrag(c){if(!dgd)return;dgd=0;const el=$("app");clearTimeout(el._w);if(c){el.style.transition=el.style.transform=el.style.opacity="";return}el.style.transition="transform .38s cubic-bezier(.22,1,.36,1),opacity .3s";el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!dgd)el.style.transition=""},400)}
 addEventListener("touchstart",e=>{if(dgd)undrag(1);bindT(e.target);if(isOpen)return;const t=e.touches[0];sx=t.clientX;sy=t.clientY;st=Date.now();gd=0;ab=atBot();at=scrollY<=2;pbY=ab?sy:null;ptY=at?sy:null;PS=[[e.timeStamp,0]]},{passive:true});
 function lum(h){const n=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4)};return .2126*f(n>>16&255)+.7152*f(n>>8&255)+.0722*f(n&255)}
@@ -378,13 +378,16 @@ function tc(){const m=document.querySelector('meta[name="theme-color"]'),bg=getC
 function swAct(){return(S.set&&S.set.sw)||"off"}
 function swipeAct(){if(swAct()==="prod"){mode="mng";drawMc();nw();show()}else op(autoMeal())}
 // Длина свайпа: множитель расстояния для всех жестов + порог скорости для резкого рывка
-const SLV={short:[.72,.36,"Короткий","Срабатывает от лёгкого движения. Быстро, но возможны случайные срабатывания."],mid:[1,.45,"Средний","Баланс скорости и защиты от случайных срабатываний."],long:[1.4,.6,"Длинный","Нужно потянуть дальше — надёжная защита от случайных срабатываний."]};
-const slv=()=>{const v=S.set&&S.set.sl;return SLV[v]?v:"mid"},GF=()=>SLV[slv()][0];
+// [расстояние, скорость рывка px/мс, доля пути для рывка, старт распознавания px, строгость направления]
+const SLV={short:[.5,.25,.3,9,1.25,"Короткий","Хватает лёгкого движения: дни листаются коротким взмахом, жесты срабатывают с полпути."],
+ mid:[1,.45,.45,14,1.5,"Средний","Баланс скорости и защиты от случайных срабатываний."],
+ long:[1.8,1.1,.7,22,2,"Длинный","Нужно провести почти вдвое дальше и строго по направлению. Случайные касания не срабатывают."]};
+const slv=()=>{const v=S.set&&S.set.sl;return SLV[v]?v:"mid"},GF=()=>SLV[slv()][0],SL=i=>SLV[slv()][i];
 function setSl(v){S.set=Object.assign({},S.set,{sl:v});saveq();drawSet();hap(8)}
 const PRE=["","#22a06b","#14b8a6","#6366f1","#8b5cf6","#e5589a","#e5484d","#f08a24","#f5c518","#64748b"],SWL=[["meal","Приём пищи"],["prod","Новый продукт"],["off","Выкл."]];
 function sets(){drawSet();sv(7,"Настройки");show()}
 function drawSet(k){$("dwd").textContent={cal:"Всегда открывает календарь.",today:"Возвращает к сегодняшнему дню. На сегодняшнем дне ничего не делает.",off:"Жест отключён."}[dwAct()];$("dwm").innerHTML=[["cal","Календарь"],["today","К сегодня"],["off","Выкл."]].map(([v,t])=>`<button class="${dwAct()===v?"on":""}" onclick="setDw('${v}')">${t}</button>`).join("");$("hpm").innerHTML=[["on","Вкл."],["nodays","Кроме дней"],["off","Выкл."]].map(([v,t])=>`<button class="${hpv()===v?"on":""}" onclick="setHp('${v}')">${t}</button>`).join("");const a=swAct(),c=(S.set&&S.set.ac)||"",th=(S.set&&S.set.th)||"auto";$("thm").innerHTML=[["auto","Авто"],["light","Светлая"],["dark","Тёмная"]].map(([v,t])=>`<button class="${th===v?"on":""}" onclick="setTh('${v}')">${t}</button>`).join("");
- {const l=slv();$("slm").innerHTML=Object.keys(SLV).map(v=>`<button class="${l===v?"on":""}" onclick="setSl('${v}')">${SLV[v][2]}</button>`).join("");$("sli").style.width=Math.round(SLV[l][0]/1.4*100)+"%";$("sld").textContent=SLV[l][3];$("sver").textContent="Версия "+BUILD}
+ {const l=slv();$("slm").innerHTML=Object.keys(SLV).map(v=>`<button class="${l===v?"on":""}" onclick="setSl('${v}')">${SLV[v][5]}</button>`).join("");$("sli").style.width=Math.round(SLV[l][0]/1.8*100)+"%";$("sld").textContent=SLV[l][6];$("sver").textContent="Версия "+BUILD}
  $("sgm").innerHTML=SWL.map(([v,t])=>`<button class="${a===v?"on":""}" onclick="setSw('${v}')">${t}</button>`).join("");
  $("swc").innerHTML=PRE.map(h=>`<button class="${c===h?"on":""}" style="background:${h||"#3b82f6"}" onclick="setAc('${h}')" aria-label="${h?"Цвет "+h:"Стандартный цвет"}">${ic("check")}</button>`).join("");
  if(!k)$("cp").value=c||"#3b82f6"}
@@ -413,7 +416,7 @@ function dwOn(){const a=dwAct();return a==="cal"||(a==="today"&&cur!==today)}
 function dwDo(){if(dwAct()==="today"){if(cur!==today){const d=today>cur?1:-1;NABS=1;slide($("app"),d,()=>{cur=today})}}else if(dwAct()==="cal")cal()}
 function setDw(v){S.set=Object.assign({},S.set,{dw:v});saveq();drawSet()}
 const onMv=e=>{if(e._m)return;e._m=1;if(isOpen)return;const t=e.touches[0],dx=t.clientX-sx,dy=t.clientY-sy;
- if(!gd){if(Math.abs(dx)>14&&Math.abs(dx)>Math.abs(dy)*1.5)gd=1;else if(Math.abs(dy)>12)gd=2}
+ if(!gd){const s0=SL(3),k=SL(4);if(Math.abs(dx)>s0&&Math.abs(dx)>Math.abs(dy)*k)gd=1;else if(Math.abs(dy)>s0)gd=2}
  if(gd===1&&e.touches.length===1){drag(dx);if(pAct)phide();return}
  if(dgd&&e.touches.length>1){undrag(1);return}
  if(gd!==2||e.touches.length>1){if(pAct)phide();return}
@@ -422,14 +425,14 @@ const onMv=e=>{if(e._m)return;e._m=1;if(isOpen)return;const t=e.touches[0],dx=t.
  if(ptY===null&&dy>0&&scrollY<=2)ptY=t.clientY;
  const up=pbY!==null?pbY-t.clientY:0,dn=ptY!==null?t.clientY-ptY:0,v=Math.max(up,dn,0);
  PS.push([e.timeStamp,v]);if(PS.length>8)PS.shift();
- if(Math.abs(dx)>Math.max(70,v*.9)){if(pAct)phide();return}
+ if(Math.abs(dx)>Math.max(70,v*.9)/SL(4)*1.5){if(pAct)phide();return}
  if(up>0)pull(up);else if(dn>0&&dwOn())pull(dn,1);else if(pAct)phide()};addEventListener("touchmove",onMv,{passive:true});
 const onEn=e=>{if(e._e)return;e._e=1;if(isOpen||!gd){if(pAct)phide();return}const t=e.changedTouches[0],dx=t.clientX-sx,g=gd;gd=0;
- if(g===1){if(pAct)phide();const gf=GF();if(Math.abs(dx)>56*gf||(Math.abs(dx)>28*gf&&Date.now()-st<260)){GQ=dgx;go(dx<0?1:-1);GQ=0;undrag(1)}else undrag();return}
+ if(g===1){if(pAct)phide();const gf=GF();if(Math.abs(dx)>56*gf||(Math.abs(dx)>56*gf*SL(2)&&Date.now()-st<(gf<1?320:gf>1?200:260))){GQ=dgx;go(dx<0?1:-1);GQ=0;undrag(1)}else undrag();return}
  if(!pAct)return;
  const ve=pDn?(ptY!==null?t.clientY-ptY:0):(pbY!==null?pbY-t.clientY:0);PS.push([e.timeStamp,ve]);
  // сработало: дотянули до порога или резко дёрнули (почти половина пути и > 0.45 px/мс)
- if(rd||(ve>THv()*.45&&pVel()>SLV[slv()][1])){const dn=pDn;if(!rd)hap(12);pgo();if(dn)dwDo();else swipeAct()}else phide()};addEventListener("touchend",onEn);
+ if(rd||(ve>THv()*SL(2)&&pVel()>SL(1))){const dn=pDn;if(!rd)hap(12);pgo();if(dn)dwDo();else swipeAct()}else phide()};addEventListener("touchend",onEn);
 const onCn=()=>{if(pAct)phide();gd=0;undrag()};addEventListener("touchcancel",onCn);
 const onEn2=e=>{if(e._f)return;e._f=1;if(dgd&&!e.touches.length){gd=0;undrag()}};addEventListener("touchend",onEn2,{passive:true});
 // render() пересобирает #app и удаляет элемент, где началось касание: события тогда не доходят до window.
@@ -442,7 +445,7 @@ addEventListener("blur",()=>undrag(1));document.addEventListener("visibilitychan
   if(!on){if(Math.abs(ddx)>10&&Math.abs(ddx)>Math.abs(ddy)){y0=null;return}
    if(ddy>8&&st0<=0&&s.scrollTop<=0){on=1;y0=t.clientY;s.style.transition="none"}else if(Math.abs(ddy)>8){y0=null;return}else return}
   dy=Math.max(0,t.clientY-y0);const n=performance.now();v=(t.clientY-ly)/Math.max(1,n-lt);ly=t.clientY;lt=n;s.style.transform=`translateY(${dy}px)`},{passive:true});
- const end=()=>{y0=null;if(!on)return;on=0;s.style.transition="";s.style.transform="";if(dy>110*GF()||(v>SLV[slv()][1]&&dy>24*GF())){hap(6);xcl()}};
+ const end=()=>{y0=null;if(!on)return;on=0;s.style.transition="";s.style.transform="";if(dy>110*GF()||(v>SL(1)&&dy>110*GF()*SL(2))){hap(6);xcl()}};
  s.addEventListener("touchend",end);s.addEventListener("touchcancel",()=>{dy=0;v=0;end()})})();
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 if(!NATIVE&&"serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
