@@ -47,10 +47,9 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;paddin
 .kp{font-size:12px;font-weight:700;color:var(--act,var(--ac));background:var(--acs);border-radius:999px;padding:3px 8px;white-space:nowrap}
 .ma{display:flex;align-items:center;gap:6px}
 .add{width:40px;height:40px;border-radius:14px;background:var(--ac);color:var(--on);display:grid;place-items:center;flex:none}.add:active{transform:scale(.9)}.sn .add{width:36px;height:36px;border-radius:12px;background:var(--acs);color:var(--act,var(--ac))}
-.il{margin:10px 0 0 -4px;background:var(--sub);border:1px solid var(--bd);border-radius:14px;padding:0 4px 0 12px}
-.it{display:flex;align-items:center;gap:8px;padding:9px 0;border-top:1px solid var(--bd);transition:background .15s;-webkit-user-select:none;user-select:none}.il .it:first-child{border-top:0}
+.il{margin:10px 0 0 -4px;background:var(--sub);border:1px solid var(--bd);border-radius:14px;padding:4px}
+.it{position:relative;display:flex;align-items:center;gap:8px;padding:8px 2px 8px 10px;border-radius:11px;transition:background-color .2s;-webkit-user-select:none;user-select:none}.it+.it::before,.pk+.pk::before{content:"";position:absolute;left:10px;right:10px;top:0;height:1px;background:var(--bd);transition:opacity .2s}.it.pr,.pk.pr{background:var(--acs);transition-duration:.06s}.it.pr::before,.it.pr+.it::before,.pk.pr::before,.pk.pr+.pk::before{opacity:0}
 .it>div{flex:1;min-width:0}.it .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px;font-weight:500}.it .mu{font-size:12.5px;margin-top:1px}.it b{font-size:15px;font-weight:700}.it b small{font-size:11px;font-weight:500;color:var(--mu);margin-left:2px}
-.it:active{background:var(--acs)}
 .x{width:44px;height:44px;color:var(--mu);display:grid;place-items:center;flex:none;border-radius:12px}.x:active{background:var(--acs);color:var(--ac)}.it .x{width:36px;height:36px}.it .x svg{width:18px;height:18px}
 
 /* Нижние кнопки */
@@ -66,8 +65,8 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;paddin
 .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;min-height:44px}.hd>b{font-size:18px;font-weight:700}
 input{width:100%;font:inherit;padding:12px 14px;border-radius:14px;border:1px solid var(--bd);background:var(--sub);color:var(--tx);margin-bottom:8px;transition:border-color .15s,box-shadow .15s}input:focus{outline:0;border-color:var(--ac);box-shadow:0 0 0 3px var(--acs)}input::placeholder{color:var(--mu)}
 label{font-size:13px;color:var(--mu);display:block;margin:0 0 4px 2px}
-.pk{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:11px 8px;border-top:1px solid var(--bd);border-radius:0}.pk:first-child{border-top:0}.pk:active{background:var(--acs);transform:none}.pk>div{flex:1;min-width:0}.pk .n{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pk .mu{font-size:12.5px;margin-top:1px}.pk b{font-size:14px;color:var(--act,var(--ac));white-space:nowrap}
-#ls{background:var(--sub);border:1px solid var(--bd);border-radius:14px;margin:4px 0 6px;overflow:hidden}#ls:empty{display:none}#ls>.mu{padding:12px}
+.pk{position:relative;display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px;border-radius:11px;transition:background-color .2s}.pk:active{transform:none}.pk>div{flex:1;min-width:0}.pk .n{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pk .mu{font-size:12.5px;margin-top:1px}.pk b{font-size:14px;color:var(--act,var(--ac));white-space:nowrap}
+#ls{background:var(--sub);border:1px solid var(--bd);border-radius:14px;margin:4px 0 6px;padding:4px}#ls:empty{display:none}#ls>.mu{padding:12px}
 .pb{width:100%;padding:15px;border-radius:14px;background:var(--ac);color:var(--on);font-weight:700;margin-top:10px;display:block;text-align:center}.pb:active{transform:scale(.98)}.pb.g{background:var(--sub);color:var(--tx);border:1px solid var(--bd)}
 .ln{color:var(--act,var(--ac));padding:12px 8px;font-weight:600}
 .lr{display:flex;gap:8px;flex-wrap:wrap}.lr .ln{flex:1;background:var(--acs);border-radius:12px;text-align:center}
@@ -88,15 +87,16 @@ label{font-size:13px;color:var(--mu);display:block;margin:0 0 4px 2px}
 .sg{background:var(--sub);border:1px solid var(--bd);border-radius:18px;padding:14px;margin-bottom:10px}
 .sgt{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;margin-bottom:10px}.sgt span{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac))}.sgt svg.i{width:18px;height:18px}
 .srl{font-size:13px;color:var(--mu);margin:12px 2px 6px}.sgt+.sr .srl{margin-top:0}.sd{font-size:12.5px;color:var(--mu);margin:8px 2px 0;line-height:1.4}
+.slp{height:6px;margin:12px 2px 0;background:var(--card);border:1px solid var(--bd);border-radius:4px;overflow:hidden}.slp i{display:block;height:100%;width:71%;background:var(--ac);border-radius:4px;transition:width .4s var(--spring)}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:var(--card);border:1px solid var(--bd);border-radius:13px;padding:3px}.seg button{padding:10px 4px;border-radius:10px;font-size:13px;font-weight:600;color:var(--mu)}.seg button.on{background:var(--ac);color:var(--on);box-shadow:0 1px 4px rgba(0,0,0,.18)}
 .swc{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:4px 2px}.swc button{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;color:#fff}.swc button svg{opacity:0;width:20px;height:20px;transform:scale(.6);transition:opacity .15s,transform .2s var(--spring)}.swc button.on{box-shadow:0 0 0 3px var(--sub),0 0 0 5px var(--tx)}.swc button.on svg{opacity:1;transform:none}
 .cc{display:flex;align-items:center;justify-content:space-between;margin-top:14px;font-size:15px;color:var(--tx)}input[type=color]{width:56px;height:36px;padding:2px;margin:0;cursor:pointer;border-radius:10px}
 
 /* Тост, диалог */
-.tt{position:fixed;left:12px;right:12px;bottom:calc(16px + max(var(--sab),var(--kb)));max-width:496px;margin:0 auto;background:#20252e;color:#fff;border:1px solid color-mix(in srgb,var(--ac) 50%,#20252e);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;z-index:9;transform:translateY(150%);opacity:0;transition:transform .3s var(--ease),opacity .25s;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.3)}.tt.on{transform:none;opacity:1;pointer-events:auto}.tt button{color:color-mix(in srgb,var(--ac) 60%,#fff);font-weight:700}
+.tt{position:fixed;left:12px;right:12px;bottom:calc(16px + max(var(--sab),var(--kb)));max-width:496px;margin:0 auto;background:#20252e;color:#fff;border:1px solid color-mix(in srgb,var(--ac) 50%,#20252e);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;z-index:9;transform:translateY(150%);opacity:0;transition:transform .3s var(--ease),opacity .25s,bottom var(--kbd) cubic-bezier(.2,0,0,1);pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.3)}.tt.on{transform:none;opacity:1;pointer-events:auto}.tt button{color:color-mix(in srgb,var(--ac) 60%,#fff);font-weight:700}
 #dg{position:fixed;inset:0;background:rgba(5,8,12,.55);display:none;align-items:center;justify-content:center;z-index:10;padding:24px}#dg.on{display:flex}.dc{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:20px;width:100%;max-width:360px;animation:pop .22s var(--spring)}#dgm{white-space:pre-line;line-height:1.45}.dbs{display:flex;gap:8px}.dbs .pb{flex:1;margin-top:16px}
 @keyframes pop{from{opacity:0;transform:scale(.94)}}
-#di{background:var(--sub);border:1px solid var(--bd);border-radius:14px;padding:0 4px 0 12px;margin-bottom:6px}#di:empty{display:none}#di .it:first-child{border-top:0}#di .it{-webkit-touch-callout:none}
+#di{background:var(--sub);border:1px solid var(--bd);border-radius:14px;padding:4px;margin-bottom:6px}#di:empty{display:none}#di .it{-webkit-touch-callout:none}
 
 /* Жест «потянуть»: кольцо прогресса тянется за пальцем */
 .pu{position:fixed;left:0;right:0;bottom:calc(22px + var(--sab));display:flex;justify-content:center;pointer-events:none;z-index:6;opacity:0}
@@ -125,7 +125,7 @@ label{font-size:13px;color:var(--mu);display:block;margin:0 0 4px 2px}
  <div id="v4" hidden><div class="g3"><div><label for="gp">Б, г</label><input id="gp" oninput="gk2()" type="text" inputmode="decimal" autocomplete="off"></div><div><label for="gf">Ж, г</label><input id="gf" oninput="gk2()" type="text" inputmode="decimal" autocomplete="off"></div><div><label for="gc">У, г</label><input id="gc" oninput="gk2()" type="text" inputmode="decimal" autocomplete="off"></div></div><div id="gkc" class="mu" style="margin-top:6px"></div><button class="pb" onclick="sg()">Сохранить</button></div>
  <div id="v6" hidden><div class="hd" style="justify-content:center"><button class="x" onclick="mv(-1)" aria-label="Предыдущий месяц"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div style="flex:1;text-align:center"><button id="cmn" class="ct"></button><button id="cy" class="ct"></button></div><button class="x" onclick="mv(1)" aria-label="Следующий месяц"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></div><div id="cwk" class="cw"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div></div><div id="cg" class="cg"></div><div id="cs" class="mu" style="text-align:center;margin-top:10px"></div><button class="ln" style="width:100%" onclick="pd(today)">Сегодня</button></div>
  <div id="v8" hidden><input id="dn" placeholder="Название блюда"><div id="di"></div><div id="dh" class="mu" style="font-size:12px"></div><button class="ln" onclick="dring()">Добавить ингредиент</button><label for="dw">Вес готового блюда, г (пусто — сумма ингредиентов)</label><input id="dw" type="text" inputmode="decimal" autocomplete="off" oninput="dsum()"><div id="ds" class="mu"></div><button class="pb" onclick="dsv()">Сохранить блюдо</button><button id="ddl" class="ln" style="color:var(--dg);width:100%" onclick="rm()">Удалить блюдо</button></div>
- <div id="v7" hidden><div class="sg"><div class="sgt"><span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V5M6.5 10.5L12 5l5.5 5.5"/></svg></span>Жесты</div><div class="sr"><div class="srl">Потянуть вверх в конце страницы</div><div id="sgm" class="seg"></div></div><div class="sr"><div class="srl">Потянуть вниз в начале страницы</div><div id="dwm" class="seg"></div><div id="dwd" class="sd"></div></div></div><div class="sg"><div class="sgt"><span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="4" width="8" height="16" rx="2.5"/><path d="M4 9v6M20 9v6"/></svg></span>Вибрация</div><div class="sr"><div id="hpm" class="seg"></div><div class="sd">Отклик при жестах и действиях. «Кроме дней» отключает вибрацию только при перелистывании дней.</div></div></div><div class="sg"><div class="sgt"><span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5s6 6.2 6 10.5a6 6 0 0 1-12 0c0-4.3 6-10.5 6-10.5z"/></svg></span>Оформление</div><div class="sr"><div class="srl">Тема</div><div id="thm" class="seg"></div></div><div class="sr"><div class="srl">Акцентный цвет</div><div id="swc" class="swc"></div><label class="cc">Свой цвет<input id="cp" type="color" oninput="setAc(this.value,1)"></label></div></div></div>
+ <div id="v7" hidden><div class="sg"><div class="sgt"><span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V5M6.5 10.5L12 5l5.5 5.5"/></svg></span>Жесты</div><div class="sr"><div class="srl">Потянуть вверх в конце страницы</div><div id="sgm" class="seg"></div></div><div class="sr"><div class="srl">Потянуть вниз в начале страницы</div><div id="dwm" class="seg"></div><div id="dwd" class="sd"></div></div><div class="sr"><div class="srl">Длина свайпа</div><div id="slm" class="seg"></div><div class="slp"><i id="sli"></i></div><div id="sld" class="sd"></div></div></div><div class="sg"><div class="sgt"><span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="4" width="8" height="16" rx="2.5"/><path d="M4 9v6M20 9v6"/></svg></span>Вибрация</div><div class="sr"><div id="hpm" class="seg"></div><div class="sd">Отклик при жестах и действиях. «Кроме дней» отключает вибрацию только при перелистывании дней.</div></div></div><div class="sg"><div class="sgt"><span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5s6 6.2 6 10.5a6 6 0 0 1-12 0c0-4.3 6-10.5 6-10.5z"/></svg></span>Оформление</div><div class="sr"><div class="srl">Тема</div><div id="thm" class="seg"></div></div><div class="sr"><div class="srl">Акцентный цвет</div><div id="swc" class="swc"></div><label class="cc">Свой цвет<input id="cp" type="color" oninput="setAc(this.value,1)"></label></div></div><div id="sver" class="sd" style="text-align:center;margin:4px 0 2px"></div></div>
  <div id="v5" hidden><div id="fi" class="mu" style="margin-bottom:12px"></div><button class="pb" onclick="fc2()">Создать файл данных</button><button class="pb g" onclick="fo2()">Открыть существующий файл</button><button id="foff" class="ln" style="width:100%;color:var(--dg)" onclick="nfOff()" hidden>Отключить файл</button><input id="fin" type="file" accept=".json,.txt,application/json,text/plain" hidden onchange="im(this)"></div>
 </div></div>
 <div id="dg"><div class="dc" role="alertdialog" aria-modal="true" aria-labelledby="dgm"><div id="dgm"></div><div class="dbs"><button id="dgn" class="pb g">Отмена</button><button id="dgy" class="pb">ОК</button></div></div></div>
@@ -223,6 +223,13 @@ function render(){if(RDEF)return;
   h+=`<section class="card meal${SN[mi]?' sn':''}"><div class="mh"><div class="mt"><b>${m}</b>${sk?`<span class="kp">${sk} ккал</span>`:""}</div><div class="ma">${it.length?`<button class="x" onclick="cm1(${mi})" aria-label="Копировать приём в другой день">${ic("copy")}</button>`:""}<button class="add" onclick="op(${mi})" aria-label="Добавить: ${LBL[mi]}">${ic("plus")}</button></div></div>`+
   (it.length?`<div class="il">`+it.map(([e,i])=>`<div class="it" data-i="${i}"><div><div class="n">${esc(e.n)}</div><div class="mu">${e.ul?e.q+" "+esc(e.ul)+" · ":""}${r1(e.g)} г · Б ${r1(e.p)} · Ж ${r1(e.f)} · У ${r1(e.c)}</div></div><b>${kc(e.p,e.f,e.c)}<small>ккал</small></b><button class="x" onclick="del(${i})" aria-label="Удалить">${ic("close")}</button></div>`).join("")+`</div>`:"")+`</section>`});
  if(dgd)undrag(1);const y=scrollY,old=[...document.querySelectorAll("#app .bar i")].map(i=>{const w=i.parentElement.getBoundingClientRect().width;return w?i.getBoundingClientRect().width/w*100:0});$("app").innerHTML=h;scrollTo(0,y);if(old.length)document.querySelectorAll("#app .bar i").forEach((el,k)=>{const nw=parseFloat(el.style.width);if(old[k]!=null&&Math.abs(old[k]-nw)>.5)try{el.animate([{width:old[k]+"%"},{width:nw+"%"}],{duration:380,delay:NAV&&!RM()?170:0,fill:"backwards",easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}})}
+// Подсветка нажатия: с небольшой задержкой (не мигает при прокрутке), снимается, как только палец сдвинулся
+(()=>{let el=null,tm=0,x0=0,y0=0;const SEL="#app .it,.pk,#di .it";
+ const clr=d=>{clearTimeout(tm);if(!el)return;const e=el;el=null;d?setTimeout(()=>e.classList.remove("pr"),d):e.classList.remove("pr")};
+ addEventListener("pointerdown",e=>{clr();const t=e.target.closest&&e.target.closest(SEL);if(!t||e.target.closest(".x"))return;el=t;x0=e.clientX;y0=e.clientY;tm=setTimeout(()=>{if(el)el.classList.add("pr")},70)},true);
+ addEventListener("pointermove",e=>{if(el&&Math.hypot(e.clientX-x0,e.clientY-y0)>8)clr()},true);
+ addEventListener("pointerup",()=>{if(el){el.classList.add("pr");clr(160)}},true);
+ addEventListener("pointercancel",()=>clr(),true);addEventListener("scroll",()=>clr(),true)})();
 let lt=0,lti=-1;function tp(i){const n=Date.now();if(lti===i&&n-lt<500){lt=0;lti=-1;ee(i)}else{lt=n;lti=i}}
 addEventListener("pointerup",e=>{if(isOpen||e.button>0)return;const t=e.target;if(!t.closest||t.closest("button"))return;const it=t.closest("#app .it");if(it)tp(+it.dataset.i)});
 function cpy(k){S.d[cur]=(S.d[k]||[]).map(e=>({...e}));save();render();toast("Скопировано записей: "+S.d[cur].length)}
@@ -310,14 +317,14 @@ function pd(k){if(cpm>=0){const mi=cpm,it=(S.d[cur]||[]).filter(e=>e.m===mi).map
   dx=t.clientX-x0;const n=performance.now();vx=(t.clientX-lx)/Math.max(1,n-lt);lx=t.clientX;lt=n;
   el.style.transform=`translateX(${dx}px)`;el.style.opacity=1-Math.min(.6,Math.abs(dx)/(el.offsetWidth*1.2||400))},{passive:true});
  const end=()=>{x0=null;if(!md)return;md=0;const el=$("cg"),w=el.offsetWidth||300;
-  if(Math.abs(dx)>w*.22||(Math.abs(vx)>.35&&Math.abs(dx)>20)){hap(6,1);calFlip(el,dx<0?1:-1,dx,parseFloat(el.style.opacity)||1)}
+  if(Math.abs(dx)>w*.22*GF()||(Math.abs(vx)>SLV[slv()][1]*.8&&Math.abs(dx)>20*GF())){hap(6,1);calFlip(el,dx<0?1:-1,dx,parseFloat(el.style.opacity)||1)}
   else{el.style.transition="transform .25s cubic-bezier(.2,.8,.2,1),opacity .25s";el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!md)el.style.transition=""},260)}};
  v.addEventListener("touchend",end);v.addEventListener("touchcancel",()=>{dx=0;vx=0;end()})})();
 function calStep(n){if(cv===0){cm[1]+=n;if(cm[1]<0){cm[1]=11;cm[0]--}if(cm[1]>11){cm[1]=0;cm[0]++}}else if(cv===1)cm[0]+=n;else cm[0]+=n*12}
 function calFlip(el,dir,from,op){const w=el.offsetWidth||300;el.style.transition="";el.style.transform="";el.style.opacity="";
  if(el._co){el._co.cancel();el._co=null}if(el._ca){el._ca.cancel();el._ca=null}
- const out=el.animate([{transform:`translateX(${from}px)`,opacity:op},{transform:`translateX(${-dir*w*.5}px)`,opacity:0}],{duration:Math.max(90,160*(1-Math.abs(from)/w)),easing:"cubic-bezier(.4,0,1,1)",fill:"forwards"});el._co=out;
- out.onfinish=()=>{calStep(dir);drawCal();out.cancel();el._co=null;el._ca=el.animate([{transform:`translateX(${dir*w*.5}px)`,opacity:0},{transform:"none",opacity:1}],{duration:260,easing:"cubic-bezier(.16,1,.3,1)"})}}
+ const out=el.animate([{transform:`translateX(${from}px)`,opacity:op},{transform:`translateX(${-dir*w*.5}px)`,opacity:0}],{duration:Math.max(90,150*(1-Math.abs(from)/w)),easing:"cubic-bezier(.4,0,.8,.3)",fill:"forwards"});el._co=out;
+ out.onfinish=()=>{calStep(dir);drawCal();out.cancel();el._co=null;el._ca=el.animate([{transform:`translateX(${dir*w*.5}px)`,opacity:0},{transform:"none",opacity:1}],{duration:340,easing:"cubic-bezier(.16,1,.3,1)"})}}
 let NAV=0,RDEF=0,NF=[],NB=0,ND=1,NP=null,NABS=0,GQ=0;const RM=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;
 function curX(el){try{const t=getComputedStyle(el).transform;return t&&t!=="none"?new DOMMatrix(t).m41:0}catch(e){return 0}}
 function slide(el,n,fn){
@@ -325,14 +332,15 @@ function slide(el,n,fn){
  if(RM()||!el.animate){NABS=0;fn();render();return}
  NF.push(fn);ND=n>0?1:-1;if(!NB)pump(el)}
 function pump(el){NB=1;const x=curX(el),o=parseFloat(getComputedStyle(el).opacity)||1,a=el._a;el._a=null;if(a)a.cancel();
- const d=ND;let out;try{out=el.animate([{transform:`translateX(${x}px)`,opacity:o},{transform:`translateX(${-d*40}px)`,opacity:0}],{duration:110,easing:"cubic-bezier(.4,0,1,1)",fill:"forwards"})}catch(e){NB=0;apply(el,null,d);return}
+ // уход продолжает движение пальца (без отката назад); при быстром перелистывании — короче
+ const d=ND,to=-d*Math.max(48,(x*-d>0?Math.abs(x):0)+32);let out;try{out=el.animate([{transform:`translateX(${x}px)`,opacity:o},{transform:`translateX(${to}px)`,opacity:0}],{duration:a?90:140,easing:"cubic-bezier(.4,0,.8,.3)",fill:"forwards"})}catch(e){NB=0;apply(el,null,d);return}
  out.onfinish=()=>apply(el,out,d);setTimeout(()=>{if(NB&&el._o===out)apply(el,out,d)},400);el._o=out}
 function apply(el,out,d){if(out){if(out._d)return;out._d=1}
  const fns=NF;NF=[];NP=null;NABS=0;NB=0;NAV=1;RDEF=1;try{fns.forEach(f=>f())}finally{RDEF=0}
  try{render();head()}finally{NAV=0}
- try{const inn=el.animate([{transform:`translateX(${d*40}px)`,opacity:0},{transform:"none",opacity:1}],{duration:260,easing:"cubic-bezier(.16,1,.3,1)"});el._a=inn;inn.onfinish=inn.oncancel=()=>{if(el._a===inn)el._a=null}}catch(e){}
+ try{const inn=el.animate([{transform:`translateX(${d*56}px)`,opacity:0},{transform:"none",opacity:1}],{duration:360,easing:"cubic-bezier(.16,1,.3,1)"});el._a=inn;inn.onfinish=inn.oncancel=()=>{if(el._a===inn)el._a=null}}catch(e){}
  if(out)out.cancel()}
-function fade(el){if(RM())return;try{el.animate([{opacity:0,transform:"scale(.96)"},{opacity:1,transform:"none"}],{duration:200,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}}
+function fade(el){if(RM())return;try{el.animate([{opacity:0,transform:"scale(.97)"},{opacity:1,transform:"none"}],{duration:260,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}}
 const vt=()=>mode==="mng"?"Все продукты ("+S.db.length+")":mode==="ing"?"Ингредиент":"Добавить: "+LBL[am];
 function step(){svBack=1;const r=step_();svBack=0;return r}
 function step_(){const on=i=>!$("v"+i).hidden;
@@ -354,11 +362,14 @@ function ensureVis(){const a=document.activeElement,s=document.querySelector("#o
  if(r.bottom>q.bottom-12)s.scrollBy({top:r.bottom-q.bottom+28,behavior:"smooth"});else if(r.top<q.top+8)s.scrollBy({top:r.top-q.top-28,behavior:"smooth"})}
 let kbH=0;window.BJU_onKeyboard=(h,d)=>{const was=kbH;kbH=h;if(h>0&&h!==was)setTimeout(ensureVis,d+20)};
 document.addEventListener("focusin",()=>{if(kbH>0)requestAnimationFrame(ensureVis)});
+// Запасной путь: если система всё же меняет размер окна под клавиатуру — лист доезжает плавно, а не прыжком
+let lastIH=innerHeight;addEventListener("resize",()=>{const h=innerHeight,d=h-lastIH;lastIH=h;if(!isOpen||document.documentElement.classList.contains("native")||window.visualViewport&&!NATIVE||RM()||Math.abs(d)<60)return;
+ try{document.querySelector("#ov .sh").animate([{transform:`translateY(${-d}px)`},{transform:"none"}],{duration:260,easing:"cubic-bezier(.2,0,0,1)"})}catch(e){}});
 const vv=NATIVE?null:window.visualViewport;function fit(){if(!vv)return;const o=$("ov");o.style.top=vv.offsetTop+"px";o.style.height=vv.height+"px"}
 if(vv){vv.addEventListener("resize",fit);vv.addEventListener("scroll",fit)}
 let sx=0,sy=0,gd=0,ab=0,at=0,st=0,dgd=0,dgx=0;
-function drag(dx){const el=$("app");if(NB)return;if(el._a){el._a.cancel();el._a=null}if(!dgd)dgx=0;dgd=1;if(!dgx&&Math.abs(dx)>56){dgx=1;hap(8,1)}else if(dgx&&Math.abs(dx)<=56)dgx=0;clearTimeout(el._w);el._w=setTimeout(()=>undrag(),1200);el.style.transition="none";el.style.transform=`translateX(${dx*.35}px)`;el.style.opacity=1-Math.min(.35,Math.abs(dx)/500)}
-function undrag(c){if(!dgd)return;dgd=0;const el=$("app");clearTimeout(el._w);if(c){el.style.transition=el.style.transform=el.style.opacity="";return}el.style.transition="transform .22s cubic-bezier(.22,1,.36,1),opacity .22s";el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!dgd)el.style.transition=""},240)}
+let dgb=0;function drag(dx){const el=$("app");if(NB)return;if(!dgd){dgx=0;dgb=0;if(el._a){dgb=curX(el);el._a.cancel();el._a=null}}dgd=1;const th=56*GF();if(!dgx&&Math.abs(dx)>th){dgx=1;hap(8,1)}else if(dgx&&Math.abs(dx)<=th)dgx=0;clearTimeout(el._w);el._w=setTimeout(()=>undrag(),1200);el.style.transition="none";el.style.transform=`translateX(${dgb+dx*.5}px)`;el.style.opacity=1-Math.min(.3,Math.abs(dx)/700)}
+function undrag(c){if(!dgd)return;dgd=0;const el=$("app");clearTimeout(el._w);if(c){el.style.transition=el.style.transform=el.style.opacity="";return}el.style.transition="transform .38s cubic-bezier(.22,1,.36,1),opacity .3s";el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!dgd)el.style.transition=""},400)}
 addEventListener("touchstart",e=>{if(dgd)undrag(1);bindT(e.target);if(isOpen)return;const t=e.touches[0];sx=t.clientX;sy=t.clientY;st=Date.now();gd=0;ab=atBot();at=scrollY<=2;pbY=ab?sy:null;ptY=at?sy:null;PS=[[e.timeStamp,0]]},{passive:true});
 function lum(h){const n=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4)};return .2126*f(n>>16&255)+.7152*f(n>>8&255)+.0722*f(n&255)}
 function act(a){const d=(document.documentElement.dataset.theme||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"))==="dark",n=parseInt(a.slice(1),16),m=d?(lum(a)<.15?255:-1):(lum(a)>.3?0:-1);return m<0?a:"#"+[n>>16&255,n>>8&255,n&255].map(v=>Math.round(v*.45+m*.55).toString(16).padStart(2,"0")).join("")}
@@ -366,9 +377,14 @@ function applyAc(){applyTh();const r=document.documentElement,a=S.set&&S.set.ac;
 function tc(){const m=document.querySelector('meta[name="theme-color"]'),bg=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#f5f6f8";if(m)m.setAttribute("content",bg);const N=NX();if(N&&/^#[0-9a-f]{6}$/i.test(bg))N.bars(bg,lum(bg)>.5)}
 function swAct(){return(S.set&&S.set.sw)||"off"}
 function swipeAct(){if(swAct()==="prod"){mode="mng";drawMc();nw();show()}else op(autoMeal())}
+// Длина свайпа: множитель расстояния для всех жестов + порог скорости для резкого рывка
+const SLV={short:[.72,.36,"Короткий","Срабатывает от лёгкого движения. Быстро, но возможны случайные срабатывания."],mid:[1,.45,"Средний","Баланс скорости и защиты от случайных срабатываний."],long:[1.4,.6,"Длинный","Нужно потянуть дальше — надёжная защита от случайных срабатываний."]};
+const slv=()=>{const v=S.set&&S.set.sl;return SLV[v]?v:"mid"},GF=()=>SLV[slv()][0];
+function setSl(v){S.set=Object.assign({},S.set,{sl:v});saveq();drawSet();hap(8)}
 const PRE=["","#22a06b","#14b8a6","#6366f1","#8b5cf6","#e5589a","#e5484d","#f08a24","#f5c518","#64748b"],SWL=[["meal","Приём пищи"],["prod","Новый продукт"],["off","Выкл."]];
 function sets(){drawSet();sv(7,"Настройки");show()}
 function drawSet(k){$("dwd").textContent={cal:"Всегда открывает календарь.",today:"Возвращает к сегодняшнему дню. На сегодняшнем дне ничего не делает.",off:"Жест отключён."}[dwAct()];$("dwm").innerHTML=[["cal","Календарь"],["today","К сегодня"],["off","Выкл."]].map(([v,t])=>`<button class="${dwAct()===v?"on":""}" onclick="setDw('${v}')">${t}</button>`).join("");$("hpm").innerHTML=[["on","Вкл."],["nodays","Кроме дней"],["off","Выкл."]].map(([v,t])=>`<button class="${hpv()===v?"on":""}" onclick="setHp('${v}')">${t}</button>`).join("");const a=swAct(),c=(S.set&&S.set.ac)||"",th=(S.set&&S.set.th)||"auto";$("thm").innerHTML=[["auto","Авто"],["light","Светлая"],["dark","Тёмная"]].map(([v,t])=>`<button class="${th===v?"on":""}" onclick="setTh('${v}')">${t}</button>`).join("");
+ {const l=slv();$("slm").innerHTML=Object.keys(SLV).map(v=>`<button class="${l===v?"on":""}" onclick="setSl('${v}')">${SLV[v][2]}</button>`).join("");$("sli").style.width=Math.round(SLV[l][0]/1.4*100)+"%";$("sld").textContent=SLV[l][3];$("sver").textContent="Версия "+BUILD}
  $("sgm").innerHTML=SWL.map(([v,t])=>`<button class="${a===v?"on":""}" onclick="setSw('${v}')">${t}</button>`).join("");
  $("swc").innerHTML=PRE.map(h=>`<button class="${c===h?"on":""}" style="background:${h||"#3b82f6"}" onclick="setAc('${h}')" aria-label="${h?"Цвет "+h:"Стандартный цвет"}">${ic("check")}</button>`).join("");
  if(!k)$("cp").value=c||"#3b82f6"}
@@ -376,7 +392,7 @@ function setHp(v){S.set=Object.assign({},S.set,{hp:v});saveq();drawSet();hap(10)
 function setSw(v){S.set=Object.assign({},S.set,{sw:v});saveq();drawSet()}
 function setAc(h,k){S.set=Object.assign({},S.set,{ac:h});saveq();applyAc();drawSet(k)}
 // Жесты «потянуть»: индикатор-кольцо следует за пальцем; срабатывает по расстоянию или резкому рывку.
-const TH=96;let rd=0,pAct=0,pDn=false,pbY=null,ptY=null,PS=[];
+const THv=()=>96*GF();let rd=0,pAct=0,pDn=false,pbY=null,ptY=null,PS=[];
 // скорость (px/мс) по последним ~100 мс жеста
 const pVel=()=>{const l=PS[PS.length-1];if(!l)return 0;let o=l;for(const q of PS)if(l[0]-q[0]<=100){o=q;break}return l[0]>o[0]?(l[1]-o[1])/(l[0]-o[0]):0};
 const atBot=()=>scrollY+innerHeight>=document.documentElement.scrollHeight-6;
@@ -385,7 +401,7 @@ function pull(v,dn){const u=$("pu"),w=u.firstElementChild,a=dn?(dwOn()?"on":"off
  if(!pAct||pDn!==dn){pAct=1;pDn=dn;rd=0;u.classList.remove("go","rdy");u.classList.add("drag");u.classList.toggle("tp",dn);
   const k=dn?dwAct():swAct();$("pa").innerHTML=ic(dn?(k==="today"?"today":"cal"):(k==="prod"?"box":"plus"));
   $("pt").textContent=dn?(k==="today"?"К сегодня":"Календарь"):(k==="prod"?"Новый продукт":"Добавить: "+LBL[autoMeal()])}
- const p=Math.min(1,v/TH),r=v>=TH,y=(1-p)*90-Math.min(v-TH>0?v-TH:0,160)*.16;// за порогом — лёгкое «резиновое» продолжение
+ const TH=THv(),p=Math.min(1,v/TH),r=v>=TH,y=(1-p)*90-Math.min(v-TH>0?v-TH:0,160)*.16;// за порогом — лёгкое «резиновое» продолжение
  if(r!==rd){rd=r;u.classList.toggle("rdy",r);if(r)hap(12)}
  u.style.opacity=Math.min(1,p*2.2);w.style.transform=`translateY(${dn?-y:y}px)`;
  u.style.setProperty("--p",p);u.style.setProperty("--lo",Math.max(0,Math.min(1,(p-.3)/.45)))}
@@ -409,11 +425,11 @@ const onMv=e=>{if(e._m)return;e._m=1;if(isOpen)return;const t=e.touches[0],dx=t.
  if(Math.abs(dx)>Math.max(70,v*.9)){if(pAct)phide();return}
  if(up>0)pull(up);else if(dn>0&&dwOn())pull(dn,1);else if(pAct)phide()};addEventListener("touchmove",onMv,{passive:true});
 const onEn=e=>{if(e._e)return;e._e=1;if(isOpen||!gd){if(pAct)phide();return}const t=e.changedTouches[0],dx=t.clientX-sx,g=gd;gd=0;
- if(g===1){if(pAct)phide();if(Math.abs(dx)>56||(Math.abs(dx)>28&&Date.now()-st<260)){GQ=dgx;go(dx<0?1:-1);GQ=0;undrag(1)}else undrag();return}
+ if(g===1){if(pAct)phide();const gf=GF();if(Math.abs(dx)>56*gf||(Math.abs(dx)>28*gf&&Date.now()-st<260)){GQ=dgx;go(dx<0?1:-1);GQ=0;undrag(1)}else undrag();return}
  if(!pAct)return;
  const ve=pDn?(ptY!==null?t.clientY-ptY:0):(pbY!==null?pbY-t.clientY:0);PS.push([e.timeStamp,ve]);
  // сработало: дотянули до порога или резко дёрнули (почти половина пути и > 0.45 px/мс)
- if(rd||(ve>TH*.45&&pVel()>.45)){const dn=pDn;if(!rd)hap(12);pgo();if(dn)dwDo();else swipeAct()}else phide()};addEventListener("touchend",onEn);
+ if(rd||(ve>THv()*.45&&pVel()>SLV[slv()][1])){const dn=pDn;if(!rd)hap(12);pgo();if(dn)dwDo();else swipeAct()}else phide()};addEventListener("touchend",onEn);
 const onCn=()=>{if(pAct)phide();gd=0;undrag()};addEventListener("touchcancel",onCn);
 const onEn2=e=>{if(e._f)return;e._f=1;if(dgd&&!e.touches.length){gd=0;undrag()}};addEventListener("touchend",onEn2,{passive:true});
 // render() пересобирает #app и удаляет элемент, где началось касание: события тогда не доходят до window.
@@ -426,7 +442,7 @@ addEventListener("blur",()=>undrag(1));document.addEventListener("visibilitychan
   if(!on){if(Math.abs(ddx)>10&&Math.abs(ddx)>Math.abs(ddy)){y0=null;return}
    if(ddy>8&&st0<=0&&s.scrollTop<=0){on=1;y0=t.clientY;s.style.transition="none"}else if(Math.abs(ddy)>8){y0=null;return}else return}
   dy=Math.max(0,t.clientY-y0);const n=performance.now();v=(t.clientY-ly)/Math.max(1,n-lt);ly=t.clientY;lt=n;s.style.transform=`translateY(${dy}px)`},{passive:true});
- const end=()=>{y0=null;if(!on)return;on=0;s.style.transition="";s.style.transform="";if(dy>110||(v>.45&&dy>24)){hap(6);xcl()}};
+ const end=()=>{y0=null;if(!on)return;on=0;s.style.transition="";s.style.transform="";if(dy>110*GF()||(v>SLV[slv()][1]&&dy>24*GF())){hap(6);xcl()}};
  s.addEventListener("touchend",end);s.addEventListener("touchcancel",()=>{dy=0;v=0;end()})})();
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 if(!NATIVE&&"serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
