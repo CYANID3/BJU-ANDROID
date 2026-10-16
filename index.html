@@ -94,7 +94,7 @@ label{font-size:13px;color:var(--mu);display:block;margin:0 0 4px 2px}
 
 /* Тост, диалог */
 .tt{position:fixed;left:12px;right:12px;bottom:calc(16px + max(var(--sab),var(--kb)));max-width:496px;margin:0 auto;background:#20252e;color:#fff;border:1px solid color-mix(in srgb,var(--ac) 50%,#20252e);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;z-index:9;transform:translateY(150%);opacity:0;transition:transform .3s var(--ease),opacity .25s,bottom var(--kbd) cubic-bezier(.2,0,0,1);pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.3)}.tt.on{transform:none;opacity:1;pointer-events:auto}.tt button{color:color-mix(in srgb,var(--ac) 60%,#fff);font-weight:700}
-#dg{position:fixed;inset:0;background:rgba(5,8,12,.55);display:none;align-items:center;justify-content:center;z-index:10;padding:24px}#dg.on{display:flex}.dc{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:20px;width:100%;max-width:360px;animation:pop .22s var(--spring)}#dgm{white-space:pre-line;line-height:1.45}.dbs{display:flex;gap:8px}.dbs .pb{flex:1;margin-top:16px}
+#dg{position:fixed;inset:0;background:rgba(5,8,12,.55);display:none;align-items:center;justify-content:center;z-index:10;padding:24px 24px calc(24px + var(--kb));transition:padding var(--kbd) cubic-bezier(.2,0,0,1)}#dg.on{display:flex}.dc{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:20px;width:100%;max-width:360px;animation:pop .22s var(--spring)}#dgm{white-space:pre-line;line-height:1.45}.dbs{display:flex;gap:8px}.dbs .pb{flex:1;margin-top:16px}
 @keyframes pop{from{opacity:0;transform:scale(.94)}}
 #di{background:var(--sub);border:1px solid var(--bd);border-radius:14px;padding:4px;margin-bottom:6px}#di:empty{display:none}#di .it{-webkit-touch-callout:none}
 
@@ -287,11 +287,15 @@ function cpy(k){S.d[cur]=(S.d[k]||[]).map(e=>({...e}));save();render();toast("С
 function del(i){const[e]=S.d[cur].splice(i,1);lastDel={e,i,k:cur};save();render();toast("Удалено: "+e.n,1)}
 function undo(){if(!lastDel)return;const{e,i,k}=lastDel;(S.d[k]=S.d[k]||[]).splice(i,0,e);lastDel=null;save();render();$("tt").classList.remove("on")}
 function toast(m,u){$("tm").textContent=m;$("tt").querySelector("button").style.display=u?"":"none";$("tt").classList.add("on");clearTimeout(tmr);tmr=setTimeout(()=>$("tt").classList.remove("on"),4500)}
-let svBack=0;
-function sv(n,t){const sh_=document.querySelector("#ov .sh"),prev=[1,2,3,4,5,6,7,8].find(i=>!$("v"+i).hidden),h0=isOpen?sh_.offsetHeight:0,back=svBack;svBack=0;
+let svBack=0,svFocus=0;
+// Высота листа после смены экрана с учётом того, где окажется клавиатура (откроется / закроется / останется)
+function svTargetH(sh,willKb){const nat=document.documentElement.classList.contains("native"),kbF=!nat?0:willKb?(kbH>0?kbH:kbLast):0;
+ if(!nat||kbF===kbH)return sh.offsetHeight;const ov=$("ov").clientHeight,sat=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sat"))||0;
+ return Math.min(sh.scrollHeight,Math.min(ov*.92,ov-sat-12)-kbF)}
+function sv(n,t){const sh_=document.querySelector("#ov .sh"),prev=[1,2,3,4,5,6,7,8].find(i=>!$("v"+i).hidden),h0=isOpen?sh_.offsetHeight:0,back=svBack,willKb=svFocus;svBack=0;svFocus=0;
  for(let i=1;i<=8;i++)$("v"+i).hidden=i!==n;$("st").textContent=t||"";
  if(!isOpen||prev===n)return;sh_.scrollTop=0;if(RM()||!sh_.animate)return;
- const h1=sh_.offsetHeight,E={duration:280,easing:"cubic-bezier(.22,1,.36,1)"};
+ const h1=svTargetH(sh_,willKb),E={duration:280,easing:"cubic-bezier(.22,1,.36,1)"};
  try{$("v"+n).animate([{opacity:0,transform:`translateX(${back?-24:24}px)`},{opacity:1,transform:"none"}],E);$("st").animate([{opacity:0},{opacity:1}],{duration:220})}catch(e){}
  if(Math.abs(h1-h0)>4)try{sh_.animate([{height:h0+"px"},{height:h1+"px"}],E)}catch(e){}}
 const LBL=["Завтрак","Перекус 1","Обед","Перекус 2","Ужин","Перекус 3"];
@@ -311,7 +315,7 @@ function lst(){const q=W($("q").value);IX=[];S.db.forEach((p,i)=>{if(q.every(t=>
 function pc(k){const i=IX[k];if(mode==="mng")return edit(i);sel=S.db[i];const u=sel[4]&&sel[4].length?0:-1;gv(mode==="ing"?"Ингредиент":MEALS[am],u<0?(S.lg||{})[sel[0]]:"",u)}
 const UM=()=>uu<0?1:sel[4][uu][1];
 function pv(){const g=num($("gr").value)*UM();$("pvw").textContent=g>0?(uu>=0?r1(g)+" г · ":"")+`Б ${r1(sel[1]*g/100)} · Ж ${r1(sel[2]*g/100)} · У ${r1(sel[3]*g/100)} · ${kc(sel[1]*g/100,sel[2]*g/100,sel[3]*g/100)} ккал`:""}
-function gv(t,v,u){uu=u==null?-1:u;$("pn").textContent=sel[0];$("gr").value=v||"";$("ab").textContent=ei>=0||ik>=0?"Сохранить":"Добавить";drawU();sv(2,t);requestAnimationFrame(()=>{const g=$("gr");try{g.focus({preventScroll:true})}catch(e){g.focus()}g.select()})}
+function gv(t,v,u){uu=u==null?-1:u;$("pn").textContent=sel[0];$("gr").value=v||"";$("ab").textContent=ei>=0||ik>=0?"Сохранить":"Добавить";drawU();svFocus=1;sv(2,t);const f=()=>{const g=$("gr");try{g.focus({preventScroll:true})}catch(e){g.focus()}g.select()};isOpen?f():requestAnimationFrame(f)}
 function drawU(){$("em").innerHTML=ei>=0?LBL.map((m,i)=>`<button class="${i===am?"on":""}" onmousedown="event.preventDefault()" onclick="am=${i};drawU()">${m}</button>`).join(""):"";const us=sel[4]||[],lg=(S.lg||{})[sel[0]];$("un").innerHTML=us.length?[["г"],...us].map((x,i)=>`<button class="${i-1===uu?"on":""}" onmousedown="event.preventDefault()" onclick="su(${i-1})">${esc(x[0])}</button>`).join(""):"";$("gr").placeholder=uu<0?"Масса, г":"Количество, "+sel[4][uu][0];$("ch").innerHTML=(uu<0?[...new Set([lg,50,100,150,200].filter(Boolean))].slice(0,5):[1,2,3,4]).map(g=>`<button onmousedown="event.preventDefault()" onclick="qg(${g})">${g}</button>`).join("");pv()}
 function su(i){uu=i;$("gr").value="";drawU()}
 function qg(g){$("gr").value=g;pv()}
@@ -326,7 +330,7 @@ function unAdd(){$("unr").insertAdjacentHTML("beforeend",unRow("",""));$("unr").
 function unDel(b){const r=b.closest(".ur");if($("unr").children.length>1)r.remove();else r.querySelectorAll("input").forEach(i=>i.value="")}
 function unGet(){return[...$("unr").children].map(r=>{const i=r.querySelectorAll("input");return[i[0].value.trim(),num(i[1].value)]}).filter(x=>x[0]&&x[1]>0)}
 let v3from=0,v3snap="",v3ok=0;const v3sig=()=>JSON.stringify([["nn","np","nf","nc"].map(i=>$(i).value.trim()),unGet()]);
-function nw(){v3from=isOpen&&!$("v1").hidden?1:0;ed=-1;["nn","np","nf","nc"].forEach(i=>$(i).value="");unDraw();nkc();$("dl").hidden=true;v3snap=v3sig();sv(3,"Новый продукт");requestAnimationFrame(()=>{try{$("nn").focus({preventScroll:true})}catch(e){}})}
+function nw(){v3from=isOpen&&!$("v1").hidden?1:0;ed=-1;["nn","np","nf","nc"].forEach(i=>$(i).value="");unDraw();nkc();$("dl").hidden=true;v3snap=v3sig();svFocus=1;sv(3,"Новый продукт");const f=()=>{try{$("nn").focus({preventScroll:true})}catch(e){}};isOpen?f():requestAnimationFrame(f)}
 function edit(i){const p0=S.db[i];if(p0[5]){ed=i;pmode=mode;ik=-1;dr={n:p0[0],i:p0[5].i.map(x=>({...x})),w:p0[5].w};return drawDish()}ed=i;const p=S.db[i];$("nn").value=p[0];$("np").value=p[1];$("nf").value=p[2];$("nc").value=p[3];unDraw(p[4]);nkc();$("dl").hidden=false;v3from=1;v3snap=v3sig();sv(3,"Изменить продукт")}
 async function mk(){const n=$("nn").value.trim();if(!n){$("nn").focus();return toast("Введите название")}const a=[n,nn($("np").value),nn($("nf").value),nn($("nc").value)],un=unGet();if(un.length)a[4]=un;
  if(a[1]+a[2]+a[3]>100.5&&!await ask("Б+Ж+У больше 100 г на 100 г. Сохранить как есть?","Сохранить"))return;
@@ -411,7 +415,11 @@ async function backStep(){if(!$("v3").hidden&&v3sig()!==v3snap&&!await ask("Пр
 // Клавиатура в APK: лист поднимается вместе с ней (CSS --kb), поле ввода остаётся видимым
 function ensureVis(){const a=document.activeElement,s=document.querySelector("#ov .sh");if(!a||a.tagName!=="INPUT"||!s.contains(a))return;const r=a.getBoundingClientRect(),q=s.getBoundingClientRect();
  if(r.bottom>q.bottom-12)s.scrollBy({top:r.bottom-q.bottom+28,behavior:"smooth"});else if(r.top<q.top+8)s.scrollBy({top:r.top-q.top-28,behavior:"smooth"})}
-let kbH=0;window.BJU_onKeyboard=(h,d)=>{kbH=h;if(d>=0&&h>0)setTimeout(ensureVis,d+20)};
+let kbH=0,kbLast=0;window.BJU_onKeyboard=(h,d)=>{kbH=h;if(d>=0&&h>0){kbLast=h;setTimeout(ensureVis,d+20)}};
+// Пока в листе открыта клавиатура, нажатия по кнопкам и строкам листа не забирают фокус у поля —
+// клавиатура не закрывается и не открывается заново при переходах (поиск → количество, «Сохранить» → количество и т. п.)
+const keepKb=e=>{const a=document.activeElement;if(!a||a.tagName!=="INPUT"||a.type==="file"||a.type==="color"||!document.querySelector("#ov .sh").contains(a))return;if(e.target.closest("input,label,textarea,select"))return;e.preventDefault()};
+document.querySelector("#ov .sh").addEventListener("mousedown",keepKb,true);$("dg").addEventListener("mousedown",keepKb,true);
 document.addEventListener("focusin",()=>{if(kbH>0)requestAnimationFrame(ensureVis)});
 // Запасной путь: если система всё же меняет размер окна под клавиатуру — лист доезжает плавно, а не прыжком
 let lastIH=innerHeight;addEventListener("resize",()=>{const h=innerHeight,d=h-lastIH;lastIH=h;if(!isOpen||document.documentElement.classList.contains("native")||window.visualViewport&&!NATIVE||RM()||Math.abs(d)<60)return;
@@ -531,7 +539,7 @@ function dedit(k){dsync();const x=dr.i[k],pr=S.db.find(p=>p[0]===x.n);mode="ing"
 (()=>{let lk=null,lt=0;const d=$("di");
 d.addEventListener("click",e=>{const r=e.target.closest(".it[data-k]");if(!r||e.target.closest(".x"))return;const k=r.dataset.k,n=Date.now();
  if(lk===k&&n-lt<600){lk=null;hap(10);dedit(+k)}else{lk=k;lt=n}})})();
-function ask(m,y,dg,one){return new Promise(ok=>{const e=$("dg"),Y=$("dgy"),N=$("dgn"),k=ev=>{if(ev.key==="Escape")f(false)},f=v=>{e.classList.remove("on");Y.onclick=N.onclick=null;document.removeEventListener("keydown",k);ok(v)};$("dgm").textContent=m;Y.textContent=y||"ОК";Y.style.background=dg?"var(--dg)":"";N.style.display=one?"none":"";Y.onclick=()=>f(true);N.onclick=()=>f(false);document.addEventListener("keydown",k);e.classList.add("on");Y.focus()})}
+function ask(m,y,dg,one){return new Promise(ok=>{const e=$("dg"),Y=$("dgy"),N=$("dgn"),k=ev=>{if(ev.key==="Escape")f(false)},f=v=>{e.classList.remove("on");Y.onclick=N.onclick=null;document.removeEventListener("keydown",k);ok(v)};$("dgm").textContent=m;Y.textContent=y||"ОК";Y.style.background=dg?"var(--dg)":"";N.style.display=one?"none":"";Y.onclick=()=>f(true);N.onclick=()=>f(false);document.addEventListener("keydown",k);e.classList.add("on");const a=document.activeElement;if(!(a&&a.tagName==="INPUT"))Y.focus()})}
 const say=m=>ask(m,"ОК",0,1);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)return;const n=iso(new Date());if(n!==today){const f=cur===today;today=n;if(f)cur=n;if(isOpen)cl();render()}});
 $("ov").addEventListener("click",e=>{if(e.target===$("ov")&&Date.now()-oa>450)xcl()});addEventListener("keydown",e=>{if(e.key==="Escape"&&isOpen&&!$("dg").classList.contains("on"))xcl()},true);

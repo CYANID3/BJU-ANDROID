@@ -54,7 +54,7 @@ function applyInsets(i) {
   // "live" — кадр анимации клавиатуры: значение ставится сразу, без CSS-перехода (лист идёт вместе с клавиатурой);
   // "set" — изменение без анимации от системы: плавный CSS-переход
   const live = i.mode === 'live' || i.mode === 'end';
-  r.setProperty('--kbd', live ? '0ms' : (i.duration || 220) + 'ms');
+  r.setProperty('--kbd', live ? '0ms' : (i.duration || 250) + 'ms');
   r.setProperty('--kb', i.keyboard + 'px');
   window.BJU_onKeyboard?.(i.keyboard, i.mode === 'live' ? -1 : live ? 0 : i.duration || 220);
 }

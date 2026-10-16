@@ -146,7 +146,7 @@ public class BjuNativePlugin extends Plugin {
         o.put("right", right / d);
         o.put("keyboard", ime / d);
         o.put("mode", mode);
-        o.put("duration", "set".equals(mode) ? 220 : 0);
+        o.put("duration", "set".equals(mode) ? 250 : 0);
         lastInsets = o;
         notifyListeners("insets", o, !"live".equals(mode));
     }
