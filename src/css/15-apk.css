@@ -1,0 +1,4 @@
+/* APK: без выделения текста и «лупы» по долгому нажатию */
+.native body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.native input{-webkit-user-select:text;user-select:text}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+

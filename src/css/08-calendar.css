@@ -1,0 +1,6 @@
+/* Календарь */
+.cw,.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cw div{text-align:center;font-size:12px;color:var(--mu);padding:4px 0;font-weight:500}.cg{touch-action:pan-y;height:332px;grid-template-rows:repeat(6,1fr);will-change:transform}
+.cd{border-radius:12px;border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15px;font-weight:500;background:var(--sub);padding:0}.cd small{font-size:11px;color:var(--act,var(--ac));min-height:13px;font-weight:600}.cd.e{visibility:hidden}.cd.t{border-color:var(--ac);border-width:2px}.cd.o small{color:var(--dg)}.cd.s{background:var(--ac);color:var(--on)}.cd.s small{color:var(--on)}.cd:active{background:var(--acs)}
+.ct{font-weight:700;font-size:17px;padding:8px 6px;border-radius:10px}.ct:active{background:var(--acs)}.cg.m{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:8px}.cg.m .cd{font-size:15px}
+#cs{min-height:20px}
+

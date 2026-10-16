@@ -44,6 +44,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Автотесты в Chromium (эмуляция Pixel 7): если хоть один упал — APK не собирается и релиза нет
+      - name: Install Chromium for tests
+        run: npx playwright install --with-deps chromium
+
+      - name: Run tests
+        run: npm run build && npm test
+
       - name: Compute version
         id: ver
         run: |

@@ -1,0 +1,14 @@
+/* Статистика за месяц. Цвета серий БЖУ для графиков: в тёмной теме — более глубокие шаги тех же тонов (проверены валидатором палитры) */
+:root{--cp:#22a565;--cf:#e89a17;--cc:#3a7ff0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--cp:#0ba763;--cf:#bf8812;--cc:#4a8add}}:root[data-theme="dark"]{--cp:#0ba763;--cf:#bf8812;--cc:#4a8add}
+.stt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.stt>div{background:var(--sub);border:1px solid var(--bd);border-radius:16px;padding:11px 12px}
+.stt .v{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}.stt .v small{font-size:12px;font-weight:500;color:var(--mu);margin-left:3px}.stt .l{font-size:12px;color:var(--mu);margin-top:3px}
+.stb{background:var(--sub);border:1px solid var(--bd);border-radius:18px;padding:12px 12px 10px;margin-bottom:12px}.stb h4{margin:0 0 2px;font-size:15px;font-weight:700}.stb .sd{margin:0 0 8px}
+.chw{position:relative;touch-action:pan-y;user-select:none}.chw svg{display:block;width:100%;overflow:visible}.chw text{font-size:10px;fill:var(--mu);font-variant-numeric:tabular-nums}
+.rdo{min-height:2.7em;transition:color .15s}.rdo.on{color:var(--tx)}.rdo b{font-variant-numeric:tabular-nums}.rdo i{display:inline-block;width:12px;height:3px;border-radius:2px;margin:0 4px 2px 8px;vertical-align:middle}
+.ctip{position:absolute;top:-6px;transform:translate(-50%,-100%);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:5px 9px;font-size:12px;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.22);pointer-events:none;opacity:0;transition:opacity .12s}.ctip.on{opacity:1}.ctip b{font-variant-numeric:tabular-nums}
+.ctip i{display:inline-block;width:12px;height:3px;border-radius:2px;margin:0 4px 2px 8px;vertical-align:middle}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mu);margin:0 0 8px}.leg span{display:flex;align-items:center;gap:6px}.leg svg{width:18px;height:6px}
+.stm .row{margin-top:8px}.stm .row:first-child{margin-top:0}.stm .bar{margin:5px 0 2px;background:var(--card)}
+.sttop .it{padding:7px 2px 7px 4px}.sttop .it b small{font-size:11px;color:var(--mu);font-weight:500;margin-left:3px}
+.stempty{text-align:center;color:var(--mu);padding:30px 0}
