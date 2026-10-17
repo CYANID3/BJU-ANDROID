@@ -6,11 +6,13 @@ const dDiff=(a,b)=>Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/
 function wPrev(k){let b=null;for(const d in S.wt||{})if(d<k&&(!b||d>b))b=d;return b?[b,S.wt[b]]:null}
 const wFmt=v=>String(r1(v)).replace(".",","),wDate=k=>new Date(k+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"short"});
 const wSg=d=>(d>0?"+":d<0?"−":"±")+wFmt(Math.abs(d));
-// вес в итоге дня: плашка справа от калорий. Есть запись — «72,4 кг −0,2»; нет — «+ вес»
-// (если вес записывается жестом «потянуть вверх», кнопка «+ вес» не нужна и скрыта)
-function wtPill(){if(!wton()||cur>today)return"";const v=(S.wt||{})[cur],pr=wPrev(cur),d=v&&pr?r1(v-pr[1]):null;
- if(!v){if(swAct()==="wt")return"";return `<button class="wpl add" onclick="wtOpen()" aria-label="Записать вес${pr?", прошлый — "+wFmt(pr[1])+" кг":""}">${ic("plus")}вес</button>`}
- return `<button class="wpl" onclick="wtOpen()" aria-label="Вес ${wFmt(v)} кг, изменить">${ic("scale")}<b>${wFmt(v)}</b><span>кг</span>${d?`<small>${wSg(d)}</small>`:""}</button>`}
+// вес в итоге дня: плашка в строке «Осталось … ккал», справа.
+// Вес за этот день записан — «72,4 кг −0,2» (разница с прошлой записью); не записан — кнопка «+ Вес»
+// (её нет, если вес записывается жестом «потянуть вверх»). Прошлый вес виден в окне ввода.
+function wtPill(){if(!wton()||cur>today)return"";const v=(S.wt||{})[cur],pr=wPrev(cur);
+ if(v){const d=pr?r1(v-pr[1]):null;return `<button class="wpl" onclick="wtOpen()" aria-label="Вес ${wFmt(v)} кг, изменить">${ic("scale")}<b>${wFmt(v)}</b><span>кг</span>${d?`<small>${wSg(d)}</small>`:""}</button>`}
+ if(swAct()==="wt")return"";
+ return `<button class="wpl wadd" onclick="wtOpen()" aria-label="Записать вес${pr?", прошлый — "+wFmt(pr[1])+" кг":""}">${ic("plus")}<span>Вес</span></button>`}
 function wtOpen(){const v=(S.wt||{})[cur];$("wv").value=v?wFmt(v):"";$("wdl").hidden=!v;wPv();svFocus=1;sv(10,"Вес · "+new Date(cur+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"long"}));show();
  const f=()=>{const g=$("wv");try{g.focus({preventScroll:true})}catch(e){g.focus()}g.select()};isOpen?f():requestAnimationFrame(f)}
 const wIn=()=>num($("wv").value);

@@ -55,8 +55,9 @@ test('недавние собираются из дневника, переим�
 test('вес: плашка в итоге дня, запись, разница с прошлой, отключение в настройках', async () => {
   const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: {}, wt: { [day(-3)]: 73 } } });
   const card = a.pg.locator('#app .wpl');
-  assert.equal((await card.textContent()).trim(), 'вес');
-  assert.equal(await a.pg.locator('#app .sum .wpl.add').count(), 1, 'плашка «+ вес» в итоге дня');
+  assert.equal((await card.textContent()).trim(), 'Вес', 'за этот день не записан — кнопка «+ Вес»');
+  assert.equal(await a.pg.locator('#app .sum .lfr .wpl.wadd').count(), 1, 'в строке «Осталось»');
+  assert.equal(await a.ev(() => { const b = document.querySelector('#app .wpl').getBoundingClientRect(), c = document.querySelector('#app .sum').getBoundingClientRect(); return b.right <= c.right - 8 && b.height < 40; }), true, 'плашка целиком внутри карточки');
   await card.click(); await a.wait(400);
   assert.equal(await a.ev(() => !$('v10').hidden), true);
   assert.match(await a.pg.textContent('#wpv'), /Прошлая запись: 73 кг/);
@@ -144,9 +145,9 @@ test('жест вверх: статистика и вес; при жесте «�
   assert.equal(await a.ev(() => isOpen && !$('v9').hidden), true, 'открылась статистика');
   await a.ev(() => cl()); await a.wait(300);
   await a.ev(() => sets()); await a.wait(300);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#sgm button')].map(b => b.textContent)), ['Приём пищи', 'Новый продукт', 'Статистика', 'Вес', 'Выкл.']);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#sgm button b')].map(b => b.textContent)), ['Приём пищи', 'Новый продукт', 'Статистика', 'Вес', 'Выключено']);
   await a.pg.click('#sgm button:nth-child(4)');
-  assert.match(await a.pg.textContent('#sgd'), /запись веса/);
+  assert.equal(await a.pg.textContent('#sgm .on b'), 'Вес');
   assert.equal(await a.ev(() => toFile(S).settings.pullUpAction), 'weight');
   assert.equal(await a.ev(() => parseData(ser()).set.sw), 'wt');
   await a.ev(() => cl()); await a.wait(300);
@@ -161,5 +162,24 @@ test('жест вверх: статистика и вес; при жесте «�
   assert.equal(await a.ev(() => swAct()), 'off');
   await a.ev(() => cl()); await a.wait(300);
   assert.deepEqual(a.errors, []);
+  await a.close();
+});
+
+test('плашка веса: «+ Вес», пока за день не записан; ровная строка в обоих состояниях', async () => {
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: {}, wt: { [day(-1)]: 81 } } });
+  const geo = () => a.ev(() => { const r = q => document.querySelector(q).getBoundingClientRect(); const p = r('#app .wpl'), row = r('#app .lfr'), bar = r('#app .sum .bar'), c = r('#app .sum');
+    return { h: Math.round(p.height), rowH: Math.round(row.height), right: Math.round(p.right), barRight: Math.round(bar.right), mid: Math.round(p.top + p.height / 2 - (row.top + row.height / 2)), w: p.width, cRight: c.right }; });
+  assert.equal(await a.pg.locator('#app .wpl.wadd').count(), 1, 'вчера был вес, сегодня нет — «+ Вес»');
+  const g1 = await geo();
+  assert.ok(g1.w > g1.h * 1.6 && g1.right <= g1.cRight - 8, 'кнопка не сжата и внутри карточки');
+  assert.equal(g1.right, g1.barRight, 'правый край — по краю полосок'); assert.equal(g1.mid, 0, 'по центру строки');
+  await a.pg.click('#app .wpl'); await a.wait(300);
+  assert.match(await a.pg.textContent('#wpv'), /Прошлая запись: 81 кг/);
+  await a.pg.fill('#wv', '80'); await a.pg.press('#wv', 'Enter'); await a.wait(300);
+  assert.match(await a.pg.textContent('#app .wpl'), /^80кг−1$/);
+  const g2 = await geo();
+  assert.deepEqual([g2.h, g2.rowH, g2.right, g2.mid], [g1.h, g1.rowH, g1.right, g1.mid], 'та же высота, строка не прыгает');
+  await a.ev(() => { cur = shiftDay(today, -1); render(); });
+  assert.match(await a.pg.textContent('#app .wpl'), /^81кг$/);
   await a.close();
 });
