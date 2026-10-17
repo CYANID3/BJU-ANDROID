@@ -32,7 +32,7 @@ label{font-size:13px;color:var(--mu);display:block;margin:0 0 4px 2px}
 .qh{margin:2px 2px 12px}.qn{font-size:17px;font-weight:700;line-height:1.25}.qm{font-size:12.5px;color:var(--mu);margin-top:3px}
 .seg.qu{margin-bottom:10px}.seg.qu button{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 4px;line-height:1.2}.seg.qu small{font-size:11px;font-weight:500;opacity:.75}
 .qf{position:relative}.qf input{margin:0;text-align:center;font-size:28px;font-weight:700;padding:13px 64px;font-variant-numeric:tabular-nums}.qf input::placeholder{color:var(--mu);opacity:.5}
-.qf span{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--mu);font-size:15px;font-weight:500;pointer-events:none;max-width:56px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qf span{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--mu);font-size:15px;font-weight:500;pointer-events:none;max-width:38%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .qc{display:flex;gap:6px;margin:10px 0 0}.qc button{flex:1;display:flex;align-items:center;justify-content:center;gap:3px;padding:9px 2px;border-radius:999px;background:var(--sub);border:1px solid var(--bd);font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;transition:background-color .15s,border-color .15s,color .15s}
 .qc button small{font-size:12px;font-weight:500;color:var(--mu)}.qc button i{display:flex;color:var(--act,var(--ac))}.qc button i svg.i{width:14px;height:14px;stroke-width:2.6}
 .qc button.on{background:var(--acs);border-color:var(--ac);color:var(--act,var(--ac))}.qc button.on small{color:inherit}
@@ -41,3 +41,5 @@ label{font-size:13px;color:var(--mu);display:block;margin:0 0 4px 2px}
 .qp.on{border-style:solid;background:var(--acs);border-color:transparent}.qp b{font-size:20px;color:var(--act,var(--ac));font-weight:800}.qp small{font-size:12px;margin-left:-6px}.qp span{color:var(--tx)}.qp em{font-style:normal;margin-left:auto}
 /* Фильтр «Все / Продукты / Блюда» — сегментом со счётчиками */
 .seg.pf{margin:-2px 0 10px}.seg.pf button{padding:8px 4px}.seg.pf small{margin-left:5px;font-size:11.5px;font-weight:500;opacity:.7}
+/* много единиц: строки переносятся и растягиваются на всю ширину — без пустых мест */
+.seg.qu.wr{display:flex;flex-wrap:wrap}.seg.qu.wr button{flex:1 1 auto;padding:8px 12px}

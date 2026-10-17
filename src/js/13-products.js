@@ -27,7 +27,8 @@ function drawU(){const nd=`onmousedown="event.preventDefault()"`;
  $("pm").textContent=`Б ${nf(r1(sel[1]))} · Ж ${nf(r1(sel[2]))} · У ${nf(r1(sel[3]))} · ${kc(sel[1],sel[2],sel[3])} ккал на 100 г`;
  const us=sel[4]||[],lg=(S.lg||{})[sel[0]];$("un").hidden=!us.length;
  $("un").innerHTML=us.length?[["Граммы"],...us].map((x,i)=>`<button class="${i-1===uu?"on":""}" ${nd} onclick="su(${i-1})">${esc(x[0])}${i?`<small>${nf(r1(x[1]))} г</small>`:""}</button>`).join(""):"";
- $("gu").textContent=uu<0?"г":us[uu][0];
+ $("un").classList.toggle("wr",us.length+1>3);
+ $("gu").textContent=uu<0?"г":us[uu][0];{const w=Math.min(innerWidth*.38,$("gu").textContent.length*8.6);$("gr").style.paddingLeft=$("gr").style.paddingRight=Math.max(48,w+28)+"px"}
  const qs=uu<0?[...new Set([lg,50,100,150,200].filter(Boolean).map(r1))].slice(0,5):[.5,1,2,3];
  $("ch").innerHTML=qs.map(g=>`<button data-v="${g}" ${nd} onclick="qg(${g})">${uu<0&&g===r1(lg||0)?`<i>${ic("check")}</i>`:""}${nf(g)}${uu<0?"<small> г</small>":""}</button>`).join("");pv()}
 function su(i){uu=i;$("gr").value="";drawU();try{$("gr").focus({preventScroll:true})}catch(e){}}
