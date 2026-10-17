@@ -200,3 +200,33 @@ test('компактная карточка дня целиком помещае
   assert.deepEqual(a.errors, []);
   await a.close();
 });
+
+test('изменение записи без выбора приёма; значки акцентом читаемы при любом акценте; удаление — плавно', async () => {
+  for (const scheme of ['dark', 'light']) for (const ac of ['#64748b', '#8b5cf6', '#f5c518']) {
+    const a = await openApp({ scheme, data: { g: { p: 100, f: 60, c: 200 }, d: {}, db: [], set: { ac, tn: 'strong' } } });
+    const c = await a.ev(() => { const cs = getComputedStyle(document.documentElement), v = k => cs.getPropertyValue(k).trim(), d = isDark();
+      return Math.min(...[v('--card'), v('--sub'), v('--bar')].map(b => crt(v('--act'), hexMix(v('--ac') || (d ? '#5b9cf0' : '#2f7de1'), b, d ? .18 : .14)))); });
+    assert.ok(c >= 4.5, `${scheme} ${ac}: контраст значков ${c.toFixed(2)}`);
+    await a.close();
+  }
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(0, 'Яйцо', 50, 6, 5, .5), entry(0, 'Хлеб', 30, 2, 1, 15)] }, db: [] } });
+  await a.ev(() => ee(0)); await a.wait(300);
+  assert.equal(await a.ev(() => document.querySelector('#v2 .mc')), null, 'при изменении приём пищи не переключается');
+  assert.equal(await a.ev(() => document.querySelector('#v1 .mc')), null);
+  await a.ev(() => cl()); await a.wait(300);
+  const g = await a.ev(() => { const n = document.body.children.length; del(0); return document.body.children.length - n; });
+  assert.equal(g, 1, 'удалённая запись тает на своём месте');
+  await a.wait(500);
+  assert.equal(await a.ev(() => document.querySelectorAll('#app .it').length), 1);
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});
+
+test('карточка дня по умолчанию открывается в компактном виде', async () => {
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(0, 'Яйцо', 50, 6, 5, .5)] }, db: [] } });
+  await a.ev(() => togRep(true)); await a.wait(400);
+  assert.equal(await a.ev(() => repMode === 1 && !!document.querySelector('#app .rep.dense')), true);
+  await a.ev(() => setRepMode(2)); await a.wait(300);
+  assert.equal(await a.ev(() => !!document.querySelector('#app .rep.dense')), false);
+  await a.close();
+});

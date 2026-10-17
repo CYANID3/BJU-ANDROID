@@ -1,7 +1,7 @@
 /* Единая система размеров. Всё в интерфейсе берёт значения отсюда — так элементы одного рода выглядят одинаково.
    Скругления: карточка/лист 24 → блок внутри 18 → элемент управления 15 → строка/кнопка внутри 12 → «пилюля».
    Высоты: поле и кнопка 50, сегмент 50 (кнопки внутри 42), чип 38, кнопка-иконка 42, значок-плитка 36. */
-:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--kb:0px;--kbd:220ms;--ease:cubic-bezier(.2,.8,.2,1);--spring:cubic-bezier(.34,1.4,.64,1);
+:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--kb:0px;--kbd:220ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in:cubic-bezier(.4,0,.8,.3);--spring:cubic-bezier(.3,1.3,.5,1);--t1:.16s;--t2:.26s;--t3:.36s;
  --r-card:24px;--r-block:18px;--r-ctl:15px;--r-in:12px;--r-pill:999px;
  --h-ctl:50px;--h-seg:42px;--h-chip:38px;--h-ib:42px;--h-tile:36px;
  --pad-card:16px;--gap:10px;

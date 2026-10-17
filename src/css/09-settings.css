@@ -3,18 +3,19 @@
 .sgt{display:flex;align-items:center;gap:12px;font-size:var(--fs-h);font-weight:700;margin-bottom:12px}.sgt span{width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac))}.sgt svg.i{width:19px;height:19px}
 .srl{font-size:var(--fs-sm);font-weight:600;color:var(--mu);margin:16px 4px 8px}.sgt+.sr .srl{margin-top:0}.sd{font-size:var(--fs-sm);color:var(--mu);margin:8px 4px 0;line-height:1.4}
 /* сегмент: контейнер 52, кнопки 44 — как поле ввода по высоте */
-.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;background:var(--card);border-radius:var(--r-ctl);padding:3px}
-.seg button{min-height:var(--h-seg);padding:0 6px;border-radius:var(--r-in);font-size:14px;font-weight:600;color:var(--mu)}.seg button.on{background:var(--ac);color:var(--on);box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;background:var(--sub);border-radius:var(--r-ctl);padding:3px}.sg .seg{background:var(--card)}
+/* невыбранные варианты — с тонким контуром: видно, что на них можно переключиться */
+.seg button{min-height:var(--h-seg);padding:0 6px;border-radius:var(--r-in);font-size:14px;font-weight:600;color:var(--tx);opacity:.88;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--tx) 11%,transparent);transition:background-color var(--t2) var(--ease),color var(--t2),box-shadow var(--t2),opacity var(--t2),transform var(--t1) var(--ease)}.seg button:active{transform:scale(.97)}.seg button.on{background:var(--ac);color:var(--on);opacity:1;box-shadow:0 2px 8px color-mix(in srgb,var(--ac) 30%,transparent)}
 /* цвета акцента */
-.swc{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:4px 2px}.swc button{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;color:#fff}.swc button svg{opacity:0;width:20px;height:20px;transform:scale(.6);transition:opacity .15s,transform .2s var(--spring)}.swc button.on{box-shadow:0 0 0 3px var(--sub),0 0 0 5px var(--tx)}.swc button.on svg{opacity:1;transform:none}
+.swc{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:4px 2px}.swc button{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;color:#fff}.swc button svg{opacity:0;width:20px;height:20px;transform:scale(.6);transition:opacity var(--t1),transform var(--t2) var(--spring)}.swc button.on{box-shadow:0 0 0 3px var(--sub),0 0 0 5px var(--tx)}.swc button.on svg{opacity:1;transform:none}
 .cc{display:flex;align-items:center;justify-content:space-between;min-height:var(--h-ctl);margin-top:12px;padding:0 6px 0 16px;border-radius:var(--r-ctl);background:var(--card);font-size:15px;font-weight:500;color:var(--tx)}input[type=color]{width:56px;height:40px;padding:3px;margin:0;cursor:pointer;border-radius:var(--r-in);background:var(--sub)}
 /* список вариантов (жесты): одна строка на вариант — значок, название, пояснение, отметка */
 .ol{background:var(--card);border-radius:var(--r-ctl);padding:3px;display:flex;flex-direction:column;gap:2px}
-.ol button{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:8px 12px 8px 8px;border-radius:var(--r-in);text-align:left;transition:background-color .15s}
+.ol button{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:8px 12px 8px 8px;border-radius:var(--r-in);text-align:left;transition:background-color var(--t1)}
 .ol button:active{transform:none;background:var(--sub)}
-.ol .oi{flex:none;width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--sub);color:var(--mu);transition:background-color .15s,color .15s}.ol .oi svg.i{width:19px;height:19px}
+.ol .oi{flex:none;width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--sub);color:var(--mu);transition:background-color var(--t1),color var(--t1)}.ol .oi svg.i{width:19px;height:19px}
 .ol .ot{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.ol .ot b{font-size:var(--fs-body);font-weight:600}.ol .ot small{font-size:var(--fs-xs);color:var(--mu);line-height:1.3}
-.ol .oc{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--bd);display:grid;place-items:center;color:transparent;transition:background-color .15s,border-color .15s}.ol .oc svg.i{width:14px;height:14px;stroke-width:3}
+.ol .oc{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--bd);display:grid;place-items:center;color:transparent;transition:background-color var(--t1),border-color var(--t1)}.ol .oc svg.i{width:14px;height:14px;stroke-width:3}
 .ol button.on{background:var(--acs)}.ol button.on .oi{background:var(--ac);color:var(--on)}.ol button.on .oc{background:var(--ac);border-color:var(--ac);color:var(--on)}
 /* свёрнутый список: видна только выбранная строка, справа — стрелка «раскрыть» */
 .ol .od{display:none;flex:none;color:var(--mu)}.ol .od svg.i{width:18px;height:18px;transform:rotate(90deg)}
@@ -22,8 +23,8 @@
 /* строка с переключателем «да / нет»: подпись слева, переключатель справа; строки разделены тонкой линией */
 .srow{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:50px;padding:4px 4px 4px 4px;font-size:var(--fs-body);font-weight:500}
 .srow+.srow{border-top:1px solid color-mix(in srgb,var(--bd) 75%,transparent)}.srow+.sr .srl{margin-top:14px}.sgt+.srow{margin-top:-6px}
-.tg{flex:none;position:relative;width:50px;height:30px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--mu) 35%,var(--card));transition:background-color .2s}
-.tg i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .25s var(--spring)}
+.tg{flex:none;position:relative;width:50px;height:30px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--mu) 35%,var(--card));transition:background-color var(--t2)}
+.tg i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform var(--t2) var(--spring)}
 .tg.on{background:var(--ac)}.tg.on i{transform:translateX(20px)}.tg:active{transform:none}.tg:active i{width:28px}.tg.on:active i{transform:translateX(16px)}
 /* свёрнутый список жестов: только название выбранного варианта, без пояснения */
 .ol.cl small{display:none}.ol.cl button{min-height:var(--h-ctl)}

@@ -1,8 +1,8 @@
 /* Палитра. Цвета БЖУ — как на логотипе: белки зелёные, жиры жёлтые, углеводы синие */
 :root{--bg:#eef1f4;--card:#fff;--sub:#f2f4f7;--tx:#151a21;--mu:#68717f;--bd:#e3e7ec;--ac:#2f7de1;--p:#22a565;--f:#e89a17;--c:#3a7ff0;--dg:#d64545;--on:#fff;--shd:0 1px 2px rgba(20,30,45,.035),0 6px 18px rgba(20,30,45,.045);box-sizing:border-box;padding-top:var(--sat);padding-bottom:var(--sab)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10141c;--card:#1a202b;--sub:#232a37;--tx:#eef2f7;--mu:#9ba5b7;--bd:#2c3442;--ac:#5b9cf0;--p:#3cc77f;--f:#f2b33d;--c:#5b9cf0;--dg:#ef6b6b;--shd:0 1px 0 rgba(255,255,255,.035) inset,0 6px 20px rgba(0,0,0,.22)}}
-:root[data-theme="dark"]{--bg:#10141c;--card:#1a202b;--sub:#232a37;--tx:#eef2f7;--mu:#9ba5b7;--bd:#2c3442;--ac:#5b9cf0;--p:#3cc77f;--f:#f2b33d;--c:#5b9cf0;--dg:#ef6b6b;--shd:0 1px 0 rgba(255,255,255,.035) inset,0 6px 20px rgba(0,0,0,.22)}
-:root{--acs:color-mix(in srgb,var(--ac) 15%,transparent);--acb:color-mix(in srgb,var(--ac) 35%,transparent);color-scheme:light dark}:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10141c;--card:#1a202b;--sub:#232a37;--tx:#eef2f7;--mu:#9ba5b7;--bd:#2c3442;--ac:#5b9cf0;--p:#3cc77f;--f:#f2b33d;--c:#5b9cf0;--dg:#ef6b6b;--shd:0 1px 0 rgba(255,255,255,.035) inset,0 6px 20px rgba(0,0,0,.22);--acs:color-mix(in srgb,var(--ac) 18%,transparent)}}
+:root[data-theme="dark"]{--bg:#10141c;--card:#1a202b;--sub:#232a37;--tx:#eef2f7;--mu:#9ba5b7;--bd:#2c3442;--ac:#5b9cf0;--p:#3cc77f;--f:#f2b33d;--c:#5b9cf0;--dg:#ef6b6b;--shd:0 1px 0 rgba(255,255,255,.035) inset,0 6px 20px rgba(0,0,0,.22);--acs:color-mix(in srgb,var(--ac) 18%,transparent)}
+:root{--acs:color-mix(in srgb,var(--ac) 14%,transparent);--acb:color-mix(in srgb,var(--ac) 35%,transparent);color-scheme:light dark}:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
 *{box-sizing:border-box}[hidden]{display:none!important}
 html{background:var(--bg);overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-action:pan-y;overflow-x:clip;overflow-y:scroll;scroll-padding-top:var(--sat)}html.lk{overflow:hidden}
 html,body,.sh{scrollbar-width:none}html::-webkit-scrollbar,body::-webkit-scrollbar,.sh::-webkit-scrollbar{display:none;width:0;height:0}
@@ -10,7 +10,7 @@ body{margin:0 auto;background:var(--bg);color:var(--tx);font:16px/1.4 "Manrope V
 body::before{content:"";position:fixed;left:0;right:0;top:0;height:var(--sat);background:var(--bg);z-index:4}
 .num,.big b,.it b,.cd,.kp,.row .mu{font-variant-numeric:tabular-nums}
 svg.i{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
-button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0;transition:transform .14s var(--ease),opacity .14s,background-color .18s,color .18s;-webkit-user-select:none;user-select:none}button:active{transform:scale(.96)}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0;transition:transform var(--t1) var(--ease),opacity var(--t1),background-color var(--t2),color var(--t2);-webkit-user-select:none;user-select:none}button:active{transform:scale(.96)}
 :focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 /* на телефоне рамка фокуса не нужна (её видно только при программном фокусе) — поля подсвечиваются сами */
 .native :focus-visible,.dc :focus-visible{outline:none}

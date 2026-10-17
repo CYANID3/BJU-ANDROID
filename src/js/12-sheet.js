@@ -3,7 +3,7 @@ let svBack=0,svFocus=0;const VWS=[1,2,3,4,5,6,7,8,9,10];
 // Высота листа после смены экрана с учётом того, где окажется клавиатура (откроется / закроется / останется)
 let hPend=0,hT=0;
 // убрать временную высоту листа (после того как клавиатура доехала); небольшую разницу — плавно
-function clearH(now){if(!hPend)return;hPend=0;clearTimeout(hT);const sh=document.querySelector("#ov .sh"),c=sh.offsetHeight;sh.style.height="";if(now||RM()||!isOpen)return;const n=sh.offsetHeight;if(Math.abs(c-n)>2)try{sh.animate([{height:c+"px"},{height:n+"px"}],{duration:220,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}}
+function clearH(now){if(!hPend)return;hPend=0;clearTimeout(hT);const sh=document.querySelector("#ov .sh"),c=sh.offsetHeight;sh.style.height="";if(now||RM()||!isOpen)return;const n=sh.offsetHeight;if(Math.abs(c-n)>2)try{sh.animate([{height:c+"px"},{height:n+"px"}],{duration:MO.t2,easing:MO.E})}catch(e){}}
 const kbFuture=willKb=>willKb?(kbH>0?kbH:kbLast||Math.round(innerHeight*.38)):0;
 function svTargetH(sh,willKb){const nat=document.documentElement.classList.contains("native"),kbF=!nat?0:willKb?(kbH>0?kbH:kbLast):0;
  if(!nat||kbF===kbH)return sh.offsetHeight;const ov=$("ov").clientHeight,sat=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sat"))||0;
@@ -11,8 +11,8 @@ function svTargetH(sh,willKb){const nat=document.documentElement.classList.conta
 function sv(n,t){const sh_=document.querySelector("#ov .sh"),prev=VWS.find(i=>!$("v"+i).hidden),h0=isOpen?sh_.offsetHeight:0,back=svBack,willKb=svFocus;svBack=0;svFocus=0;clearH(1);
  VWS.forEach(i=>$("v"+i).hidden=i!==n);$("st").textContent=t||"";
  if(!isOpen||prev===n)return;sh_.scrollTop=0;if(RM()||!sh_.animate)return;
- const E={duration:280,easing:"cubic-bezier(.22,1,.36,1)"};
- try{$("v"+n).animate([{opacity:0,transform:`translateX(${back?-24:24}px)`},{opacity:1,transform:"none"}],E);$("st").animate([{opacity:0},{opacity:1}],{duration:220})}catch(e){}
+ const E={duration:MO.t2,easing:MO.E};
+ try{$("v"+n).animate([{opacity:0,transform:`translateX(${back?-24:24}px)`},{opacity:1,transform:"none"}],E);$("st").animate([{opacity:0},{opacity:1}],{duration:MO.t2})}catch(e){}
  const kbF=kbFuture(willKb);
  if(document.documentElement.classList.contains("native")&&kbF!==kbH){
   // клавиатура сейчас поедет: высота = (содержимое + клавиатура в конце) − текущая клавиатура.
@@ -26,8 +26,8 @@ function sv(n,t){const sh_=document.querySelector("#ov .sh"),prev=VWS.find(i=>!$
  if(Math.abs(h1-h0)>4)try{sh_.animate([{height:h0+"px"},{height:h1+"px"}],E)}catch(e){}}
 const LBL=["Завтрак","Перекус 1","Обед","Перекус 2","Ужин","Перекус 3"];
 function autoMeal(){const h=new Date().getHours()+new Date().getMinutes()/60;return h<11?0:h<12.5?1:h<15?2:h<18?3:h<21?4:5}
-function drawMc(){$("mc").style.display=mode==="add"?"":"none";$("dbn").textContent=mode==="ing"?"Назад к блюду":"Новое блюдо";$("mc").innerHTML=LBL.map((m,i)=>`<button class="${i===am?"on":""}" onclick="sm(${i})">${m}</button>`).join("")}
-function sm(i){am=i;drawMc();$("st").textContent="Добавить: "+LBL[i]}
+// приём пищи выбран кнопкой «＋» у него (или жестом) — в списке и при изменении записи его не переключают
+function drawMc(){$("dbn").textContent=mode==="ing"?"Назад к блюду":"Новое блюдо"}
 function op(m){am=m;mode="add";$("q").value="";lst();drawMc();sv(1,"Добавить: "+LBL[m]);show()}
 function mng(){mode="mng";pFl=0;$("q").value="";lst();drawMc();sv(1,"Все продукты ("+S.db.length+")");show()}
 const num=v=>parseFloat(String(v).replace(",","."))||0,nn=v=>Math.max(0,num(v));

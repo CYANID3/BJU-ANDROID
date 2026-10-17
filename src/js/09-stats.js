@@ -2,7 +2,7 @@
 // ===== Статистика за месяц =====
 let stM=null;
 function stats(){const d=new Date(cur+"T12:00:00");stM=[d.getFullYear(),d.getMonth()];drawStats();sv(9,"Статистика");show()}
-function stMv(n){stM[1]+=n;if(stM[1]<0){stM[1]=11;stM[0]--}if(stM[1]>11){stM[1]=0;stM[0]++}const el=$("stc");drawStats();if(!RM())try{el.animate([{opacity:0,transform:`translateX(${n*24}px)`},{opacity:1,transform:"none"}],{duration:260,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}}
+function stMv(n){stM[1]+=n;if(stM[1]<0){stM[1]=11;stM[0]--}if(stM[1]>11){stM[1]=0;stM[0]++}const el=$("stc");drawStats();if(!RM())try{el.animate([{opacity:0,transform:`translateX(${n*24}px)`},{opacity:1,transform:"none"}],{duration:MO.t2,easing:MO.E})}catch(e){}}
 function stData(){const[y,m]=stM,n=new Date(y,m+1,0).getDate(),pad=x=>String(x).padStart(2,"0"),days=[];
  for(let d=1;d<=n;d++){const k=y+"-"+pad(m+1)+"-"+pad(d),E=S.d[k]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0});days.push({d,k,w:(S.wt||{})[k]||0,n:E.length,kc:kc(t.p,t.f,t.c),p:t.p,f:t.f,c:t.c,E})}
  return days}

@@ -1,7 +1,7 @@
 /* Нижняя панель */
 .bt{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:4px;background:var(--card);border-radius:var(--r-card);padding:6px 4px;box-shadow:var(--shd)}
 .bt button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px 0 4px;border-radius:var(--r-ctl);font-size:11.5px;min-width:0;font-weight:600;color:var(--tx)}
-.bt button span{width:42px;height:42px;border-radius:var(--r-ctl);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac));transition:background .18s,color .18s,transform .18s var(--spring)}
+.bt button span{width:42px;height:42px;border-radius:var(--r-ctl);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac));transition:background var(--t2),color var(--t2),transform var(--t2) var(--spring)}
 .bt button:active{transform:none}.bt button:active span{background:var(--ac);color:var(--on);transform:scale(.9)}
 /* «Статистика» в центре — главная из пяти */
 .bt button:nth-child(3) span{background:var(--ac);color:var(--on);box-shadow:0 4px 12px color-mix(in srgb,var(--ac) 35%,transparent)}

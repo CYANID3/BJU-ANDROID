@@ -4,8 +4,8 @@
  box-shadow:0 0 0 1px var(--barl),0 12px 32px rgba(0,0,0,var(--bars)),0 2px 8px rgba(0,0,0,calc(var(--bars) * .6))}
 /* панель отделена от содержимого: свой, более светлый тон, тонкий контур и плавное затемнение страницы под ней */
 :root{--bar:var(--card);--barl:color-mix(in srgb,var(--tx) 7%,transparent);--bars:.14}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bar:color-mix(in srgb,var(--sub) 84%,#fff);--barl:rgba(255,255,255,.07);--bars:.5}}
-:root[data-theme="dark"]{--bar:color-mix(in srgb,var(--sub) 84%,#fff);--barl:rgba(255,255,255,.07);--bars:.5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--barl:rgba(255,255,255,.07);--bars:.5}}
+:root[data-theme="dark"]{--barl:rgba(255,255,255,.07);--bars:.5}
 html.bfix body::after{content:"";position:fixed;left:0;right:0;bottom:0;z-index:3;height:calc(var(--bth,84px) + 34px + var(--sab));pointer-events:none;
  background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),color-mix(in srgb,var(--bg) 82%,transparent) 50%,var(--bg))}
 .bfix .bt button{padding:4px 0 2px;gap:4px;font-size:11px}.bfix .bt button span{width:40px;height:40px;border-radius:var(--r-in)}

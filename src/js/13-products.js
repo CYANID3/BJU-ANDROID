@@ -23,7 +23,7 @@ function pv(){const q=num($("gr").value),g=q*UM(),el=$("pvw");
  $("ch").querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.v===q))}
 function gv(t,v,u){uu=u==null?-1:u;$("pn").textContent=sel[0];$("gr").value=v?nf(v):"";$("ab").textContent=ei>=0||ik>=0?"Сохранить":"Добавить";drawU();svFocus=1;sv(2,t);const f=()=>{const g=$("gr");try{g.focus({preventScroll:true})}catch(e){g.focus()}g.select()};isOpen?f():requestAnimationFrame(f)}
 function drawU(){const nd=`onmousedown="event.preventDefault()"`;
- $("em").innerHTML=ei>=0?LBL.map((m,i)=>`<button class="${i===am?"on":""}" ${nd} onclick="am=${i};drawU()">${m}</button>`).join(""):"";$("em").hidden=ei<0;
+ 
  $("pm").textContent=`Б ${nf(r1(sel[1]))} · Ж ${nf(r1(sel[2]))} · У ${nf(r1(sel[3]))} · ${kc(sel[1],sel[2],sel[3])} ккал на 100 г`;
  const us=sel[4]||[],lg=(S.lg||{})[sel[0]];$("un").hidden=!us.length;
  $("un").innerHTML=us.length?[["Граммы"],...us].map((x,i)=>`<button class="${i-1===uu?"on":""}" ${nd} onclick="su(${i-1})">${esc(x[0])}${i?`<small>${nf(r1(x[1]))} г</small>`:""}</button>`).join(""):"";
@@ -33,7 +33,7 @@ function drawU(){const nd=`onmousedown="event.preventDefault()"`;
  $("ch").innerHTML=qs.map(g=>`<button data-v="${g}" ${nd} onclick="qg(${g})">${uu<0&&g===r1(lg||0)?`<i>${ic("check")}</i>`:""}${nf(g)}${uu<0?"<small> г</small>":""}</button>`).join("");pv()}
 function su(i){uu=i;$("gr").value="";drawU();try{$("gr").focus({preventScroll:true})}catch(e){}}
 function qg(g){$("gr").value=nf(g);pv()}
-function ee(i){const e=S.d[cur][i],pr=S.db.find(x=>x[0]===e.n);ei=i;am=e.m;sel=[e.n,e.p/e.g*100,e.f/e.g*100,e.c/e.g*100,pr&&pr[4]];const k=e.ul&&sel[4]?sel[4].findIndex(x=>x[0]===e.ul):-1;gv("Изменить: "+MEALS[am],k>=0?e.q:e.g,k);show()}
+function ee(i){const e=S.d[cur][i],pr=S.db.find(x=>x[0]===e.n);ei=i;am=e.m;sel=[e.n,e.p/e.g*100,e.f/e.g*100,e.c/e.g*100,pr&&pr[4]];const k=e.ul&&sel[4]?sel[4].findIndex(x=>x[0]===e.ul):-1;gv("Изменить · "+MEALS[am],k>=0?e.q:e.g,k);show()}
 function ad(){const q=num($("gr").value),g=q*UM();if(!(g>0)){$("gr").focus();return toast("Введите количество")}const R=x=>Math.round(x*1e3)/1e3,o={m:am,n:sel[0],g:R(g),p:R(sel[1]*g/100),f:R(sel[2]*g/100),c:R(sel[3]*g/100)};if(uu>=0){o.q=q;o.ul=sel[4][uu][0]}
  if(mode==="ing"){delete o.m;if(ik>=0)dr.i[ik]=o;else dr.i.push(o);ik=-1;return drawDish()}
  if(ei>=0)S.d[cur][ei]=o;else{(S.d[cur]=S.d[cur]||[]).push(o);S.uc=S.uc||{};S.uc[sel[0]]=(S.uc[sel[0]]||0)+1;rcPush(sel[0])}

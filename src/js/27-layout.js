@@ -7,7 +7,7 @@ function applyLay(){const r=document.documentElement,fix=bbv()!=="page",bt=docum
  if(fix&&bt){const m=()=>r.style.setProperty("--bth",bt.offsetHeight+"px");m();if(!bthRO&&window.ResizeObserver){bthRO=new ResizeObserver(m);bthRO.observe(bt)}}
  const lr=document.querySelector("#v1 .lr");if(lr){if(nbv()==="top")document.getElementById("q").after(lr);else document.getElementById("ls").after(lr);lr.classList.toggle("top",nbv()==="top")}}
 function setBb(v){if(bbv()===v)return;const was=scrollY;S.set=Object.assign({},S.set,{bb:v});saveq();applyLay();drawSet();hap(8);
- const bt=document.querySelector(".bt");if(!RM()&&bt)try{bt.animate([{opacity:0,transform:"translateY(14px)"},{opacity:1,transform:"none"}],{duration:300,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}scrollTo(0,was)}
+ const bt=document.querySelector(".bt");if(!RM()&&bt)try{bt.animate([{opacity:0,transform:"translateY(14px)"},{opacity:1,transform:"none"}],{duration:MO.t2,easing:MO.E})}catch(e){}scrollTo(0,was)}
 function setNb(v){S.set=Object.assign({},S.set,{nb:v});saveq();applyLay();drawSet();hap(8)}
 // перекусы на главном: «Тонкой строкой» — пустые видны тонкой строкой между приёмами;
 // «По двойному касанию» — пустых не видно; два касания по названию основного приёма (Завтрак / Обед / Ужин)
@@ -15,7 +15,7 @@ function setNb(v){S.set=Object.assign({},S.set,{nb:v});saveq();applyLay();drawSe
 const snv=()=>S.set&&(S.set.sn==="tap"||S.set.sn==="hide")?"tap":"row";
 let snOpen=new Set(),snDay="";
 function snToggle(mi){const s=mi+1;if(!SN[s])return;if(snOpen.has(s)){snOpen.delete(s)}else snOpen.add(s);hap(8);render();
- const b=document.querySelector(`#app .snk[data-m="${s}"]`);if(b&&!RM())try{b.animate([{opacity:0,transform:"translateY(-10px) scale(.98)"},{opacity:1,transform:"none"}],{duration:260,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}}
+ const b=document.querySelector(`#app .snk[data-m="${s}"]`);if(b&&!RM())try{b.animate([{opacity:0,transform:"translateY(-10px) scale(.98)"},{opacity:1,transform:"none"}],{duration:MO.t2,easing:MO.E})}catch(e){}}
 function setSn(v){S.set=Object.assign({},S.set,{sn:v});saveq();snOpen.clear();drawSet();render();hap(6)}
 // двойное касание по шапке основного приёма (не по кнопкам)
 (()=>{let t=0,m=-1;addEventListener("pointerup",e=>{if(isOpen||REP||snv()!=="tap"||e.button>0)return;const h=e.target.closest&&e.target.closest("#app .meal:not(.sn) .mh");if(!h||e.target.closest("button"))return;

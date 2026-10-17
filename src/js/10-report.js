@@ -3,8 +3,8 @@
 let REP=0;
 // Карточка всегда целиком помещается на экран (чтобы её можно было снять одним скриншотом):
 // 1) продукты в каждом приёме — компактной строкой; 2) если всё ещё длинная — карточка уменьшается целиком
-let repMode=0;
-function setRepMode(m){repMode=m;render();scrollTo(0,0);hap(10);const c=$("app").querySelector(".rep");if(c&&!RM())try{c.animate([{opacity:.4,transform:`scale(${m===1?1.02:.98})`},{opacity:1,transform:"none"}],{duration:280,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}}
+let repMode=1;// 1 — компактный (по умолчанию), 2 — подробный, 0 — авто (подробный, если помещается)
+function setRepMode(m){repMode=m;render();scrollTo(0,0);hap(10);const c=$("app").querySelector(".rep");if(c&&!RM())try{c.animate([{opacity:.4,transform:`scale(${m===1?1.02:.98})`},{opacity:1,transform:"none"}],{duration:MO.t2,easing:MO.E})}catch(e){}}
 const repDense=()=>{const c=$("app").querySelector(".rep");return !!c&&(c.classList.contains("dense")||!!c.style.zoom)};
 // Подгонка под экран (авто и компактный вид): 1) компактный вид; 2) продукты в две колонки;
 // 3) лёгкое уменьшение всей карточки (две колонки — только для очень насыщенного дня) — с повторным замером, пока низ карточки не окажется на экране
@@ -44,8 +44,8 @@ function repHTML(dense){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f
    (dense?"":`<div class="rp-mb">${cbar(s0)}<span>${gk?Math.round(kc(s0.p,s0.f,s0.c)/gk*100):0}% нормы</span></div>`)+`<div class="rp-its">`+it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b>${dense?"":`<small>${mxs(e)}</small>`}</div>`).join("")+`</div></div>`});h+=`</div>`}
  h+=`<div class="rp-f"><span>Норма: ${gk} ккал · Б ${G.p} · Ж ${G.f} · У ${G.c} г</span><span><img src="icon-192.png" alt="">БЖУ</span></div></div>`;
  return h}
-function togRep(on){REP=on==null?!REP:on;repMode=0;document.documentElement.classList.toggle("repm",!!REP);hap(10);render();scrollTo(0,0);
- if(!REP&&!RM())try{$("app").animate([{opacity:0,transform:"scale(.98)"},{opacity:1,transform:"none"}],{duration:280,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}
+function togRep(on){REP=on==null?!REP:on;repMode=1;document.documentElement.classList.toggle("repm",!!REP);hap(10);render();scrollTo(0,0);
+ if(!REP&&!RM())try{$("app").animate([{opacity:0,transform:"scale(.98)"},{opacity:1,transform:"none"}],{duration:MO.t2,easing:MO.E})}catch(e){}
  if(REP)toast("Свайп вверх/вниз — вид · три касания — назад",0,2600)}
 (()=>{let n=0,t=0,x=0,y=0,sw=0;
  addEventListener("pointerdown",e=>{x=e.clientX;y=e.clientY},true);

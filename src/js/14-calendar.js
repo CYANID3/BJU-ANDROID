@@ -31,10 +31,10 @@ function pd(k){if(cpm>=0){const mi=cpm,it=(S.d[cur]||[]).filter(e=>e.m===mi).map
   el.style.transform=`translateX(${dx}px)`;el.style.opacity=1-Math.min(.6,Math.abs(dx)/(el.offsetWidth*1.2||400))},{passive:true});
  const end=()=>{x0=null;if(!md)return;md=0;const el=$("cg"),w=el.offsetWidth||300;
   if(Math.abs(dx)>w*.22*GF()||(Math.abs(vx)>SL(1)*.8&&Math.abs(dx)>w*.22*GF()*SL(2))){hap(6,1);calFlip(el,dx<0?1:-1,dx,parseFloat(el.style.opacity)||1)}
-  else{el.style.transition="transform .25s cubic-bezier(.2,.8,.2,1),opacity .25s";el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!md)el.style.transition=""},260)}};
+  else{el.style.transition=`transform ${MO.t2}ms ${MO.E},opacity ${MO.t2}ms ${MO.E}`;el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!md)el.style.transition=""},260)}};
  v.addEventListener("touchend",end);v.addEventListener("touchcancel",()=>{dx=0;vx=0;end()})})();
 function calStep(n){if(cv===0){cm[1]+=n;if(cm[1]<0){cm[1]=11;cm[0]--}if(cm[1]>11){cm[1]=0;cm[0]++}}else if(cv===1)cm[0]+=n;else cm[0]+=n*12}
 function calFlip(el,dir,from,op){const w=el.offsetWidth||300;el.style.transition="";el.style.transform="";el.style.opacity="";
  if(el._co){el._co.cancel();el._co=null}if(el._ca){el._ca.cancel();el._ca=null}
- const out=el.animate([{transform:`translateX(${from}px)`,opacity:op},{transform:`translateX(${-dir*w*.5}px)`,opacity:0}],{duration:Math.max(90,150*(1-Math.abs(from)/w)),easing:"cubic-bezier(.4,0,.8,.3)",fill:"forwards"});el._co=out;
- out.onfinish=()=>{calStep(dir);drawCal();out.cancel();el._co=null;el._ca=el.animate([{transform:`translateX(${dir*w*.5}px)`,opacity:0},{transform:"none",opacity:1}],{duration:340,easing:"cubic-bezier(.16,1,.3,1)"})}}
+ const out=el.animate([{transform:`translateX(${from}px)`,opacity:op},{transform:`translateX(${-dir*w*.5}px)`,opacity:0}],{duration:Math.max(90,150*(1-Math.abs(from)/w)),easing:MO.EI,fill:"forwards"});el._co=out;
+ out.onfinish=()=>{calStep(dir);drawCal();out.cancel();el._co=null;el._ca=el.animate([{transform:`translateX(${dir*w*.5}px)`,opacity:0},{transform:"none",opacity:1}],{duration:MO.t3,easing:MO.E})}}

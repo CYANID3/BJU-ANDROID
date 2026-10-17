@@ -22,5 +22,5 @@
 @media (max-width:390px){.sum{padding:18px 16px}.mac{gap:6px}.mtl{padding:11px 8px 10px}.mtn{font-size:12.5px}.mtv b{font-size:19px}.mtr{font-size:11px;gap:2px}
  .duo{gap:8px}.dtl{gap:10px;padding:12px 10px}.dtl .ti{width:34px;height:34px}.dtl b{font-size:18px}}
 /* полоса калорий по вкладу Б / Ж / У — главный элемент экрана */
-.bar.km{display:flex;gap:3px;height:14px;padding:3px;background:var(--sub);border-radius:var(--r-pill);overflow:hidden}.bar.km i{flex:none;border-radius:var(--r-pill);min-width:0;transition:width .38s cubic-bezier(.22,1,.36,1)}.bar.km i[style*="width:0%"]{display:none}
+.bar.km{display:flex;gap:3px;height:14px;padding:3px;background:var(--sub);border-radius:var(--r-pill);overflow:hidden}.bar.km i{flex:none;border-radius:var(--r-pill);min-width:0;transition:width var(--t3) var(--ease)}.bar.km i[style*="width:0%"]{display:none}
 .bar.km.ov{box-shadow:0 0 0 2px var(--dg)}
