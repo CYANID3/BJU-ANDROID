@@ -230,3 +230,24 @@ test('карточка дня по умолчанию открывается в 
   assert.equal(await a.ev(() => !!document.querySelector('#app .rep.dense')), false);
   await a.close();
 });
+
+test('сегменты: таблетка переезжает к выбранному; перекус по двойному касанию выезжает и уезжает плавно', async () => {
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(0, 'Яйцо', 50, 6, 5, .5)] }, db: [], set: { sn: 'tap' } } });
+  await a.ev(() => sets()); await a.wait(400);
+  const x0 = await a.ev(() => $('thm').style.getPropertyValue('--sx'));
+  await a.ev(() => $('thm').querySelectorAll('button')[2].click()); await a.wait(80);
+  const st = await a.ev(() => ({ sk: $('thm').classList.contains('sk'), x: $('thm').style.getPropertyValue('--sx'), b: $('thm').querySelector('button.on').offsetLeft + 'px' }));
+  assert.ok(st.sk && st.x === st.b && st.x !== x0, JSON.stringify(st));
+  await a.ev(() => cl()); await a.wait(400);
+  await a.ev(() => snToggle(0)); await a.wait(60);
+  const h1 = await a.ev(() => document.querySelector('#app .snk').getBoundingClientRect().height);
+  await a.wait(500);
+  const h2 = await a.ev(() => document.querySelector('#app .snk').getBoundingClientRect().height);
+  assert.ok(h1 < h2, `выезжает: ${h1} → ${h2}`);
+  await a.ev(() => snToggle(0)); await a.wait(60);
+  assert.equal(await a.pg.locator('#app .snk').count(), 1, 'пока уезжает — ещё на месте');
+  await a.wait(450);
+  assert.equal(await a.pg.locator('#app .snk').count(), 0);
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});

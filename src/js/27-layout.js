@@ -14,8 +14,10 @@ function setNb(v){S.set=Object.assign({},S.set,{nb:v});saveq();applyLay();drawSe
 // выдвигают под ним «+ Перекус N», ещё два — убирают. Открытый, но пустой перекус сам прячется при смене дня.
 const snv=()=>S.set&&(S.set.sn==="tap"||S.set.sn==="hide")?"tap":"row";
 let snOpen=new Set(),snDay="";
-function snToggle(mi){const s=mi+1;if(!SN[s])return;if(snOpen.has(s)){snOpen.delete(s)}else snOpen.add(s);hap(8);render();
- const b=document.querySelector(`#app .snk[data-m="${s}"]`);if(b&&!RM())try{b.animate([{opacity:0,transform:"translateY(-10px) scale(.98)"},{opacity:1,transform:"none"}],{duration:MO.t2,easing:MO.E})}catch(e){}}
+function snToggle(mi){const s=mi+1;if(!SN[s])return;hap(8);const q=()=>document.querySelector(`#app .snk[data-m="${s}"]`),rr=()=>{flipSkip=1;render();flipSkip=0};
+ // уезжает: строка плавно сжимается, соседи подтягиваются вслед; выезжает — наоборот
+ if(snOpen.has(s)){snOpen.delete(s);const b=q();if(b&&!b._sh){b._sh=1;moH(b,0,rr)}else rr();return}
+ snOpen.add(s);rr();const b=q();if(b)moH(b,1)}
 function setSn(v){S.set=Object.assign({},S.set,{sn:v});saveq();snOpen.clear();drawSet();render();hap(6)}
 // двойное касание по шапке основного приёма (не по кнопкам)
 (()=>{let t=0,m=-1;addEventListener("pointerup",e=>{if(isOpen||REP||snv()!=="tap"||e.button>0)return;const h=e.target.closest&&e.target.closest("#app .meal:not(.sn) .mh");if(!h||e.target.closest("button"))return;
