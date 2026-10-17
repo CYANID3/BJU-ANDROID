@@ -2,7 +2,7 @@
 let cm=[0,0],tx=null,ty=0;const cap=s=>s[0].toUpperCase()+s.slice(1);
 let cv=0,cb=0;
 const MN=Array.from({length:12},(_,i)=>cap(new Date(2000,i,1).toLocaleDateString("ru-RU",{month:"long"})));
-function cal(){const d=new Date(cur+"T12:00:00");cm=[d.getFullYear(),d.getMonth()];cv=0;drawCal();sv(6,"");show()}
+function cal(){const d=new Date(cur+"T12:00:00");cm=[d.getFullYear(),d.getMonth()];cv=0;drawCal();sv(6,"Календарь");show()}
 function vw(v){cb=cv;cv=v;drawCal();fade($("cg"))}
 function mv(n){const el=$("cg");if(RM()||!el.animate){calStep(n);drawCal();return}if(el._co){el._co.finish()}calFlip(el,n,0,1)}
 function pm(i){cm[1]=i;cv=0;drawCal();fade($("cg"))}

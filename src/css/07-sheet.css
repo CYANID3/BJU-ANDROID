@@ -1,45 +1,49 @@
 /* Нижний лист */
 #ov{position:fixed;left:0;right:0;top:0;height:100%;background:rgba(5,8,12,.5);display:flex;align-items:flex-end;justify-content:center;z-index:5;opacity:0;visibility:hidden;transition:opacity .24s,visibility 0s .24s,height .18s ease-out,top .18s ease-out}#ov.on{opacity:1;visibility:visible;transition:opacity .24s,height .18s ease-out,top .18s ease-out}
-.sh{background:var(--card);width:100%;max-width:520px;max-height:calc(min(92%,100% - var(--sat) - 12px) - var(--kb));overflow:auto;overscroll-behavior:contain;transform:translateY(100%);translate:0 calc(-1*var(--kb));transition:transform .34s cubic-bezier(.22,1,.36,1),translate var(--kbd) cubic-bezier(.2,0,0,1),max-height var(--kbd) cubic-bezier(.2,0,0,1);border-radius:24px 24px 0 0;padding:8px 16px calc(16px + var(--sab));will-change:transform}
-#ov.on .sh{transform:none}.sh::before{content:"";display:block;width:40px;height:5px;border-radius:3px;background:var(--bd);margin:0 auto 6px}
-.hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;min-height:44px}.hd>b{font-size:18px;font-weight:700}
-input{width:100%;font:inherit;padding:12px 14px;border-radius:14px;border:1px solid var(--bd);background:var(--sub);color:var(--tx);margin-bottom:8px;transition:border-color .15s,box-shadow .15s}input:focus{outline:0;border-color:var(--ac);box-shadow:0 0 0 3px var(--acs)}input::placeholder{color:var(--mu)}
-label{font-size:13px;color:var(--mu);display:block;margin:0 0 4px 2px}
-.pk{position:relative;display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px;border-radius:11px;transition:background-color .2s}.pk:active{transform:none}.pk>div{flex:1;min-width:0}.pk .n{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pk .mu{font-size:12.5px;margin-top:1px}.pk b{font-size:14px;color:var(--act,var(--ac));white-space:nowrap}
-#ls{background:var(--sub);border:1px solid var(--bd);border-radius:14px;margin:4px 0 6px;padding:4px}#ls:empty{display:none}#ls>.mu{padding:12px}
-.pb{width:100%;padding:15px;border-radius:14px;background:var(--ac);color:var(--on);font-weight:700;margin-top:10px;display:block;text-align:center}.pb:active{transform:scale(.98)}.pb.g{background:var(--sub);color:var(--tx);border:1px solid var(--bd)}
-.ln{color:var(--act,var(--ac));padding:12px 8px;font-weight:600}
-.lr{display:flex;gap:8px;flex-wrap:wrap}.lr .ln{flex:1;background:var(--acs);border-radius:12px;text-align:center}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.chips{display:flex;gap:8px;margin-bottom:8px}.chips button{flex:1;padding:10px 0;border-radius:12px;background:var(--sub);border:1px solid var(--bd);font-weight:600}.chips button:active{background:var(--acs);border-color:var(--ac);color:var(--act,var(--ac))}
-.mc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.mc button{padding:7px 12px;border-radius:999px;background:var(--sub);border:1px solid var(--bd);font-size:13px;font-weight:500}.mc button.on{background:var(--ac);border-color:var(--ac);color:var(--on)}
-#pn{font-size:17px;font-weight:700;margin-bottom:10px}
-.ur{display:grid;grid-template-columns:1fr 96px 44px;gap:8px;align-items:start}.ur input{margin-bottom:8px}.ur .x{height:46px}
-.sec{font-size:13px;color:var(--mu);margin:12px 2px 6px}
-
-/* Избранное и недавние в списке продуктов */
-.lh{font-size:12.5px;font-weight:600;color:var(--mu);letter-spacing:.02em;margin:12px 10px 4px}.lh:first-child{margin-top:2px}.lh+.pk::before{display:none}
-.pk .fv{flex:none;display:grid;place-items:center;width:38px;height:38px;margin:-8px -6px -8px -4px;border-radius:50%;color:var(--mu);opacity:.45;transition:opacity .15s,color .15s,transform .2s cubic-bezier(.3,1.6,.5,1)}
-.pk .fv .i{width:19px;height:19px}.pk .fv.on{opacity:1;color:#f5b301}.pk .fv.on .i{fill:currentColor}.pk .fv:active{transform:scale(.82)}
-/* Блюда в списке: значок-миска и подпись «Блюдо · N ингр.» акцентом — сразу видно, где готовое блюдо, а где продукт */
-.pk .dk{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac));margin:-2px 0 -2px -2px}.pk .dk svg.i{width:19px;height:19px}
-.pk .dt{color:var(--act,var(--ac));font-weight:600}
-.pf{margin:-2px 0 8px}
-.pk.dish .mu{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* Приёмы пищи — ровная сетка 3×2, все видны сразу */
-.mc.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.mc.mg button{padding:8px 4px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh{background:var(--card);width:100%;max-width:520px;max-height:calc(min(92%,100% - var(--sat) - 12px) - var(--kb));overflow:auto;overscroll-behavior:contain;transform:translateY(100%);translate:0 calc(-1*var(--kb));transition:transform .34s cubic-bezier(.22,1,.36,1),translate var(--kbd) cubic-bezier(.2,0,0,1),max-height var(--kbd) cubic-bezier(.2,0,0,1);border-radius:var(--r-card) var(--r-card) 0 0;padding:8px 18px calc(18px + var(--sab));will-change:transform}
+#ov.on .sh{transform:none}.sh::before{content:"";display:block;width:40px;height:5px;border-radius:3px;background:var(--bd);margin:0 auto 8px}
+/* заголовок листа и кнопка «закрыть» (мягкий кружок — одинаковый во всех листах) */
+.hd{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;min-height:var(--h-ib)}.hd>b{font-size:var(--fs-title);font-weight:700;line-height:1.25}
+.hd>.x{width:38px;height:38px;border-radius:50%;background:var(--sub);color:var(--tx)}.hd>.x svg{width:18px;height:18px}
+/* навигация по месяцам (календарь, статистика): стрелки — кнопки-иконки, название по центру */
+.mnav{display:flex;align-items:center;gap:8px;margin:-2px 0 12px}.mnav>.x{background:var(--sub);border-radius:var(--r-ctl)}.mnt{flex:1;text-align:center;font-size:var(--fs-h);font-weight:700}
+/* поля ввода */
+input{width:100%;font:inherit;font-size:16px;height:var(--h-ctl);padding:0 16px;border-radius:var(--r-ctl);border:1px solid var(--bd);background:var(--sub);color:var(--tx);margin-bottom:10px;transition:border-color .15s,box-shadow .15s}input:focus{outline:0;border-color:var(--ac);box-shadow:0 0 0 3px var(--acs)}input::placeholder{color:var(--mu);opacity:.8}
+label{font-size:var(--fs-sm);font-weight:600;color:var(--mu);display:block;margin:0 0 6px 4px}
+/* подзаголовок раздела внутри листа — тот же стиль, что у подписей в настройках */
+.sec{font-size:var(--fs-sm);font-weight:600;color:var(--mu);margin:14px 4px 8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.g3 input{text-align:center;font-weight:600;padding:0 8px}
+/* кнопки: основная (залитая), второстепенная (тональная), нейтральная, опасная — одна высота и скругление */
+.pb{width:100%;height:var(--h-ctl);border-radius:var(--r-ctl);background:var(--ac);color:var(--on);font-weight:700;font-size:16px;margin-top:12px;display:flex;align-items:center;justify-content:center;text-align:center}.pb:active{transform:scale(.98)}
+.pb.g{background:var(--sub);color:var(--tx);border:1px solid var(--bd)}
+.ln{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;margin-top:10px;padding:0 14px;border-radius:var(--r-ctl);background:var(--acs);color:var(--act,var(--ac));font-weight:600;font-size:15px;text-align:center}
+.ln.dg{background:color-mix(in srgb,var(--dg) 11%,transparent);color:var(--dg)}
+.lr{display:flex;gap:10px}.lr .ln{flex:1;margin-top:10px}#v1 .lr.top{margin:0 0 12px}#v1 .lr.top .ln{margin-top:0}
+/* списки: продукты, ингредиенты — блок со строками */
+#ls,#di{background:var(--sub);border:1px solid var(--bd);border-radius:var(--r-block);padding:4px;margin:2px 0 4px}#ls:empty,#di:empty{display:none}#ls>.mu{padding:14px;text-align:center}
+.pk{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:58px;text-align:left;padding:8px 8px 8px 12px;border-radius:var(--r-ctl);transition:background-color .2s}.pk:active{transform:none}.pk>div{flex:1;min-width:0}.pk .n{font-weight:500;font-size:var(--fs-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pk .mu{font-size:var(--fs-xs);margin-top:2px}.pk b{font-size:14px;color:var(--act,var(--ac));white-space:nowrap}
+.lh{font-size:var(--fs-xs);font-weight:700;color:var(--mu);letter-spacing:.03em;text-transform:uppercase;margin:12px 12px 4px}.lh:first-child{margin-top:8px}.lh+.pk::before{display:none}
+.pk .fv{flex:none;display:grid;place-items:center;width:40px;height:40px;margin:-8px -4px;border-radius:50%;color:var(--mu);opacity:.45;transition:opacity .15s,color .15s,transform .2s cubic-bezier(.3,1.6,.5,1)}
+.pk .fv .i{width:20px;height:20px}.pk .fv.on{opacity:1;color:#f5b301}.pk .fv.on .i{fill:currentColor}.pk .fv:active{transform:scale(.82)}
+/* блюда: значок-миска и подпись «Блюдо» акцентом */
+.pk .dk{flex:none;width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac));margin-left:-4px}.pk .dk svg.i{width:19px;height:19px}
+.pk .dt{color:var(--act,var(--ac));font-weight:600}.pk.dish .mu{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* чипы-пилюли: приёмы пищи */
+.mc{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.mc button{height:var(--h-chip);padding:0 14px;border-radius:var(--r-pill);background:var(--sub);border:1px solid var(--bd);font-size:14px;font-weight:500}.mc button.on{background:var(--ac);border-color:var(--ac);color:var(--on);font-weight:600}
+.mc.mg{display:grid;grid-template-columns:repeat(3,1fr)}.mc.mg button{padding:0 6px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* единицы продукта в форме: «единица · граммы · удалить» */
+.ur{display:grid;grid-template-columns:1fr 104px var(--h-ctl);gap:10px;align-items:start}.ur .x{height:var(--h-ctl);width:var(--h-ctl);border-radius:var(--r-ctl);background:var(--sub)}
 /* Экран количества */
-.qh{margin:2px 2px 12px}.qn{font-size:17px;font-weight:700;line-height:1.25}.qm{font-size:12.5px;color:var(--mu);margin-top:3px}
-.seg.qu{margin-bottom:10px}.seg.qu button{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 4px;line-height:1.2}.seg.qu small{font-size:11px;font-weight:500;opacity:.75}
-.qf{position:relative}.qf input{margin:0;text-align:center;font-size:28px;font-weight:700;padding:13px 64px;font-variant-numeric:tabular-nums}.qf input::placeholder{color:var(--mu);opacity:.5}
-.qf span{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--mu);font-size:15px;font-weight:500;pointer-events:none;max-width:38%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.qc{display:flex;gap:6px;margin:10px 0 0}.qc button{flex:1;display:flex;align-items:center;justify-content:center;gap:3px;padding:9px 2px;border-radius:999px;background:var(--sub);border:1px solid var(--bd);font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;transition:background-color .15s,border-color .15s,color .15s}
+.qh{margin:0 4px 14px}.qn{font-size:var(--fs-h);font-weight:700;line-height:1.25}.qm{font-size:var(--fs-sm);color:var(--mu);margin-top:4px}
+.seg.qu{margin-bottom:10px}.seg.qu button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.15}.seg.qu small{font-size:11px;font-weight:500;opacity:.75}
+.seg.qu.wr{display:flex;flex-wrap:wrap}.seg.qu.wr button{flex:1 1 auto;padding:0 12px}
+.qf{position:relative}.qf input{margin:0;height:66px;text-align:center;font-size:28px;font-weight:700;padding:0 64px;border-radius:var(--r-block);font-variant-numeric:tabular-nums}.qf input::placeholder{color:var(--mu);opacity:.5}
+.qf span{position:absolute;right:18px;top:50%;transform:translateY(-50%);color:var(--mu);font-size:15px;font-weight:500;pointer-events:none;max-width:38%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qc{display:flex;gap:8px;margin:10px 0 0}.qc button{flex:1;height:var(--h-chip);display:flex;align-items:center;justify-content:center;gap:3px;padding:0 2px;border-radius:var(--r-pill);background:var(--sub);border:1px solid var(--bd);font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;transition:background-color .15s,border-color .15s,color .15s}
 .qc button small{font-size:12px;font-weight:500;color:var(--mu)}.qc button i{display:flex;color:var(--act,var(--ac))}.qc button i svg.i{width:14px;height:14px;stroke-width:2.6}
 .qc button.on{background:var(--acs);border-color:var(--ac);color:var(--act,var(--ac))}.qc button.on small{color:inherit}
-.qp{display:flex;align-items:baseline;gap:4px 10px;flex-wrap:wrap;min-height:46px;margin:10px 0 0;padding:10px 14px;border-radius:14px;background:var(--sub);border:1px dashed var(--bd);font-size:13px;color:var(--mu);font-variant-numeric:tabular-nums;transition:border-color .2s,background-color .2s}
-.qp:empty::before{content:"Введите количество — посчитаю калории порции";font-size:13px}
+.qp{display:flex;align-items:center;gap:4px 10px;flex-wrap:wrap;min-height:var(--h-ctl);margin:10px 0 0;padding:8px 16px;border-radius:var(--r-ctl);background:var(--sub);border:1px dashed var(--bd);font-size:var(--fs-sm);color:var(--mu);font-variant-numeric:tabular-nums;transition:border-color .2s,background-color .2s}
+.qp:empty::before{content:"Введите количество — посчитаю калории порции"}
 .qp.on{border-style:solid;background:var(--acs);border-color:transparent}.qp b{font-size:20px;color:var(--act,var(--ac));font-weight:800}.qp small{font-size:12px;margin-left:-6px}.qp span{color:var(--tx)}.qp em{font-style:normal;margin-left:auto}
-/* Фильтр «Все / Продукты / Блюда» — сегментом со счётчиками */
-.seg.pf{margin:-2px 0 10px}.seg.pf button{padding:8px 4px}.seg.pf small{margin-left:5px;font-size:11.5px;font-weight:500;opacity:.7}
-/* много единиц: строки переносятся и растягиваются на всю ширину — без пустых мест */
-.seg.qu.wr{display:flex;flex-wrap:wrap}.seg.qu.wr button{flex:1 1 auto;padding:8px 12px}
+/* фильтр «Все / Продукты / Блюда» */
+.seg.pf{margin:0 0 12px}.seg.pf small{margin-left:5px;font-size:11.5px;font-weight:500;opacity:.7}

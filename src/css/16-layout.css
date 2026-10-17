@@ -1,10 +1,7 @@
 /* Закреплённая нижняя панель: парит над страницей у нижнего края, страница прокручивается под ней */
 .bfix .bt{position:fixed;left:0;right:0;bottom:calc(10px + var(--sab));z-index:4;width:calc(100% - 24px);max-width:496px;margin:0 auto;padding:6px;
  background:color-mix(in srgb,var(--card) 86%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);box-shadow:0 10px 30px rgba(0,0,0,.24),0 1px 0 rgba(255,255,255,.04) inset}
-.bfix .bt button{padding:5px 0 3px;gap:4px;font-size:11px}.bfix .bt button span{width:38px;height:38px;border-radius:12px}
+.bfix .bt button{padding:4px 0 2px;gap:4px;font-size:11px}.bfix .bt button span{width:40px;height:40px;border-radius:var(--r-in)}
 .bfix body{padding-bottom:calc(var(--bth,84px) + 22px + var(--sab))}
 .bfix .tt{bottom:calc(var(--bth,84px) + 20px + max(var(--sab),var(--kb)))}
 .bfix .pu:not(.tp){bottom:calc(var(--bth,84px) + 30px + var(--sab))}
-.repm .bt{display:none}
-/* кнопки «Новый продукт» / «Новое блюдо» под поиском */
-#v1 .lr.top{margin:-2px 0 10px}

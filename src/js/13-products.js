@@ -38,7 +38,7 @@ function ad(){const q=num($("gr").value),g=q*UM();if(!(g>0)){$("gr").focus();ret
  if(mode==="ing"){delete o.m;if(ik>=0)dr.i[ik]=o;else dr.i.push(o);ik=-1;return drawDish()}
  if(ei>=0)S.d[cur][ei]=o;else{(S.d[cur]=S.d[cur]||[]).push(o);S.uc=S.uc||{};S.uc[sel[0]]=(S.uc[sel[0]]||0)+1;rcPush(sel[0])}
  if(uu<0){S.lg=S.lg||{};S.lg[sel[0]]=g}hap(8);save();cl();render()}
-function unRow(l,g){return `<div class="ur"><input placeholder="Единица, напр. банка" value="${esc(l)}" autocomplete="off" enterkeyhint="next"><input placeholder="Граммы" inputmode="decimal" value="${g||""}" autocomplete="off"><button class="x" onclick="unDel(this)" aria-label="Удалить единицу">${ic("close")}</button></div>`}
+function unRow(l,g){return `<div class="ur"><input placeholder="Например, банка" value="${esc(l)}" autocomplete="off" enterkeyhint="next"><input placeholder="Граммы" inputmode="decimal" value="${g||""}" autocomplete="off"><button class="x" onclick="unDel(this)" aria-label="Удалить единицу">${ic("close")}</button></div>`}
 function unDraw(a){$("unr").innerHTML=(a&&a.length?a:[["",""]]).map(x=>unRow(x[0],x[1])).join("")}
 function unAdd(){$("unr").insertAdjacentHTML("beforeend",unRow("",""));$("unr").lastElementChild.firstElementChild.focus()}
 function unDel(b){const r=b.closest(".ur");if($("unr").children.length>1)r.remove();else r.querySelectorAll("input").forEach(i=>i.value="")}

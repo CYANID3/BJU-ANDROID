@@ -1,7 +1,6 @@
 /* Итог дня */
-.big{display:flex;align-items:baseline;gap:8px}.big b{font-size:40px;font-weight:800;letter-spacing:-.02em;line-height:1}.big .mu{font-size:15px}
-.lf{margin:8px 0 14px;font-size:14px;color:var(--mu)}.lf b{color:var(--act,var(--ac));font-weight:700}.lf.ov b{color:var(--dg)}
-.bar{height:6px;background:var(--sub);border-radius:6px;overflow:hidden;margin:6px 0 12px;border:1px solid var(--bd)}.bar i{display:block;height:100%;border-radius:6px}.bar.k{height:10px;margin:14px 0 0;background:var(--acs);border:0}
-.row{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;font-weight:600}.row span:first-child{display:flex;align-items:center;gap:7px}.row span:first-child::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--dot)}.row .mu{font-weight:400;font-size:13px}
-.ex{display:flex;flex-direction:column;gap:2px;margin-top:2px;padding-top:10px;border-top:1px solid var(--bd)}.ex .mu{font-size:13px}
-
+.big{display:flex;align-items:baseline;gap:8px}.big b{font-size:42px;font-weight:800;letter-spacing:-.02em;line-height:1}.big .mu{font-size:15px}
+.lf{font-size:14px;color:var(--mu)}.lf b{color:var(--act,var(--ac));font-weight:700}.lf.ov b{color:var(--dg)}
+.bar{height:8px;background:var(--sub);border-radius:var(--r-pill);overflow:hidden;margin:7px 0 14px;border:1px solid var(--bd)}.bar i{display:block;height:100%;border-radius:var(--r-pill)}.bar.k{height:12px;margin:14px 0 0;background:var(--acs);border:0}
+.row{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;font-weight:600}.row span:first-child{display:flex;align-items:center;gap:8px}.row span:first-child::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--dot)}.row .mu{font-weight:400;font-size:var(--fs-sm)}
+.ex{display:flex;flex-direction:column;gap:3px;margin-top:2px;padding-top:12px;border-top:1px solid var(--bd)}.ex .mu{font-size:var(--fs-sm)}
