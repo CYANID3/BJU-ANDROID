@@ -11,8 +11,12 @@ function chKcal(days,gk,W){const H=150,L=34,Rr=8,T=12,B=20,iw=W-L-Rr,ih=H-T-B,st
  const mx=Math.max(gk*1.15,...days.map(x=>x.kc))*1.04||1,Y=v=>T+ih-(v/mx)*ih,r=Math.min(4,bw/2);let g="";
  [0,gk].concat(mx>gk*1.6?[Math.round(mx*.9/500)*500]:[]).forEach(v=>{if(v<0||v>mx)return;g+=`<line x1="${L}" x2="${W-Rr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--bd)" stroke-width="1"${v===gk&&v?' stroke-dasharray="4 4" stroke="var(--mu)"':""}/><text x="${L-6}" y="${Y(v)+3.5}" text-anchor="end">${v}</text>`});
  if(gk)g+=`<text x="${W-Rr}" y="${Y(gk)-5}" text-anchor="end">норма</text>`;
- days.forEach((x,i)=>{if(!x.kc)return;const cx=L+i*st+st/2,x0=cx-bw/2,y0=Y(x.kc),yb=T+ih,h=yb-y0,rr=Math.min(r,h);
-  g+=`<path data-i="${i}" d="M${x0},${yb}V${y0+rr}Q${x0},${y0} ${x0+rr},${y0}H${x0+bw-rr}Q${x0+bw},${y0} ${x0+bw},${y0+rr}V${yb}Z" fill="var(--ac)"/>`});
+ // столбец дня сложен из вклада белков, жиров и углеводов (снизу вверх), верх скруглён, между частями — тонкий зазор
+ days.forEach((x,i)=>{if(!x.kc)return;const cx=L+i*st+st/2,x0=cx-bw/2,yb=T+ih,parts=[[x.p*4,"var(--p)"],[x.f*9,"var(--f)"],[x.c*4,"var(--c)"]].filter(q=>q[0]>0),sum=parts.reduce((a,q)=>a+q[0],0)||1;
+  let yc=yb;const yTop=Y(x.kc);g+=`<g data-i="${i}">`;
+  parts.forEach(([v,c],j)=>{const h=(yb-yTop)*v/sum,last=j===parts.length-1,y1=yc-h+(last?0:1),hh=Math.max(0,yc-y1);
+   if(last){const rr=Math.min(r,hh);g+=`<path d="M${x0},${yc}V${y1+rr}Q${x0},${y1} ${x0+rr},${y1}H${x0+bw-rr}Q${x0+bw},${y1} ${x0+bw},${y1+rr}V${yc}Z" fill="${c}"/>`}
+   else g+=`<rect x="${x0}" y="${y1}" width="${bw}" height="${hh}" fill="${c}"/>`;yc-=h});g+=`</g>`});
  days.forEach((x,i)=>{if(x.d===1||x.d%7===1&&x.d<=29||x.d===days.length&&x.d%7!==1)g+=`<text x="${L+i*st+st/2}" y="${H-5}" text-anchor="middle">${x.d}</text>`});
  return{svg:`<svg viewBox="0 0 ${W} ${H}" height="${H}">${g}</svg>`,L,st}}
 // БЖУ по дням в % от нормы (общая шкала — одна ось); пропущенные дни — разрыв линии
@@ -36,25 +40,24 @@ function drawStats(){const[y,m]=stM,days=stData(),G=S.g,gk=kc(G.p,G.f,G.c),lg=da
  const av=k=>lg.reduce((a,x)=>a+x[k],0)/N,akc=Math.round(av("kc")),inN=lg.filter(x=>gk&&Math.abs(x.kc-gk)<=gk*.1).length;
  // серия: подряд идущие дни с записями, заканчивая последним днём с записями
  let streak=0,best=0,run=0;days.forEach(x=>{run=x.n?run+1:0;best=Math.max(best,run)});for(let i=days.map(x=>x.n>0).lastIndexOf(true);i>=0&&days[i].n;i--)streak++;
- let h=`<div class="stt"><div><div class="v">${N}<small>из ${days.length}</small></div><div class="l">дней с записями</div></div><div><div class="v">${akc}<small>ккал</small></div><div class="l">в среднем за день${gk?` · ${Math.round(akc/gk*100)}% нормы`:""}</div></div>`+
-  `<div><div class="v">${inN}<small>дн.</small></div><div class="l">в норме (±10% ккал)</div></div><div><div class="v">${best}<small>дн.</small></div><div class="l">самая длинная серия${streak&&streak!==best?` · сейчас ${streak}`:""}</div></div></div>`;
+ const A={p:av("p"),f:av("f"),c:av("c")},ash=shrD(A)||[];
+ // главное: средний день месяца — как итог дня на главном экране
+ let h=`<div class="stb sthero"><h4>В среднем за день</h4><div class="big"><b>${akc}</b><span class="mu">из ${gk} ккал${gk?` · ${Math.round(akc/gk*100)}%`:""}</span></div>${kbar(A,gk,akc)}<div class="mac">${mtile("Белки",A.p,G.p,"var(--p)",1,ash[0])}${mtile("Жиры",A.f,G.f,"var(--f)",0,ash[1])}${mtile("Углеводы",A.c,G.c,"var(--c)",0,ash[2])}</div></div>`;
+ const dn=n=>n%10===1&&n%100!==11?"день":(n%10>=2&&n%10<=4&&(n%100<10||n%100>=20))?"дня":"дней";
+ h+=`<div class="stt"><div><div class="v">${N}<small>из ${days.length}</small></div><div class="l">${dn(N)} с записями</div></div><div><div class="v">${inN}</div><div class="l">в норме ±10%</div></div><div><div class="v">${best}</div><div class="l">${streak&&streak!==best?`серия · сейчас ${streak}`:"дней подряд"}</div></div></div>`;
  const c1=chKcal(days,gk,W);
- h+=`<div class="stb"><h4>Калории по дням</h4><div class="sd rdo" id="rd1" data-def="Пунктир — норма ${gk} ккал. Коснитесь столбца — покажу день.">Пунктир — норма ${gk} ккал. Коснитесь столбца — покажу день.</div><div class="chw" id="ch1">${c1.svg}</div></div>`+(WB?WB.html:"");
+ h+=`<div class="stb"><h4>Калории по дням</h4><div class="sd rdo" id="rd1" data-def="Столбец — день, цвета — вклад Б / Ж / У, пунктир — норма.">Столбец — день, цвета — вклад Б / Ж / У, пунктир — норма.</div><div class="chw" id="ch1">${c1.svg}</div></div>`+(WB?WB.html:"");
  const c2=chMac(days,{p:G.p,f:G.f,c:G.c},W);
  h+=`<div class="stb"><h4>БЖУ по дням</h4><div class="sd rdo" id="rd2" data-def="В процентах от нормы, пунктир — 100%.">В процентах от нормы, пунктир — 100%.</div><div class="leg">${MCH.map(([k,n,c,da])=>`<span><svg viewBox="0 0 18 6"><line x1="1" x2="17" y1="3" y2="3" stroke="${c}" stroke-width="2" stroke-linecap="round"${da?` stroke-dasharray="${da}"`:""}/></svg>${n}</span>`).join("")}</div><div class="chw" id="ch2">${c2.svg}</div></div>`;
- // средние за день и доли калорий
- const A={p:av("p"),f:av("f"),c:av("c")},kp=[A.p*4,A.f*9,A.c*4],ks=kp[0]+kp[1]+kp[2]||1;
- h+=`<div class="stb stm"><h4>В среднем за день</h4><div class="sd">По ${N} дн. с записями</div>`+[["p","Белки","var(--p)"],["f","Жиры","var(--f)"],["c","Углеводы","var(--c)"]].map(([k,n,c])=>`<div class="row" style="--dot:${c}"><span>${n}</span><span class="mu">${f1(A[k])} / ${G[k]} г · ${G[k]?Math.round(A[k]/G[k]*100):0}%</span></div><div class="bar"><i style="width:${Math.min(100,G[k]?A[k]/G[k]*100:0)}%;background:${c}"></i></div>`).join("")+
-  `<div class="rp-sh" style="margin-top:12px">${kp.map((v,i)=>v>0?`<i style="flex:${v};background:${["var(--p)","var(--f)","var(--c)"][i]}"></i>`:"").join("")}</div><div class="rp-sl">${["Б","Ж","У"].map((n,i)=>`<span>${n} ${Math.round(kp[i]/ks*100)}% ккал</span>`).join("")}</div></div>`;
- // чаще всего
+ // чаще всего — строками, как записи дня
  const cnt={};lg.forEach(x=>x.E.forEach(e=>{const o=cnt[e.n]||(cnt[e.n]={n:e.n,c:0,k:0});o.c++;o.k+=kc(e.p,e.f,e.c)}));
  const top=Object.values(cnt).sort((a,b)=>b.c-a.c||b.k-a.k).slice(0,5);
- h+=`<div class="stb sttop"><h4>Чаще всего</h4><div class="sd">Продукты месяца по числу записей</div><div class="il" style="margin:0">${top.map(o=>`<div class="it"><div><div class="n">${esc(o.n)}</div><div class="mu">${o.c} ${o.c%10===1&&o.c%100!==11?"раз":(o.c%10>=2&&o.c%10<=4&&(o.c%100<10||o.c%100>=20))?"раза":"раз"}</div></div><b>${o.k}<small>ккал</small></b></div>`).join("")}</div></div>`;
+ h+=`<div class="stb sttop"><h4>Чаще всего</h4><div class="il">${top.map(o=>`<div class="it"><span class="tc">${o.c}×</span><div><div class="n">${esc(o.n)}</div><div class="mu">≈ ${Math.round(o.k/o.c)} ккал за раз</div></div><b>${o.k}<small>ккал</small></b></div>`).join("")}</div></div>`;
  $("stc").innerHTML=h;
  // касание столбца/точки — подсказка (сдвиг пальцем ведёт её по дням)
  const fmt=stFmt,bind=(...a)=>stBind(days,W,...a);
  if(WB)bindWt(days,W,WB.c);
- bind("ch1","rd1",c1,d=>`${fmt(d)} · <b>${d.kc}</b> ккал${gk?` · ${Math.round(d.kc/gk*100)}%`:""}`,i=>$("ch1").querySelectorAll("path").forEach(p=>p.style.opacity=i<0||+p.dataset.i===i?"":".35"));
+ bind("ch1","rd1",c1,d=>`${fmt(d)} · <b>${d.kc}</b> ккал${gk?` · ${Math.round(d.kc/gk*100)}%`:""}`,i=>$("ch1").querySelectorAll("[data-i]").forEach(p=>p.style.opacity=i<0||+p.dataset.i===i?"":".3"));
  bind("ch2","rd2",c2,d=>`${fmt(d)}`+MCH.map(([k,n,c])=>`<i style="background:${c}"></i>${n[0]} <b>${G[k]?Math.round(d[k]/G[k]*100):0}%</b>`).join(""),i=>{const l=$("ch2").querySelector(".cx");if(i<0)l.setAttribute("opacity","0");else{const x=c2.L+i*c2.st+c2.st/2;l.setAttribute("x1",x);l.setAttribute("x2",x);l.setAttribute("opacity",".6")}});
 }
 const stFmt=x=>new Date(x.k+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"short"});

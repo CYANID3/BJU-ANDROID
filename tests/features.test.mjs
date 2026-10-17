@@ -96,7 +96,9 @@ test('статистика: плитки, графики калорий, БЖУ 
   const n = await a.ev(() => stData().filter(x => x.n).length);
   assert.ok(n >= 1);
   assert.match(await a.pg.textContent('#stc .stt'), new RegExp(`${n}из`));
-  assert.equal(await a.pg.locator('#ch1 path[data-i]').count(), n);
+  assert.equal(await a.pg.locator('#ch1 g[data-i]').count(), n);
+  assert.ok(await a.pg.locator('#ch1 g[data-i] [fill="var(--p)"]').count() >= 1, 'столбцы сложены из Б / Ж / У');
+  assert.equal(await a.pg.locator('#stc .sthero .mtl').count(), 3, 'средний день — три плитки как на главном');
   assert.equal(await a.pg.locator('#ch2 polyline, #ch2 circle').count() >= 3, true);
   const wn = await a.ev(() => stData().filter(x => x.w).length);
   assert.equal(await a.pg.locator('#ch3 circle[data-i]').count(), wn);

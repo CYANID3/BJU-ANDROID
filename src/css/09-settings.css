@@ -27,3 +27,9 @@
 .tg.on{background:var(--ac)}.tg.on i{transform:translateX(20px)}.tg:active{transform:none}.tg:active i{width:28px}.tg.on:active i{transform:translateX(16px)}
 /* свёрнутый список жестов: только название выбранного варианта, без пояснения */
 .ol.cl small{display:none}.ol.cl button{min-height:var(--h-ctl)}
+/* переключатели собраны в одну плашку карточного тона — как сегменты и списки вариантов */
+.srow{background:var(--card);padding:4px 10px 4px 16px;min-height:var(--h-ctl);border-radius:0}
+:not(.srow)+.srow{border-top-left-radius:var(--r-ctl);border-top-right-radius:var(--r-ctl)}
+.srow:not(:has(+.srow)){border-bottom-left-radius:var(--r-ctl);border-bottom-right-radius:var(--r-ctl)}
+.srow+.srow{border-top:0;position:relative}.srow+.srow::before{content:"";position:absolute;left:16px;right:16px;top:0;height:1px;background:var(--sub)}
+.sgt+.srow{margin-top:0}

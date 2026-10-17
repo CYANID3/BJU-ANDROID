@@ -1,6 +1,13 @@
 /* Закреплённая нижняя панель: парит над страницей у нижнего края, страница прокручивается под ней */
 .bfix .bt{position:fixed;left:0;right:0;bottom:calc(10px + var(--sab));z-index:4;width:calc(100% - 24px);max-width:496px;margin:0 auto;padding:6px;
- background:color-mix(in srgb,var(--card) 86%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);box-shadow:0 10px 30px rgba(0,0,0,.24),0 1px 0 rgba(255,255,255,.04) inset}
+ background:color-mix(in srgb,var(--bar) 94%,transparent);-webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);
+ box-shadow:0 0 0 1px var(--barl),0 12px 32px rgba(0,0,0,var(--bars)),0 2px 8px rgba(0,0,0,calc(var(--bars) * .6))}
+/* панель отделена от содержимого: свой, более светлый тон, тонкий контур и плавное затемнение страницы под ней */
+:root{--bar:var(--card);--barl:color-mix(in srgb,var(--tx) 7%,transparent);--bars:.14}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bar:color-mix(in srgb,var(--sub) 84%,#fff);--barl:rgba(255,255,255,.07);--bars:.5}}
+:root[data-theme="dark"]{--bar:color-mix(in srgb,var(--sub) 84%,#fff);--barl:rgba(255,255,255,.07);--bars:.5}
+html.bfix body::after{content:"";position:fixed;left:0;right:0;bottom:0;z-index:3;height:calc(var(--bth,84px) + 34px + var(--sab));pointer-events:none;
+ background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),color-mix(in srgb,var(--bg) 82%,transparent) 50%,var(--bg))}
 .bfix .bt button{padding:4px 0 2px;gap:4px;font-size:11px}.bfix .bt button span{width:40px;height:40px;border-radius:var(--r-in)}
 /* место под закреплённую панель (сильнее любых отступов вида интерфейса) */
 html.bfix body{padding-bottom:calc(var(--bth,84px) + 26px + var(--sab))}
