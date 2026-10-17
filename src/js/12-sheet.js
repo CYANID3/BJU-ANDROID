@@ -29,7 +29,7 @@ function autoMeal(){const h=new Date().getHours()+new Date().getMinutes()/60;ret
 function drawMc(){$("mc").style.display=mode==="add"?"":"none";$("dbn").textContent=mode==="ing"?"Назад к блюду":"Новое блюдо";$("mc").innerHTML=LBL.map((m,i)=>`<button class="${i===am?"on":""}" onclick="sm(${i})">${m}</button>`).join("")}
 function sm(i){am=i;drawMc();$("st").textContent="Добавить: "+LBL[i]}
 function op(m){am=m;mode="add";$("q").value="";lst();drawMc();sv(1,"Добавить: "+LBL[m]);show()}
-function mng(){mode="mng";$("q").value="";lst();drawMc();sv(1,"Все продукты ("+S.db.length+")");show()}
+function mng(){mode="mng";pFl=0;$("q").value="";lst();drawMc();sv(1,"Все продукты ("+S.db.length+")");show()}
 const num=v=>parseFloat(String(v).replace(",","."))||0,nn=v=>Math.max(0,num(v));
 let ei=-1,lastDel=null,tmr,isOpen=false;
 function show(){if(!isOpen){isOpen=true;oa=Date.now();if(!NATIVE)try{history.pushState({o:1},"")}catch(e){}}$("ov").classList.add("on");document.documentElement.classList.add("lk")}

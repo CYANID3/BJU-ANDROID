@@ -15,6 +15,8 @@ function drawSet(k){$("dwd").textContent={cal:"Всегда открывает �
  {const l=slv();$("slm").innerHTML=Object.keys(SLV).map(v=>`<button class="${l===v?"on":""}" onclick="setSl('${v}')">${SLV[v][5]}</button>`).join("");$("sli").style.width=Math.round(PLV[l][0]/3.4*100)+"%";$("sld").textContent=SLV[l][6];$("sver").textContent="Версия "+BUILD}
  {const t=tnv();$("tnm").innerHTML=[["off","Выкл."],["soft","Лёгкий"],["strong","Заметный"]].map(([v,n])=>`<button class="${t===v?"on":""}" onclick="setTn('${v}')">${n}</button>`).join("")}
  $("wtd").textContent={on:"Строка «Вес» внизу каждого дня, вес на карточке дня и график в статистике.",off:"Строки, графика и веса на карточке нет. Уже сделанные записи не удаляются."}[wtm()];$("wtm").innerHTML=[["on","Вкл."],["off","Выкл."]].map(([v,t])=>`<button class="${wtm()===v?"on":""}" onclick="setWt('${v}')">${t}</button>`).join("");
+ $("bbm").innerHTML=[["page","Внизу страницы"],["fix","У края экрана"]].map(([v,t])=>`<button class="${bbv()===v?"on":""}" onclick="setBb('${v}')">${t}</button>`).join("");$("bbd").textContent=bbv()==="fix"?"Панель всегда на экране, страница прокручивается под ней.":"Панель идёт после приёмов пищи — видна, когда долистаете до конца дня.";
+ $("nbm").innerHTML=[["bottom","Под списком"],["top","Под поиском"]].map(([v,t])=>`<button class="${nbv()===v?"on":""}" onclick="setNb('${v}')">${t}</button>`).join("");
  $("sgm").innerHTML=SWL.map(([v,t])=>`<button class="${a===v?"on":""}" onclick="setSw('${v}')">${t}</button>`).join("");
  $("swc").innerHTML=PRE.map(h=>`<button class="${c===h?"on":""}" style="background:${h||"#3b82f6"}" onclick="setAc('${h}')" aria-label="${h?"Цвет "+h:"Стандартный цвет"}">${ic("check")}</button>`).join("");
  if(!k)$("cp").value=c||"#3b82f6"}
