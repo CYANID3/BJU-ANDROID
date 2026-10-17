@@ -172,18 +172,47 @@ test('«Повторить предыдущий день?»: «Нет» скры
   await a.close();
 });
 
-test('перекусы: «Тонкой строкой» или «Скрыть» — одна кнопка «+ Перекус»; с записями — карточка', async () => {
+test('перекусы: «Тонкой строкой» или «По двойному касанию» по основному приёму', async () => {
   const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(3, 'Творог', 150, 25, 7, 3)] } } });
   assert.equal(await a.pg.locator('#app .snk').count(), 2, 'два пустых — строками');
   await a.ev(() => sets()); await a.wait(300);
   await a.pg.click('#snm button:nth-child(2)'); await a.ev(() => cl()); await a.wait(300);
-  assert.equal(await a.pg.locator('#app .snk').count(), 1, 'одна кнопка вместо пустых');
-  assert.equal(await a.pg.locator('#app .snk.one').count(), 1);
+  assert.equal(await a.pg.locator('#app .snk').count(), 0, 'пустых не видно');
   assert.equal(await a.pg.locator('#app .meal').count(), 4, 'перекус с записью — карточкой');
-  await a.pg.click('#app .snk.one'); await a.wait(300);
-  assert.equal(await a.ev(() => isOpen && [1, 3, 5].includes(am)), true, 'добавление в ближайший перекус');
-  assert.equal(await a.ev(() => toFile(S).settings.snacks), 'hideEmpty');
-  assert.equal(await a.ev(() => parseData(ser()).set.sn), 'hide');
+  const head = a.pg.locator('#app .meal[data-m="2"] .mh .mt');
+  await head.click(); await a.wait(120); await head.click(); await a.wait(350);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#app .snk')].map(b => b.dataset.m)), [], 'у обеда перекус 2 уже с записью — ничего не выдвигается');
+  const bf = a.pg.locator('#app .meal[data-m="0"] .mh .mt');
+  await bf.click(); await a.wait(120); await bf.click(); await a.wait(350);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#app .snk')].map(b => b.dataset.m)), ['1'], 'два касания по «Завтрак» — «+ Перекус 1»');
+  assert.ok(await a.ev(() => { const m = document.querySelector('#app .meal[data-m="0"]'), s = document.querySelector('#app .snk'); return m.nextElementSibling === s; }), 'сразу под завтраком');
+  await bf.click(); await a.wait(120); await bf.click(); await a.wait(350);
+  assert.equal(await a.pg.locator('#app .snk').count(), 0, 'ещё два касания — убирают');
+  await bf.click(); await a.wait(120); await bf.click(); await a.wait(350);
+  await a.ev(() => { cur = shiftDay(today, -1); render(); cur = today; render(); });
+  assert.equal(await a.pg.locator('#app .snk').count(), 0, 'пустой выдвинутый перекус прячется при смене дня');
+  await a.pg.click('#app .meal[data-m="0"] .add'); await a.wait(300);
+  assert.equal(await a.ev(() => isOpen && am), 0, 'кнопка «+» по-прежнему добавляет в сам приём');
+  await a.ev(() => cl()); await a.wait(300);
+  assert.equal(await a.ev(() => toFile(S).settings.snacks), 'doubleTap');
+  assert.equal(await a.ev(() => parseData(ser()).set.sn), 'tap');
   assert.deepEqual(a.errors, []);
+  await a.close();
+});
+
+test('вид интерфейса: «Компактный» уменьшает элементы, «Удобный» возвращает', async () => {
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(0, 'Рис', 100, 7, 1, 74)] } } });
+  const h = () => a.ev(() => [document.querySelector('#app .it').getBoundingClientRect().height, document.querySelector('#app .sum').getBoundingClientRect().height]);
+  const h0 = await h();
+  await a.ev(() => sets()); await a.wait(300);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#uim button')].map(b => b.textContent)), ['Удобный', 'Компактный']);
+  const inp0 = await a.ev(() => document.querySelector('#v7 .seg button').getBoundingClientRect().height);
+  await a.pg.click('#uim button:nth-child(2)'); await a.wait(200);
+  const inp1 = await a.ev(() => document.querySelector('#v7 .seg button').getBoundingClientRect().height);
+  assert.ok(inp1 < inp0, 'кнопки в листе ниже');
+  await a.ev(() => cl()); await a.wait(300);
+  const h1 = await h(); assert.ok(h1[0] < h0[0] && h1[1] < h0[1], `строки и итог плотнее: ${h0} → ${h1}`);
+  assert.equal(await a.ev(() => toFile(S).settings.uiDensity), 'compact');
+  await a.ev(() => setUi('comfy')); assert.deepEqual(await h(), h0);
   await a.close();
 });

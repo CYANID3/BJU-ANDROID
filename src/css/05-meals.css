@@ -16,4 +16,5 @@
 /* пустой перекус — тонкая строка «+ Перекус N» между карточками */
 .snk{display:flex;align-items:center;gap:10px;width:100%;min-height:46px;margin:0 0 var(--gap);padding:0 18px 0 14px;border:1.5px dashed var(--bd);border-radius:var(--r-block);color:var(--mu);font-size:15px;font-weight:600;text-align:left}
 .snk svg.i{width:20px;height:20px;padding:3px;box-sizing:content-box;border-radius:50%;background:var(--acs);color:var(--act,var(--ac))}.snk:active{background:var(--acs);border-color:var(--acb);transform:scale(.99)}
-.snk.one small{margin-left:auto;font-size:var(--fs-xs);font-weight:500;color:var(--mu)}
+/* выдвинутый двойным касанием перекус — прижат к своему приёму */
+.snk.tap{margin-top:calc(-1*var(--gap) + 4px);border-style:solid;border-color:var(--acb);background:var(--acs);color:var(--act,var(--ac))}

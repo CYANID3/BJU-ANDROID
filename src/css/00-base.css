@@ -6,3 +6,5 @@
  --h-ctl:56px;--h-seg:46px;--h-chip:42px;--h-ib:46px;--h-tile:40px;
  --pad-card:20px;--gap:12px;
  --fs-title:20px;--fs-h:18px;--fs-body:16px;--fs-sm:13.5px;--fs-xs:12.5px}
+/* «Компактный» вид интерфейса (Настройки → Оформление): та же система, на шаг плотнее */
+:root.uic{--r-card:20px;--r-block:15px;--r-ctl:13px;--r-in:10px;--h-ctl:44px;--h-seg:36px;--h-chip:34px;--h-ib:38px;--h-tile:32px;--pad-card:12px;--gap:7px;--fs-title:18px;--fs-h:16px;--fs-body:14.5px;--fs-sm:12.5px;--fs-xs:11.5px}

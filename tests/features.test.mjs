@@ -185,3 +185,17 @@ test('плитки под итогом: вес и неделя — одной в
   assert.equal(g.length, 1); assert.ok(Math.abs(g[0][2] - card.width) <= 1, 'одна плитка — на всю ширину');
   await a.close();
 });
+
+test('компактная карточка дня целиком помещается на экран (разные экраны, до 25 продуктов)', async () => {
+  const E = Array.from({ length: 25 }, (_, i) => entry(i % 6, 'Продукт номер ' + i, 100 + i, 5, 3, 10));
+  const a = await openApp({ data: { g: { p: 120, f: 70, c: 250 }, d: { [day()]: E }, wt: { [day()]: 72.4 } } });
+  for (const [w, h] of [[412, 915], [412, 780], [360, 700], [360, 640]]) {
+    await a.pg.setViewportSize({ width: w, height: h });
+    await a.ev(() => { togRep(false); togRep(true); setRepMode(1); }); await a.wait(450);
+    const r = await a.ev(() => { const c = document.querySelector('#app .rep').getBoundingClientRect(); return { b: c.bottom, ih: innerHeight, z: parseFloat(document.querySelector('#app .rep').style.zoom || 1) }; });
+    assert.ok(r.b <= r.ih - 4, `${w}×${h}: низ карточки ${Math.round(r.b)} при высоте экрана ${r.ih}`);
+    assert.ok(r.z >= 0.68, `${w}×${h}: не мельче 68 % (сейчас ${r.z.toFixed(2)})`);
+  }
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});

@@ -5,3 +5,15 @@
 .bfix body{padding-bottom:calc(var(--bth,84px) + 22px + var(--sab))}
 .bfix .tt{bottom:calc(var(--bth,84px) + 20px + max(var(--sab),var(--kb)))}
 .bfix .pu:not(.tp){bottom:calc(var(--bth,84px) + 30px + var(--sab))}
+/* компактный вид: заметно плотнее главный экран — та же раскладка, меньше воздуха */
+.uic body{padding:4px 10px 20px}.uic .nav{padding:4px 0 6px}.uic .nav>button{width:38px;height:38px}.uic .nav b{font-size:15.5px}
+.uic .card{padding:12px 14px}.uic .big b{font-size:32px}.uic .big .mu{font-size:14px}.uic .bar.k{height:8px;margin-top:9px}.uic .lf{margin:6px 2px 9px;font-size:13px}
+.uic .mac{gap:6px}.uic .mtl{padding:7px 8px 7px}.uic .mtn{font-size:12px}.uic .mtv{margin:2px 0 5px}.uic .mtv b{font-size:16px}.uic .mtl .bar{height:5px}.uic .mtr{margin-top:4px;font-size:11px}
+.uic .duo{gap:7px}.uic .dtl{min-height:50px;padding:7px 10px 7px 8px;gap:8px}.uic .dtl .ti{width:30px;height:30px}.uic .dtl .ti svg.i{width:17px;height:17px}.uic .dtl b{font-size:15.5px}.uic .dtl small,.uic .dtl em{font-size:11px}
+.uic .meal{padding:8px 10px 8px 14px}.uic .meal.sn{padding:6px 10px 6px 14px}.uic .mh{min-height:36px}.uic .mt b{font-size:15.5px}.uic .kp{font-size:11px;padding:3px 7px}
+.uic .add{width:36px;height:36px;border-radius:12px}.uic .ma .x{width:36px;height:36px}
+.uic .il{margin-top:6px;gap:3px}.uic .it{min-height:42px;padding:3px 0 3px 10px;border-radius:12px}.uic .it .n{font-size:14px}.uic .it .mu{font-size:11px;margin-top:0}.uic .it b{font-size:14px}.uic .it .x{width:32px;height:32px}
+.uic .snk{min-height:36px;font-size:13px;padding:0 14px 0 10px}.uic .snk svg.i{width:16px;height:16px}
+.uic .bt{padding:4px 2px;border-radius:18px}.uic .bt button{gap:3px;padding:3px 0 2px;font-size:10.5px}.uic .bt button span{width:34px;height:34px;border-radius:11px}.uic .bt button span svg.i{width:19px;height:19px}
+.uic .pk{min-height:46px;padding:5px 6px 5px 10px}.uic .pk .n{font-size:14px}.uic .mc button{padding:0 10px;font-size:13px}.uic .qf input,.uic .wtf input{height:56px;font-size:24px}.uic .wst{width:56px;height:56px}
+.uic .sg{padding:12px}.uic .ol button{min-height:46px;padding:5px 10px 5px 6px}.uic .ol .oi{width:30px;height:30px}

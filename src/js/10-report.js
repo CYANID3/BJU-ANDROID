@@ -6,10 +6,17 @@ let REP=0;
 let repMode=0;
 function setRepMode(m){repMode=m;render();scrollTo(0,0);hap(10);const c=$("app").querySelector(".rep");if(c&&!RM())try{c.animate([{opacity:.4,transform:`scale(${m===1?1.02:.98})`},{opacity:1,transform:"none"}],{duration:280,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}}
 const repDense=()=>{const c=$("app").querySelector(".rep");return !!c&&(c.classList.contains("dense")||!!c.style.zoom)};
-function repFit(){const app=$("app");let c=app.querySelector(".rep");if(!c)return;
- if(repMode===2)return;if(repMode===1){app.innerHTML=repHTML(1);c=app.querySelector(".rep")}const avail=innerHeight-(parseFloat(getComputedStyle(document.documentElement).paddingTop)||0)-(parseFloat(getComputedStyle(document.documentElement).paddingBottom)||0)-28;
- if(c.offsetHeight>avail){app.innerHTML=repHTML(1);c=app.querySelector(".rep")}
- if(c.offsetHeight>avail){const z=Math.max(.5,avail/c.offsetHeight);c.style.zoom=z}}
+// Подгонка под экран (авто и компактный вид): 1) компактный вид; 2) продукты в две колонки;
+// 3) лёгкое уменьшение всей карточки (две колонки — только для очень насыщенного дня) — с повторным замером, пока низ карточки не окажется на экране
+function repFit(){const app=$("app");let c=app.querySelector(".rep");if(!c)return;if(repMode===2)return;
+ // меряем раскладку (offsetTop / offsetHeight × zoom), а не getBoundingClientRect — на нём сказывается анимация появления
+ const lim=()=>innerHeight-(parseFloat(getComputedStyle(document.documentElement).paddingBottom)||0)-14,zo=()=>parseFloat(c.style.zoom||1),
+  top=()=>{let y=0,e=c;while(e){y+=e.offsetTop;e=e.offsetParent}return y-scrollY},hh=()=>c.offsetHeight*zo(),fits=()=>top()+hh()<=lim();
+ if(repMode===1||!fits()){app.innerHTML=repHTML(1);c=app.querySelector(".rep")}
+ // две колонки — только если одной колонке пришлось бы уменьшиться сильнее, чем до 85 % (иначе названия обрезаются зря)
+ if(!fits()&&(lim()-top())/hh()<.85&&c.querySelectorAll(".rp-it").length>8)c.classList.add("d2");
+ for(let k=0;k<5&&!fits();k++)c.style.zoom=Math.max(.5,zo()*(lim()-top())/hh()*(k?.98:1))}
+addEventListener("resize",()=>{if(REP)requestAnimationFrame(()=>{if(REP){const y=scrollY;render();scrollTo(0,y)}})});
 function repHTML(dense){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
  const dd=new Date(cur+"T12:00:00"),title=cap(dd.toLocaleDateString("ru-RU",{weekday:"long"}))+", "+dd.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+(dd.getFullYear()!==new Date().getFullYear()?" "+dd.getFullYear():"");
  // кольцо: доли калорий Б/Ж/У одним цельным кругом, цвета плавно перетекают друг в друга (как на логотипе)
@@ -23,13 +30,13 @@ function repHTML(dense){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f
  const sh=ks>0?kp.map(v=>Math.round(v/ks*100)):[];
  let h=`<div class="rep rep-in${dense?" dense":""}"><div class="rp-h"><div><div class="rp-d">${esc(title)}</div><div class="rp-k">${k}<span>из ${gk} ккал</span></div><div class="rp-l${left<0?" ov":""}">${left>=0?`Осталось <b>${left}</b> ккал`:`Перебор <b>${-left}</b> ккал`}</div>${wtRep()}</div>${ring}</div>`;
  h+=`<div class="mac rp-mac">${mtile("Белки",t.p,G.p,"var(--p)",1,sh[0])}${mtile("Жиры",t.f,G.f,"var(--f)",0,sh[1])}${mtile("Углеводы",t.c,G.c,"var(--c)",0,sh[2])}</div>`;
- // приёмы пищи — один блок, приёмы разделены тонкой линией; компактно — продукты плашками, подробно — строками
+ // приёмы пищи — один блок, приёмы через тонкую линию; продукты — ровные строки: название · количество · ккал
+ // (компактный вид — те же колонки мельче и плотнее, без БЖУ приёма)
  const meals=MEALS.map((m,mi)=>[m,E.filter(e=>e.m===mi),mi]).filter(x=>x[1].length);
  if(!meals.length)h+=`<div class="rp-empty">Записей за этот день нет</div>`;
  else{h+=`<div class="rp-ml">`;meals.forEach(([m,it,mi])=>{const s0=it.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),amt=e=>e.ul?f1(e.q)+" "+esc(e.ul):f1(e.g)+" г";
   h+=`<div class="rp-meal"><div class="rp-mh"><b>${LBL[mi]}</b>${dense?"":`<span class="rp-mm">Б ${f1(s0.p)} · Ж ${f1(s0.f)} · У ${f1(s0.c)}</span>`}<span class="kp">${kc(s0.p,s0.f,s0.c)} ккал</span></div>`+
-   (dense?`<div class="rp-dl">${it.map(e=>`<span><i>${esc(e.n)}</i><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b></span>`).join("")}</div>`
-    :it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b></div>`).join(""))+`</div>`});h+=`</div>`}
+   `<div class="rp-its">`+it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b></div>`).join("")+`</div></div>`});h+=`</div>`}
  h+=`<div class="rp-f"><span>Норма: ${gk} ккал · Б ${G.p} · Ж ${G.f} · У ${G.c} г</span><span><img src="icon-192.png" alt="">БЖУ</span></div></div>`;
  return h}
 function togRep(on){REP=on==null?!REP:on;repMode=0;document.documentElement.classList.toggle("repm",!!REP);hap(10);render();scrollTo(0,0);
