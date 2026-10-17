@@ -6,7 +6,7 @@ function render(){if(RDEF)return;if(REP){head();$("app").innerHTML=repHTML();rep
  const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
  head();
  let h="";
- {const q=new Date(cur+"T12:00:00");q.setDate(q.getDate()-1);const pk=iso(q);if(!E.length&&(S.d[pk]||[]).length)h+=`<div class="bn"><span>Повторить предыдущий день?</span><button onclick="cpy('${pk}')">Копировать</button></div>`}
+ {const q=new Date(cur+"T12:00:00");q.setDate(q.getDate()-1);const pk=iso(q);if(!E.length&&(S.d[pk]||[]).length&&!(S.ncp||[]).includes(cur))h+=`<div class="bn"><span>Повторить предыдущий день?</span><span class="bnb"><button class="no" onclick="ncp()">Нет</button><button onclick="cpy('${pk}')">Да</button></span></div>`}
  if(serr)h+=`<div class="bn er"><span>Не удалось сохранить данные в браузере</span><button onclick="fp()">В файл</button></div>`;
  else if(NATIVE){if(MF&&!mfOk)h+=`<div class="bn er"><span>Нет доступа к файлу «${esc(MF.name)}»</span><button onclick="fo2()">Выбрать</button></div>`}
  else if(H&&!perm&&S.dirty>0)h+=`<div class="bn"><span>Автосохранение на паузе · не в файле: ${S.dirty} изм.</span><button onclick="resume()">Продолжить</button></div>`;

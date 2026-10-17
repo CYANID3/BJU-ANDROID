@@ -155,3 +155,19 @@ test('длина свайпа: «потянуть вверх/вниз» силь
   assert.deepEqual([await pull('short'), await pull('mid'), await pull('long')], [true, true, false]);
   await a.close();
 });
+
+test('«Повторить предыдущий день?»: «Нет» скрывает для этого дня, «Да» копирует', async () => {
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day(-1)]: [entry(0, 'Рис', 100, 7, 1, 74)], [day(-3)]: [entry(0, 'Гречка', 80, 10, 2.6, 50)] } } });
+  assert.equal(await a.pg.locator('#app .bn').count(), 1);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#app .bn button')].map(b => b.textContent)), ['Нет', 'Да']);
+  await a.pg.click('#app .bn button.no'); await a.wait(350);
+  assert.equal(await a.pg.locator('#app .bn').count(), 0, 'скрылось');
+  await a.ev(() => { cur = shiftDay(today, -1); render(); cur = today; render(); });
+  assert.equal(await a.pg.locator('#app .bn').count(), 0, 'и не возвращается при возврате на день');
+  await a.ev(() => { cur = shiftDay(today, -2); render(); });
+  assert.equal(await a.pg.locator('#app .bn').count(), 1, 'на другом пустом дне — предлагается');
+  await a.pg.click('#app .bn button:not(.no)'); await a.wait(200);
+  assert.equal(await a.ev(() => S.d[cur][0].n), 'Гречка');
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});
