@@ -36,3 +36,8 @@
 .rp-mb{display:flex;align-items:center;gap:10px;margin:8px 0 4px}.rp-mb .bar.km{flex:1;height:8px;margin:0;padding:0;gap:2px;background:var(--card)}.rp-mb span{font-size:11.5px;color:var(--mu);white-space:nowrap;font-variant-numeric:tabular-nums}
 .rep:not(.dense) .rp-it{padding:9px 0 0;row-gap:1px}.rep:not(.dense) .rp-it small{grid-column:1/-1;font-size:11.5px;color:var(--mu);font-variant-numeric:tabular-nums}
 .rep:not(.dense) .rp-it+.rp-it{border-top:1px dashed color-mix(in srgb,var(--bd) 70%,transparent);margin-top:8px}
+/* полоса состава приёма — сегменты делят всю ширину по доле калорий */
+.rp-mb .bar.cb i{flex-shrink:1;min-width:6px}
+/* цветные буквы Б / Ж / У */
+.mx{font-style:normal;font-weight:700;margin:0 3px 0 0}.mx.p{color:var(--p)}.mx.f{color:var(--f)}.mx.c{color:var(--c)}
+.rp-mm .mx,.rp-it small .mx{margin-left:6px}.rp-mm .mx:first-child,.rp-it small .mx:first-child{margin-left:0}

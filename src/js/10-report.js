@@ -17,14 +17,19 @@ function repFit(){const app=$("app");let c=app.querySelector(".rep");if(!c)retur
  if(!fits()&&(lim()-top())/hh()<.85&&c.querySelectorAll(".rp-it").length>8)c.classList.add("d2");
  for(let k=0;k<5&&!fits();k++)c.style.zoom=Math.max(.5,zo()*(lim()-top())/hh()*(k?.98:1))}
 addEventListener("resize",()=>{if(REP)requestAnimationFrame(()=>{if(REP){const y=scrollY;render();scrollTo(0,y)}})});
+// Б / Ж / У цветными буквами: «Б 22,1  Ж 1,3  У 0»
+const mxs=e=>[["p","Б",e.p],["f","Ж",e.f],["c","У",e.c]].map(([k,l,v])=>`<i class="mx ${k}">${l}</i>${f1(v)}`).join(" ");
+// полоса состава приёма: вклад Б / Ж / У в его калории, на всю ширину
+function cbar(t){const part=[t.p*4,t.f*9,t.c*4],sum=part[0]+part[1]+part[2]||1;return `<div class="bar km cb">${part.map((v,i)=>v>0?`<i style="flex:${v/sum};background:${["var(--p)","var(--f)","var(--c)"][i]}"></i>`:"").join("")}</div>`}
 function repHTML(dense){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
  const dd=new Date(cur+"T12:00:00"),title=cap(dd.toLocaleDateString("ru-RU",{weekday:"long"}))+", "+dd.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+(dd.getFullYear()!==new Date().getFullYear()?" "+dd.getFullYear():"");
  // кольцо: доли калорий Б/Ж/У одним цельным кругом, цвета плавно перетекают друг в друга (как на логотипе)
  const kp=[t.p*4,t.f*9,t.c*4],ks=kp[0]+kp[1]+kp[2],col=["var(--p)","var(--f)","var(--c)"];
+ // кольцо долей калорий Б / Ж / У: чёткие границы и ровные зазоры между цветами (как на иконке приложения)
  let grad="var(--sub)";
- if(ks>0){const seg=kp.map((v,i)=>[v/ks*100,col[i]]).filter(x=>x[0]>0);if(seg.length===1)grad=seg[0][1];else{let st=0,parts=[];const bl=4;
-  seg.forEach(([w,c],j)=>{const a=st,b=st+w;parts.push(`${c} ${j?Math.min(b,a+bl/2):a}% ${j===seg.length-1?Math.max(a,b-bl/2):Math.max(a,b-bl/2)}%`);st=b});
-  parts.push(`${seg[0][1]} 100%`);grad=`conic-gradient(from 0deg,${parts.join(",")})`}}
+ if(ks>0){const seg=kp.map((v,i)=>[v/ks*100,col[i]]).filter(x=>x[0]>0);if(seg.length===1)grad=seg[0][1];else{const gap=1.6;let st=0,parts=[];
+  seg.forEach(([w,c])=>{const a=st,b=st+w;parts.push(`${c} ${(a+gap/2).toFixed(2)}% ${(b-gap/2).toFixed(2)}%`,`transparent ${(b-gap/2).toFixed(2)}% ${Math.min(100,b+gap/2).toFixed(2)}%`);st=b});
+  grad=`conic-gradient(from ${-gap*1.8}deg,transparent 0% ${(gap/2).toFixed(2)}%,${parts.join(",")})`}}
  const ring=`<div class="rp-ring" style="--rg:${grad}"><div class="rp-rc"><b>${gk?Math.round(k/gk*100):0}%</b><span>нормы</span></div></div>`;
  // Б / Ж / У — те же плитки, что на главном экране (съедено / норма, полоска, остаток, доля калорий)
  const sh=ks>0?kp.map(v=>Math.round(v/ks*100)):[];
@@ -35,8 +40,8 @@ function repHTML(dense){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f
  const meals=MEALS.map((m,mi)=>[m,E.filter(e=>e.m===mi),mi]).filter(x=>x[1].length);
  if(!meals.length)h+=`<div class="rp-empty">Записей за этот день нет</div>`;
  else{h+=`<div class="rp-ml">`;meals.forEach(([m,it,mi])=>{const s0=it.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),amt=e=>e.ul?f1(e.q)+" "+esc(e.ul):f1(e.g)+" г";
-  h+=`<div class="rp-meal"><div class="rp-mh"><b>${LBL[mi]}</b>${dense?"":`<span class="rp-mm">Б ${f1(s0.p)} · Ж ${f1(s0.f)} · У ${f1(s0.c)}</span>`}<span class="kp">${kc(s0.p,s0.f,s0.c)} ккал</span></div>`+
-   (dense?"":`<div class="rp-mb">${kbar(s0,gk,kc(s0.p,s0.f,s0.c))}<span>${gk?Math.round(kc(s0.p,s0.f,s0.c)/gk*100):0}% нормы</span></div>`)+`<div class="rp-its">`+it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b>${dense?"":`<small>Б ${f1(e.p)} · Ж ${f1(e.f)} · У ${f1(e.c)}</small>`}</div>`).join("")+`</div></div>`});h+=`</div>`}
+  h+=`<div class="rp-meal"><div class="rp-mh"><b>${LBL[mi]}</b>${dense?"":`<span class="rp-mm">${mxs(s0)}</span>`}<span class="kp">${kc(s0.p,s0.f,s0.c)} ккал</span></div>`+
+   (dense?"":`<div class="rp-mb">${cbar(s0)}<span>${gk?Math.round(kc(s0.p,s0.f,s0.c)/gk*100):0}% нормы</span></div>`)+`<div class="rp-its">`+it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b>${dense?"":`<small>${mxs(e)}</small>`}</div>`).join("")+`</div></div>`});h+=`</div>`}
  h+=`<div class="rp-f"><span>Норма: ${gk} ккал · Б ${G.p} · Ж ${G.f} · У ${G.c} г</span><span><img src="icon-192.png" alt="">БЖУ</span></div></div>`;
  return h}
 function togRep(on){REP=on==null?!REP:on;repMode=0;document.documentElement.classList.toggle("repm",!!REP);hap(10);render();scrollTo(0,0);
