@@ -10,16 +10,16 @@
 //   "diary":    { "2026-10-16": { "breakfast": [ { "name": "Яблоко", "grams": 55, "protein": 0.2, "fat": 0.2, "carbs": 5.4,
 //                                                  "unit": { "name": "шт", "count": 1 } } ],
 //                                 "snack1": [], "lunch": [], "snack2": [], "dinner": [], "snack3": [] } },
-//   "settings": { "theme": "auto|light|dark", "accentColor": "#22a06b", "pullUpAction": "meal|product|off",
+//   "settings": { "theme": "auto|light|dark", "accentColor": "#22a06b", "pullUpAction": "meal|product|stats|weight|off",
 //                 "pullDownAction": "calendar|today|off", "vibration": "on|exceptDays|off", "swipeLength": "short|medium|long",
 //                 "backgroundTint": "off|soft|strong", "weightTracking": "on|off",
-//                 "bottomBar": "page|fixed", "newButtons": "bottom|top" },
+//                 "bottomBar": "floating|fixed|page", "newButtons": "bottom|top" },
 //   "weight":   { "2026-10-16": 72.4 },                                    — вес по дням, кг
 //   "stats":    { "useCount": { "Яблоко": 12 }, "lastGrams": { "Яблоко": 55 }, "recent": [ "Яблоко" ] }   — для сортировки и подсказок
 // }
 // В products числа на 100 г можно не указывать (будет 0). Старые файлы (без "format") тоже открываются.
 const MK=["breakfast","snack1","lunch","snack2","dinner","snack3"];
-const STM={th:["theme",{}],tn:["backgroundTint",{}],ac:["accentColor",{}],sw:["pullUpAction",{prod:"product"}],dw:["pullDownAction",{cal:"calendar"}],hp:["vibration",{nodays:"exceptDays"}],sl:["swipeLength",{mid:"medium"}],wt:["weightTracking",{}],bb:["bottomBar",{fix:"fixed"}],nb:["newButtons",{}]};
+const STM={th:["theme",{}],tn:["backgroundTint",{}],ac:["accentColor",{}],sw:["pullUpAction",{prod:"product",stat:"stats",wt:"weight"}],dw:["pullDownAction",{cal:"calendar"}],hp:["vibration",{nodays:"exceptDays"}],sl:["swipeLength",{mid:"medium"}],wt:["weightTracking",{}],bb:["bottomBar",{fix:"fixed",float:"floating"}],nb:["newButtons",{}]};
 const r3=x=>Math.round(x*1000)/1000,fnum=(x,d)=>x==null||x===""?d:typeof x==="number"?x:parseFloat(String(x).replace(",","."));
 const entOut=e=>{const o={name:e.n,grams:r3(e.g),protein:r3(e.p),fat:r3(e.f),carbs:r3(e.c)};if(e.ul)o.unit={name:e.ul,count:e.q};return o};
 const entIn=(o,w)=>{if(!o||typeof o!=="object")throw Error(w+": запись должна быть объектом");if(!o.name)throw Error(w+": нет названия (name)");

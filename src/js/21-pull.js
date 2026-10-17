@@ -1,6 +1,6 @@
 // Жесты «потянуть вверх/вниз» и их индикатор
 // Жесты «потянуть»: индикатор-кольцо следует за пальцем; срабатывает по расстоянию или резкому рывку.
-// длина «потянуть вверх/вниз»: короткий ≈34 px, средний ≈96 px, длинный ≈230 px
+// длина «потянуть вверх/вниз»: короткий ≈21 px, средний ≈96 px, длинный ≈326 px
 const PLV={short:[.22,.15,.15],mid:[1,.45,.45],long:[3.4,9,1]},PL=i=>PLV[slv()][i],THv=()=>96*PL(0);let rd=0,pAct=0,pDn=false,pbY=null,ptY=null,PS=[];
 // скорость (px/мс) по последним ~100 мс жеста
 const pVel=()=>{const l=PS[PS.length-1];if(!l)return 0;let o=l;for(const q of PS)if(l[0]-q[0]<=100){o=q;break}return l[0]>o[0]?(l[1]-o[1])/(l[0]-o[0]):0};
@@ -11,8 +11,8 @@ function pull(v,dn){const u=$("pu"),w=u.firstElementChild,a=REP?"on":dn?(dwOn()?
  if(a==="off"){if(pAct)phide();return}
  if(!pAct&&v<8)return;
  if(!pAct||pDn!==dn){pAct=1;pDn=dn;rd=0;u.classList.remove("go","rdy");u.classList.add("drag");u.classList.toggle("tp",dn);
-  const k=dn?dwAct():swAct();$("pa").innerHTML=ic(REP?(dn?"expand":"collapse"):dn?(k==="today"?"today":"cal"):(k==="prod"?"box":"plus"));
-  $("pt").textContent=REP?(dn?"Подробный вид":"Компактный вид"):dn?(k==="today"?"К сегодня":"Календарь"):(k==="prod"?"Новый продукт":"Добавить: "+LBL[autoMeal()])}
+  const k=dn?dwAct():swAct();$("pa").innerHTML=ic(REP?(dn?"expand":"collapse"):dn?(k==="today"?"today":"cal"):({prod:"box",stat:"chart",wt:"scale"}[k]||"plus"));
+  $("pt").textContent=REP?(dn?"Подробный вид":"Компактный вид"):dn?(k==="today"?"К сегодня":"Календарь"):({prod:"Новый продукт",stat:"Статистика",wt:"Вес"}[k]||"Добавить: "+LBL[autoMeal()])}
  v=Math.max(0,v);const TH=THv(),p=Math.min(1,v/TH),CAP=120,off=v<=CAP?v*.7:CAP*.7+(v-CAP)*.12,y=90-off;
  const r=rd?v>=TH*.92:v>=TH;if(r!==rd){rd=r;u.classList.toggle("rdy",r);if(r)hap(12)}
  u.style.opacity=Math.min(1,off/36);w.style.transform=`translateY(${dn?-y:y}px)`;

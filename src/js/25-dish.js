@@ -2,9 +2,9 @@
 const dtot=()=>dr.i.reduce((a,x)=>({g:a.g+x.g,p:a.p+x.p,f:a.f+x.f,c:a.c+x.c}),{g:0,p:0,f:0,c:0});
 function dbt(){if(mode==="ing"){drawDish();return}ed=-1;pmode=mode;ik=-1;dr={n:"",i:[],w:0};drawDish()}
 function drawDish(){$("dn").value=dr.n;$("dw").value=dr.w||"";$("ddl").hidden=ed<0;dlist();sv(8,ed<0?"Новое блюдо":"Изменить блюдо")}
-function dlist(){$("di").innerHTML=dr.i.map((x,k)=>`<div class="it" data-k="${k}"><div><div class="n">${esc(x.n)}</div><div class="mu">${x.ul?x.q+" "+esc(x.ul)+" · ":""}${r1(x.g)} г</div></div><b>${kc(x.p,x.f,x.c)}<small>ккал</small></b><button class="x" onclick="dx(${k})" aria-label="Удалить">${ic("close")}</button></div>`).join("");$("dh").textContent=dr.i.length?"Дважды коснитесь ингредиента, чтобы изменить количество":"";dsum()}
+function dlist(){$("di").innerHTML=dr.i.map((x,k)=>`<div class="it" data-k="${k}"><div><div class="n">${esc(x.n)}</div><div class="mu">${x.ul?x.q+" "+esc(x.ul)+" · ":""}${f1(x.g)} г</div></div><b>${kc(x.p,x.f,x.c)}<small>ккал</small></b><button class="x" onclick="dx(${k})" aria-label="Удалить">${ic("close")}</button></div>`).join("");$("dh").textContent=dr.i.length?"Дважды коснитесь ингредиента, чтобы изменить количество":"";dsum()}
 function dx(k){dr.i.splice(k,1);dlist()}
-function dsum(){const t=dtot(),w=num($("dw").value)||t.g;$("dw").placeholder=t.g?"Сумма: "+r1(t.g):"Вес, г";$("ds").textContent=t.g?`Всего ${kc(t.p,t.f,t.c)} ккал · на 100 г: Б ${r1(t.p/w*100)} · Ж ${r1(t.f/w*100)} · У ${r1(t.c/w*100)} · порция = ${r1(w)} г`:"Добавьте ингредиенты"}
+function dsum(){const t=dtot(),w=num($("dw").value)||t.g;$("dw").placeholder=t.g?"Сумма: "+f1(t.g):"Вес, г";$("ds").textContent=t.g?`Всего ${kc(t.p,t.f,t.c)} ккал · на 100 г: Б ${f1(t.p/w*100)} · Ж ${f1(t.f/w*100)} · У ${f1(t.c/w*100)} · порция = ${f1(w)} г`:"Добавьте ингредиенты"}
 function dring(){dsync();ik=-1;mode="ing";$("q").value="";lst();drawMc();sv(1,"Ингредиент")}
 async function dsv(){const n=$("dn").value.trim(),t=dtot(),w=num($("dw").value)||t.g;if(!n)return toast("Введите название блюда");if(!dr.i.length)return toast("Добавьте ингредиенты");if(!(w>0))return;
  if(S.db.some((x,i)=>i!==ed&&nz(x[0])===nz(n))&&!await ask("Продукт «"+n+"» уже есть. Создать ещё один?","Создать"))return;

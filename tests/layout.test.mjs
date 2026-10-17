@@ -6,22 +6,22 @@ import { openApp, day, entry } from './helpers.mjs';
 const many = () => { const d = {}; d[day()] = Array.from({ length: 12 }, (_, i) => entry(i % 6, 'Продукт ' + i, 100, 5, 5, 10)); return d; };
 const dish = ['Салат', 1.2, 4.8, 4, [['порция', 300]], { w: 300, i: [{ n: 'Огурец', g: 200, p: 1.6, f: .2, c: 5 }] }];
 
-test('нижняя панель: внизу страницы или закреплена у края экрана', async () => {
+test('нижняя панель: плавающая (по умолчанию), всегда видна, в конце дня', async () => {
   const a = await openApp({ data: { g: { p: 120, f: 70, c: 250 }, d: many() } });
   const vh = await a.ev(() => innerHeight);
-  const pos = () => a.ev(() => { const r = document.querySelector('.bt').getBoundingClientRect(); return { top: r.top, bottom: r.bottom, fixed: getComputedStyle(document.querySelector('.bt')).position === 'fixed' }; });
+  const pos = () => a.ev(() => { const b = document.querySelector('.bt'), r = b.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, fixed: getComputedStyle(b).position === 'fixed', hidden: document.documentElement.classList.contains('bhide') }; });
+  const scrollBy = async dy => { for (let i = 0; i < 6; i++) { await a.ev(d => scrollBy(0, d), dy / 6); await a.wait(30); } await a.wait(380); };
+  // плавающая: видна в начале, прячется при прокрутке вниз, возвращается при прокрутке вверх и в конце дня
   let p = await pos();
-  assert.equal(p.fixed, false); assert.ok(p.top > vh, 'по умолчанию — после приёмов пищи, за экраном');
-  await a.ev(() => sets()); await a.wait(300);
-  await a.pg.click('#bbm button:nth-child(2)'); await a.ev(() => cl()); await a.wait(400);
-  await a.ev(() => scrollTo(0, 0)); await a.wait(100);
-  p = await pos();
-  assert.equal(p.fixed, true); assert.ok(p.bottom <= vh && p.bottom > vh - 60, 'видна у нижнего края в начале страницы');
-  // в конце страницы последний элемент не прячется под панелью
-  await a.ev(() => scrollTo(0, 1e6)); await a.wait(100);
+  assert.equal(p.fixed, true); assert.equal(p.hidden, false); assert.ok(p.bottom <= vh && p.bottom > vh - 60);
+  await scrollBy(300); assert.equal((await pos()).hidden, true, 'прячется при прокрутке вниз');
+  await scrollBy(-60); assert.equal((await pos()).hidden, false, 'появляется при прокрутке вверх');
+  await scrollBy(200); assert.equal((await pos()).hidden, true);
+  await a.ev(() => scrollTo(0, 1e6)); await a.wait(400);
+  p = await pos(); assert.equal(p.hidden, false, 'в конце дня видна');
   const last = await a.ev(() => [...document.querySelectorAll('#app > *')].pop().getBoundingClientRect().bottom);
-  p = await pos(); assert.ok(last <= p.top, `последний блок (${last}) выше панели (${p.top})`);
-  // жест «потянуть вверх» в конце страницы работает и с закреплённой панелью
+  assert.ok(last <= p.top, `последний блок (${last}) выше панели (${p.top})`);
+  // жест «потянуть вверх» в конце страницы работает
   await a.ev(() => { S.set = { ...S.set, sw: 'meal' }; scrollTo(0, 1e6); }); await a.wait(150);
   await a.drag(200, 600, 200, 380, { steps: 14, ms: 30 }); await a.wait(500);
   assert.equal(await a.ev(() => isOpen), true);
@@ -34,11 +34,20 @@ test('нижняя панель: внизу страницы или закреп
   await a.ev(() => togRep(true)); await a.wait(200);
   assert.equal(await a.ev(() => getComputedStyle(document.querySelector('.bt')).display), 'none');
   await a.ev(() => togRep(false)); await a.wait(200);
-  // обратно
-  await a.ev(() => setBb('page')); await a.wait(100); await a.ev(() => scrollTo(0, 0));
-  assert.equal((await pos()).fixed, false);
-  assert.equal(await a.ev(() => toFile({ ...S, set: { ...S.set, bb: 'fix' } }).settings.bottomBar), 'fixed');
-  assert.equal(await a.ev(() => parseData(JSON.stringify(toFile({ ...S, set: { ...S.set, bb: 'fix', nb: 'top' } }))).set.bb), 'fix');
+  // всегда видна: не прячется при прокрутке
+  await a.ev(() => sets()); await a.wait(300);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#bbm button')].map(b => b.textContent)), ['Плавающая', 'Всегда видна', 'В конце дня']);
+  await a.pg.click('#bbm button:nth-child(2)'); await a.ev(() => cl()); await a.wait(400);
+  await a.ev(() => scrollTo(0, 0)); await a.wait(100); await scrollBy(300);
+  p = await pos(); assert.equal(p.fixed, true); assert.equal(p.hidden, false); assert.ok(p.bottom <= vh);
+  // в конце дня: после приёмов пищи
+  await a.ev(() => setBb('page')); await a.wait(100); await a.ev(() => scrollTo(0, 0)); await a.wait(100);
+  p = await pos(); assert.equal(p.fixed, false); assert.ok(p.top > vh);
+  await scrollBy(300); assert.equal((await pos()).hidden, false);
+  for (const [v, f] of [['fix', 'fixed'], ['float', 'floating'], ['page', 'page']]) {
+    assert.equal(await a.ev(v => toFile({ ...S, set: { ...S.set, bb: v } }).settings.bottomBar, v), f);
+    assert.equal(await a.ev(v => parseData(JSON.stringify(toFile({ ...S, set: { ...S.set, bb: v } }))).set.bb, v), v);
+  }
   assert.deepEqual(a.errors, []);
   await a.close();
 });

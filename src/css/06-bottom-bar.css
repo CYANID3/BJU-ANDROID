@@ -4,3 +4,4 @@
 .bt button span{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac));transition:background .18s,color .18s,transform .18s var(--spring)}
 .bt button:active{transform:none}.bt button:active span{background:var(--ac);color:var(--on);transform:scale(.9)}
 
+.bt button:nth-child(3) span{background:var(--ac);color:var(--on);box-shadow:0 4px 12px color-mix(in srgb,var(--ac) 35%,transparent)}
