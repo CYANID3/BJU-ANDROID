@@ -3,9 +3,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { openApp, day, entry } from './helpers.mjs';
 
-test('запуск без ошибок: итог дня и шесть приёмов пищи', async () => {
+test('запуск без ошибок: итог дня, три основных приёма и тонкие строки пустых перекусов', async () => {
   const a = await openApp();
-  assert.equal(await a.pg.locator('#app .meal').count(), 6);
+  assert.equal(await a.pg.locator('#app .meal').count(), 3);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#app .snk span')].map(e => e.textContent)), ['Перекус 1', 'Перекус 2', 'Перекус 3']);
+  await a.pg.click('#app .snk >> nth=1'); await a.wait(300);
+  assert.equal(await a.ev(() => isOpen && am), 3, '«+ Перекус 2» открывает добавление в перекус 2');
+  await a.ev(() => cl()); await a.wait(300);
   assert.match(await a.pg.textContent('#app .sum'), /из \d+ ккал/);
   assert.equal(await a.pg.locator('.bt button').count(), 5);
   assert.deepEqual(a.errors, []);

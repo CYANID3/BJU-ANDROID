@@ -1,11 +1,5 @@
-/* Вес: плашка в итоге дня и ввод в нижнем листе */
-/* плашка веса в итоге дня — в строке «Осталось … ккал», справа. Высота строки одна и та же — с плашкой и без,
-   у обоих состояний плашки одинаковая высота и скругление, правый край — по краю полосок */
-.lfr{display:flex;align-items:center;gap:10px;min-height:32px;margin:8px 0 14px}.lfr .lf{margin:0;flex:1;min-width:0}
-.wpl{flex:none;display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 13px 0 11px;border-radius:var(--r-pill);background:var(--sub);border:1px solid var(--bd);color:var(--mu);font-size:12.5px;font-weight:500;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums;transition:background-color .15s,transform .15s}
-.wpl svg.i{width:14px;height:14px;margin-right:2px;color:var(--act,var(--ac))}.wpl b{font-size:14.5px;font-weight:700;color:var(--tx)}.wpl small{font-size:12px;margin-left:3px}
-.wpl.wadd{gap:3px;padding:0 13px 0 10px;color:var(--act,var(--ac));font-weight:600;font-size:13px;background:var(--acs);border-color:transparent}.wpl.wadd svg.i{stroke-width:2.4;margin-right:1px}
-.wpl:active{transform:scale(.95)}
+/* Вес: ввод в нижнем листе (плитка «Вес» — в 04-summary.css) */
+
 .wtin{display:flex;align-items:center;gap:10px;margin:0 0 4px}
 .wtf{flex:1;position:relative}.wtf input{margin:0;height:66px;text-align:center;font-size:28px;font-weight:700;padding:0 44px;border-radius:var(--r-block);font-variant-numeric:tabular-nums}
 .wtf span{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--mu);font-size:15px;pointer-events:none}

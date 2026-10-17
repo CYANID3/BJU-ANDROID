@@ -52,19 +52,18 @@ test('недавние собираются из дневника, переим�
   await a.close();
 });
 
-test('вес: плашка в итоге дня, запись, разница с прошлой, отключение в настройках', async () => {
+test('вес: плитка под итогом дня, запись, разница с прошлой, отключение в настройках', async () => {
   const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: {}, wt: { [day(-3)]: 73 } } });
-  const card = a.pg.locator('#app .wpl');
-  assert.equal((await card.textContent()).trim(), 'Вес', 'за этот день не записан — кнопка «+ Вес»');
-  assert.equal(await a.pg.locator('#app .sum .lfr .wpl.wadd').count(), 1, 'в строке «Осталось»');
-  assert.equal(await a.ev(() => { const b = document.querySelector('#app .wpl').getBoundingClientRect(), c = document.querySelector('#app .sum').getBoundingClientRect(); return b.right <= c.right - 8 && b.height < 40; }), true, 'плашка целиком внутри карточки');
+  const card = a.pg.locator('#app .wtl');
+  assert.match(await card.textContent(), /^ВесЗаписатьбыло 73 кг$/, 'за этот день не записан — «Записать», прошлый вес мелко');
+  assert.equal(await a.ev(() => { const t = document.querySelector('#app .wtl'), s = document.querySelector('#app .sum'); return t.parentElement.classList.contains('duo') && t.getBoundingClientRect().top > s.getBoundingClientRect().bottom; }), true, 'плитка — сразу под итогом дня');
   await card.click(); await a.wait(400);
   assert.equal(await a.ev(() => !$('v10').hidden), true);
   assert.match(await a.pg.textContent('#wpv'), /Прошлая запись: 73 кг/);
   await a.pg.fill('#wv', '72,4');
   await a.pg.press('#wv', 'Enter'); await a.wait(400);
   assert.equal(await a.ev(() => S.wt[cur]), 72.4);
-  assert.match(await card.textContent(), /72,4кг−0,6/);
+  assert.match(await card.textContent(), /72,4кг−0,6 кг с /);
   // кнопки ±0,1
   await card.click(); await a.wait(300);
   await a.pg.click('.wst >> nth=1'); assert.equal(await a.pg.inputValue('#wv'), '72,5');
@@ -74,7 +73,7 @@ test('вес: плашка в итоге дня, запись, разница с
   assert.equal(await a.ev(() => S.wt[cur]), 72.4); await a.ev(() => cl()); await a.wait(300);
   // будущий день — без строки веса
   await a.ev(() => { cur = shiftDay(today, 1); render(); });
-  assert.equal(await a.pg.locator('#app .wpl').count(), 0);
+  assert.equal(await a.pg.locator('#app .wtl').count(), 0);
   await a.ev(() => { cur = today; render(); });
   // отключение
   await a.ev(() => sets()); await a.wait(300);
@@ -82,7 +81,7 @@ test('вес: плашка в итоге дня, запись, разница с
   const bw = await a.pg.locator('#wtm button').evaluateAll(b => b.map(x => Math.round(x.getBoundingClientRect().width)));
   assert.ok(Math.abs(bw[0] - bw[1]) <= 1, 'по 50%');
   await a.pg.click('#wtm button:nth-child(2)'); await a.wait(100);
-  assert.equal(await a.pg.locator('#app .wpl').count(), 0);
+  assert.equal(await a.pg.locator('#app .wtl').count(), 0);
   assert.equal(await a.ev(() => S.wt[cur]), 72.4, 'записи не удаляются');
   assert.deepEqual(a.errors, []);
   await a.close();
@@ -151,11 +150,11 @@ test('жест вверх: статистика и вес; при жесте «�
   assert.equal(await a.ev(() => toFile(S).settings.pullUpAction), 'weight');
   assert.equal(await a.ev(() => parseData(ser()).set.sw), 'wt');
   await a.ev(() => cl()); await a.wait(300);
-  assert.equal(await a.pg.locator('#app .wpl').count(), 0, '«+ вес» скрыта, вес пишется жестом');
+  assert.equal(await a.pg.locator('#app .wtl').count(), 0, '«Записать» скрыта, вес пишется жестом');
   await pullUp();
   assert.equal(await a.ev(() => isOpen && !$('v10').hidden), true, 'открылся ввод веса');
   await a.pg.fill('#wv', '70'); await a.pg.press('#wv', 'Enter'); await a.wait(400);
-  assert.match(await a.pg.textContent('#app .wpl'), /70кг/, 'записанный вес виден');
+  assert.match(await a.pg.textContent('#app .wtl'), /70кг/, 'записанный вес виден');
   // вес выключен — пункта «Вес» нет, жест не срабатывает
   await a.ev(() => { S.set = { ...S.set, wt: 'off' }; sets(); }); await a.wait(300);
   assert.equal(await a.pg.locator('#sgm button').count(), 4);
@@ -165,21 +164,20 @@ test('жест вверх: статистика и вес; при жесте «�
   await a.close();
 });
 
-test('плашка веса: «+ Вес», пока за день не записан; ровная строка в обоих состояниях', async () => {
-  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: {}, wt: { [day(-1)]: 81 } } });
-  const geo = () => a.ev(() => { const r = q => document.querySelector(q).getBoundingClientRect(); const p = r('#app .wpl'), row = r('#app .lfr'), bar = r('#app .sum .bar'), c = r('#app .sum');
-    return { h: Math.round(p.height), rowH: Math.round(row.height), right: Math.round(p.right), barRight: Math.round(bar.right), mid: Math.round(p.top + p.height / 2 - (row.top + row.height / 2)), w: p.width, cRight: c.right }; });
-  assert.equal(await a.pg.locator('#app .wpl.wadd').count(), 1, 'вчера был вес, сегодня нет — «+ Вес»');
-  const g1 = await geo();
-  assert.ok(g1.w > g1.h * 1.6 && g1.right <= g1.cRight - 8, 'кнопка не сжата и внутри карточки');
-  assert.equal(g1.right, g1.barRight, 'правый край — по краю полосок'); assert.equal(g1.mid, 0, 'по центру строки');
-  await a.pg.click('#app .wpl'); await a.wait(300);
-  assert.match(await a.pg.textContent('#wpv'), /Прошлая запись: 81 кг/);
-  await a.pg.fill('#wv', '80'); await a.pg.press('#wv', 'Enter'); await a.wait(300);
-  assert.match(await a.pg.textContent('#app .wpl'), /^80кг−1$/);
-  const g2 = await geo();
-  assert.deepEqual([g2.h, g2.rowH, g2.right, g2.mid], [g1.h, g1.rowH, g1.right, g1.mid], 'та же высота, строка не прыгает');
-  await a.ev(() => { cur = shiftDay(today, -1); render(); });
-  assert.match(await a.pg.textContent('#app .wpl'), /^81кг$/);
+test('плитки под итогом: вес и неделя — одной высоты, рядом; без одной — вторая на всю ширину', async () => {
+  const d = {}; for (let i = 1; i < 4; i++) d[day(-i)] = [entry(2, 'Рис', 100, 7, 1, 74)];
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d, wt: { [day(-1)]: 81 } } });
+  const geo = () => a.ev(() => [...document.querySelectorAll('#app .duo > *')].map(e => { const r = e.getBoundingClientRect(); return [Math.round(r.top), Math.round(r.height), Math.round(r.width)]; }));
+  let g = await geo();
+  assert.equal(g.length, 2); assert.equal(g[0][0], g[1][0]); assert.equal(g[0][1], g[1][1], 'одна высота'); assert.ok(Math.abs(g[0][2] - g[1][2]) <= 1, 'одна ширина');
+  assert.match(await a.pg.textContent('#app .duo .dtl:not(.wtl)'), /В среднем · 3 дн\.333ккалбелок 7 г$/);
+  await a.pg.click('#app .wtl'); await a.wait(300); await a.pg.fill('#wv', '80'); await a.pg.press('#wv', 'Enter'); await a.wait(300);
+  const g2 = await geo(); assert.deepEqual(g2.map(x => x[1]), g.map(x => x[1]), 'после записи высота та же');
+  assert.match(await a.pg.textContent('#app .wtl'), /80кг−1 кг с /);
+  await a.pg.click('#app .duo .dtl:not(.wtl)'); await a.wait(300);
+  assert.equal(await a.ev(() => isOpen && !$('v9').hidden), true, 'неделя открывает статистику');
+  await a.ev(() => { cl(); S.set = { ...S.set, wt: 'off' }; render(); }); await a.wait(300);
+  g = await geo(); const card = await a.pg.locator('#app .sum').boundingBox();
+  assert.equal(g.length, 1); assert.ok(Math.abs(g[0][2] - card.width) <= 1, 'одна плитка — на всю ширину');
   await a.close();
 });
