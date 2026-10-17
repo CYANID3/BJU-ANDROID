@@ -99,7 +99,7 @@ public class BjuWidget extends AppWidgetProvider {
             boolean fresh = today.equals(p.getString("date", ""));
             dark = p.getBoolean("dark", true);
             accent = p.getInt("accent", 0xFF22A565);
-            bg = p.getInt("bg", dark ? 0xFF1A1E25 : 0xFFFFFFFF);
+            bg = p.getInt("bg", dark ? 0xFF1A202B : 0xFFFFFFFF);
             tx = dark ? 0xFFEEF1F5 : 0xFF161A22;
             mu = dark ? 0xFF8F98A8 : 0xFF6A7282;
             kcalGoal = p.getInt("goal", 0);

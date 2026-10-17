@@ -17,3 +17,6 @@
 .ol .ot{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.ol .ot b{font-size:var(--fs-body);font-weight:600}.ol .ot small{font-size:var(--fs-xs);color:var(--mu);line-height:1.3}
 .ol .oc{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--bd);display:grid;place-items:center;color:transparent;transition:background-color .15s,border-color .15s}.ol .oc svg.i{width:14px;height:14px;stroke-width:3}
 .ol button.on{background:var(--acs)}.ol button.on .oi{background:var(--ac);color:var(--on)}.ol button.on .oc{background:var(--ac);border-color:var(--ac);color:var(--on)}
+/* свёрнутый список: видна только выбранная строка, справа — стрелка «раскрыть» */
+.ol .od{display:none;flex:none;color:var(--mu)}.ol .od svg.i{width:18px;height:18px;transform:rotate(90deg)}
+.ol.cl button:not(.on){display:none}.ol.cl button.on{background:transparent}.ol.cl .oc{display:none}.ol.cl .od{display:grid}

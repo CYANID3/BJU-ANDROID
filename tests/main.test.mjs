@@ -171,3 +171,19 @@ test('«Повторить предыдущий день?»: «Нет» скры
   assert.deepEqual(a.errors, []);
   await a.close();
 });
+
+test('перекусы: «Тонкой строкой» или «Скрыть» — одна кнопка «+ Перекус»; с записями — карточка', async () => {
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(3, 'Творог', 150, 25, 7, 3)] } } });
+  assert.equal(await a.pg.locator('#app .snk').count(), 2, 'два пустых — строками');
+  await a.ev(() => sets()); await a.wait(300);
+  await a.pg.click('#snm button:nth-child(2)'); await a.ev(() => cl()); await a.wait(300);
+  assert.equal(await a.pg.locator('#app .snk').count(), 1, 'одна кнопка вместо пустых');
+  assert.equal(await a.pg.locator('#app .snk.one').count(), 1);
+  assert.equal(await a.pg.locator('#app .meal').count(), 4, 'перекус с записью — карточкой');
+  await a.pg.click('#app .snk.one'); await a.wait(300);
+  assert.equal(await a.ev(() => isOpen && [1, 3, 5].includes(am)), true, 'добавление в ближайший перекус');
+  assert.equal(await a.ev(() => toFile(S).settings.snacks), 'hideEmpty');
+  assert.equal(await a.ev(() => parseData(ser()).set.sn), 'hide');
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});

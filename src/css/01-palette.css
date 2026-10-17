@@ -1,7 +1,7 @@
 /* Палитра. Цвета БЖУ — как на логотипе: белки зелёные, жиры жёлтые, углеводы синие */
-:root{--bg:#f2f3f6;--card:#fff;--sub:#f5f6f9;--tx:#161a22;--mu:#6a7282;--bd:#e3e6ec;--ac:#2f7de1;--p:#22a565;--f:#e89a17;--c:#3a7ff0;--dg:#d64545;--on:#fff;--shd:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.04);box-sizing:border-box;padding-top:var(--sat);padding-bottom:var(--sab)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101318;--card:#1a1e25;--sub:#14181e;--tx:#eef1f5;--mu:#8f98a8;--bd:#272d36;--ac:#5b9cf0;--p:#3cc77f;--f:#f2b33d;--c:#5b9cf0;--dg:#ef6b6b;--shd:none}}
-:root[data-theme="dark"]{--bg:#101318;--card:#1a1e25;--sub:#14181e;--tx:#eef1f5;--mu:#8f98a8;--bd:#272d36;--ac:#5b9cf0;--p:#3cc77f;--f:#f2b33d;--c:#5b9cf0;--dg:#ef6b6b;--shd:none}
+:root{--bg:#eef1f5;--card:#fff;--sub:#f4f6f9;--tx:#161a22;--mu:#646d7d;--bd:#e1e5eb;--ac:#2f7de1;--p:#22a565;--f:#e89a17;--c:#3a7ff0;--dg:#d64545;--on:#fff;--shd:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.05);box-sizing:border-box;padding-top:var(--sat);padding-bottom:var(--sab)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10141c;--card:#1a202b;--sub:#232a37;--tx:#eef2f7;--mu:#9ba5b7;--bd:#2c3442;--ac:#5b9cf0;--p:#3cc77f;--f:#f2b33d;--c:#5b9cf0;--dg:#ef6b6b;--shd:0 1px 0 rgba(255,255,255,.035) inset,0 6px 20px rgba(0,0,0,.22)}}
+:root[data-theme="dark"]{--bg:#10141c;--card:#1a202b;--sub:#232a37;--tx:#eef2f7;--mu:#9ba5b7;--bd:#2c3442;--ac:#5b9cf0;--p:#3cc77f;--f:#f2b33d;--c:#5b9cf0;--dg:#ef6b6b;--shd:0 1px 0 rgba(255,255,255,.035) inset,0 6px 20px rgba(0,0,0,.22)}
 :root{--acs:color-mix(in srgb,var(--ac) 15%,transparent);--acb:color-mix(in srgb,var(--ac) 35%,transparent);color-scheme:light dark}:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
 *{box-sizing:border-box}[hidden]{display:none!important}
 html{background:var(--bg);overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-action:pan-y;overflow-x:clip;overflow-y:scroll;scroll-padding-top:var(--sat)}html.lk{overflow:hidden}

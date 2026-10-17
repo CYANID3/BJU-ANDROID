@@ -9,3 +9,7 @@ function applyLay(){const r=document.documentElement,fix=bbv()!=="page",bt=docum
 function setBb(v){if(bbv()===v)return;const was=scrollY;S.set=Object.assign({},S.set,{bb:v});saveq();applyLay();drawSet();hap(8);
  const bt=document.querySelector(".bt");if(!RM()&&bt)try{bt.animate([{opacity:0,transform:"translateY(14px)"},{opacity:1,transform:"none"}],{duration:300,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}scrollTo(0,was)}
 function setNb(v){S.set=Object.assign({},S.set,{nb:v});saveq();applyLay();drawSet();hap(8)}
+// перекусы на главном: «Строкой» — пустые видны тонкой строкой; «Скрыть пустые» — одна кнопка «+ Перекус» (ближайший по времени)
+const snv=()=>S.set&&S.set.sn==="hide"?"hide":"row";
+function snNear(){const a=autoMeal();return a<=1?1:a<=3?3:5}
+function setSn(v){S.set=Object.assign({},S.set,{sn:v});saveq();drawSet();render();hap(6)}

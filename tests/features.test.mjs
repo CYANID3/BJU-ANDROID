@@ -145,7 +145,11 @@ test('жест вверх: статистика и вес; при жесте «�
   await a.ev(() => cl()); await a.wait(300);
   await a.ev(() => sets()); await a.wait(300);
   assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#sgm button b')].map(b => b.textContent)), ['Приём пищи', 'Новый продукт', 'Статистика', 'Вес', 'Выключено']);
-  await a.pg.click('#sgm button:nth-child(4)');
+  assert.equal(await a.pg.locator('#sgm button:visible').count(), 1, 'список свёрнут до выбранного');
+  await a.pg.click('#sgm button.on'); await a.wait(250);
+  assert.equal(await a.pg.locator('#sgm button:visible').count(), 5, 'касание раскрывает');
+  await a.pg.click('#sgm button:nth-child(4)'); await a.wait(100);
+  assert.equal(await a.pg.locator('#sgm button:visible').count(), 1, 'выбор сворачивает');
   assert.equal(await a.pg.textContent('#sgm .on b'), 'Вес');
   assert.equal(await a.ev(() => toFile(S).settings.pullUpAction), 'weight');
   assert.equal(await a.ev(() => parseData(ser()).set.sw), 'wt');

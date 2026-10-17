@@ -19,16 +19,17 @@ function repHTML(dense){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f
   seg.forEach(([w,c],j)=>{const a=st,b=st+w;parts.push(`${c} ${j?Math.min(b,a+bl/2):a}% ${j===seg.length-1?Math.max(a,b-bl/2):Math.max(a,b-bl/2)}%`);st=b});
   parts.push(`${seg[0][1]} 100%`);grad=`conic-gradient(from 0deg,${parts.join(",")})`}}
  const ring=`<div class="rp-ring" style="--rg:${grad}"><div class="rp-rc"><b>${gk?Math.round(k/gk*100):0}%</b><span>нормы</span></div></div>`;
- const M=[["Белки",t.p,G.p,"var(--p)"],["Жиры",t.f,G.f,"var(--f)"],["Углеводы",t.c,G.c,"var(--c)"]];
+ // Б / Ж / У — те же плитки, что на главном экране (съедено / норма, полоска, остаток, доля калорий)
+ const sh=ks>0?kp.map(v=>Math.round(v/ks*100)):[];
  let h=`<div class="rep rep-in${dense?" dense":""}"><div class="rp-h"><div><div class="rp-d">${esc(title)}</div><div class="rp-k">${k}<span>из ${gk} ккал</span></div><div class="rp-l${left<0?" ov":""}">${left>=0?`Осталось <b>${left}</b> ккал`:`Перебор <b>${-left}</b> ккал`}</div>${wtRep()}</div>${ring}</div>`;
- h+=`<div class="rp-m">`+M.map(([n,v,g,c],i)=>`<div style="--cl:${c}"><div class="nm">${n}</div><div class="v">${f1(v)}<small>/ ${g} г</small></div><div class="bar"><i style="width:${Math.min(100,g?v/g*100:0)}%;background:${v>g&&i?"var(--dg)":c}"></i></div><div class="rpc">${g?Math.round(v/g*100):0}% нормы</div></div>`).join("")+`</div>`;
- if(ks>0)h+=`<div class="rp-sh">${kp.map((v,i)=>v>0?`<i style="flex:${v};background:${col[i]}"></i>`:"").join("")}</div><div class="rp-sl">${(()=>{const raw=kp.map(v=>v/ks*100),fl=raw.map(Math.floor);let d=100-fl.reduce((a,b)=>a+b,0);raw.map((v,i)=>[v-fl[i],i]).sort((a,b)=>b[0]-a[0]).forEach(([,i])=>{if(d>0){fl[i]++;d--}});return["Б","Ж","У"].map((n,i)=>`<span>${n} ${fl[i]}% ккал</span>`).join("")})()}</div>`;
+ h+=`<div class="mac rp-mac">${mtile("Белки",t.p,G.p,"var(--p)",1,sh[0])}${mtile("Жиры",t.f,G.f,"var(--f)",0,sh[1])}${mtile("Углеводы",t.c,G.c,"var(--c)",0,sh[2])}</div>`;
+ // приёмы пищи — один блок, приёмы разделены тонкой линией; компактно — продукты плашками, подробно — строками
  const meals=MEALS.map((m,mi)=>[m,E.filter(e=>e.m===mi),mi]).filter(x=>x[1].length);
  if(!meals.length)h+=`<div class="rp-empty">Записей за этот день нет</div>`;
- meals.forEach(([m,it,mi])=>{const s0=it.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),amt=e=>e.ul?e.q+" "+esc(e.ul):f1(e.g)+" г";
-  h+=`<div class="rp-meal"><div class="rp-mh"><b>${LBL[mi].replace(/ \d$/,"")}</b><span class="kp">${kc(s0.p,s0.f,s0.c)} ккал</span></div><div class="rp-mm">Б ${f1(s0.p)} · Ж ${f1(s0.f)} · У ${f1(s0.c)} г</div>`+
+ else{h+=`<div class="rp-ml">`;meals.forEach(([m,it,mi])=>{const s0=it.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),amt=e=>e.ul?f1(e.q)+" "+esc(e.ul):f1(e.g)+" г";
+  h+=`<div class="rp-meal"><div class="rp-mh"><b>${LBL[mi]}</b>${dense?"":`<span class="rp-mm">Б ${f1(s0.p)} · Ж ${f1(s0.f)} · У ${f1(s0.c)}</span>`}<span class="kp">${kc(s0.p,s0.f,s0.c)} ккал</span></div>`+
    (dense?`<div class="rp-dl">${it.map(e=>`<span><i>${esc(e.n)}</i><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b></span>`).join("")}</div>`
-    :it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b></div>`).join(""))+`</div>`});
+    :it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b></div>`).join(""))+`</div>`});h+=`</div>`}
  h+=`<div class="rp-f"><span>Норма: ${gk} ккал · Б ${G.p} · Ж ${G.f} · У ${G.c} г</span><span><img src="icon-192.png" alt="">БЖУ</span></div></div>`;
  return h}
 function togRep(on){REP=on==null?!REP:on;repMode=0;document.documentElement.classList.toggle("repm",!!REP);hap(10);render();scrollTo(0,0);
