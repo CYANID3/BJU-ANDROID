@@ -34,6 +34,14 @@ for (const f of await readdir('native/android')) {
 await cp('native/android/res', 'android/app/src/main/res', { recursive: true });
 console.log('copied  native/android/res -> android/app/src/main/res');
 
+// 3b. Тематический значок (Android 13+): монохромный слой в адаптивной иконке
+for (const f of ['ic_launcher.xml', 'ic_launcher_round.xml']) {
+  const file = `android/app/src/main/res/mipmap-anydpi-v26/${f}`;
+  try {
+    await patch(file, s => s.includes('<monochrome') ? s : s.replace('</adaptive-icon>', '    <monochrome android:drawable="@drawable/bju_ic_mono" />\n</adaptive-icon>'));
+  } catch (e) { if (e.code !== 'ENOENT') throw e; console.log('нет    ' + file); }
+}
+
 // 4. Манифест
 await patch('android/app/src/main/AndroidManifest.xml', s => {
   // Клавиатура: окно не сдвигается (adjustPan) — страница сама поднимает лист по отступам из BjuNative

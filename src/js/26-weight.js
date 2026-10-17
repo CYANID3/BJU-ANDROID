@@ -22,7 +22,10 @@ function wPv(){const v=wIn(),pr=wPrev(cur),el=$("wpv");
  const d=v>0?r1(v-pr[1]):null;el.innerHTML=`Прошлая запись: <b>${wFmt(pr[1])}</b> кг · ${wDate(pr[0])}`+(d?` · <span style="color:var(--tx)">${wSg(d)} кг</span>`:"")}
 function wSave(){const v=wIn();if(!(v>=20&&v<=400)){$("wv").focus();return toast("Введите вес в кг")}S.wt=Object.assign({},S.wt,{[cur]:Math.round(v*100)/100});hap(8);save();cl();render()}
 async function wDel(){if(!await ask("Удалить запись веса за этот день?","Удалить",1))return;const w=Object.assign({},S.wt);delete w[cur];S.wt=w;save();cl();render()}
-function setWt(v){S.set=Object.assign({},S.set,{wt:v});saveq();drawSet();render();hap(8)}
+function setWt(v){S.set=Object.assign({},S.set,{wt:v});saveq();drawSet();render();scSync();hap(8)}
+// ярлык «Вес» у иконки приложения — по настройке (вызывается при запуске и при переключении)
+// (вызывается и из applyAc — в том числе до объявления let-переменных, поэтому состояние хранится в window)
+function scSync(){const N=window.BJU_NATIVE;if(!N||!N.native||!N.shortcuts)return;const w=wton();if(window.__scL===w)return;window.__scL=w;N.shortcuts({weight:w})}
 // график веса за месяц: линия через все записи (между записями — прямая), точки на днях с записью
 function chWt(days,W){const H=130,L=34,Rr=26,T=12,B=20,iw=W-L-Rr,ih=H-T-B,st=iw/days.length,X=i=>L+i*st+st/2;
  const pts=days.map((x,i)=>x.w?[i,x.w]:null).filter(Boolean),vs=pts.map(p=>p[1]);

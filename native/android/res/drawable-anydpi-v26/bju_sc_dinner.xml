@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- создано scripts/shortcut-icons.py -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/bju_sc_dinner_bg" />
+    <foreground android:drawable="@drawable/bju_sc_dinner_fg" />
+</adaptive-icon>

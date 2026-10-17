@@ -9,4 +9,6 @@
     <string name="bju_sc_dinner_long">Добавить ужин</string>
     <string name="bju_sc_snack">Перекус</string>
     <string name="bju_sc_snack_long">Добавить перекус</string>
+    <string name="bju_sc_weight">Вес</string>
+    <string name="bju_sc_weight_long">Записать вес</string>
 </resources>

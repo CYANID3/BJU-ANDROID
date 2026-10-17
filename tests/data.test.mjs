@@ -74,3 +74,20 @@ test('виджет получает итоги дня, ярлыки открыв
   assert.equal(await a.ev(() => cur === today), true, 'ярлык всегда добавляет на сегодня');
   await a.close();
 });
+
+test('ярлык «Вес» у иконки: есть, только когда вес включён; bju://weight открывает ввод', async () => {
+  const a = await openApp({ native: true });
+  await a.ev(() => { window.__SC = []; const N = window.BJU_NATIVE; N.shortcuts = o => { window.__SC.push(o.weight); return Promise.resolve(); }; window.__scL = undefined; scSync(); });
+  assert.deepEqual(await a.ev(() => __SC), [true]);
+  await a.ev(() => BJU_onUrl('bju://weight')); await a.wait(400);
+  assert.equal(await a.ev(() => isOpen && !$('v10').hidden && cur === today), true);
+  await a.ev(() => cl()); await a.wait(300);
+  await a.ev(() => setWt('off')); await a.ev(() => setWt('off'));
+  assert.deepEqual(await a.ev(() => __SC), [true, false], 'без повторных вызовов');
+  await a.ev(() => { lastU = ''; BJU_onUrl('bju://weight'); }); await a.wait(300);
+  assert.equal(await a.ev(() => isOpen), false, 'вес выключен — ярлык ничего не открывает');
+  await a.ev(() => setWt('on'));
+  assert.deepEqual(await a.ev(() => __SC), [true, false, true]);
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});

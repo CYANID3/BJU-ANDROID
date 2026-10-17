@@ -68,6 +68,8 @@ if (hasBju) {
 const bars = (color, light) => (hasBju ? Bju.setBars({ color, light }).catch(() => {}) : Promise.resolve());
 // Виджет рабочего стола: остаток калорий на сегодня
 const widget = data => (hasBju ? Bju.updateWidget(data).catch(() => {}) : Promise.resolve());
+// Ярлык «Вес» в меню долгого нажатия на иконку (есть, только когда вес включён)
+const shortcuts = o => (hasBju ? Bju.setShortcuts(o).catch(() => {}) : Promise.resolve());
 
 // Системная кнопка / жест «Назад»
 if (native) {
@@ -75,10 +77,10 @@ if (native) {
     if (!(window.BJU_onBack && window.BJU_onBack())) App.minimizeApp();
   });
   App.addListener('pause', () => window.BJU_onPause?.());
-  // Ярлыки быстрых действий и кнопка «+» виджета открывают bju://add?m=…
+  // Ярлыки быстрых действий и кнопка «+» виджета открывают bju://add?m=… (и bju://weight)
   App.addListener('appUrlOpen', e => window.BJU_onUrl?.(e.url));
   App.getLaunchUrl().then(r => r && r.url && window.BJU_onUrl?.(r.url)).catch(() => {});
 }
 
-window.BJU_NATIVE = { native, readLocal, writeLocal, writeBackup, readLegacy, file, haptic, bars, widget };
+window.BJU_NATIVE = { native, readLocal, writeLocal, writeBackup, readLegacy, file, haptic, bars, widget, shortcuts };
 window.BJU_NATIVE_READY_RESOLVE?.();

@@ -6,9 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.UriPermission;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Insets;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.OpenableColumns;
@@ -29,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -189,6 +193,36 @@ public class BjuNativePlugin extends Plugin {
     }
 
     // ---------- Виджет рабочего стола ----------
+
+    /**
+     * Ярлык «Вес» в меню долгого нажатия на иконку приложения — только когда отслеживание веса включено.
+     * Остальные ярлыки (приёмы пищи) статические, из res/xml/bju_shortcuts.xml. Если «Вес» закреплён на рабочем
+     * столе, а вес выключили — ярлык становится неактивным с пояснением.
+     */
+    @PluginMethod
+    public void setShortcuts(PluginCall call) {
+        if (Build.VERSION.SDK_INT < 25) { call.resolve(); return; }
+        try {
+            Context ctx = getContext();
+            ShortcutManager sm = ctx.getSystemService(ShortcutManager.class);
+            if (sm == null) { call.resolve(); return; }
+            List<String> ids = Collections.singletonList("weight");
+            if (Boolean.TRUE.equals(call.getBoolean("weight", false))) {
+                Intent it = new Intent(Intent.ACTION_VIEW, Uri.parse("bju://weight"), ctx, MainActivity.class);
+                ShortcutInfo si = new ShortcutInfo.Builder(ctx, "weight")
+                    .setShortLabel(ctx.getString(R.string.bju_sc_weight))
+                    .setLongLabel(ctx.getString(R.string.bju_sc_weight_long))
+                    .setIcon(Icon.createWithResource(ctx, R.drawable.bju_sc_weight))
+                    .setIntent(it).setRank(0).build();
+                sm.enableShortcuts(ids);
+                sm.setDynamicShortcuts(Collections.singletonList(si));
+            } else {
+                sm.removeAllDynamicShortcuts();
+                sm.disableShortcuts(ids, "Отслеживание веса выключено в настройках");
+            }
+        } catch (Exception ignored) { }
+        call.resolve();
+    }
 
     @PluginMethod
     public void updateWidget(PluginCall call) {

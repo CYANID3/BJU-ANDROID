@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- создано scripts/shortcut-icons.py -->
+<resources>
+    <color name="bju_sc_breakfast_bg">#FFF0D4</color>
+    <color name="bju_sc_lunch_bg">#DDF3E6</color>
+    <color name="bju_sc_dinner_bg">#E3E5FB</color>
+    <color name="bju_sc_snack_bg">#FCE3EB</color>
+    <color name="bju_sc_weight_bg">#DAF1EF</color>
+</resources>
