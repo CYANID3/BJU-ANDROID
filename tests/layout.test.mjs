@@ -13,8 +13,8 @@ test('нижняя панель: в конце дня (по умолчанию) 
   let p = await pos();
   assert.equal(p.fixed, false); assert.ok(p.top > vh, 'по умолчанию — после приёмов пищи');
   await a.ev(() => sets()); await a.wait(300);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#bbm button')].map(b => b.textContent)), ['В конце дня', 'Всегда видна']);
-  await a.pg.click('#bbm button:nth-child(2)'); await a.ev(() => cl()); await a.wait(400);
+  assert.equal(await a.ev(() => $('bbm').getAttribute('aria-checked')), 'false', '«Закрепить нижнюю панель» выключено');
+  await a.pg.click('#bbm'); await a.ev(() => cl()); await a.wait(400);
   for (const y of [0, 300, 1e6]) {
     await a.ev(y => scrollTo(0, y), y); await a.wait(150);
     p = await pos(); assert.equal(p.fixed, true); assert.ok(p.bottom <= vh && p.bottom > vh - 60, 'видна у края при любой прокрутке');
@@ -94,5 +94,31 @@ test('без блюд фильтра нет', async () => {
   const a = await openApp({ data: { g: { p: 120, f: 70, c: 250 }, d: {}, db: [['Творог 5%', 17, 5, 1.8]] } });
   await a.ev(() => mng()); await a.wait(300);
   assert.equal(await a.ev(() => $('pf').hidden), true);
+  await a.close();
+});
+
+test('закреплённая панель не закрывает конец дня — в «Удобном» и «Компактном» виде, с системным отступом', async () => {
+  const E = Array.from({ length: 12 }, (_, i) => entry(i % 6, 'Продукт ' + i, 100, 5, 3, 10));
+  for (const ui of ['comfy', 'compact']) for (const sab of [0, 24]) {
+    const a = await openApp({ data: { g: { p: 120, f: 70, c: 250 }, d: { [day()]: E }, wt: { [day()]: 82 }, set: { bb: 'fix', ui } } });
+    await a.ev(s => document.documentElement.style.setProperty('--sab', s + 'px'), sab); await a.wait(200);
+    await a.ev(() => scrollTo(0, 1e6)); await a.wait(200);
+    const r = await a.ev(() => { const bt = document.querySelector('.bt').getBoundingClientRect(), els = [...document.querySelectorAll('#app > *')], last = els[els.length - 1].getBoundingClientRect(); return [last.bottom, bt.top]; });
+    assert.ok(r[0] <= r[1] - 8, `${ui}, отступ ${sab}: низ дня ${Math.round(r[0])}, верх панели ${Math.round(r[1])}`);
+    await a.close();
+  }
+});
+
+test('настройки: три раздела, переключатели «да / нет», почти без пояснений', async () => {
+  const a = await openApp();
+  await a.ev(() => sets()); await a.wait(300);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v7 .sgt')].map(e => e.textContent)), ['Оформление', 'Главный экран', 'Жесты и вибрация']);
+  assert.equal(await a.ev(() => [...document.querySelectorAll('#v7 .sd')].filter(e => !e.hidden && e.textContent.trim()).length), 0, 'по умолчанию без пояснительных абзацев');
+  assert.equal(await a.ev(() => document.querySelectorAll('#v7 .tg').length), 3);
+  await a.pg.click('#nbm'); assert.equal(await a.ev(() => nbv()), 'top');
+  await a.pg.click('#nbm'); assert.equal(await a.ev(() => nbv()), 'bottom');
+  await a.pg.click('#snm button:nth-child(2)');
+  assert.equal(await a.ev(() => !$('snd').hidden && $('snd').textContent.length < 80), true, 'короткая подсказка — только для двойного касания');
+  assert.deepEqual(a.errors, []);
   await a.close();
 });

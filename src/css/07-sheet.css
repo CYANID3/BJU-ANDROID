@@ -15,13 +15,13 @@ label{font-size:var(--fs-sm);font-weight:600;color:var(--mu);display:block;margi
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.g3 input{text-align:center;font-weight:600;padding:0 8px}
 /* кнопки: основная (залитая), второстепенная (тональная), нейтральная, опасная — одна высота и скругление */
 .pb{width:100%;height:var(--h-ctl);border-radius:var(--r-ctl);background:var(--ac);color:var(--on);font-weight:700;font-size:16px;margin-top:12px;display:flex;align-items:center;justify-content:center;text-align:center}.pb:active{transform:scale(.98)}
-.pb.g{background:var(--sub);color:var(--tx);border:1px solid var(--bd)}
+.pb.g{background:var(--sub);color:var(--tx)}
 .ln{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;margin-top:10px;padding:0 14px;border-radius:var(--r-ctl);background:var(--acs);color:var(--act,var(--ac));font-weight:600;font-size:15px;text-align:center}
 .ln.dg{background:color-mix(in srgb,var(--dg) 11%,transparent);color:var(--dg)}
 .lr{display:flex;gap:10px}.lr .ln{flex:1;margin-top:10px}#v1 .lr.top{margin:0 0 12px}#v1 .lr.top .ln{margin-top:0}
 /* списки: продукты, ингредиенты — блок со строками */
-#ls,#di{background:var(--sub);border:1px solid var(--bd);border-radius:var(--r-block);padding:4px;margin:2px 0 4px}#ls:empty,#di:empty{display:none}#ls>.mu{padding:14px;text-align:center}
-.pk{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:58px;text-align:left;padding:8px 8px 8px 12px;border-radius:var(--r-ctl);transition:background-color .2s}.pk:active{transform:none}.pk>div{flex:1;min-width:0}.pk .n{font-weight:500;font-size:var(--fs-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pk .mu{font-size:var(--fs-xs);margin-top:2px}.pk b{font-size:14px;color:var(--act,var(--ac));white-space:nowrap}
+#ls,#di{background:var(--sub);border-radius:var(--r-block);padding:4px;margin:2px 0 4px}#ls:empty,#di:empty{display:none}#ls>.mu{padding:14px;text-align:center}
+.pk{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:54px;text-align:left;padding:6px 8px 6px 12px;border-radius:var(--r-ctl);transition:background-color .2s}.pk:active{transform:none}.pk>div{flex:1;min-width:0}.pk .n{font-weight:500;font-size:var(--fs-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pk .mu{font-size:var(--fs-xs);margin-top:2px}.pk b{font-size:14px;color:var(--act,var(--ac));white-space:nowrap}
 .lh{font-size:var(--fs-xs);font-weight:700;color:var(--mu);letter-spacing:.03em;text-transform:uppercase;margin:12px 12px 4px}.lh:first-child{margin-top:8px}.lh+.pk::before{display:none}
 .pk .fv{flex:none;display:grid;place-items:center;width:40px;height:40px;margin:-8px -4px;border-radius:50%;color:var(--mu);opacity:.45;transition:opacity .15s,color .15s,transform .2s cubic-bezier(.3,1.6,.5,1)}
 .pk .fv .i{width:20px;height:20px}.pk .fv.on{opacity:1;color:#f5b301}.pk .fv.on .i{fill:currentColor}.pk .fv:active{transform:scale(.82)}
@@ -29,7 +29,7 @@ label{font-size:var(--fs-sm);font-weight:600;color:var(--mu);display:block;margi
 .pk .dk{flex:none;width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac));margin-left:-4px}.pk .dk svg.i{width:19px;height:19px}
 .pk .dt{color:var(--act,var(--ac));font-weight:600}.pk.dish .mu{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* чипы-пилюли: приёмы пищи */
-.mc{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.mc button{height:var(--h-chip);padding:0 14px;border-radius:var(--r-pill);background:var(--sub);border:1px solid var(--bd);font-size:14px;font-weight:500}.mc button.on{background:var(--ac);border-color:var(--ac);color:var(--on);font-weight:600}
+.mc{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.mc button{height:var(--h-chip);padding:0 14px;border-radius:var(--r-pill);background:var(--sub);font-size:14px;font-weight:500}.mc button.on{background:var(--ac);border-color:var(--ac);color:var(--on);font-weight:600}
 .mc.mg{display:grid;grid-template-columns:repeat(3,1fr)}.mc.mg button{padding:0 6px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* единицы продукта в форме: «единица · граммы · удалить» */
 .ur{display:grid;grid-template-columns:1fr 104px var(--h-ctl);gap:10px;align-items:start}.ur .x{height:var(--h-ctl);width:var(--h-ctl);border-radius:var(--r-ctl);background:var(--sub)}
@@ -37,9 +37,9 @@ label{font-size:var(--fs-sm);font-weight:600;color:var(--mu);display:block;margi
 .qh{margin:0 4px 14px}.qn{font-size:var(--fs-h);font-weight:700;line-height:1.25}.qm{font-size:var(--fs-sm);color:var(--mu);margin-top:4px}
 .seg.qu{margin-bottom:10px}.seg.qu button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.15}.seg.qu small{font-size:11px;font-weight:500;opacity:.75}
 .seg.qu.wr{display:flex;flex-wrap:wrap}.seg.qu.wr button{flex:1 1 auto;padding:0 12px}
-.qf{position:relative}.qf input{margin:0;height:66px;text-align:center;font-size:28px;font-weight:700;padding:0 64px;border-radius:var(--r-block);font-variant-numeric:tabular-nums}.qf input::placeholder{color:var(--mu);opacity:.5}
+.qf{position:relative}.qf input{margin:0;height:60px;text-align:center;font-size:28px;font-weight:700;padding:0 64px;border-radius:var(--r-block);font-variant-numeric:tabular-nums}.qf input::placeholder{color:var(--mu);opacity:.5}
 .qf span{position:absolute;right:18px;top:50%;transform:translateY(-50%);color:var(--mu);font-size:15px;font-weight:500;pointer-events:none;max-width:38%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.qc{display:flex;gap:8px;margin:10px 0 0}.qc button{flex:1;height:var(--h-chip);display:flex;align-items:center;justify-content:center;gap:3px;padding:0 2px;border-radius:var(--r-pill);background:var(--sub);border:1px solid var(--bd);font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;transition:background-color .15s,border-color .15s,color .15s}
+.qc{display:flex;gap:8px;margin:10px 0 0}.qc button{flex:1;height:var(--h-chip);display:flex;align-items:center;justify-content:center;gap:3px;padding:0 2px;border-radius:var(--r-pill);background:var(--sub);font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;transition:background-color .15s,border-color .15s,color .15s}
 .qc button small{font-size:12px;font-weight:500;color:var(--mu)}.qc button i{display:flex;color:var(--act,var(--ac))}.qc button i svg.i{width:14px;height:14px;stroke-width:2.6}
 .qc button.on{background:var(--acs);border-color:var(--ac);color:var(--act,var(--ac))}.qc button.on small{color:inherit}
 .qp{display:flex;align-items:center;gap:4px 10px;flex-wrap:wrap;min-height:var(--h-ctl);margin:10px 0 0;padding:8px 16px;border-radius:var(--r-ctl);background:var(--sub);border:1px dashed var(--bd);font-size:var(--fs-sm);color:var(--mu);font-variant-numeric:tabular-nums;transition:border-color .2s,background-color .2s}

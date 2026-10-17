@@ -200,19 +200,3 @@ test('перекусы: «Тонкой строкой» или «По двойн
   await a.close();
 });
 
-test('вид интерфейса: «Компактный» уменьшает элементы, «Удобный» возвращает', async () => {
-  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(0, 'Рис', 100, 7, 1, 74)] } } });
-  const h = () => a.ev(() => [document.querySelector('#app .it').getBoundingClientRect().height, document.querySelector('#app .sum').getBoundingClientRect().height]);
-  const h0 = await h();
-  await a.ev(() => sets()); await a.wait(300);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#uim button')].map(b => b.textContent)), ['Удобный', 'Компактный']);
-  const inp0 = await a.ev(() => document.querySelector('#v7 .seg button').getBoundingClientRect().height);
-  await a.pg.click('#uim button:nth-child(2)'); await a.wait(200);
-  const inp1 = await a.ev(() => document.querySelector('#v7 .seg button').getBoundingClientRect().height);
-  assert.ok(inp1 < inp0, 'кнопки в листе ниже');
-  await a.ev(() => cl()); await a.wait(300);
-  const h1 = await h(); assert.ok(h1[0] < h0[0] && h1[1] < h0[1], `строки и итог плотнее: ${h0} → ${h1}`);
-  assert.equal(await a.ev(() => toFile(S).settings.uiDensity), 'compact');
-  await a.ev(() => setUi('comfy')); assert.deepEqual(await h(), h0);
-  await a.close();
-});

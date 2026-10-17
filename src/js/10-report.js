@@ -36,7 +36,7 @@ function repHTML(dense){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f
  if(!meals.length)h+=`<div class="rp-empty">Записей за этот день нет</div>`;
  else{h+=`<div class="rp-ml">`;meals.forEach(([m,it,mi])=>{const s0=it.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),amt=e=>e.ul?f1(e.q)+" "+esc(e.ul):f1(e.g)+" г";
   h+=`<div class="rp-meal"><div class="rp-mh"><b>${LBL[mi]}</b>${dense?"":`<span class="rp-mm">Б ${f1(s0.p)} · Ж ${f1(s0.f)} · У ${f1(s0.c)}</span>`}<span class="kp">${kc(s0.p,s0.f,s0.c)} ккал</span></div>`+
-   `<div class="rp-its">`+it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b></div>`).join("")+`</div></div>`});h+=`</div>`}
+   (dense?"":`<div class="rp-mb">${kbar(s0,gk,kc(s0.p,s0.f,s0.c))}<span>${gk?Math.round(kc(s0.p,s0.f,s0.c)/gk*100):0}% нормы</span></div>`)+`<div class="rp-its">`+it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b>${dense?"":`<small>Б ${f1(e.p)} · Ж ${f1(e.f)} · У ${f1(e.c)}</small>`}</div>`).join("")+`</div></div>`});h+=`</div>`}
  h+=`<div class="rp-f"><span>Норма: ${gk} ккал · Б ${G.p} · Ж ${G.f} · У ${G.c} г</span><span><img src="icon-192.png" alt="">БЖУ</span></div></div>`;
  return h}
 function togRep(on){REP=on==null?!REP:on;repMode=0;document.documentElement.classList.toggle("repm",!!REP);hap(10);render();scrollTo(0,0);

@@ -1,10 +1,8 @@
 /* Единая система размеров. Всё в интерфейсе берёт значения отсюда — так элементы одного рода выглядят одинаково.
-   Скругления: карточка/лист 30 → блок внутри 22 → элемент управления 18 → строка/кнопка внутри элемента 14 → «пилюля».
-   Высоты: поле и кнопка 56, сегмент 54 (кнопки внутри 46), чип 42, кнопка-иконка 46, значок-плитка 40. */
+   Скругления: карточка/лист 24 → блок внутри 18 → элемент управления 15 → строка/кнопка внутри 12 → «пилюля».
+   Высоты: поле и кнопка 50, сегмент 50 (кнопки внутри 42), чип 38, кнопка-иконка 42, значок-плитка 36. */
 :root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--kb:0px;--kbd:220ms;--ease:cubic-bezier(.2,.8,.2,1);--spring:cubic-bezier(.34,1.4,.64,1);
- --r-card:30px;--r-block:22px;--r-ctl:18px;--r-in:14px;--r-pill:999px;
- --h-ctl:56px;--h-seg:46px;--h-chip:42px;--h-ib:46px;--h-tile:40px;
- --pad-card:20px;--gap:12px;
- --fs-title:20px;--fs-h:18px;--fs-body:16px;--fs-sm:13.5px;--fs-xs:12.5px}
-/* «Компактный» вид интерфейса (Настройки → Оформление): та же система, на шаг плотнее */
-:root.uic{--r-card:20px;--r-block:15px;--r-ctl:13px;--r-in:10px;--h-ctl:44px;--h-seg:36px;--h-chip:34px;--h-ib:38px;--h-tile:32px;--pad-card:12px;--gap:7px;--fs-title:18px;--fs-h:16px;--fs-body:14.5px;--fs-sm:12.5px;--fs-xs:11.5px}
+ --r-card:24px;--r-block:18px;--r-ctl:15px;--r-in:12px;--r-pill:999px;
+ --h-ctl:50px;--h-seg:42px;--h-chip:38px;--h-ib:42px;--h-tile:36px;
+ --pad-card:16px;--gap:10px;
+ --fs-title:19px;--fs-h:17px;--fs-body:15px;--fs-sm:13px;--fs-xs:12px}

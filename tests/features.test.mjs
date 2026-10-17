@@ -77,10 +77,9 @@ test('вес: плитка под итогом дня, запись, разни�
   await a.ev(() => { cur = today; render(); });
   // отключение
   await a.ev(() => sets()); await a.wait(300);
-  assert.equal(await a.pg.locator('#wtm button').count(), 2, 'два пункта');
-  const bw = await a.pg.locator('#wtm button').evaluateAll(b => b.map(x => Math.round(x.getBoundingClientRect().width)));
-  assert.ok(Math.abs(bw[0] - bw[1]) <= 1, 'по 50%');
-  await a.pg.click('#wtm button:nth-child(2)'); await a.wait(100);
+  assert.equal(await a.ev(() => $('wtm').getAttribute('aria-checked')), 'true', 'переключатель «Отслеживать вес» включён');
+  await a.pg.click('#wtm'); await a.wait(100);
+  assert.equal(await a.ev(() => $('wtm').getAttribute('aria-checked')), 'false');
   assert.equal(await a.pg.locator('#app .wtl').count(), 0);
   assert.equal(await a.ev(() => S.wt[cur]), 72.4, 'записи не удаляются');
   assert.deepEqual(a.errors, []);

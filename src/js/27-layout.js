@@ -3,7 +3,7 @@
 const bbv=()=>S.set&&S.set.bb==="fix"?"fix":"page",nbv=()=>S.set&&S.set.nb==="top"?"top":"bottom";
 // высота закреплённой панели → --bth (под неё отступ страницы, тост и индикатор жеста «потянуть вверх»)
 let bthRO=null;
-function applyLay(){document.documentElement.classList.toggle("uic",uiv()==="compact");const r=document.documentElement,fix=bbv()!=="page",bt=document.querySelector(".bt");r.classList.toggle("bfix",fix);
+function applyLay(){const r=document.documentElement,fix=bbv()!=="page",bt=document.querySelector(".bt");r.classList.toggle("bfix",fix);
  if(fix&&bt){const m=()=>r.style.setProperty("--bth",bt.offsetHeight+"px");m();if(!bthRO&&window.ResizeObserver){bthRO=new ResizeObserver(m);bthRO.observe(bt)}}
  const lr=document.querySelector("#v1 .lr");if(lr){if(nbv()==="top")document.getElementById("q").after(lr);else document.getElementById("ls").after(lr);lr.classList.toggle("top",nbv()==="top")}}
 function setBb(v){if(bbv()===v)return;const was=scrollY;S.set=Object.assign({},S.set,{bb:v});saveq();applyLay();drawSet();hap(8);
@@ -20,6 +20,3 @@ function setSn(v){S.set=Object.assign({},S.set,{sn:v});saveq();snOpen.clear();dr
 // двойное касание по шапке основного приёма (не по кнопкам)
 (()=>{let t=0,m=-1;addEventListener("pointerup",e=>{if(isOpen||REP||snv()!=="tap"||e.button>0)return;const h=e.target.closest&&e.target.closest("#app .meal:not(.sn) .mh");if(!h||e.target.closest("button"))return;
  const mi=+h.parentElement.dataset.m,n=Date.now();if(m===mi&&n-t<420){t=0;m=-1;snToggle(mi)}else{t=n;m=mi}})})();
-// вид интерфейса: «Удобный» (по умолчанию) или «Компактный» — те же элементы, плотнее
-const uiv=()=>S.set&&S.set.ui==="compact"?"compact":"comfy";
-function setUi(v){S.set=Object.assign({},S.set,{ui:v});saveq();applyLay();drawSet();render();hap(8)}

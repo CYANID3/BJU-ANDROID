@@ -2,6 +2,8 @@ import { Capacitor, registerPlugin } from '@capacitor/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { App } from '@capacitor/app';
+// Шрифт интерфейса — внутри приложения (без сети): Manrope, мягкий геометрический, с кириллицей и табличными цифрами
+import '@fontsource-variable/manrope';
 
 const native = Capacitor.isNativePlatform();
 // Собственный нативный плагин (native/android/BjuNativePlugin.java)
