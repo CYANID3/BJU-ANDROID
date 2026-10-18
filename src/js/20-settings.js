@@ -13,12 +13,12 @@ const slv=()=>{const v=S.set&&S.set.sl;return SLV[v]?v:"mid"},GF=()=>SLV[slv()][
 // «Длина свайпа» — ползунок на три положения: дорожка с точками, бегунок плавно переезжает (касанием подписи или перетаскиванием)
 function sldDraw(){const el=$("slm"),K=Object.keys(SLV),l=slv(),i=K.indexOf(l);
  if(!el.querySelector(".sldt")){el.innerHTML=`<div class="sldt" role="slider" aria-label="Длина свайпа" aria-valuemin="0" aria-valuemax="2" tabindex="0"><i class="sldf"></i>${K.map((v,j)=>`<span class="sldd" style="left:${j*50}%"></span>`).join("")}<b class="sldk"></b></div><div class="sldl">${K.map(v=>`<button onclick="setSl('${v}')">${SLV[v][5]}</button>`).join("")}</div>`;sldBind(el)}
- el.style.setProperty("--v",i/2);el.querySelectorAll(".sldl button").forEach((b,j)=>b.classList.toggle("on",j===i));el.querySelectorAll(".sldd").forEach((d,j)=>d.classList.toggle("in",j<=i));
+ el.style.setProperty("--slv",i/2);el.querySelectorAll(".sldl button").forEach((b,j)=>b.classList.toggle("on",j===i));el.querySelectorAll(".sldd").forEach((d,j)=>d.classList.toggle("in",j<=i));
  const t=el.querySelector(".sldt");t.setAttribute("aria-valuenow",i);t.setAttribute("aria-valuetext",SLV[l][5])}
 function sldBind(el){const t=el.querySelector(".sldt"),K=Object.keys(SLV);let on=0,last=-1;
  const at=e=>{const r=t.getBoundingClientRect();return Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))};
  t.addEventListener("pointerdown",e=>{on=1;last=K.indexOf(slv());el.classList.add("drag");try{t.setPointerCapture(e.pointerId)}catch(_){}mv(e)});
- const mv=e=>{if(!on)return;const f=at(e),n=Math.round(f*2);el.style.setProperty("--v",f);el.querySelectorAll(".sldd").forEach((d,j)=>d.classList.toggle("in",j/2<=f+.001));if(n!==last){last=n;hap(4)}};
+ const mv=e=>{if(!on)return;const f=at(e),n=Math.round(f*2);el.style.setProperty("--slv",f);el.querySelectorAll(".sldd").forEach((d,j)=>d.classList.toggle("in",j/2<=f+.001));if(n!==last){last=n;hap(4)}};
  t.addEventListener("pointermove",mv);
  const up=e=>{if(!on)return;on=0;el.classList.remove("drag");const v=K[Math.round(at(e)*2)];if(v!==slv())setSl(v);else sldDraw()};
  t.addEventListener("pointerup",up);t.addEventListener("pointercancel",()=>{on=0;el.classList.remove("drag");sldDraw()});
@@ -37,7 +37,7 @@ function drawSet(k){optList("dwm",DWL,dwAct(),"setDw");$("hpm").innerHTML=[["on"
  {sldDraw();$("sver").textContent="Версия "+BUILD}
  {const t=tnv();$("tnm").innerHTML=[["off","Выкл."],["soft","Лёгкий"],["strong","Заметный"]].map(([v,n])=>`<button class="${t===v?"on":""}" onclick="setTn('${v}')">${n}</button>`).join("")}
  // переключатели «да / нет»
- [["wtm",wton()],["bbm",bbv()==="fix"],["nbm",nbv()==="top"]].forEach(([id,on])=>{const b=$(id);b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});
+ [["wtm",wton()],["bbm",bbv()==="fix"],["nbm",nbv()==="top"],["mgm",mgOn()]].forEach(([id,on])=>{const b=$(id);b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});
  $("snm").innerHTML=[["row","Строкой"],["tap","Двойным касанием"]].map(([v,t])=>`<button class="${snv()===v?"on":""}" onclick="setSn('${v}')">${t}</button>`).join("");$("snd").textContent=snv()==="tap"?"Два касания по названию приёма — показать или скрыть его перекус.":"";$("snd").hidden=snv()!=="tap";
  optList("sgm",SWL.filter(([v])=>v!=="wt"||wton()),a,"setSw");
  $("swc").innerHTML=PRE.map(h=>`<button class="${c===h?"on":""}" style="background:${h||"#3b82f6"}" onclick="setAc('${h}')" aria-label="${h?"Цвет "+h:"Стандартный цвет"}">${ic("check")}</button>`).join("");
@@ -55,7 +55,7 @@ const CPS=["#e11d48","#f97316","#eab308","#16a34a","#0d9488","#0891b2","#2563eb"
 function cpOpen(){const c=(S.set&&/^#[0-9a-f]{6}$/i.test(S.set.ac||"")&&S.set.ac)||getComputedStyle(document.documentElement).getPropertyValue("--ac").trim()||"#2f7de1";
  [cpH,cpS,cpV]=hex2hsv(c);$("cps").innerHTML=CPS.map(h=>`<button style="background:${h}" onclick="cpSet('${h}')" aria-label="Цвет ${h}"></button>`).join("");cpDraw(1);sv(11,"Свой цвет")}
 function cpSet(h){[cpH,cpS,cpV]=hex2hsv(h);cpDraw(1);hap(4)}
-function cpDraw(hx){const c=hsv2hex(cpH,cpS,cpV),a=$("cpa");a.style.setProperty("--h",cpH);a.style.setProperty("--x",cpS);a.style.setProperty("--y",1-cpV);$("cph").style.setProperty("--x",cpH/360);
+function cpDraw(hx){const c=hsv2hex(cpH,cpS,cpV),a=$("cpa");a.style.setProperty("--cph",cpH);a.style.setProperty("--cpx",cpS);a.style.setProperty("--cpy",1-cpV);$("cph").style.setProperty("--cpx",cpH/360);
  $("cpak").style.background=c;$("cphk").style.background=`hsl(${cpH} 100% 50%)`;$("cpv").style.background=c;if(hx)$("cpx").value=c.toUpperCase();
  const ok=$("cpok");ok.style.background=c;ok.style.color=crt("#ffffff",c)>=3.1?"#fff":"#141922";
  $("cps").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.getAttribute("onclick").includes(c)))}

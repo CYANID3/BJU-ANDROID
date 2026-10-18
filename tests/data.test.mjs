@@ -103,3 +103,51 @@ test('виджет: превью в списке виджетов — тёмно
   const base = fs.readFileSync('native/android/res/layout/bju_widget.xml', 'utf8');
   assert.ok(base.includes('"Жиры"') && base.includes('"Углеводы"'), 'до первого обновления — верные подписи');
 });
+
+test('слияние баз: тот же продукт склеивается, похожие — на выбор, новые добавляются, дневник не меняется', async () => {
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [{ m: 0, n: 'Мой', g: 100, p: 1, f: 1, c: 1 }] }, db: [
+    ['Творог 5%', 17, 5, 1.8], ['Творог 5% Савушкин', 16, 5, 3], ['Куриная грудка', 23.6, 1.9, .4], ['Молоко 2,5%', 2.9, 2.5, 4.7],
+    ['Яйцо (варёное)', 12.6, 10.6, 1.1, [['Штук', 50]]], ['Яйцо жареное', 13.6, 15, .9], ['Яйцо сырое', 12.7, 10.9, .7], ['Хлеб белый', 7.6, 2.9, 50]] } });
+  const file = await a.ev(() => { const o = toFile(S); o.diary = { '2026-01-01': { breakfast: [{ name: 'Её запись', grams: 100, per100g: { protein: 1, fat: 1, carbs: 1 } }] } };
+    o.products = [
+      { name: 'творог 5 %', per100g: { protein: 17, fat: 5, carbs: 1.8 } },
+      { name: 'Грудка куриная', per100g: { protein: 23.5, fat: 2, carbs: .4 }, units: [{ name: 'Филе', grams: 200 }] },
+      { name: 'Молоко 3,2%', per100g: { protein: 2.9, fat: 3.2, carbs: 4.7 } },
+      { name: 'Яйцо', per100g: { protein: 12.7, fat: 10.9, carbs: .7 }, units: [{ name: 'штук', grams: 55 }, { name: 'Десяток', grams: 550 }] },
+      { name: 'Хлеб', per100g: { protein: 7.5, fat: 3, carbs: 49.5 } },
+      { name: 'Гречка', per100g: { protein: 12.6, fat: 3.3, carbs: 62 } }];
+    return JSON.stringify(o); });
+  await a.ev(f => mgRun(f, 'другой.json'), file); await a.wait(400);
+  assert.equal(await a.ev(() => isOpen && !$('v12').hidden), true, 'открылся экран «Похожие продукты»');
+  const pairs = await a.ev(() => [...document.querySelectorAll('#mgl .mgp')].map(p => [...p.querySelectorAll('.mgr b')].map(b => b.textContent).join(' ↔ ')));
+  assert.deepEqual(pairs, ['Яйцо ↔ Яйцо сырое', 'Хлеб ↔ Хлеб белый'], 'похожее — самое близкое по БЖУ');
+  assert.equal(await a.ev(() => S.db.length), 8, 'до «Готово» список не меняется');
+  await a.pg.click('#mgl .mgp:nth-child(2) button:has-text("Это одно")');
+  await a.pg.click('#v12 .pb'); await a.wait(300);
+  const r = await a.ev(() => ({ names: S.db.map(p => p[0]), bread: S.db.find(p => p[0] === 'Хлеб белый')[4], days: Object.keys(S.d), toast: $('tm').textContent, v5: !$('v5').hidden }));
+  assert.deepEqual(r.names, ['Творог 5%', 'Творог 5% Савушкин', 'Куриная грудка', 'Молоко 2,5%', 'Яйцо (варёное)', 'Яйцо жареное', 'Яйцо сырое', 'Хлеб белый', 'Молоко 3,2%', 'Яйцо', 'Гречка']);
+  assert.equal(r.bread, undefined, 'у «Хлеба» из файла мер не было');
+  assert.deepEqual(await a.ev(() => S.db.find(p => p[0] === 'Куриная грудка')[4]), [['Филе', 200]], 'тот же набор слов — склеено, мера добавлена');
+  assert.deepEqual(r.days, [day()], 'дневник не меняется');
+  assert.match(r.toast, /Добавлено продуктов: 3 .* новых мер: 1/);
+  assert.equal(r.v5, true, 'после «Готово» — снова «Файл»');
+  await a.ev(() => undo());
+  assert.equal(await a.ev(() => S.db.length), 8, '«Отменить» возвращает прежний список');
+  await a.ev(() => { mgRun(ser(), 'свой'); }); await a.wait(300);
+  assert.match(await a.ev(() => $('dgm').textContent), /нет новых продуктов/);
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});
+
+test('настройка «Импорт продуктов из файла»: выключена — кнопки нет; сохраняется в файле', async () => {
+  const a = await openApp();
+  await a.ev(() => fp()); await a.wait(300);
+  assert.equal(await a.ev(() => $('mgb').hidden), false);
+  await a.ev(() => cl()); await a.wait(400); await a.ev(() => sets()); await a.wait(400);
+  await a.pg.click('#mgm'); await a.wait(100);
+  assert.equal(await a.ev(() => [S.set.mg, $('mgm').getAttribute('aria-checked')].join()), 'off,false');
+  assert.equal(await a.ev(() => JSON.parse(ser()).settings.productImport), 'off');
+  await a.ev(() => cl()); await a.wait(400); await a.ev(() => fp()); await a.wait(400);
+  assert.equal(await a.ev(() => $('mgb').hidden), true);
+  await a.close();
+});

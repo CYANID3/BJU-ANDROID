@@ -6,6 +6,7 @@ function step_(){const on=i=>!$("v"+i).hidden;
  if(on(3)){if(!v3from)return 0;$("q").value="";lst();drawMc();sv(1,vt());return 1}
  if(on(1)&&mode==="ing"){drawDish();return 1}
  if(on(11)){drawSet();sv(7,"Настройки");return 1}
+ if(on(12)){mgS=null;fp();return 1}
  if(on(6)&&cv){cv=cb===1&&cv===2?1:0;drawCal();fade($("cg"));return 1}return 0}
 addEventListener("popstate",async()=>{if(!isOpen)return;
  if(!$("v8").hidden&&($("dn").value.trim()||dr.i.length)){if(await ask("Закрыть без сохранения блюда?","Закрыть",1))closeUI();else try{history.pushState({o:1},"")}catch(e){}return}

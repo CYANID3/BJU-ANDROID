@@ -42,7 +42,7 @@ function segSync(){document.querySelectorAll(".seg").forEach(s=>{const b=s.query
  if(!b||!s.offsetWidth){if(!b)s.classList.remove("sk");return}
  const v=[b.offsetLeft+"px",b.offsetTop+"px",b.offsetWidth+"px",b.offsetHeight+"px"],k=v.join();if(s._sk===k&&s.classList.contains("sk"))return;
  const first=!s.classList.contains("sk")||!s._sk;if(first)s.classList.add("sn");
- ["--sx","--sy","--sw","--sh"].forEach((n,i)=>s.style.setProperty(n,v[i]));s._sk=k;s.classList.add("sk");
+ ["--skx","--sky","--skw","--skh"].forEach((n,i)=>s.style.setProperty(n,v[i]));s._sk=k;s.classList.add("sk");
  if(first){void s.offsetWidth;requestAnimationFrame(()=>s.classList.remove("sn"))}})}
 (()=>{let q=0;const go=()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;segSync()})};
  new MutationObserver(go).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["class","hidden"]});

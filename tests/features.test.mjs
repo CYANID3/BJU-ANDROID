@@ -233,9 +233,9 @@ test('карточка дня по умолчанию открывается в 
 test('сегменты: таблетка переезжает к выбранному; перекус по двойному касанию выезжает и уезжает плавно', async () => {
   const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(0, 'Яйцо', 50, 6, 5, .5)] }, db: [], set: { sn: 'tap' } } });
   await a.ev(() => sets()); await a.wait(400);
-  const x0 = await a.ev(() => $('thm').style.getPropertyValue('--sx'));
+  const x0 = await a.ev(() => $('thm').style.getPropertyValue('--skx'));
   await a.ev(() => $('thm').querySelectorAll('button')[2].click()); await a.wait(80);
-  const st = await a.ev(() => ({ sk: $('thm').classList.contains('sk'), x: $('thm').style.getPropertyValue('--sx'), b: $('thm').querySelector('button.on').offsetLeft + 'px' }));
+  const st = await a.ev(() => ({ sk: $('thm').classList.contains('sk'), x: $('thm').style.getPropertyValue('--skx'), b: $('thm').querySelector('button.on').offsetLeft + 'px' }));
   assert.ok(st.sk && st.x === st.b && st.x !== x0, JSON.stringify(st));
   await a.ev(() => cl()); await a.wait(400);
   await a.ev(() => snToggle(0)); await a.wait(60);
@@ -276,14 +276,14 @@ test('добавление: можно сменить приём; после д�
 test('длина свайпа — ползунок: касание подписи и перетаскивание', async () => {
   const a = await openApp();
   await a.ev(() => sets()); await a.wait(400);
-  assert.equal(await a.ev(() => $('slm').style.getPropertyValue('--v')), '0.5');
+  assert.equal(await a.ev(() => $('slm').style.getPropertyValue('--slv')), '0.5');
   const r = await a.ev(() => { const b = $('slm').querySelector('.sldt').getBoundingClientRect(); return { x: b.left, y: b.top + b.height / 2, w: b.width }; });
   await a.ev(() => $('slm').querySelector('.sldt').scrollIntoView({ block: 'center' })); await a.wait(200);
   const r2 = await a.ev(() => { const b = $('slm').querySelector('.sldt').getBoundingClientRect(); return { x: b.left, y: b.top + b.height / 2, w: b.width }; });
   await a.pg.mouse.move(r2.x + r2.w / 2, r2.y); await a.pg.mouse.down(); await a.pg.mouse.move(r2.x + r2.w * .9, r2.y, { steps: 5 }); await a.pg.mouse.up(); await a.wait(200);
   assert.equal(await a.ev(() => slv()), 'long', 'перетаскивание вправо — «Длинный»');
   await a.pg.click('#slm .sldl button:nth-child(1)'); await a.wait(100);
-  assert.equal(await a.ev(() => [slv(), $('slm').style.getPropertyValue('--v'), $('slm').querySelector('.sldl .on').textContent].join()), 'short,0,Короткий');
+  assert.equal(await a.ev(() => [slv(), $('slm').style.getPropertyValue('--slv'), $('slm').querySelector('.sldl .on').textContent].join()), 'short,0,Короткий');
   assert.ok(r.w > 0);
   await a.close();
 });

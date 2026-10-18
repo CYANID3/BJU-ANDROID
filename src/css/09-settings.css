@@ -11,7 +11,7 @@
 .seg button:active{transform:scale(.96)}.seg button:not(.on):active{color:var(--tx)}
 .seg button.on{background:var(--ac);color:var(--on);box-shadow:0 2px 10px color-mix(in srgb,var(--ac) 32%,transparent)}
 .seg.sk button.on{background:transparent;box-shadow:none}
-.seg.sk::before{content:"";position:absolute;left:0;top:0;z-index:-1;width:var(--sw);height:var(--sh);transform:translate(var(--sx),var(--sy));border-radius:var(--r-in);background:var(--ac);
+.seg.sk::before{content:"";position:absolute;left:0;top:0;z-index:-1;width:var(--skw);height:var(--skh);transform:translate(var(--skx),var(--sky));border-radius:var(--r-in);background:var(--ac);
  box-shadow:0 2px 10px color-mix(in srgb,var(--ac) 32%,transparent);transition:transform var(--t3) var(--ease),width var(--t3) var(--ease),height var(--t3) var(--ease),background-color var(--t2)}
 .seg.sn::before{transition:none}
 /* цвета акцента */
@@ -44,12 +44,12 @@
 .sgt+.srow{margin-top:0}
 /* ползунок «Длина свайпа»: точки стоят по центрам трёх подписей — всё симметрично.
    Дорожка от первой точки до последней, пройденная часть — акцентом, бегунок — белый круг с мягкой тенью и ореолом */
-.sld{--v:.5;background:var(--card);border-radius:var(--r-ctl);padding:12px 0 4px}
+.sld{--slv:.5;background:var(--card);border-radius:var(--r-ctl);padding:12px 0 4px}
 .sldt{position:relative;height:32px;margin:0 calc(100% / 6);touch-action:none;cursor:pointer}
 .sldt::before{content:"";position:absolute;left:0;right:0;top:50%;height:6px;margin-top:-3px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--mu) 22%,var(--card))}
-.sldf{position:absolute;left:0;top:50%;height:6px;margin-top:-3px;width:calc(var(--v) * 100%);border-radius:var(--r-pill);background:var(--ac)}
+.sldf{position:absolute;left:0;top:50%;height:6px;margin-top:-3px;width:calc(var(--slv) * 100%);border-radius:var(--r-pill);background:var(--ac)}
 .sldd{position:absolute;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:color-mix(in srgb,var(--mu) 70%,var(--card));transition:opacity var(--t2),transform var(--t2) var(--ease)}.sldd.in{opacity:0;transform:scale(.4)}
-.sldk{position:absolute;top:50%;left:calc(var(--v) * 100%);width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:#fff;
+.sldk{position:absolute;top:50%;left:calc(var(--slv) * 100%);width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:#fff;
  box-shadow:0 0 0 6px color-mix(in srgb,var(--ac) 22%,transparent),0 2px 6px rgba(0,0,0,.3)}
 .sldk::after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--ac)}
 .sldf,.sldk{transition:left var(--t3) var(--ease),width var(--t3) var(--ease),transform var(--t1) var(--ease),box-shadow var(--t2)}.sld.drag .sldf,.sld.drag .sldk{transition:transform var(--t1) var(--ease),box-shadow var(--t2)}
@@ -60,13 +60,13 @@ button.cc{width:100%;text-align:left;padding-right:12px}.cc .ccv{display:flex;al
 .cc .ccv i{width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}.cc .ccv svg.i{width:18px;height:18px}
 /* экран «Свой цвет» */
 .cpk{display:flex;flex-direction:column;gap:16px}
-.cpa{--h:210;--x:.7;--y:.1;position:relative;height:210px;border-radius:var(--r-block);touch-action:none;cursor:crosshair;
- background:linear-gradient(to top,#000,rgba(0,0,0,0)),linear-gradient(to right,#fff,hsl(calc(var(--h) * 1deg) 100% 50%))}
+.cpa{--cph:210;--cpx:.7;--cpy:.1;position:relative;height:210px;border-radius:var(--r-block);touch-action:none;cursor:crosshair;
+ background:linear-gradient(to top,#000,rgba(0,0,0,0)),linear-gradient(to right,#fff,hsl(calc(var(--cph) * 1deg) 100% 50%))}
 .cpa i,.cph i{position:absolute;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35),inset 0 0 0 1px rgba(0,0,0,.15);pointer-events:none;transition:transform var(--t1) var(--ease)}
-.cpa i{left:calc(var(--x) * 100%);top:calc(var(--y) * 100%)}
-.cph{--x:.5;position:relative;height:16px;margin:4px 14px;border-radius:var(--r-pill);touch-action:none;cursor:pointer;
+.cpa i{left:calc(var(--cpx) * 100%);top:calc(var(--cpy) * 100%)}
+.cph{--cpx:.5;position:relative;height:16px;margin:4px 14px;border-radius:var(--r-pill);touch-action:none;cursor:pointer;
  background:linear-gradient(to right,#f00 0%,#ff0 16.66%,#0f0 33.33%,#0ff 50%,#00f 66.66%,#f0f 83.33%,#f00 100%)}
-.cph::before{content:"";position:absolute;inset:-14px -14px;}.cph i{left:calc(var(--x) * 100%);top:50%}
+.cph::before{content:"";position:absolute;inset:-14px -14px;}.cph i{left:calc(var(--cpx) * 100%);top:50%}
 .cpa.drag i,.cph.drag i{transform:scale(1.15)}
 .cpr{display:flex;gap:10px;align-items:center}.cpv{flex:none;width:var(--h-ctl);height:var(--h-ctl);border-radius:var(--r-ctl);box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}
 .cpr input{margin:0;flex:1;font-variant-numeric:tabular-nums;letter-spacing:.04em;font-weight:600;text-transform:uppercase}
@@ -74,3 +74,9 @@ button.cc{width:100%;text-align:left;padding-right:12px}.cc .ccv{display:flex;al
 .cps button.on{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--tx);transform:scale(.9)}
 /* кнопка «Готово» окрашивается вслед за пальцем — без перехода цвета (иначе запаздывает) */
 #cpok{margin-top:0;transition:transform var(--t1) var(--ease)}
+/* «Похожие продукты» при слиянии баз: пара «из файла / у вас» и выбор */
+#mgl{display:flex;flex-direction:column;gap:var(--gap);margin-bottom:4px}
+.mgp{background:var(--sub);border-radius:var(--r-block);padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mgr{min-width:0;display:flex;flex-direction:column;gap:2px;padding:2px 4px}.mgr small{font-size:var(--fs-xs);color:var(--mu);font-weight:600}
+.mgr b{font-size:var(--fs-body);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mgr span{font-size:var(--fs-xs);color:var(--mu);font-variant-numeric:tabular-nums}
+.mgp .seg{grid-column:1/-1;background:var(--card)}
