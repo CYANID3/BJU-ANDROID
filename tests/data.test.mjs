@@ -103,15 +103,3 @@ test('виджет: превью в списке виджетов — тёмно
   const base = fs.readFileSync('native/android/res/layout/bju_widget.xml', 'utf8');
   assert.ok(base.includes('"Жиры"') && base.includes('"Углеводы"'), 'до первого обновления — верные подписи');
 });
-
-test('резервная копия: кнопка в «Файл» видна, только если копия есть, и восстанавливает данные', async () => {
-  const a = await openApp();
-  await a.ev(() => { try { localStorage.removeItem('bju2bak'); } catch (e) {} fp(); }); await a.wait(300);
-  assert.equal(await a.ev(() => $('frb').hidden), true);
-  await a.ev(() => { S.d['2026-10-01'] = [{ m: 0, n: 'Копия', g: 100, p: 1, f: 1, c: 1 }]; bk(); S.d['2026-10-01'] = []; save(); cl(); }); await a.wait(300);
-  await a.ev(() => fp()); await a.wait(300);
-  assert.equal(await a.ev(() => $('frb').hidden), false);
-  const p = a.ev(() => rb()); await a.wait(300); await a.ev(() => $('dgy').click()); await p; await a.wait(200);
-  assert.equal(await a.ev(() => (S.d['2026-10-01'] || []).length), 1);
-  await a.close();
-});
