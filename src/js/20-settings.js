@@ -42,14 +42,14 @@ function drawSet(k){optList("dwm",DWL,dwAct(),"setDw");$("hpm").innerHTML=[["on"
  // какое движение и его сила — только когда действие выбрано
  $("ssr").hidden=skAct()==="off";
  // живая подсказка под выбранным движением: телефон показывает, как его двигать
- {const m=smv(),h=$("smh");h.className="smh "+m;h.querySelector(".smt").innerHTML={tw:"Держите как обычно и <b>дважды крутните кистью</b> туда-обратно, как отвёрткой, — быстро",
-  ch:"<b>Два коротких резких взмаха</b> вниз, как топориком, — и замрите",fl:"Переверните <b>экраном вниз</b> и <b>сразу обратно</b> — за пару секунд"}[m]}sldDraw("ssm",{keys:Object.keys(SSV),labels:Object.values(SSV).map(x=>x[1]),get:ssv,set:setSs,aria:"Сила движения"});
+ {const m=smv(),h=$("smh");h.className="smh "+m;h.querySelector(".smt").innerHTML={tw:"<b>Дважды крутните кистью</b> туда-обратно <b>через угол</b>, как при переключении камер на Pixel, — быстро",
+  ch:"<b>Два коротких резких взмаха</b> вниз, как топориком, — и замрите",tl:"<b>Наклоните</b> телефон в любую сторону и <b>сразу верните</b>, как держали"}[m]}sldDraw("ssm",{keys:Object.keys(SSV),labels:Object.values(SSV).map(x=>x[1]),get:ssv,set:setSs,aria:"Сила движения"});
  $("sver").textContent="Версия "+BUILD
  {const t=tnv();$("tnm").innerHTML=[["off","Выкл."],["soft","Лёгкий"],["strong","Заметный"]].map(([v,n])=>`<button class="${t===v?"on":""}" onclick="setTn('${v}')">${n}</button>`).join("")}
  // переключатели «да / нет»
  [["wtm",wton()],["bbm",bbv()==="fix"],["nbm",nbv()==="top"],["mgm",mgOn()]].forEach(([id,on])=>{const b=$(id);b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});
  $("snm").innerHTML=[["row","Строкой"],["tap","Двойным касанием"]].map(([v,t])=>`<button class="${snv()===v?"on":""}" onclick="setSn('${v}')">${t}</button>`).join("");$("snd").textContent=snv()==="tap"?"Два касания по названию приёма — показать или скрыть его перекус.":"";$("snd").hidden=snv()!=="tap";
- optList("sgm",SWL.filter(([v])=>v!=="wt"||wton()),a,"setSw");optList("skm",SKL.filter(([v])=>v!=="wt"||wton()),skAct(),"setSk");optList("smm",SML,smv(),"setSm");
+ optList("sgm",SWL.filter(([v])=>v!=="wt"||wton()),a,"setSw");$("dwh").hidden=dwAct()==="off";$("sgh").hidden=a==="off";optList("skm",SKL.filter(([v])=>v!=="wt"||wton()),skAct(),"setSk");optList("smm",SML,smv(),"setSm");
  $("swc").innerHTML=PRE.map(h=>`<button class="${c===h?"on":""}" style="background:${h||"#3b82f6"}" onclick="setAc('${h}')" aria-label="${h?"Цвет "+h:"Стандартный цвет"}">${ic("check")}</button>`).join("");
  $("cpd").style.background=c||"var(--ac)";$("cpn").textContent=c&&!PRE.includes(c)?c.toUpperCase():""}
 function setHp(v){S.set=Object.assign({},S.set,{hp:v});saveq();drawSet();hap(10)}

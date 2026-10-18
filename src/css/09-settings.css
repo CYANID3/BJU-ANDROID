@@ -84,11 +84,22 @@ button.cc{width:100%;text-align:left;padding-right:12px}.cc .ccv{display:flex;al
 .smp b{border-color:var(--mu);opacity:.28}
 .smt{font-size:var(--fs-sm);line-height:1.4;color:var(--mu)}.smt b{color:var(--tx);font-weight:600}
 .smp{perspective:160px}
-.smh.tw i{animation:smTw 2.6s ease-in-out infinite}.smh.ch i{animation:smCh 2.4s infinite}.smh.fl i{animation:smFl 3s var(--ease) infinite}
+.smh.tw i{animation:smTw 2.6s ease-in-out infinite}.smh.ch i{animation:smCh 2.4s infinite}.smh.tl i{transform-origin:50% 90%;animation:smTl 2.6s var(--ease) infinite}
 .smh .smp b{display:none}
-@keyframes smTw{0%,58%,100%{transform:none}12%{transform:rotateY(62deg)}24%{transform:rotateY(-20deg)}36%{transform:rotateY(62deg)}48%{transform:rotateY(-10deg)}}
-@keyframes smCh{0%,60%,100%{transform:none}8%{transform:translateY(14px) rotate(8deg)}16%{transform:translateY(-4px)}26%{transform:translateY(14px) rotate(8deg)}34%{transform:translateY(-2px)}42%{transform:none}}
-@keyframes smFl{0%,15%{transform:none}38%,55%{transform:rotateX(180deg)}78%,100%{transform:none}}
+@keyframes smTw{0%,58%,100%{transform:none}12%{transform:rotate3d(1,1,0,60deg)}24%{transform:rotate3d(1,1,0,-18deg)}36%{transform:rotate3d(1,1,0,60deg)}48%{transform:rotate3d(1,1,0,-8deg)}}
+.smh.ch i{transform-origin:50% 85%}
+@keyframes smCh{0%,62%,100%{transform:none}8%{transform:rotate3d(1,-1,0,58deg)}17%{transform:rotate3d(1,-1,0,-6deg)}27%{transform:rotate3d(1,-1,0,58deg)}36%{transform:rotate3d(1,-1,0,-4deg)}44%{transform:none}}
+/* подсказки «потянуть вниз / вверх»: в телефоне — карточки списка и палец */
+.smp s{position:absolute;left:3px;right:3px;height:7px;border-radius:2px;background:var(--mu);opacity:.45}.smp s:nth-child(1){top:7px}.smp s:nth-child(2){top:17px}.smp s:nth-child(3){top:27px}
+.smp u{position:absolute;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--ac);opacity:0;box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 25%,transparent)}
+.smh.phd i,.smh.phu i{overflow:hidden}
+.smh.phd u{top:4px;animation:pdF 2.4s var(--ease) infinite}.smh.phd s{animation:pdS 2.4s var(--ease) infinite}
+.smh.phu u{bottom:4px;animation:puF 2.4s var(--ease) infinite}.smh.phu s{animation:puS 2.4s var(--ease) infinite}
+@keyframes pdF{0%,8%{opacity:0;transform:none}16%{opacity:.9;transform:none}52%{opacity:.9;transform:translateY(20px)}64%,100%{opacity:0;transform:translateY(20px)}}
+@keyframes pdS{0%,16%{transform:none}52%{transform:translateY(8px)}70%,100%{transform:none}}
+@keyframes puF{0%,8%{opacity:0;transform:none}16%{opacity:.9;transform:none}52%{opacity:.9;transform:translateY(-20px)}64%,100%{opacity:0;transform:translateY(-20px)}}
+@keyframes puS{0%,16%{transform:none}52%{transform:translateY(-8px)}70%,100%{transform:none}}
+@keyframes smTl{0%,15%{transform:none}35%,48%{transform:rotateX(58deg)}68%,100%{transform:none}}
 /* «Проверка движения» */
 .dgx{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px;border-radius:var(--r-block);background:var(--sub);margin-bottom:var(--gap)}
 .dgs{font-size:var(--fs-h);font-weight:700;color:var(--mu);transition:color var(--t2)}.dgs.ok{color:var(--act,var(--ac))}
