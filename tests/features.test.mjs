@@ -238,14 +238,11 @@ test('сегменты: таблетка переезжает к выбранн�
   const st = await a.ev(() => ({ sk: $('thm').classList.contains('sk'), x: $('thm').style.getPropertyValue('--skx'), b: $('thm').querySelector('button.on').offsetLeft + 'px' }));
   assert.ok(st.sk && st.x === st.b && st.x !== x0, JSON.stringify(st));
   await a.ev(() => cl()); await a.wait(400);
-  await a.ev(() => snToggle(0)); await a.wait(60);
-  const h1 = await a.ev(() => document.querySelector('#app .snk').getBoundingClientRect().height);
+  const kf = () => { const an = document.querySelector('#app .snk').getAnimations()[0]; return an ? an.effect.getKeyframes().map(k => k.height) : null; };
+  assert.deepEqual(await a.ev(k => { snToggle(0); return new Function('return (' + k + ')()')(); }, kf.toString()), ['0px', '42px'], 'выезжает: высота от нуля до своей');
   await a.wait(500);
-  const h2 = await a.ev(() => document.querySelector('#app .snk').getBoundingClientRect().height);
-  assert.ok(h1 < h2, `выезжает: ${h1} → ${h2}`);
-  await a.ev(() => snToggle(0)); await a.wait(60);
-  assert.equal(await a.pg.locator('#app .snk').count(), 1, 'пока уезжает — ещё на месте');
-  await a.wait(450);
+  assert.deepEqual(await a.ev(k => { snToggle(0); return [document.querySelectorAll('#app .snk').length, new Function('return (' + k + ')()')()]; }, kf.toString()), [1, ['42px', '0px']], 'уезжает: строка ещё на месте и сжимается');
+  await a.wait(700);
   assert.equal(await a.pg.locator('#app .snk').count(), 0);
   assert.deepEqual(a.errors, []);
   await a.close();
@@ -330,7 +327,8 @@ test('свой цвет: экран выбора — квадрат, оттен�
 
 test('встряхивание: выключено по умолчанию; выбранное действие срабатывает на три толчка', async () => {
   const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(0, 'Яйцо', 50, 6, 5, .5)] }, db: [] } });
-  const shake = () => a.ev(async () => { for (let i = 0; i < 4; i++) { window.dispatchEvent(new DeviceMotionEvent('devicemotion', { acceleration: { x: i % 2 ? -20 : 20, y: 0, z: 0 } })); await new Promise(r => setTimeout(r, 150)); } });
+  // три толчка с «виртуальными» отметками времени (каждое встряхивание — на 2 с позже предыдущего): от скорости машины не зависит
+  let T = 1e7; const shake = () => { T += 2000; return a.ev(t => { for (let i = 0; i < 3; i++) skMotion({ acceleration: { x: i % 2 ? -20 : 20, y: 0, z: 0 }, timeStamp: t + i * 150 }); }, T); };
   assert.equal(await a.ev(() => skAct()), 'off');
   assert.deepEqual(await a.ev(() => SKL.map(x => x[1])), ['Выключено', 'Приём пищи', 'Новый продукт', 'Статистика', 'Вес', 'Карточка дня']);
   await shake(); await a.wait(300);
@@ -338,12 +336,12 @@ test('встряхивание: выключено по умолчанию; вы
   await a.ev(() => setSk('stat')); await shake(); await a.wait(400);
   assert.equal(await a.ev(() => isOpen && !$('v9').hidden), true, 'встряхнули — статистика');
   await a.ev(() => cl()); await a.wait(400);
-  await a.ev(() => setSk('prod')); await a.wait(1600); await shake(); await a.wait(400);
+  await a.ev(() => setSk('prod')); await shake(); await a.wait(400);
   assert.equal(await a.ev(() => isOpen && !$('v3').hidden), true, '«Новый продукт»');
   await a.ev(() => cl()); await a.wait(400);
-  await a.ev(() => setSk('rep')); await a.wait(1600); await shake(); await a.wait(400);
+  await a.ev(() => setSk('rep')); await shake(); await a.wait(400);
   assert.equal(await a.ev(() => !!REP), true, 'карточка дня открылась');
-  await a.wait(1600); await shake(); await a.wait(400);
+  await shake(); await a.wait(400);
   assert.equal(await a.ev(() => !!REP), false, 'ещё раз — закрылась');
   assert.equal(await a.ev(() => JSON.parse(ser()).settings.shakeAction), 'dayCard');
   assert.deepEqual(a.errors, []);
