@@ -115,9 +115,10 @@ test('клавиатура поднимает лист на её высоту', 
 
 test('настройки: длина свайпа, оттенок фона и акцент применяются', async () => {
   const a = await openApp();
-  await a.ev(() => sets()); await a.wait(300);
+  await a.ev(() => { sets(); stGo(2); }); await a.wait(300);
   await a.pg.click('#slm button:nth-child(3)');
   assert.equal(await a.ev(() => slv()), 'long');
+  await a.ev(() => stGo(0)); await a.wait(300);
   const bg0 = await a.ev(() => getComputedStyle(document.documentElement).getPropertyValue('--bg'));
   await a.pg.click('#tnm button:nth-child(3)');
   const bg1 = await a.ev(() => getComputedStyle(document.documentElement).getPropertyValue('--bg'));
@@ -175,7 +176,7 @@ test('«Повторить предыдущий день?»: «Нет» скры
 test('перекусы: «Тонкой строкой» или «По двойному касанию» по основному приёму', async () => {
   const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(3, 'Творог', 150, 25, 7, 3)] } } });
   assert.equal(await a.pg.locator('#app .snk').count(), 2, 'два пустых — строками');
-  await a.ev(() => sets()); await a.wait(300);
+  await a.ev(() => { sets(); stGo(1); }); await a.wait(300);
   await a.pg.click('#snm button:nth-child(2)'); await a.ev(() => cl()); await a.wait(300);
   assert.equal(await a.pg.locator('#app .snk').count(), 0, 'пустых не видно');
   assert.equal(await a.pg.locator('#app .meal').count(), 4, 'перекус с записью — карточкой');

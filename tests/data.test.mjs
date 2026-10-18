@@ -143,7 +143,7 @@ test('настройка «Импорт продуктов из файла»: в
   const a = await openApp();
   await a.ev(() => fp()); await a.wait(300);
   assert.equal(await a.ev(() => $('mgb').hidden), false);
-  await a.ev(() => cl()); await a.wait(400); await a.ev(() => sets()); await a.wait(400);
+  await a.ev(() => cl()); await a.wait(400); await a.ev(() => { sets(); stGo(3); }); await a.wait(400);
   await a.pg.click('#mgm'); await a.wait(100);
   assert.equal(await a.ev(() => [S.set.mg, $('mgm').getAttribute('aria-checked')].join()), 'off,false');
   assert.equal(await a.ev(() => JSON.parse(ser()).settings.productImport), 'off');

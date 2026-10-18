@@ -12,9 +12,9 @@ test('нижняя панель: в конце дня (по умолчанию) 
   const pos = () => a.ev(() => { const b = document.querySelector('.bt'), r = b.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, fixed: getComputedStyle(b).position === 'fixed' }; });
   let p = await pos();
   assert.equal(p.fixed, false); assert.ok(p.top > vh, 'по умолчанию — после приёмов пищи');
-  await a.ev(() => sets()); await a.wait(300);
-  assert.equal(await a.ev(() => $('bbm').getAttribute('aria-checked')), 'false', '«Закрепить нижнюю панель» выключено');
-  await a.pg.click('#bbm'); await a.ev(() => cl()); await a.wait(400);
+  await a.ev(() => { sets(); stGo(1); }); await a.wait(300);
+  assert.equal(await a.ev(() => $('bbm').querySelector('.on').textContent), 'В конце дня');
+  await a.pg.click('#bbm button:nth-child(2)'); await a.ev(() => cl()); await a.wait(400);
   for (const y of [0, 300, 1e6]) {
     await a.ev(y => scrollTo(0, y), y); await a.wait(150);
     p = await pos(); assert.equal(p.fixed, true); assert.ok(p.bottom <= vh && p.bottom > vh - 60, 'видна у края при любой прокрутке');
@@ -109,16 +109,28 @@ test('закреплённая панель не закрывает конец �
   }
 });
 
-test('настройки: четыре раздела, переключатели «да / нет», почти без пояснений', async () => {
+test('настройки: четыре вкладки, понятные подписи, короткие пояснения; вкладки листаются пальцем', async () => {
   const a = await openApp();
   await a.ev(() => sets()); await a.wait(300);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v7 .sgt')].map(e => e.firstChild.nextSibling.textContent)), ['Оформление', 'Главный экран', 'Жесты и вибрация', 'Данные']);
-  assert.equal(await a.ev(() => [...document.querySelectorAll('#v7 .sd')].filter(e => !e.hidden && e.textContent.trim()).length), 0, 'по умолчанию без пояснительных абзацев');
-  assert.equal(await a.ev(() => document.querySelectorAll('#v7 .tg').length), 4);
-  await a.pg.click('#nbm'); assert.equal(await a.ev(() => nbv()), 'top');
-  await a.pg.click('#nbm'); assert.equal(await a.ev(() => nbv()), 'bottom');
+  assert.deepEqual(await a.ev(() => [...$('stb').querySelectorAll('button')].map(b => b.textContent)), ['Вид', 'Экран', 'Жесты', 'Прочее']);
+  assert.deepEqual(await a.ev(() => [0, 1, 2, 3].map(i => $('sp' + i).hidden)), [false, true, true, true], 'открыта первая вкладка');
+  assert.equal(await a.ev(() => document.querySelectorAll('#v7 .tg').length), 3, 'переключатели — только для «да / нет»');
+  assert.ok(await a.ev(() => [...document.querySelectorAll('#v7 .sd')].every(e => e.textContent.length < 80)), 'пояснения короткие');
+  await a.pg.click('#stb button:nth-child(2)'); await a.wait(300);
+  await a.pg.click('#nbm button:nth-child(2)'); assert.equal(await a.ev(() => nbv()), 'top');
+  await a.pg.click('#nbm button:nth-child(1)'); assert.equal(await a.ev(() => nbv()), 'bottom');
   await a.pg.click('#snm button:nth-child(2)');
   assert.equal(await a.ev(() => !$('snd').hidden && $('snd').textContent.length < 80), true, 'короткая подсказка — только для двойного касания');
+  // пальцем влево — следующая вкладка, вправо — обратно; высота листа не меняется
+  const h0 = await a.ev(() => document.querySelector('#ov .sh').offsetHeight);
+  await a.drag(330, 500, 120, 510, { steps: 8, ms: 20 }); await a.wait(400);
+  assert.equal(await a.ev(() => stTab), 2);
+  assert.equal(await a.ev(() => document.querySelector('#ov .sh').offsetHeight), h0, 'лист не прыгает по высоте');
+  await a.drag(120, 500, 330, 510, { steps: 8, ms: 20 }); await a.wait(400);
+  assert.equal(await a.ev(() => stTab), 1);
+  // повторное открытие — на той же вкладке
+  await a.ev(() => closeUI()); await a.wait(400); await a.ev(() => sets()); await a.wait(300);
+  assert.equal(await a.ev(() => !$('sp1').hidden), true);
   assert.deepEqual(a.errors, []);
   await a.close();
 });

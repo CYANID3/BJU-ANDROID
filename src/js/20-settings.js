@@ -35,16 +35,31 @@ function optList(id,L,cur,fn){const open=olOpen.has(id),el=$(id);el.classList.to
  el.innerHTML=L.map(([v,t,i,d])=>`<button class="${cur===v?"on":""}" onclick="olTap('${id}','${fn}','${v}')" role="radio" aria-checked="${cur===v}"${cur===v?` aria-expanded="${open}"`:""}><span class="oi">${ic(i)}</span><span class="ot"><b>${t}</b><small>${d}</small></span><span class="oc">${ic("check")}</span><span class="od">${ic("chevR")}</span></button>`).join("")}
 function olTap(id,fn,v){const el=$(id);if(el.classList.contains("cl")){olOpen.add(id);drawSet();hap(4);el.querySelectorAll("button:not(.on)").forEach((b,k)=>mo(b,[{opacity:0,transform:"translateY(-6px)"},{opacity:1,transform:"none"}],{delay:k*25,fill:"backwards"}));return}
  olOpen.delete(id);window[fn](v)}
-function sets(){olOpen.clear();drawSet();sv(7,"Настройки");show()}
+// Настройки — четыре вкладки; открываются на той, где были в прошлый раз (за этот запуск)
+const STABS=["Вид","Экран","Жесты","Прочее"];let stTab=0;
+function sets(){olOpen.clear();drawSet();stShow(stTab);sv(7,"Настройки");show()}
+function stShow(i){stTab=i;$("stb").innerHTML=STABS.map((t,j)=>`<button class="${j===i?"on":""}" role="tab" aria-selected="${j===i}" onclick="stGo(${j})">${t}</button>`).join("");
+ STABS.forEach((t,j)=>$("sp"+j).hidden=j!==i)}
+// смена вкладки: новая проявляется на месте, лист плавно меняет высоту, прокрутка — с начала
+function stGo(i){if(i===stTab||i<0||i>=STABS.length)return;const sh=document.querySelector("#ov .sh"),h0=sh.offsetHeight;stShow(i);sh.scrollTop=0;hap(4);
+ if(RM()||!sh.animate)return;const h1=svTargetH(sh,0);
+ try{$("sp"+i).animate([{opacity:0,transform:"translateY(6px)"},{opacity:1,transform:"none"}],{duration:MO.t2,easing:MO.E});if(Math.abs(h1-h0)>4)sh.animate([{height:h0+"px"},{height:h1+"px"}],{duration:MO.t2,easing:MO.E})}catch(e){}}
+// вкладки листаются и пальцем вбок (кроме ползунков)
+(()=>{const v=$("v7");let x0=null,y0=0;v.addEventListener("touchstart",e=>{x0=e.touches.length===1&&!e.target.closest(".sld,.nodrag")?e.touches[0].clientX:null;y0=e.touches[0].clientY},{passive:true});
+ v.addEventListener("touchend",e=>{if(x0===null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;if(Math.abs(dx)>64*GF()&&Math.abs(dx)>Math.abs(dy)*1.6)stGo(stTab+(dx<0?1:-1))},{passive:true})})();
 function drawSet(k){optList("dwm",DWL,dwAct(),"setDw");$("hpm").innerHTML=[["on","Вкл."],["nodays","Кроме дней"],["off","Выкл."]].map(([v,t])=>`<button class="${hpv()===v?"on":""}" onclick="setHp('${v}')">${t}</button>`).join("");const a=swAct(),c=(S.set&&S.set.ac)||"",th=(S.set&&S.set.th)||"auto";$("thm").innerHTML=[["auto","Авто"],["light","Светлая"],["dark","Тёмная"]].map(([v,t])=>`<button class="${th===v?"on":""}" onclick="setTh('${v}')">${t}</button>`).join("");
  sldDraw("slm",{keys:Object.keys(SLV),labels:Object.values(SLV).map(x=>x[5]),get:slv,set:setSl,aria:"Длина свайпа"});
 
  $("sver").textContent="Версия "+BUILD
  {const t=tnv();$("tnm").innerHTML=[["off","Выкл."],["soft","Лёгкий"],["strong","Заметный"]].map(([v,n])=>`<button class="${t===v?"on":""}" onclick="setTn('${v}')">${n}</button>`).join("")}
  // переключатели «да / нет»
- [["wtm",wton()],["bbm",bbv()==="fix"],["nbm",nbv()==="top"],["mgm",mgOn()]].forEach(([id,on])=>{const b=$(id);b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});
+ [["wtm",wton()],["mgm",mgOn()],["ghm",ghOn()]].forEach(([id,on])=>{const b=$(id);b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});
  $("snm").innerHTML=[["row","Строкой"],["tap","Двойным касанием"]].map(([v,t])=>`<button class="${snv()===v?"on":""}" onclick="setSn('${v}')">${t}</button>`).join("");$("snd").textContent=snv()==="tap"?"Два касания по названию приёма — показать или скрыть его перекус.":"";$("snd").hidden=snv()!=="tap";
  optList("sgm",SWL.filter(([v])=>v!=="wt"||wton()),a,"setSw");
+ // «Экран»: нижняя панель и кнопки создания — выбором с понятными подписями
+ {const b=bbv();$("bbm").innerHTML=[["page","В конце дня"],["fix","Всегда видна"]].map(([v,t])=>`<button class="${b===v?"on":""}" onclick="setBb('${v}')">${t}</button>`).join("");
+  $("bbd").textContent=b==="fix"?"Панель всегда внизу экрана, поверх списка":"Панель — после приёмов пищи, в конце дня";
+  const n=nbv();$("nbm").innerHTML=[["bottom","Под списком"],["top","Под поиском"]].map(([v,t])=>`<button class="${n===v?"on":""}" onclick="setNb('${v}')">${t}</button>`).join("")}
  // откуда тянуть вверх и подсказка под выбранный вариант
  {const fx=bbv()==="fix",e=sfv()==="edge";$("sfr").hidden=a==="off";
   $("sfm").innerHTML=[["edge",fx?"От панели":"От низа экрана"],["end","В конце списка"]].map(([v,t])=>`<button class="${sfv()===v?"on":""}" onclick="setSf('${v}')">${t}</button>`).join("");
@@ -52,9 +67,9 @@ function drawSet(k){optList("dwm",DWL,dwAct(),"setDw");$("hpm").innerHTML=[["on"
   h.querySelector(".smt").innerHTML=e?(fx?"Потяните вверх <b>от нижней панели</b> — где угодно в списке":"Потяните вверх <b>от низа экрана</b>, чуть выше края, — где угодно в списке"):"Долистайте до конца дня и <b>потяните вверх</b>"}ghSync();
  $("swc").innerHTML=PRE.map(h=>`<button class="${c===h?"on":""}" style="background:${h||"#3b82f6"}" onclick="setAc('${h}')" aria-label="${h?"Цвет "+h:"Стандартный цвет"}">${ic("check")}</button>`).join("");
  $("cpd").style.background=c||"var(--ac)";$("cpn").textContent=c&&!PRE.includes(c)?c.toUpperCase():""}
-// подсказки к жестам («?» у раздела): мини-телефон с анимацией под каждым включённым жестом
+// подсказки к жестам («Показывать подсказки» во вкладке «Жесты»): мини-телефон с анимацией под каждым включённым жестом
 const ghOn=()=>S.set&&S.set.gh==="on",GHS=[["dwh",()=>dwAct()!=="off"],["sgh",()=>swAct()!=="off"]];
-function ghSync(anim){const on=ghOn(),b=$("ghb");b.classList.toggle("on",on);b.setAttribute("aria-pressed",on);
+function ghSync(anim){const on=ghOn(),b=$("ghm");b.classList.toggle("on",on);b.setAttribute("aria-checked",on);
  GHS.forEach(([id,f])=>{const el=$(id),show=on&&f();if(el._gh===show&&show===!el.hidden)return;el._gh=show;
   // быстрое двойное касание: прошлую анимацию — прочь, итог решает последнее состояние
   el.getAnimations().forEach(x=>x.cancel());if(!anim){el.hidden=!show;return}

@@ -96,7 +96,15 @@ button.cc{width:100%;text-align:left;padding-right:12px}.cc .ccv{display:flex;al
 @keyframes pdS{0%,16%{transform:none}52%{transform:translateY(8px)}70%,100%{transform:none}}
 @keyframes puF{0%,8%{opacity:0;transform:none}16%{opacity:.9;transform:none}52%{opacity:.9;transform:translateY(-20px)}64%,100%{opacity:0;transform:translateY(-20px)}}
 @keyframes puS{0%,16%{transform:none}52%{transform:translateY(-8px)}70%,100%{transform:none}}
-/* кнопка «?» у раздела: показать / скрыть подсказки к жестам */
-.ghb{margin-left:auto;flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--sub);color:var(--mu);font-size:16px;font-weight:700;transition:background var(--t2) var(--ease),color var(--t2) var(--ease),transform var(--t1) var(--ease)}
-.ghb:active{transform:scale(.92)}.ghb.on{background:var(--acs);color:var(--act,var(--ac))}
 
+
+/* вкладки настроек: закреплены сверху листа при прокрутке */
+.stb{position:sticky;top:-8px;z-index:3;margin:0 0 12px;box-shadow:0 -8px 0 8px var(--card),0 6px 10px -6px var(--card)}.stb button{font-size:var(--fs-body)}
+.sp>.srl:first-child{margin-top:2px}.sgap{margin-top:16px}.sp>.sd{margin-bottom:2px}
+/* «Жесты»: каждый жест — своя группа: заголовок со стрелкой, действие, подсказка */
+.gc{padding-bottom:16px;margin-bottom:4px}.gc+.gc{border-top:1px solid var(--bd);padding-top:16px}
+.gch{display:flex;align-items:center;gap:10px;font-size:var(--fs-body);font-weight:700;margin:0 4px 10px}.gch small{margin-left:auto;font-size:var(--fs-sm);font-weight:500;color:var(--mu)}
+.gch span{flex:none;width:28px;height:28px;border-radius:var(--r-in);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac))}.gch .i{width:17px;height:17px}
+.gc #sfr .srl{margin-top:12px}
+/* лист настроек — всегда в полную высоту: при смене вкладки он не «прыгает» */
+#ov .sh:has(#v7:not([hidden])){height:calc(min(92%,100% - var(--sat) - 12px) - var(--kb))}
