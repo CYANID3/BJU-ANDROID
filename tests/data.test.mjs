@@ -91,3 +91,15 @@ test('ярлык «Вес» у иконки: есть, только когда �
   assert.deepEqual(a.errors, []);
   await a.close();
 });
+
+test('виджет: превью в списке виджетов — тёмное, с подписями Б / Ж / У и правдоподобным днём', async () => {
+  const fs = await import('node:fs');
+  const info = fs.readFileSync('native/android/res/xml/bju_widget_info.xml', 'utf8');
+  assert.match(info, /previewLayout="@layout\/bju_widget_preview"/);
+  const x = fs.readFileSync('native/android/res/layout/bju_widget_preview.xml', 'utf8');
+  for (const t of ['Белки', 'Жиры', 'Углеводы', '964 ккал', '102 / 120 г']) assert.ok(x.includes(`"${t}"`), t);
+  assert.match(x, /bju_widget_shape_preview/);
+  assert.match(fs.readFileSync('native/android/res/drawable/bju_widget_shape_preview.xml', 'utf8'), /#F51A202B/);
+  const base = fs.readFileSync('native/android/res/layout/bju_widget.xml', 'utf8');
+  assert.ok(base.includes('"Жиры"') && base.includes('"Углеводы"'), 'до первого обновления — верные подписи');
+});

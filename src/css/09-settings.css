@@ -42,3 +42,12 @@
 .srow:not(:has(+.srow)){border-bottom-left-radius:var(--r-ctl);border-bottom-right-radius:var(--r-ctl)}
 .srow+.srow{border-top:0;position:relative}.srow+.srow::before{content:"";position:absolute;left:16px;right:16px;top:0;height:1px;background:var(--sub)}
 .sgt+.srow{margin-top:0}
+/* ползунок «Длина свайпа»: точки стоят по центрам трёх подписей — всё симметрично */
+.sld{--v:.5;background:var(--card);border-radius:var(--r-ctl);padding:14px 0 6px}
+.sldt{position:relative;height:28px;margin:0 calc(100% / 6);touch-action:none;cursor:pointer}
+.sldt::before{content:"";position:absolute;left:-7px;right:-7px;top:50%;height:6px;margin-top:-3px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--mu) 24%,var(--card))}
+.sldf{position:absolute;left:-7px;top:50%;height:6px;margin-top:-3px;width:calc(var(--v) * 100% + 7px);border-radius:var(--r-pill);background:var(--ac)}
+.sldd{position:absolute;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:color-mix(in srgb,var(--mu) 60%,var(--card));transition:background-color var(--t2)}.sldd.in{background:color-mix(in srgb,var(--on) 85%,transparent)}
+.sldk{position:absolute;top:50%;left:calc(var(--v) * 100%);width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px var(--ac),0 3px 10px rgba(0,0,0,.28);transition:transform var(--t1) var(--ease)}
+.sldf,.sldk{transition:left var(--t3) var(--ease),width var(--t3) var(--ease),transform var(--t1) var(--ease)}.sld.drag .sldf,.sld.drag .sldk{transition:transform var(--t1) var(--ease)}.sld.drag .sldk{transform:scale(1.12)}
+.sldl{display:grid;grid-template-columns:repeat(3,1fr);margin-top:4px}.sldl button{min-height:34px;font-size:14px;font-weight:600;color:var(--mu);transition:color var(--t2)}.sldl button.on{color:var(--tx)}.sldl button:active{transform:none;color:var(--tx)}

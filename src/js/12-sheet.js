@@ -26,8 +26,12 @@ function sv(n,t){const sh_=document.querySelector("#ov .sh"),prev=VWS.find(i=>!$
  if(Math.abs(h1-h0)>4)try{sh_.animate([{height:h0+"px"},{height:h1+"px"}],E)}catch(e){}}
 const LBL=["Завтрак","Перекус 1","Обед","Перекус 2","Ужин","Перекус 3"];
 function autoMeal(){const h=new Date().getHours()+new Date().getMinutes()/60;return h<11?0:h<12.5?1:h<15?2:h<18?3:h<21?4:5}
-// приём пищи выбран кнопкой «＋» у него (или жестом) — в списке и при изменении записи его не переключают
-function drawMc(){$("dbn").textContent=mode==="ing"?"Назад к блюду":"Новое блюдо"}
+// выбор приёма пищи — при добавлении (список продуктов и количество): жест и «＋» в виджете подставляют приём по времени, здесь его можно сменить.
+// При изменении записи переключателя нет — меняется только количество. Сетка 3×2: в столбце основной приём и перекус после него.
+const MCO=[0,2,4,1,3,5];
+function drawMc(){$("dbn").textContent=mode==="ing"?"Назад к блюду":"Новое блюдо";const nd=`onmousedown="event.preventDefault()"`;
+ [["mc",mode==="add"],["em",mode==="add"&&ei<0]].forEach(([id,on])=>{const el=$(id);el.hidden=!on;if(on)el.innerHTML=MCO.map(i=>`<button class="${i===am?"on":""}" role="radio" aria-checked="${i===am}" ${nd} onclick="sm(${i})">${LBL[i]}</button>`).join("")})}
+function sm(i){if(am===i)return;am=i;drawMc();hap(4);$("st").textContent=!$("v2").hidden?LBL[i]:"Добавить: "+LBL[i]}
 function op(m){am=m;mode="add";$("q").value="";lst();drawMc();sv(1,"Добавить: "+LBL[m]);show()}
 function mng(){mode="mng";pFl=0;$("q").value="";lst();drawMc();sv(1,"Все продукты ("+S.db.length+")");show()}
 const num=v=>parseFloat(String(v).replace(",","."))||0,nn=v=>Math.max(0,num(v));

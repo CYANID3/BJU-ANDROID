@@ -8,7 +8,7 @@ function dsum(){const t=dtot(),w=num($("dw").value)||t.g;$("dw").placeholder=t.g
 function dring(){dsync();ik=-1;mode="ing";$("q").value="";lst();drawMc();sv(1,"Ингредиент")}
 async function dsv(){const n=$("dn").value.trim(),t=dtot(),w=num($("dw").value)||t.g;if(!n)return toast("Введите название блюда");if(!dr.i.length)return toast("Добавьте ингредиенты");if(!(w>0))return;
  if(S.db.some((x,i)=>i!==ed&&nz(x[0])===nz(n))&&!await ask("Продукт «"+n+"» уже есть. Создать ещё один?","Создать"))return;
- const a=[n,r1(t.p/w*100),r1(t.f/w*100),r1(t.c/w*100),[["порция",r1(w)]],{w:r1(w),i:dr.i}];if(ed>=0)S.db[ed]=a;else S.db.unshift(a);save();mode=pmode;$("q").value="";lst();drawMc();if(mode==="add"&&ed<0){sel=a;gv(MEALS[am],"",0)}else sv(1,vt())}
+ const a=[n,r1(t.p/w*100),r1(t.f/w*100),r1(t.c/w*100),[["порция",r1(w)]],{w:r1(w),i:dr.i}];if(ed>=0)S.db[ed]=a;else S.db.unshift(a);save();mode=pmode;$("q").value="";lst();drawMc();if(mode==="add"&&ed<0){sel=a;gv(LBL[am],"",0)}else sv(1,vt())}
 function dsync(){dr.n=$("dn").value;dr.w=num($("dw").value)}
 try{localStorage.removeItem("bjudraft")}catch(e){}
 function dedit(k){dsync();const x=dr.i[k],pr=S.db.find(p=>p[0]===x.n);mode="ing";ik=k;sel=[x.n,x.p/x.g*100,x.f/x.g*100,x.c/x.g*100,pr&&pr[4]];const u=x.ul&&sel[4]?sel[4].findIndex(a=>a[0]===x.ul):-1;gv("Ингредиент",u>=0?x.q:x.g,u)}

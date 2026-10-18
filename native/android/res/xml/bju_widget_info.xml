@@ -3,7 +3,7 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/bju_widget_desc"
     android:initialLayout="@layout/bju_widget"
-    android:previewLayout="@layout/bju_widget"
+    android:previewLayout="@layout/bju_widget_preview"
     android:minWidth="250dp"
     android:minHeight="110dp"
     android:minResizeWidth="40dp"

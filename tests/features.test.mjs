@@ -211,8 +211,7 @@ test('изменение записи без выбора приёма; знач
   }
   const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(0, 'Яйцо', 50, 6, 5, .5), entry(0, 'Хлеб', 30, 2, 1, 15)] }, db: [] } });
   await a.ev(() => ee(0)); await a.wait(300);
-  assert.equal(await a.ev(() => document.querySelector('#v2 .mc')), null, 'при изменении приём пищи не переключается');
-  assert.equal(await a.ev(() => document.querySelector('#v1 .mc')), null);
+  assert.equal(await a.ev(() => $('em').hidden), true, 'при изменении приём пищи не переключается');
   await a.ev(() => cl()); await a.wait(300);
   const g = await a.ev(() => { const n = document.body.children.length; del(0); return document.body.children.length - n; });
   assert.equal(g, 1, 'удалённая запись тает на своём месте');
@@ -249,5 +248,42 @@ test('сегменты: таблетка переезжает к выбранн�
   await a.wait(450);
   assert.equal(await a.pg.locator('#app .snk').count(), 0);
   assert.deepEqual(a.errors, []);
+  await a.close();
+});
+
+test('добавление: можно сменить приём; после добавления — снова список, «Отменить» убирает запись', async () => {
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: {}, db: [['Творог 5%', 17, 5, 1.8], ['Банан', 1.5, .2, 21.8]] } });
+  await a.ev(() => op(2)); await a.wait(350);
+  assert.equal(await a.ev(() => !$('mc').hidden && $('mc').querySelector('.on').textContent), 'Обед');
+  await a.pg.click('#mc button:has-text("Перекус 2")'); await a.wait(100);
+  assert.equal(await a.ev(() => [am, $('st').textContent].join()), '3,Добавить: Перекус 2');
+  await a.pg.locator('#ls .pk').first().click(); await a.wait(350);
+  assert.equal(await a.ev(() => !$('em').hidden && $('em').querySelector('.on').textContent), 'Перекус 2', 'и на экране количества');
+  await a.pg.click('#em button:has-text("Ужин")');
+  await a.pg.fill('#gr', '150'); await a.pg.click('#ab'); await a.wait(450);
+  assert.equal(await a.ev(() => isOpen && !$('v1').hidden && $('q').value === ''), true, 'вернулись в список');
+  assert.equal(await a.ev(() => S.d[cur].length === 1 && S.d[cur][0].m), 4);
+  await a.ev(() => undo()); await a.wait(300);
+  assert.equal(await a.ev(() => S.d[cur].length), 0, 'отмена убирает добавленное');
+  await a.ev(() => cl()); await a.wait(300);
+  await a.ev(() => { S.d[cur] = [{ m: 0, n: 'Банан', g: 100, p: 1.5, f: .2, c: 21.8 }]; render(); ee(0); }); await a.wait(350);
+  await a.pg.fill('#gr', '120'); await a.pg.click('#ab'); await a.wait(400);
+  assert.equal(await a.ev(() => isOpen), false, 'изменение записи закрывает лист');
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});
+
+test('длина свайпа — ползунок: касание подписи и перетаскивание', async () => {
+  const a = await openApp();
+  await a.ev(() => sets()); await a.wait(400);
+  assert.equal(await a.ev(() => $('slm').style.getPropertyValue('--v')), '0.5');
+  const r = await a.ev(() => { const b = $('slm').querySelector('.sldt').getBoundingClientRect(); return { x: b.left, y: b.top + b.height / 2, w: b.width }; });
+  await a.ev(() => $('slm').querySelector('.sldt').scrollIntoView({ block: 'center' })); await a.wait(200);
+  const r2 = await a.ev(() => { const b = $('slm').querySelector('.sldt').getBoundingClientRect(); return { x: b.left, y: b.top + b.height / 2, w: b.width }; });
+  await a.pg.mouse.move(r2.x + r2.w / 2, r2.y); await a.pg.mouse.down(); await a.pg.mouse.move(r2.x + r2.w * .9, r2.y, { steps: 5 }); await a.pg.mouse.up(); await a.wait(200);
+  assert.equal(await a.ev(() => slv()), 'long', 'перетаскивание вправо — «Длинный»');
+  await a.pg.click('#slm .sldl button:nth-child(1)'); await a.wait(100);
+  assert.equal(await a.ev(() => [slv(), $('slm').style.getPropertyValue('--v'), $('slm').querySelector('.sldl .on').textContent].join()), 'short,0,Короткий');
+  assert.ok(r.w > 0);
   await a.close();
 });

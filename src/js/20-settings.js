@@ -10,6 +10,19 @@ const SLV={short:[.5,.25,.3,9,1.25,"Короткий","Хватает лёгко
  mid:[1,.45,.45,14,1.5,"Средний","Баланс скорости и защиты от случайных срабатываний."],
  long:[1.8,1.1,.7,22,2,"Длинный","Нужно провести дальше и строго по направлению, а вверх и вниз — потянуть примерно на треть экрана. Случайные касания не срабатывают."]};
 const slv=()=>{const v=S.set&&S.set.sl;return SLV[v]?v:"mid"},GF=()=>SLV[slv()][0],SL=i=>SLV[slv()][i];
+// «Длина свайпа» — ползунок на три положения: дорожка с точками, бегунок плавно переезжает (касанием подписи или перетаскиванием)
+function sldDraw(){const el=$("slm"),K=Object.keys(SLV),l=slv(),i=K.indexOf(l);
+ if(!el.querySelector(".sldt")){el.innerHTML=`<div class="sldt" role="slider" aria-label="Длина свайпа" aria-valuemin="0" aria-valuemax="2" tabindex="0"><i class="sldf"></i>${K.map((v,j)=>`<span class="sldd" style="left:${j*50}%"></span>`).join("")}<b class="sldk"></b></div><div class="sldl">${K.map(v=>`<button onclick="setSl('${v}')">${SLV[v][5]}</button>`).join("")}</div>`;sldBind(el)}
+ el.style.setProperty("--v",i/2);el.querySelectorAll(".sldl button").forEach((b,j)=>b.classList.toggle("on",j===i));el.querySelectorAll(".sldd").forEach((d,j)=>d.classList.toggle("in",j<=i));
+ const t=el.querySelector(".sldt");t.setAttribute("aria-valuenow",i);t.setAttribute("aria-valuetext",SLV[l][5])}
+function sldBind(el){const t=el.querySelector(".sldt"),K=Object.keys(SLV);let on=0,last=-1;
+ const at=e=>{const r=t.getBoundingClientRect();return Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))};
+ t.addEventListener("pointerdown",e=>{on=1;last=K.indexOf(slv());el.classList.add("drag");try{t.setPointerCapture(e.pointerId)}catch(_){}mv(e)});
+ const mv=e=>{if(!on)return;const f=at(e),n=Math.round(f*2);el.style.setProperty("--v",f);el.querySelectorAll(".sldd").forEach((d,j)=>d.classList.toggle("in",j/2<=f+.001));if(n!==last){last=n;hap(4)}};
+ t.addEventListener("pointermove",mv);
+ const up=e=>{if(!on)return;on=0;el.classList.remove("drag");const v=K[Math.round(at(e)*2)];if(v!==slv())setSl(v);else sldDraw()};
+ t.addEventListener("pointerup",up);t.addEventListener("pointercancel",()=>{on=0;el.classList.remove("drag");sldDraw()});
+ t.addEventListener("keydown",e=>{const i=K.indexOf(slv()),n=e.key==="ArrowRight"?i+1:e.key==="ArrowLeft"?i-1:i;if(n!==i&&K[n]){e.preventDefault();setSl(K[n])}})}
 function setSl(v){S.set=Object.assign({},S.set,{sl:v});saveq();drawSet();hap(8)}
 const PRE=["","#22a06b","#14b8a6","#6366f1","#8b5cf6","#e5589a","#e5484d","#f08a24","#f5c518","#64748b"],SWL=[["meal","Приём пищи","plus","Добавить в приём пищи по времени суток"],["prod","Новый продукт","box","Сразу открыть создание продукта"],["stat","Статистика","chart","Открыть статистику за месяц"],["wt","Вес","scale","Записать вес за день"],["off","Выключено","close","Жест не используется"]],
  DWL=[["cal","Календарь","cal","Выбрать день в календаре"],["today","К сегодня","today","Вернуться к сегодняшнему дню"],["off","Выключено","close","Жест не используется"]];
@@ -21,7 +34,7 @@ function olTap(id,fn,v){const el=$(id);if(el.classList.contains("cl")){olOpen.ad
  olOpen.delete(id);window[fn](v)}
 function sets(){olOpen.clear();drawSet();sv(7,"Настройки");show()}
 function drawSet(k){optList("dwm",DWL,dwAct(),"setDw");$("hpm").innerHTML=[["on","Вкл."],["nodays","Кроме дней"],["off","Выкл."]].map(([v,t])=>`<button class="${hpv()===v?"on":""}" onclick="setHp('${v}')">${t}</button>`).join("");const a=swAct(),c=(S.set&&S.set.ac)||"",th=(S.set&&S.set.th)||"auto";$("thm").innerHTML=[["auto","Авто"],["light","Светлая"],["dark","Тёмная"]].map(([v,t])=>`<button class="${th===v?"on":""}" onclick="setTh('${v}')">${t}</button>`).join("");
- {const l=slv();$("slm").innerHTML=Object.keys(SLV).map(v=>`<button class="${l===v?"on":""}" onclick="setSl('${v}')">${SLV[v][5]}</button>`).join("");$("sver").textContent="Версия "+BUILD}
+ {sldDraw();$("sver").textContent="Версия "+BUILD}
  {const t=tnv();$("tnm").innerHTML=[["off","Выкл."],["soft","Лёгкий"],["strong","Заметный"]].map(([v,n])=>`<button class="${t===v?"on":""}" onclick="setTn('${v}')">${n}</button>`).join("")}
  // переключатели «да / нет»
  [["wtm",wton()],["bbm",bbv()==="fix"],["nbm",nbv()==="top"]].forEach(([id,on])=>{const b=$(id);b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});

@@ -47,3 +47,8 @@ function segSync(){document.querySelectorAll(".seg").forEach(s=>{const b=s.query
 (()=>{let q=0;const go=()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;segSync()})};
  new MutationObserver(go).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["class","hidden"]});
  addEventListener("resize",()=>{document.querySelectorAll(".seg.sk").forEach(s=>{s._sk="";s.classList.remove("sk")});go()})})();
+
+// поле ввода: значение выделено целиком — курсор прячется (класс .all), начали печатать или сдвинули курсор — снова виден
+(()=>{const chk=e=>{const i=e.target;if(!i||i.tagName!=="INPUT")return;try{const n=i.value.length;i.classList.toggle("all",n>0&&i.selectionStart===0&&i.selectionEnd===n)}catch(_){}};
+ ["select","input","keyup","pointerup","focusin"].forEach(t=>document.addEventListener(t,chk,true));document.addEventListener("selectionchange",()=>chk({target:document.activeElement}));
+ document.addEventListener("focusout",e=>{if(e.target&&e.target.classList)e.target.classList.remove("all")},true)})();
