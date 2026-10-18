@@ -31,6 +31,14 @@ await png(full(variant, 0.78), 1024, path.join(assets, 'icon-only.png'));
 // Splash: кольцо поменьше по центру
 for (const f of ['splash.png', 'splash-dark.png']) await png(full(variant, 0.3), 2732, path.join(assets, f));
 
+// Заставка при запуске: само кольцо (без фона, обрезано по краям) — Android ставит его по центру фиксированного размера,
+// поэтому на любых экранах и версиях оно не растягивается (раньше растягивалась картинка splash.png на весь экран)
+const ring = foreground(variant).replace('viewBox="0 0 1024 1024"', 'viewBox="296 296 432 432"').replace('width="1024" height="1024"', 'width="432" height="432"');
+await mkdir(path.join(root, 'native/android/res/drawable-nodpi'), { recursive: true });
+await png(ring, 480, path.join(root, 'native/android/res/drawable-nodpi/bju_splash_logo.png'));
+await writeFile(path.join(root, 'native/android/res/values/bju_splash.xml'),
+  `<?xml version="1.0" encoding="utf-8"?>\n<!-- Сгенерировано scripts/icons.mjs: фон заставки (как у иконки) -->\n<resources>\n    <color name="bju_splash_bg">${VARIANTS[variant].bg}</color>\n</resources>\n`);
+
 // Монохромный слой (тематические значки Android 13+): система красит его в цвета обоев и темы
 await writeFile(path.join(root, 'native/android/res/drawable/bju_ic_mono.xml'), monoVector());
 

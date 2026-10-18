@@ -23,14 +23,13 @@ const mxs=e=>[["p","Б",e.p],["f","Ж",e.f],["c","У",e.c]].map(([k,l,v])=>`<i c
 function cbar(t){const part=[t.p*4,t.f*9,t.c*4],sum=part[0]+part[1]+part[2]||1;return `<div class="bar km cb">${part.map((v,i)=>v>0?`<i style="flex:${v/sum};background:${["var(--p)","var(--f)","var(--c)"][i]}"></i>`:"").join("")}</div>`}
 function repHTML(dense){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
  const dd=new Date(cur+"T12:00:00"),title=cap(dd.toLocaleDateString("ru-RU",{weekday:"long"}))+", "+dd.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+(dd.getFullYear()!==new Date().getFullYear()?" "+dd.getFullYear():"");
- // кольцо: доли калорий Б/Ж/У одним цельным кругом, цвета плавно перетекают друг в друга (как на логотипе)
  const kp=[t.p*4,t.f*9,t.c*4],ks=kp[0]+kp[1]+kp[2],col=["var(--p)","var(--f)","var(--c)"];
- // кольцо долей калорий Б / Ж / У: чёткие границы и ровные зазоры между цветами (как на иконке приложения)
- let grad="var(--sub)";
- if(ks>0){const seg=kp.map((v,i)=>[v/ks*100,col[i]]).filter(x=>x[0]>0);if(seg.length===1)grad=seg[0][1];else{const gap=.32;let st=0,parts=[];
-  seg.forEach(([w,c])=>{const a=st,b=st+w;parts.push(`${c} ${(a+gap/2).toFixed(2)}% ${(b-gap/2).toFixed(2)}%`,`transparent ${(b-gap/2).toFixed(2)}% ${Math.min(100,b+gap/2).toFixed(2)}%`);st=b});
-  grad=`conic-gradient(from 0deg,transparent 0% ${(gap/2).toFixed(2)}%,${parts.join(",")})`}}
- const ring=`<div class="rp-ring" style="--rg:${grad}"><div class="rp-rc"><b>${gk?Math.round(k/gk*100):0}%</b><span>нормы</span></div></div>`;
+ // кольцо долей калорий Б / Ж / У — дугами SVG (сглаживаются чисто, в отличие от conic-gradient): ровные узкие зазоры между цветами
+ const R=44.5,SW=11,arc=(len,off,c)=>`<circle cx="50" cy="50" r="${R}" pathLength="100" fill="none" stroke="${c}" stroke-width="${SW}" stroke-dasharray="${len.toFixed(3)} ${(100-len).toFixed(3)}" stroke-dashoffset="${(-off).toFixed(3)}"/>`;
+ let arcs=arc(100,0,"var(--sub)");
+ if(ks>0){const seg=kp.map((v,i)=>[v/ks*100,col[i]]).filter(x=>x[0]>0);if(seg.length===1)arcs=arc(100,0,seg[0][1]);else{const gap=.9;let st=0;arcs="";
+  seg.forEach(([w,c])=>{arcs+=arc(Math.max(.5,w-gap),st+gap/2,c);st+=w})}}
+ const ring=`<div class="rp-ring"><svg viewBox="0 0 100 100" aria-hidden="true"><g transform="rotate(-90 50 50)">${arcs}</g></svg><div class="rp-rc"><b>${gk?Math.round(k/gk*100):0}%</b><span>нормы</span></div></div>`;
  // Б / Ж / У — те же плитки, что на главном экране (съедено / норма, полоска, остаток, доля калорий)
  const sh=ks>0?kp.map(v=>Math.round(v/ks*100)):[];
  let h=`<div class="rep rep-in${dense?" dense":""}"><div class="rp-h"><div><div class="rp-d">${esc(title)}</div><div class="rp-k">${k}<span>из ${gk} ккал</span></div><div class="rp-l${left<0?" ov":""}">${left>=0?`Осталось <b>${left}</b> ккал`:`Перебор <b>${-left}</b> ккал`}</div>${wtRep()}</div>${ring}</div>`;

@@ -6,7 +6,7 @@
 .rp-d{font-size:14px;color:var(--mu);font-weight:500}
 .rp-k{font-size:46px;font-weight:800;letter-spacing:-.03em;line-height:1;margin-top:8px;font-variant-numeric:tabular-nums}.rp-k span{font-size:15px;font-weight:500;color:var(--mu);letter-spacing:0;margin-left:6px}
 .rp-l{font-size:14px;margin-top:8px;color:var(--mu)}.rp-l b{color:var(--act,var(--ac))}.rp-l.ov b{color:var(--dg)}
-.rp-ring{position:relative;width:112px;height:112px;flex:none;margin-left:auto}.rp-ring::before{content:"";position:absolute;inset:0;border-radius:50%;background:var(--rg);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 13px),#000 calc(100% - 12px));mask:radial-gradient(farthest-side,transparent calc(100% - 13px),#000 calc(100% - 12px))}
+.rp-ring{position:relative;width:112px;height:112px;flex:none;margin-left:auto}.rp-ring svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible}
 .rp-rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.rp-rc b{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}.rp-rc span{font-size:11px;color:var(--mu);margin-top:1px}
 .rp-w{display:inline-flex;align-items:baseline;gap:5px;margin-top:10px;padding:5px 12px 5px 9px;border-radius:var(--r-pill);background:var(--sub);font-size:13px;color:var(--mu);font-variant-numeric:tabular-nums;white-space:nowrap}.rp-w svg.i{width:14px;height:14px;align-self:center;color:var(--act,var(--ac))}.rp-w b{font-size:14px;color:var(--tx)}.rp-w small{font-size:12px}
 .rp-mac{margin:18px 0 0}

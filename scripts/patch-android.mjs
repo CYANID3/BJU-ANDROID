@@ -42,6 +42,15 @@ for (const f of ['ic_launcher.xml', 'ic_launcher_round.xml']) {
   } catch (e) { if (e.code !== 'ENOENT') throw e; console.log('нет    ' + file); }
 }
 
+// 3c. Заставка: вместо растягиваемой картинки splash.png — фон и кольцо по центру (bju_splash); на Android 12+ — тот же значок и фон
+await patch('android/app/src/main/res/values/styles.xml', s => {
+  s = s.replace(/(<style name="AppTheme\.NoActionBarLaunch"[^>]*>[\s\S]*?)@drawable\/splash</, '$1@drawable/bju_splash<');
+  const m = s.match(/<style name="AppTheme\.NoActionBarLaunch"[^>]*parent="([^"]*)"[^>]*>/);
+  if (m && /Theme\.SplashScreen/.test(m[1]) && !s.includes('windowSplashScreenAnimatedIcon'))
+    s = s.replace(m[0], m[0] + '\n        <item name="windowSplashScreenBackground">@color/bju_splash_bg</item>\n        <item name="windowSplashScreenAnimatedIcon">@drawable/bju_splash_icon</item>');
+  return s;
+});
+
 // 4. Манифест
 await patch('android/app/src/main/AndroidManifest.xml', s => {
   // Клавиатура: окно не сдвигается (adjustPan) — страница сама поднимает лист по отступам из BjuNative
