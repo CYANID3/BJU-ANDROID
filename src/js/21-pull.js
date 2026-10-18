@@ -22,11 +22,11 @@ let pT=null,pC=null,pRaf=0;
 function pStep(){pRaf=0;if(!pAct||!pT)return;const u=$("pu"),w=u.firstElementChild,c=pC||(pC={off:0,p:0}),k=.42;
  c.off+=(pT.off-c.off)*k;c.p+=(pT.p-c.p)*k;if(Math.abs(pT.off-c.off)<.3){c.off=pT.off;c.p=pT.p}
  const y=90-c.off;u.style.opacity=Math.min(1,c.off/36);w.style.transform=`translateY(${pT.dn?-y:y}px)`;
- u.style.setProperty("--p",c.p);u.style.setProperty("--lo",Math.max(0,Math.min(1,(c.off-24)/30)));
+ u.style.setProperty("--pgr",c.p);u.style.setProperty("--plo",Math.max(0,Math.min(1,(c.off-24)/30)));
  if(c.off!==pT.off)pRaf=requestAnimationFrame(pStep)}
-function phide(){const u=$("pu");pAct=0;rd=0;pT=pC=null;u.classList.remove("drag","rdy");u.style.opacity=0;u.firstElementChild.style.transform="";u.style.setProperty("--p",0);u.style.setProperty("--lo",0)}
-function pgo(){const u=$("pu");pAct=0;rd=0;pT=pC=null;u.classList.remove("drag");u.classList.add("rdy","go");u.style.setProperty("--p",1);u.style.opacity="";
- setTimeout(()=>{u.classList.remove("go","rdy");u.style.opacity=0;u.firstElementChild.style.transform="";u.style.setProperty("--p",0);u.style.setProperty("--lo",0)},360)}
+function phide(){const u=$("pu");pAct=0;rd=0;pT=pC=null;u.classList.remove("drag","rdy");u.style.opacity=0;u.firstElementChild.style.transform="";u.style.setProperty("--pgr",0);u.style.setProperty("--plo",0)}
+function pgo(){const u=$("pu");pAct=0;rd=0;pT=pC=null;u.classList.remove("drag");u.classList.add("rdy","go");u.style.setProperty("--pgr",1);u.style.opacity="";
+ setTimeout(()=>{u.classList.remove("go","rdy");u.style.opacity=0;u.firstElementChild.style.transform="";u.style.setProperty("--pgr",0);u.style.setProperty("--plo",0)},360)}
 function dwAct(){const v=S.set&&S.set.dw;return v==="today"||v==="off"?v:"cal"}
 function dwOn(){const a=dwAct();return a==="cal"||(a==="today"&&cur!==today)}
 function dwDo(){if(dwAct()==="today"){if(cur!==today){const d=today>cur?1:-1;NABS=1;slide($("app"),d,()=>{cur=today})}}else if(dwAct()==="cal")cal()}

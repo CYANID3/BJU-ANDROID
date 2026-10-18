@@ -200,3 +200,13 @@ test('перекусы: «Тонкой строкой» или «По двойн
   await a.close();
 });
 
+
+test('цвета Б / Ж / У заданы во всех темах (их не перекрывают служебные свойства)', async () => {
+  for (const scheme of ['light', 'dark']) {
+    const a = await openApp({ scheme });
+    const c = await a.ev(() => ['--p', '--f', '--c'].map(k => getComputedStyle($('app')).getPropertyValue(k).trim()));
+    for (const v of c) assert.match(v, /^#[0-9a-f]{6}$/i, `${scheme}: ${c}`);
+    assert.notEqual(await a.ev(() => getComputedStyle(document.querySelector('#app .mtl .mtn')).color), await a.ev(() => getComputedStyle(document.querySelector('#app .sum')).color), 'подпись «Белки» цветная');
+    await a.close();
+  }
+});
