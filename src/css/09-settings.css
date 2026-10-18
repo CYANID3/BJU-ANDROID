@@ -92,18 +92,7 @@ button.cc{width:100%;text-align:left;padding-right:12px}.cc .ccv{display:flex;al
 @keyframes pdS{0%,16%{transform:none}52%{transform:translateY(8px)}70%,100%{transform:none}}
 @keyframes puF{0%,8%{opacity:0;transform:none}16%{opacity:.9;transform:none}52%{opacity:.9;transform:translateY(-20px)}64%,100%{opacity:0;transform:translateY(-20px)}}
 @keyframes puS{0%,16%{transform:none}52%{transform:translateY(-8px)}70%,100%{transform:none}}
-.smp{perspective:160px}.smh.tl2 i{transform-origin:50% 90%;animation:smT2 3.2s var(--ease) infinite}
-@keyframes smT2{0%,8%{transform:none}20%,26%{transform:rotateX(56deg)}38%{transform:none}50%,56%{transform:rotateX(56deg)}68%,100%{transform:none}}
 /* кнопка «?» у раздела: показать / скрыть подсказки к жестам */
 .ghb{margin-left:auto;flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--sub);color:var(--mu);font-size:16px;font-weight:700;transition:background var(--t2) var(--ease),color var(--t2) var(--ease),transform var(--t1) var(--ease)}
 .ghb:active{transform:scale(.92)}.ghb.on{background:var(--acs);color:var(--act,var(--ac))}
-#ssr>.ln{margin-top:8px}#ssr>.srl{margin-top:16px}
-/* «Проверка движения» */
-.dgp{display:flex;gap:6px;margin-top:10px}.dgp i{width:22px;height:6px;border-radius:var(--r-pill);background:var(--card);transition:background var(--t2) var(--ease)}.dgp i.on{background:var(--ac)}
-.dgx{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px;border-radius:var(--r-block);background:var(--sub);margin-bottom:var(--gap)}
-.dgs{font-size:var(--fs-h);font-weight:700;color:var(--mu);transition:color var(--t2)}.dgs.ok{color:var(--act,var(--ac))}
-.dgc{display:flex;flex-direction:column;align-items:flex-end}.dgc b{font-size:34px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}.dgc span{font-size:var(--fs-xs);color:var(--mu)}
-.dgm{display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:var(--r-block);background:var(--sub)}
-.dgm div{display:grid;grid-template-columns:110px 1fr;align-items:center;gap:10px;font-size:var(--fs-sm);color:var(--mu)}
-.dgm i{position:relative;height:8px;border-radius:var(--r-pill);background:var(--card);overflow:hidden}.dgm em{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--tx);opacity:.5}.dgm i b{display:block;height:100%;width:0;border-radius:inherit;background:var(--ac)}
 

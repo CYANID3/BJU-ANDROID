@@ -16,7 +16,7 @@ function applyTint(){const r=document.documentElement,v=tnv(),dark=(r.dataset.th
 function setTn(v){S.set=Object.assign({},S.set,{tn:v});saveq();applyAc();drawSet()}
 // акцент и производные от него цвета: --act — значки и текст акцентом (на мягкой подложке --acs читаются на любом фоне),
 // --on — текст на заливке акцентом, --bar — тон закреплённой панели. Считаются для любого акцента и оттенка фона.
-function applyAc(){applyTh();applyTint();applyLay();try{scSync()}catch(e){}try{skBind()}catch(e){}const r=document.documentElement,c=S.set&&S.set.ac,cu=c&&/^#[0-9a-f]{6}$/i.test(c),dark=isDark(),a=cu?c:dark?"#5b9cf0":"#2f7de1";
+function applyAc(){applyTh();applyTint();applyLay();try{scSync()}catch(e){}const r=document.documentElement,c=S.set&&S.set.ac,cu=c&&/^#[0-9a-f]{6}$/i.test(c),dark=isDark(),a=cu?c:dark?"#5b9cf0":"#2f7de1";
  if(cu)r.style.setProperty("--ac",a);else r.style.removeProperty("--ac");
  const cs=getComputedStyle(r),gv_=(k,d)=>{const v=cs.getPropertyValue(k).trim();return/^#[0-9a-f]{6}$/i.test(v)?v:d},card=gv_("--card",dark?"#1a202b":"#ffffff"),sub=gv_("--sub",dark?"#232a37":"#f2f4f7"),
   bar=dark?hexMix("#ffffff",sub,.1):card;r.style.setProperty("--bar",bar);

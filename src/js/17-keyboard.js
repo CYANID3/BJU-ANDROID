@@ -15,6 +15,6 @@ document.querySelector("#ov .sh").addEventListener("mousedown",keepKb,true);$("d
 document.addEventListener("focusin",()=>{if(kbH>0)requestAnimationFrame(ensureVis)});
 // Запасной путь: если система всё же меняет размер окна под клавиатуру — лист доезжает плавно, а не прыжком
 let lastIH=innerHeight;addEventListener("resize",()=>{const h=innerHeight,d=h-lastIH;lastIH=h;if(!isOpen||document.documentElement.classList.contains("native")||window.visualViewport&&!NATIVE||RM()||Math.abs(d)<60)return;
- try{document.querySelector("#ov .sh").animate([{transform:`translateY(${-d}px)`},{transform:"none"}],{duration:260,easing:"cubic-bezier(.2,0,0,1)"})}catch(e){}});
+ try{document.querySelector("#ov .sh").animate([{transform:`translateY(${-d}px)`},{transform:"none"}],{duration:MO.t2,easing:"cubic-bezier(.2,0,0,1)"})}catch(e){}});
 const vv=NATIVE?null:window.visualViewport;function fit(){if(!vv)return;const o=$("ov");o.style.top=vv.offsetTop+"px";o.style.height=vv.height+"px"}
 if(vv){vv.addEventListener("resize",fit);vv.addEventListener("scroll",fit)}

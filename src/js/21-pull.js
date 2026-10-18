@@ -7,7 +7,7 @@ const pVel=()=>{const l=PS[PS.length-1];if(!l)return 0;let o=l;for(const q of PS
 const atBot=()=>scrollY+innerHeight>=document.documentElement.scrollHeight-6;
 // Индикатор «потянуть»: всегда идёт за пальцем в одном темпе (0.7 от движения, дальше — «резина»),
 // при движении назад так же плавно возвращается; исчезает только после отпускания пальца.
-function pull(v,dn){const u=$("pu"),w=u.firstElementChild,a=REP?"on":dn?(dwOn()?"on":"off"):swAct();dn=!!dn;
+function pull(v,dn){const u=$("pu"),a=REP?"on":dn?(dwOn()?"on":"off"):swAct();dn=!!dn;
  if(a==="off"){if(pAct)phide();return}
  if(!pAct&&v<8)return;
  if(!pAct||pDn!==dn){pAct=1;pDn=dn;rd=0;pC=null;u.classList.remove("go","rdy");u.classList.add("drag");u.classList.toggle("tp",dn);
@@ -24,9 +24,11 @@ function pStep(){pRaf=0;if(!pAct||!pT)return;const u=$("pu"),w=u.firstElementChi
  const y=90-c.off;u.style.opacity=Math.min(1,c.off/36);w.style.transform=`translateY(${pT.dn?-y:y}px)`;
  u.style.setProperty("--pgr",c.p);u.style.setProperty("--plo",Math.max(0,Math.min(1,(c.off-24)/30)));
  if(c.off!==pT.off)pRaf=requestAnimationFrame(pStep)}
-function phide(){const u=$("pu");pAct=0;rd=0;pT=pC=null;u.classList.remove("drag","rdy");u.style.opacity=0;u.firstElementChild.style.transform="";u.style.setProperty("--pgr",0);u.style.setProperty("--plo",0)}
+// индикатор в исходное: скрыт, на месте, без заливки
+function pReset(u){u.style.opacity=0;u.firstElementChild.style.transform="";u.style.setProperty("--pgr",0);u.style.setProperty("--plo",0)}
+function phide(){const u=$("pu");pAct=0;rd=0;pT=pC=null;u.classList.remove("drag","rdy");pReset(u)}
 function pgo(){const u=$("pu");pAct=0;rd=0;pT=pC=null;u.classList.remove("drag");u.classList.add("rdy","go");u.style.setProperty("--pgr",1);u.style.opacity="";
- setTimeout(()=>{u.classList.remove("go","rdy");u.style.opacity=0;u.firstElementChild.style.transform="";u.style.setProperty("--pgr",0);u.style.setProperty("--plo",0)},360)}
+ setTimeout(()=>{u.classList.remove("go","rdy");pReset(u)},MO.t3)}
 function dwAct(){const v=S.set&&S.set.dw;return v==="today"||v==="off"?v:"cal"}
 function dwOn(){const a=dwAct();return a==="cal"||(a==="today"&&cur!==today)}
 function dwDo(){if(dwAct()==="today"){if(cur!==today){const d=today>cur?1:-1;NABS=1;slide($("app"),d,()=>{cur=today})}}else if(dwAct()==="cal")cal()}

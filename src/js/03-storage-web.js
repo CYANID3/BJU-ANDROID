@@ -1,5 +1,5 @@
 // Сохранение; браузерная версия: File System Access, импорт/экспорт; раздел «Файл»
-function save(){S.dirty=(S.dirty||0)+1;store();queueNativeSave();if(H){clearTimeout(tm);tm=setTimeout(wr,400)}}
+function save(){S.dirty=(S.dirty||0)+1;saveq()}
 function saveq(){store();queueNativeSave();if(H){clearTimeout(tm);tm=setTimeout(wr,400)}}
 async function wr(){try{if((await H.queryPermission({mode:"readwrite"}))!=="granted"){perm=false;render();return}const w=await H.createWritable();S.saved=Date.now();await w.write(ser());await w.close();perm=true;S.dirty=0;store();render()}catch(e){perm=false;render()}}
 let rq=0;async function resume(){if(rq)return;rq=1;try{if((await H.requestPermission({mode:"readwrite"}))==="granted"){perm=true;await wr()}}catch(e){}rq=0}
@@ -11,7 +11,7 @@ async function of(){try{const[h]=await showOpenFilePicker(FT);const o=pRead(awai
 async function sh(){try{if(NATIVE)return nfCreate();const f=new File([ser()],"bju-data.json",{type:"text/plain"});if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else dlFile(f,"bju-data.json");S.dirty=0;S.saved=Date.now();store();render();toast("Копия сохранена")}catch(e){say("Не удалось сохранить копию: "+(e.message||e))}}
 function im(el){const f=el.files[0];el.value="";if(!f)return;f.text().then(async t=>{const o=pRead(t);if(!o||!await askRepl(o,f.name))return;
  adopt(o);store();queueNativeSave();if(H)wr();cl();render()})}
-let fch=0,cpm=-1,oa=0;
+let cpm=-1,oa=0;
 function cm1(mi){cpm=mi;cal();$("st").textContent="Копировать «"+MEALS[mi]+"» в день:"}
 function fc2(){if(NATIVE)return nfCreate();window.showSaveFilePicker?pf():sh()}
 function fo2(){if(NATIVE)return nfOpen();window.showSaveFilePicker?of():$("fin").click()}

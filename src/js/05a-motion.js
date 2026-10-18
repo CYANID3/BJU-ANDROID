@@ -1,8 +1,8 @@
-// Анимации: одни кривые и длительности для всего приложения (те же значения — в CSS: --ease, --ease-in, --spring, --t1…--t3)
-//  - E   — основная кривая: быстрый старт, мягкое торможение (появление, перемещение, смена экрана)
+// Анимации: одни кривые и длительности для всего приложения (те же значения — в CSS: --ease, --spring, --t1…--t3)
+//  - E   — основная кривая: плавный старт, долгое мягкое торможение (появление, перемещение, смена экрана)
 //  - EI  — уход: плавный разгон (скрытие)
 //  - EIO — плавно в обе стороны (сжатие по высоте)
-const MO={E:"cubic-bezier(.22,1,.36,1)",EI:"cubic-bezier(.4,0,.8,.3)",EIO:"cubic-bezier(.4,0,.2,1)",t1:160,t2:260,t3:360};
+const MO={E:"cubic-bezier(.25,.8,.25,1)",EI:"cubic-bezier(.4,0,.8,.3)",EIO:"cubic-bezier(.4,0,.2,1)",t1:160,t2:260,t3:360};
 function moOk(el){return el&&el.animate&&!RM()}
 function mo(el,kf,o){if(!moOk(el))return null;try{return el.animate(kf,Object.assign({duration:MO.t2,easing:MO.E},typeof o==="number"?{duration:o}:o))}catch(e){return null}}
 // появление: из прозрачности, чуть снизу и чуть меньше

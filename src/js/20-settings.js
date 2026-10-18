@@ -1,9 +1,8 @@
 // Настройки: жесты, длина свайпа, вибрация, оформление
 // жест «потянуть вверх»: приём пищи по времени / новый продукт / статистика / вес (если вес включён) / выкл.
 function swAct(){const v=(S.set&&S.set.sw)||"off";return v==="wt"&&!wton()?"off":v}
-// действие жеста (общее для «потянуть вверх» и «встряхнуть»): новый продукт / статистика / вес (будущий день — на сегодня) / приём пищи по времени
-function actRun(a){if(a==="prod"){mode="mng";drawMc();nw();show()}else if(a==="stat")stats();else if(a==="wt"){if(cur>today){cur=today;head();render()}wtOpen()}else op(autoMeal())}
-const swipeAct=()=>actRun(swAct());
+// действие жеста «потянуть вверх»: новый продукт / статистика / вес (будущий день — на сегодня) / приём пищи по времени
+function swipeAct(){const a=swAct();if(a==="prod"){mode="mng";drawMc();nw();show()}else if(a==="stat")stats();else if(a==="wt"){if(cur>today){cur=today;head();render()}wtOpen()}else op(autoMeal())}
 
 // Длина свайпа: множитель расстояния для жестов в стороны (дни, календарь, месяцы статистики, смахивание листа) + порог рывка.
 // Сильнее всего уровни отличаются для жестов «потянуть вверх/вниз» — у них свои значения PLV (21-pull.js)
@@ -12,7 +11,7 @@ const SLV={short:[.5,.25,.3,9,1.25,"Короткий","Хватает лёгко
  mid:[1,.45,.45,14,1.5,"Средний","Баланс скорости и защиты от случайных срабатываний."],
  long:[1.8,1.1,.7,22,2,"Длинный","Нужно провести дальше и строго по направлению, а вверх и вниз — потянуть примерно на треть экрана. Случайные касания не срабатывают."]};
 const slv=()=>{const v=S.set&&S.set.sl;return SLV[v]?v:"mid"},GF=()=>SLV[slv()][0],SL=i=>SLV[slv()][i];
-// ползунок на три положения (длина свайпа, сила встряхивания): дорожка с точками над тремя подписями, бегунок плавно переезжает —
+// ползунок на три положения (длина свайпа): дорожка с точками над тремя подписями, бегунок плавно переезжает —
 // касанием подписи, перетаскиванием или стрелками. o: {keys, labels, get(), set(v), aria}
 function sldDraw(id,o){const el=$(id),K=o.keys,i=Math.max(0,K.indexOf(o.get()));el._o=o;
  if(!el.querySelector(".sldt")){el.innerHTML=`<div class="sldt" role="slider" aria-label="${o.aria}" aria-valuemin="0" aria-valuemax="${K.length-1}" tabindex="0"><i class="sldf"></i>${K.map((v,j)=>`<span class="sldd" style="left:${j*100/(K.length-1)}%"></span>`).join("")}<b class="sldk"></b></div><div class="sldl">${K.map((v,j)=>`<button>${o.labels[j]}</button>`).join("")}</div>`;sldBind(el)}
@@ -39,21 +38,22 @@ function olTap(id,fn,v){const el=$(id);if(el.classList.contains("cl")){olOpen.ad
 function sets(){olOpen.clear();drawSet();sv(7,"Настройки");show()}
 function drawSet(k){optList("dwm",DWL,dwAct(),"setDw");$("hpm").innerHTML=[["on","Вкл."],["nodays","Кроме дней"],["off","Выкл."]].map(([v,t])=>`<button class="${hpv()===v?"on":""}" onclick="setHp('${v}')">${t}</button>`).join("");const a=swAct(),c=(S.set&&S.set.ac)||"",th=(S.set&&S.set.th)||"auto";$("thm").innerHTML=[["auto","Авто"],["light","Светлая"],["dark","Тёмная"]].map(([v,t])=>`<button class="${th===v?"on":""}" onclick="setTh('${v}')">${t}</button>`).join("");
  sldDraw("slm",{keys:Object.keys(SLV),labels:Object.values(SLV).map(x=>x[5]),get:slv,set:setSl,aria:"Длина свайпа"});
- // проверка и сила движения — только когда действие выбрано
- $("ssr").hidden=skAct()==="off";sldDraw("ssm",{keys:Object.keys(SSV),labels:Object.values(SSV).map(x=>x[1]),get:ssv,set:setSs,aria:"Сила движения"});
+
  $("sver").textContent="Версия "+BUILD
  {const t=tnv();$("tnm").innerHTML=[["off","Выкл."],["soft","Лёгкий"],["strong","Заметный"]].map(([v,n])=>`<button class="${t===v?"on":""}" onclick="setTn('${v}')">${n}</button>`).join("")}
  // переключатели «да / нет»
  [["wtm",wton()],["bbm",bbv()==="fix"],["nbm",nbv()==="top"],["mgm",mgOn()]].forEach(([id,on])=>{const b=$(id);b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});
  $("snm").innerHTML=[["row","Строкой"],["tap","Двойным касанием"]].map(([v,t])=>`<button class="${snv()===v?"on":""}" onclick="setSn('${v}')">${t}</button>`).join("");$("snd").textContent=snv()==="tap"?"Два касания по названию приёма — показать или скрыть его перекус.":"";$("snd").hidden=snv()!=="tap";
- optList("sgm",SWL.filter(([v])=>v!=="wt"||wton()),a,"setSw");optList("skm",SKL.filter(([v])=>v!=="wt"||wton()),skAct(),"setSk");ghSync();
+ optList("sgm",SWL.filter(([v])=>v!=="wt"||wton()),a,"setSw");ghSync();
  $("swc").innerHTML=PRE.map(h=>`<button class="${c===h?"on":""}" style="background:${h||"#3b82f6"}" onclick="setAc('${h}')" aria-label="${h?"Цвет "+h:"Стандартный цвет"}">${ic("check")}</button>`).join("");
  $("cpd").style.background=c||"var(--ac)";$("cpn").textContent=c&&!PRE.includes(c)?c.toUpperCase():""}
 // подсказки к жестам («?» у раздела): мини-телефон с анимацией под каждым включённым жестом
-const ghOn=()=>S.set&&S.set.gh==="on",GHS=[["dwh",()=>dwAct()!=="off"],["sgh",()=>swAct()!=="off"],["smh",()=>skAct()!=="off"]];
+const ghOn=()=>S.set&&S.set.gh==="on",GHS=[["dwh",()=>dwAct()!=="off"],["sgh",()=>swAct()!=="off"]];
 function ghSync(anim){const on=ghOn(),b=$("ghb");b.classList.toggle("on",on);b.setAttribute("aria-pressed",on);
- GHS.forEach(([id,f])=>{const el=$(id),show=on&&f();if(show===!el.hidden)return;
-  if(!anim){el.hidden=!show;return}if(show){el.hidden=false;moH(el,1)}else moH(el,0,()=>{el.hidden=true;el.getAnimations().forEach(x=>x.cancel())})})}
+ GHS.forEach(([id,f])=>{const el=$(id),show=on&&f();if(el._gh===show&&show===!el.hidden)return;el._gh=show;
+  // быстрое двойное касание: прошлую анимацию — прочь, итог решает последнее состояние
+  el.getAnimations().forEach(x=>x.cancel());if(!anim){el.hidden=!show;return}
+  if(show){el.hidden=false;moH(el,1)}else moH(el,0,()=>{if(el._gh)return;el.hidden=true;el.getAnimations().forEach(x=>x.cancel())})})}
 function togGh(){S.set=Object.assign({},S.set,{gh:ghOn()?"off":"on"});saveq();ghSync(1);hap(6)}
 function setHp(v){S.set=Object.assign({},S.set,{hp:v});saveq();drawSet();hap(10)}
 function setSw(v){S.set=Object.assign({},S.set,{sw:v});saveq();drawSet();render();hap(6)}

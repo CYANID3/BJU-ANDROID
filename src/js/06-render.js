@@ -4,7 +4,12 @@
 function kbar(t,gk,k){const part=[t.p*4,t.f*9,t.c*4],sc=gk?Math.min(1,gk/Math.max(k,1))*100/gk:0;
  return `<div class="bar k km${k>gk&&gk?" ov":""}" role="img" aria-label="Съедено ${k} из ${gk} ккал">${part.map((v,i)=>`<i style="width:${v*sc}%;background:${["var(--p)","var(--f)","var(--c)"][i]}"></i>`).join("")}</div>`}
 // плитка нутриента в итоге дня: название и доля калорий, «съедено / норма», полоска, остаток
+// «Осталось N ккал» / «Перебор N ккал» — на главном экране и в карточке дня
+const leftTxt=l=>l>=0?`Осталось <b>${l}</b> ккал`:`Перебор <b>${-l}</b> ккал`;
 function mtile(l,v,g,col,np,sh){const over=v>g&&g>0,bad=over&&!np;return `<div class="mtl" style="--dot:${col}"><div class="mtn">${l}</div><div class="mtv"><b>${f1(v)}</b><small>/${g}</small></div><div class="bar"><i style="width:${Math.min(100,g?v/g*100:0)}%;background:${bad?'var(--dg)':col}"></i></div><div class="mtr"><span${bad?' class="ov"':""}>${!g?"":over?"+"+(v-g>=100?Math.round(v-g):f1(v-g))+" г":"ещё "+(g-v>=100?Math.round(g-v):f1(g-v))}</span>${sh!=null?`<em title="доля калорий">${sh}%</em>`:""}</div></div>`}
+// касание даты в шапке: «К сегодня» — на сегодня, иначе — календарь.
+// (не в onclick: там «head» — это document.head, и head() падал — шапка оставалась со старой датой)
+function dtTap(e){if(e.target.dataset.t){cur=today;render();head()}else cal()}
 function head(c){c=c||cur;const dd=new Date(c+"T12:00:00"),df=Math.round((dd-new Date(today+"T12:00:00"))/864e5);$("dt").innerHTML=cap(dd.toLocaleDateString("ru-RU",{weekday:"short"}))+", "+dd.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+"<span class=\"dd\">▾</span><small>"+(df!==0?"<span data-t=\"1\" style=\"color:var(--act,var(--ac));font-weight:600\">К сегодня</span> · ":"")+(df===0?"Сегодня":df===-1?"Вчера":df===1?"Завтра":dd.getFullYear()!==new Date().getFullYear()?dd.getFullYear():"&nbsp;")+"</small>"}
 function render(){if(RDEF)return;if(REP){head();$("app").innerHTML=repHTML();repFit();wUpd();return}
  const E=S.d[cur]||[],t=sumE(E),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
@@ -15,7 +20,7 @@ function render(){if(RDEF)return;if(REP){head();$("app").innerHTML=repHTML();rep
  else if(NATIVE){if(MF&&!mfOk)h+=`<div class="bn er"><span>Нет доступа к файлу «${esc(MF.name)}»</span><button onclick="fo2()">Выбрать</button></div>`}
  else if(H&&!perm&&S.dirty>0)h+=`<div class="bn"><span>Автосохранение на паузе · не в файле: ${S.dirty} изм.</span><button onclick="resume()">Продолжить</button></div>`;
  else if(!H&&S.dirty>=10)h+=`<div class="bn"><span>Не сохранено в файл: ${S.dirty} изм.</span><button onclick="${window.showSaveFilePicker?"fp()":"sh()"}">${window.showSaveFilePicker?"Настроить":"Сохранить"}</button></div>`;
- {const sh=shrD(t)||[];h+=`<div class="card sum" data-fk="sum"><div class="big"><b>${k}</b><span class="mu">из ${gk} ккал</span></div>${kbar(t,gk,k)}<div class="lf${left<0?" ov":""}">${left>=0?`Осталось <b>${left}</b> ккал`:`Перебор <b>${-left}</b> ккал`}</div><div class="mac">${mtiles(t,G,sh)}</div></div>`}
+ {const sh=shrD(t)||[];h+=`<div class="card sum" data-fk="sum"><div class="big"><b>${k}</b><span class="mu">из ${gk} ккал</span></div>${kbar(t,gk,k)}<div class="lf${left<0?" ov":""}">${leftTxt(left)}</div><div class="mac">${mtiles(t,G,sh)}</div></div>`}
  // под итогом: вес и неделя — две плитки (одна на всю ширину, если второй нет)
  {const w=wtTile(),wd=wkD(),wkt=wd?`<button class="dtl" onclick="stats()" aria-label="Статистика"><span class="ti">${ic("chart")}</span><span class="tx"><small>В среднем · ${wd.n} дн.</small><b>${wd.k}<i>ккал</i></b><em>белок ${wd.p} г</em></span></button>`:"";if(w||wkt)h+=`<div class="duo" data-fk="duo">${w}${wkt}</div>`}
 

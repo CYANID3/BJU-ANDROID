@@ -32,7 +32,7 @@ function repHTML(dense){const E=S.d[cur]||[],t=sumE(E),G=S.g,gk=kc(G.p,G.f,G.c),
  const ring=`<div class="rp-ring"><svg viewBox="0 0 100 100" aria-hidden="true"><g transform="rotate(-90 50 50)">${arcs}</g></svg><div class="rp-rc"><b>${gk?Math.round(k/gk*100):0}%</b><span>нормы</span></div></div>`;
  // Б / Ж / У — те же плитки, что на главном экране (съедено / норма, полоска, остаток, доля калорий)
  const sh=ks>0?kp.map(v=>Math.round(v/ks*100)):[];
- let h=`<div class="rep rep-in${dense?" dense":""}"><div class="rp-h"><div><div class="rp-d">${esc(title)}</div><div class="rp-k">${k}<span>из ${gk} ккал</span></div><div class="rp-l${left<0?" ov":""}">${left>=0?`Осталось <b>${left}</b> ккал`:`Перебор <b>${-left}</b> ккал`}</div>${wtRep()}</div>${ring}</div>`;
+ let h=`<div class="rep rep-in${dense?" dense":""}"><div class="rp-h"><div><div class="rp-d">${esc(title)}</div><div class="rp-k">${k}<span>из ${gk} ккал</span></div><div class="rp-l${left<0?" ov":""}">${leftTxt(left)}</div>${wtRep()}</div>${ring}</div>`;
  h+=`<div class="mac rp-mac">${mtiles(t,G,sh)}</div>`;
  // приёмы пищи — один блок, приёмы через тонкую линию; продукты — ровные строки: название · количество · ккал
  // (компактный вид — те же колонки мельче и плотнее, без БЖУ приёма)

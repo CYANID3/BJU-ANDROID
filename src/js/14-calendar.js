@@ -1,5 +1,5 @@
 // Календарь: месяцы, годы, свайп за пальцем
-let cm=[0,0],tx=null,ty=0;const cap=s=>s[0].toUpperCase()+s.slice(1);
+let cm=[0,0];const cap=s=>s[0].toUpperCase()+s.slice(1);
 let cv=0,cb=0;
 const MN=Array.from({length:12},(_,i)=>cap(new Date(2000,i,1).toLocaleDateString("ru-RU",{month:"long"})));
 function cal(){const d=new Date(cur+"T12:00:00");cm=[d.getFullYear(),d.getMonth()];cv=0;drawCal();sv(6,"Календарь");show()}
@@ -31,7 +31,7 @@ function pd(k){if(cpm>=0){const mi=cpm,it=(S.d[cur]||[]).filter(e=>e.m===mi).map
   el.style.transform=`translateX(${dx}px)`;el.style.opacity=1-Math.min(.6,Math.abs(dx)/(el.offsetWidth*1.2||400))},{passive:true});
  const end=()=>{x0=null;if(!md)return;md=0;const el=$("cg"),w=el.offsetWidth||300;
   if(Math.abs(dx)>w*.22*GF()||(Math.abs(vx)>SL(1)*.8&&Math.abs(dx)>w*.22*GF()*SL(2))){hap(6,1);calFlip(el,dx<0?1:-1,dx,parseFloat(el.style.opacity)||1)}
-  else{el.style.transition=`transform ${MO.t2}ms ${MO.E},opacity ${MO.t2}ms ${MO.E}`;el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!md)el.style.transition=""},260)}};
+  else{el.style.transition=`transform ${MO.t2}ms ${MO.E},opacity ${MO.t2}ms ${MO.E}`;el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!md)el.style.transition=""},MO.t2)}};
  v.addEventListener("touchend",end);v.addEventListener("touchcancel",()=>{dx=0;vx=0;end()})})();
 function calStep(n){if(cv===0){cm[1]+=n;if(cm[1]<0){cm[1]=11;cm[0]--}if(cm[1]>11){cm[1]=0;cm[0]++}}else if(cv===1)cm[0]+=n;else cm[0]+=n*12}
 function calFlip(el,dir,from,op){const w=el.offsetWidth||300;el.style.transition="";el.style.transform="";el.style.opacity="";
