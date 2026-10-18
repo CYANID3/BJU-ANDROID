@@ -370,6 +370,11 @@ test('движение телефоном: настройки — действи
   await a.pg.click('#smm button:has-text("Поворот")'); await a.wait(200);
   await a.pg.click('#ssm .sldl button:nth-child(2)'); await a.wait(100);
   assert.equal(await a.ev(() => smv() + ':' + ssv()), 'rot:strong');
+  assert.equal(await a.ev(() => $('smh').className), 'smh rot', 'подсказка-анимация — под выбранное движение');
+  assert.equal(await a.ev(() => getComputedStyle(document.querySelector('#smh .smp i')).animationName), 'smRot');
+  await a.ev(() => { setSm('wig'); setSs('max'); });
+  assert.match(await a.ev(() => $('smh').textContent), /туда-обратно 4 раза/, 'в подсказке — число покачиваний для выбранной силы');
+  await a.ev(() => { setSm('rot'); setSs('strong'); });
   const st = await a.ev(() => JSON.parse(ser()).settings);
   assert.deepEqual([st.shakeAction, st.shakeMotion, st.shakeStrength], ['dayCard', 'twist', 'strong']);
   // карточка дня: открыть движением и тем же движением закрыть

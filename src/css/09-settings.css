@@ -76,3 +76,16 @@ button.cc{width:100%;text-align:left;padding-right:12px}.cc .ccv{display:flex;al
 .mgr{min-width:0;display:flex;flex-direction:column;gap:2px;padding:2px 4px}.mgr small{font-size:var(--fs-xs);color:var(--mu);font-weight:600}
 .mgr b{font-size:var(--fs-body);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mgr span{font-size:var(--fs-xs);color:var(--mu);font-variant-numeric:tabular-nums}
 .mgp .seg{grid-column:1/-1;background:var(--card)}
+/* подсказка «как двигать телефон»: маленький телефон повторяет выбранное движение */
+.smh{display:flex;align-items:center;gap:14px;margin-top:8px;padding:10px 14px 10px 10px;background:var(--card);border-radius:var(--r-ctl)}
+.smp{flex:none;position:relative;width:76px;height:76px;border-radius:var(--r-in);background:var(--sub);display:grid;place-items:center;overflow:hidden}
+.smp i,.smp b{position:absolute;left:50%;top:50%;width:26px;height:44px;margin:-22px 0 0 -13px;border-radius:7px;border:2.5px solid var(--tx)}
+.smp i::after{content:"";position:absolute;left:50%;top:3px;width:8px;height:2px;margin-left:-4px;border-radius:1px;background:var(--mu)}
+.smp b{border-color:var(--mu);opacity:.28}
+.smt{font-size:var(--fs-sm);line-height:1.4;color:var(--mu)}.smt b{color:var(--tx);font-weight:600}
+.smh.ud i{animation:smUd 2.4s var(--ease) infinite}.smh.dn i{animation:smDn 2.6s infinite}.smh.rot i{animation:smRot 2.8s infinite}.smh.wig i{animation:smWig 2.4s ease-in-out infinite}
+.smh.ud .smp b,.smh.rot .smp b,.smh.wig .smp b{display:none}.smh.dn .smp b{transform:translateY(-14px)}
+@keyframes smUd{0%,52%,100%{transform:none}8%{transform:translateY(-11px)}16%{transform:translateY(11px)}24%{transform:translateY(-11px)}32%{transform:translateY(11px)}40%{transform:translateY(-6px)}}
+@keyframes smDn{0%,30%{transform:translateY(-14px);animation-timing-function:cubic-bezier(.5,0,.9,.3)}42%{transform:translateY(14px)}44%{transform:translateY(12px)}46%,78%{transform:translateY(14px);opacity:1}88%{transform:translateY(14px);opacity:0}89%{transform:translateY(-14px);opacity:0}100%{transform:translateY(-14px);opacity:1}}
+@keyframes smRot{0%,22%{transform:none;animation-timing-function:cubic-bezier(.3,0,.2,1)}36%,62%{transform:rotate(55deg);animation-timing-function:ease-in-out}92%,100%{transform:none}}
+@keyframes smWig{0%,60%,100%{transform:none}10%{transform:rotate(-28deg)}22%{transform:rotate(28deg)}34%{transform:rotate(-28deg)}46%{transform:rotate(28deg)}}

@@ -40,7 +40,11 @@ function sets(){olOpen.clear();drawSet();sv(7,"Настройки");show()}
 function drawSet(k){optList("dwm",DWL,dwAct(),"setDw");$("hpm").innerHTML=[["on","Вкл."],["nodays","Кроме дней"],["off","Выкл."]].map(([v,t])=>`<button class="${hpv()===v?"on":""}" onclick="setHp('${v}')">${t}</button>`).join("");const a=swAct(),c=(S.set&&S.set.ac)||"",th=(S.set&&S.set.th)||"auto";$("thm").innerHTML=[["auto","Авто"],["light","Светлая"],["dark","Тёмная"]].map(([v,t])=>`<button class="${th===v?"on":""}" onclick="setTh('${v}')">${t}</button>`).join("");
  sldDraw("slm",{keys:Object.keys(SLV),labels:Object.values(SLV).map(x=>x[5]),get:slv,set:setSl,aria:"Длина свайпа"});
  // какое движение и его сила — только когда действие выбрано
- $("ssr").hidden=skAct()==="off";sldDraw("ssm",{keys:Object.keys(SSV),labels:Object.values(SSV).map(x=>x[2]),get:ssv,set:setSs,aria:"Сила движения"});
+ $("ssr").hidden=skAct()==="off";
+ // живая подсказка под выбранным движением: телефон показывает, как его двигать
+ {const m=smv(),n=SSV[ssv()][1],h=$("smh");h.className="smh "+m;h.querySelector(".smt").innerHTML={ud:`Резко потрясите вдоль длинной стороны: <b>${n} толчка</b> вверх-вниз за секунду`,
+  dn:"Подержите спокойно, <b>одним рывком</b> опустите вниз — и <b>замрите</b> на полсекунды",rot:"Поверните, как руль, <b>на 50° и больше</b> одним движением, обратно — спокойно",
+  wig:`Поверните <b>туда-обратно ${n} раза</b> подряд, быстро — примерно за секунду`}[m]}sldDraw("ssm",{keys:Object.keys(SSV),labels:Object.values(SSV).map(x=>x[2]),get:ssv,set:setSs,aria:"Сила движения"});
  $("sver").textContent="Версия "+BUILD
  {const t=tnv();$("tnm").innerHTML=[["off","Выкл."],["soft","Лёгкий"],["strong","Заметный"]].map(([v,n])=>`<button class="${t===v?"on":""}" onclick="setTn('${v}')">${n}</button>`).join("")}
  // переключатели «да / нет»
