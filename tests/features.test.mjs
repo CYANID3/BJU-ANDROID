@@ -360,3 +360,27 @@ test('настройки жестов: сначала «вниз в начале
   assert.equal(await a.ev(() => isOpen), false, 'из настроек крестик закрывает');
   await a.close();
 });
+
+test('сила встряхивания: ползунок виден только при включённом встряхивании; сильнее — нужен резче и больше толчков', async () => {
+  const a = await openApp();
+  let T = 2e7; const shake = (g, n) => { T += 2000; return a.ev(([t, g, n]) => { for (let i = 0; i < n; i++) skMotion({ acceleration: { x: i % 2 ? -g : g, y: 0, z: 0 }, timeStamp: t + i * 150 }); }, [T, g, n]); };
+  await a.ev(() => sets()); await a.wait(400);
+  assert.equal(await a.ev(() => $('ssr').hidden), true, 'встряхивание выключено — ползунка нет');
+  await a.ev(() => setSk('stat'));
+  assert.equal(await a.ev(() => !$('ssr').hidden && ssv() + ':' + $('ssm').querySelector('.sldl .on').textContent), 'norm:Обычное');
+  await a.pg.click('#ssm .sldl button:nth-child(2)'); await a.wait(100);
+  assert.equal(await a.ev(() => ssv()), 'strong');
+  await a.ev(() => cl()); await a.wait(400);
+  await shake(17, 3); await a.wait(300);
+  assert.equal(await a.ev(() => isOpen), false, '«Сильное»: обычного встряхивания мало');
+  await shake(22, 3); await a.wait(300);
+  assert.equal(await a.ev(() => isOpen && !$('v9').hidden), true, '«Сильное»: резкое — срабатывает');
+  await a.ev(() => { cl(); setSs('max'); }); await a.wait(400);
+  await shake(27, 3); await a.wait(300);
+  assert.equal(await a.ev(() => isOpen), false, '«Резкое»: трёх толчков мало');
+  await shake(27, 4); await a.wait(300);
+  assert.equal(await a.ev(() => isOpen), true, '«Резкое»: четыре резких толчка');
+  assert.equal(await a.ev(() => JSON.parse(ser()).settings.shakeStrength), 'sharp');
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});
