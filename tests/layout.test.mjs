@@ -112,7 +112,7 @@ test('закреплённая панель не закрывает конец �
 test('настройки: четыре раздела, переключатели «да / нет», почти без пояснений', async () => {
   const a = await openApp();
   await a.ev(() => sets()); await a.wait(300);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v7 .sgt')].map(e => e.textContent)), ['Оформление', 'Главный экран', 'Жесты и вибрация', 'Данные']);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v7 .sgt')].map(e => e.firstChild.nextSibling.textContent)), ['Оформление', 'Главный экран', 'Жесты и вибрация', 'Данные']);
   assert.equal(await a.ev(() => [...document.querySelectorAll('#v7 .sd')].filter(e => !e.hidden && e.textContent.trim()).length), 0, 'по умолчанию без пояснительных абзацев');
   assert.equal(await a.ev(() => document.querySelectorAll('#v7 .tg').length), 4);
   await a.pg.click('#nbm'); assert.equal(await a.ev(() => nbv()), 'top');

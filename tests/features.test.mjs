@@ -340,67 +340,63 @@ test('настройки жестов: сначала «вниз в начале
 });
 
 
-test('движение телефоном: каждое движение срабатывает только на себя; тряска и ходьба не срабатывают; сила отсекает слабые', async () => {
+test('движение телефоном: «дважды наклонить» срабатывает только на себя; один наклон, тряска, ходьба — нет; сила отсекает слабые', async () => {
   const a = await openApp();
   await a.ev(c => { new Function(c)(); }, readFileSync('tests/sim.js', 'utf8'));
   const r = await a.ev(() => { window.__f = 0; skDo = () => window.__f++; S.set = Object.assign({}, S.set, { sk: 'stat' }); skBind();
-    const run = (m, s, g, o) => { S.set.sm = m; S.set.ss = s; skReset(); window.__f = 0; __sim(g, o); return window.__f; }, M = {};
-    const G = ['tw', 'tw1', 'ch', 'shake', 'tl', 'tlslow', 'tlstay', 'walk', 'ch2', 'chr', 'tlsmall'];
-    for (const s of ['norm', 'strong', 'max']) for (const m of ['tw', 'ch', 'tl']) M[m + '/' + s] = G.map(g => run(m, s, g)).join('');
-    return { M, weakTw: run('tw', 'max', 'tw', { r: 180 }), strongTw: run('tw', 'max', 'tw', { r: 420 }),
-      weakCh: run('ch', 'max', 'ch', { g: 18 }), strongCh: run('ch', 'max', 'ch', { g: 30 }), slowCh: run('ch', 'norm', 'ch', { gap: 1300 }), twX: run('tw', 'norm', 'tw', { ax: 0 }), twZ: run('tw', 'norm', 'tw', { ax: 2 }), tw3: run('tw', 'norm', 'tw', { n: 2 }), weakChr: run('ch', 'max', 'chr', { r: 300 }), twD: run('tw', 'norm', 'tw', { ax: 'd' }), weakTl: run('tl', 'max', 'tl', { deg: 55 }), strongTl: run('tl', 'max', 'tl', { deg: 75 }) }; });
-  for (const s of ['norm', 'strong', 'max']) assert.deepEqual([r.M['tw/' + s], r.M['ch/' + s], r.M['tl/' + s]], ['10000000010', '00100000110', '00001000000'],
-    s + ': крутнуть, один поворот, рубануть, тряска, наклонить, медленно, оставить наклонённым, ходьба, рубануть с ударом, рубануть кистью (это и есть «крутнуть» туда-обратно), слегка наклонить');
-  assert.deepEqual([r.weakTw, r.strongTw, r.weakCh, r.strongCh, r.slowCh, r.twX, r.twZ, r.tw3, r.weakChr, r.twD, r.weakTl, r.strongTl], [0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1], 'на «Резком» слабое не срабатывает; два взмаха с долгой паузой — нет; крутнуть — вокруг любой оси (и через угол), но не меньше 3 отрезков; на «Резком» наклон нужен больше: ' + JSON.stringify(r));
+    const run = (s, g, o) => { S.set.ss = s; skReset(); window.__f = 0; __sim(g, o); return window.__f; }, M = {};
+    const G = ['tl2', 'tl', 'tlslow', 'tlstay', 'tlsmall', 'tw', 'ch', 'shake', 'walk'];
+    for (const s of ['norm', 'strong', 'max']) M[s] = G.map(g => run(s, g)).join('');
+    return { M, weak: run('max', 'tl2', { deg: 55 }), strong: run('max', 'tl2', { deg: 75 }), slowPause: run('norm', 'tl2', { pause: 2600 }),
+      // дважды подряд без паузы: оба раза срабатывает (карточку можно сразу закрыть)
+      twice: (() => { S.set.ss = 'norm'; skReset(); window.__f = 0; __sim('tl2', { after: 0 }); __sim('tl2'); return window.__f; })() }; });
+  for (const s of ['norm', 'strong', 'max']) assert.equal(r.M[s], '100000000', s + ': дважды, один раз, второй медленно, оставить наклонённым, слегка, крутнуть, толчки, тряска, ходьба');
+  assert.deepEqual([r.weak, r.strong, r.slowPause, r.twice], [0, 1, 0, 2], JSON.stringify(r));
   await a.close();
 });
 
-test('движение телефоном: настройки, проверка движения, сохранение в файле', async () => {
+test('движение телефоном: настройки, «?» с подсказками, проверка движения, сохранение в файле', async () => {
   const a = await openApp();
   await a.ev(() => sets()); await a.wait(400);
-  assert.equal(await a.ev(() => $('ssr').hidden), true, 'действие выключено — выбора движения и силы нет');
+  assert.equal(await a.ev(() => $('ssr').hidden), true, 'действие выключено — проверки и силы нет');
   assert.deepEqual(await a.ev(() => SKL.map(x => x[1])), ['Выключено', 'Приём пищи', 'Новый продукт', 'Статистика', 'Вес', 'Карточка дня']);
-  assert.deepEqual(await a.ev(() => SML.map(x => x[1])), ['Дважды крутнуть', 'Дважды рубануть', 'Наклонить']);
-  await a.ev(() => setSk('rep'));
-  assert.equal(await a.ev(() => !$('ssr').hidden && smv() + ':' + ssv()), 'tw:norm');
-  assert.deepEqual(await a.ev(() => [...$('smm').querySelectorAll('button')].filter(b => b.offsetParent).map(b => b.querySelector('.ot b').textContent)), ['Дважды крутнуть'], 'список свёрнут до выбранного');
-  assert.equal(await a.ev(() => getComputedStyle(document.querySelector('#smh .smp i')).animationName), 'smTw');
-  await a.pg.click('#smm button.on'); await a.wait(200);
-  await a.pg.click('#smm button:has-text("Дважды рубануть")'); await a.wait(200);
+  await a.ev(() => { setSk('rep'); setSw('stat'); setDw('cal'); });
+  assert.equal(await a.ev(() => !$('ssr').hidden && ssv()), 'norm');
+  assert.deepEqual(await a.ev(() => ['dwh', 'sgh', 'smh'].map(id => $(id).hidden)), [true, true, true], 'подсказки по умолчанию скрыты');
+  await a.pg.click('#ghb'); await a.wait(500);
+  assert.deepEqual(await a.ev(() => ['dwh', 'sgh', 'smh'].map(id => $(id).hidden).concat($('ghb').getAttribute('aria-pressed'))), [false, false, false, 'true']);
+  assert.equal(await a.ev(() => getComputedStyle(document.querySelector('#smh .smp i')).animationName), 'smT2');
+  const pos = await a.ev(() => [['dwm', 'dwh'], ['sgm', 'sgh'], ['skm', 'smh']].map(([l, h]) => { const L = $(l).getBoundingClientRect(), H = $(h).getBoundingClientRect(); return H.top >= L.bottom - 1 && H.top - L.bottom < 30 && getComputedStyle($(h)).position === 'static'; }));
+  assert.deepEqual(pos, [true, true, true], 'каждая подсказка — под своим жестом');
+  await a.ev(() => setSw('off')); await a.wait(100);
+  assert.equal(await a.ev(() => $('sgh').hidden), true, 'жест выключен — его подсказки нет');
+  await a.pg.click('#ghb'); await a.wait(500);
+  assert.deepEqual(await a.ev(() => ['dwh', 'smh'].map(id => $(id).hidden)), [true, true], '«?» ещё раз — скрыть');
   await a.pg.click('#ssm .sldl button:nth-child(2)'); await a.wait(100);
-  assert.equal(await a.ev(() => smv() + ':' + ssv()), 'ch:strong');
-  assert.equal(await a.ev(() => $('smh').className), 'smh ch', 'подсказка-анимация — под выбранное движение');
-  // проверка движения: счётчик засчитанных, действие не выполняется, запись для разработчика
-  await a.ev(() => setSm('tl')); await a.wait(100);
+  assert.equal(await a.ev(() => ssv()), 'strong');
+  // проверка движения: точки наклонов, счётчик, действие не выполняется, запись для разработчика
   await a.pg.click('#ssr button.ln'); await a.wait(400);
   assert.equal(await a.ev(() => !$('v13').hidden && skTest), 1);
   await a.ev(c => { new Function(c)(); }, readFileSync('tests/sim.js', 'utf8'));
-  await a.ev(() => { __sim('tl'); __sim('walk'); __sim('tl'); }); await a.wait(100);
+  await a.ev(() => __sim('tl', { after: 0 }));
+  assert.equal(await a.ev(() => $('dgp').querySelectorAll('i.on').length + ':' + $('dgs2').textContent), '1:Ещё раз', 'после первого наклона — одна точка');
+  await a.ev(() => { __sim('tl'); __sim('walk'); __sim('tl2'); }); await a.wait(100);
   assert.equal(await a.ev(() => $('dgn2').textContent), '2');
   assert.equal(await a.ev(() => !!REP), false, 'в проверке действие не выполняется');
   const log = await a.ev(() => dgText());
-  assert.match(log, /засчитано 2/); assert.ok(log.split('\n').length > 5, 'по строке на каждое движение');
+  assert.match(log, /засчитано 2/); assert.match(log, /\(52°\)/); assert.ok(log.split('\n').length > 5, 'по строке на каждую попытку');
   await a.ev(() => step()); await a.wait(400);
   assert.equal(await a.ev(() => !$('v7').hidden && skTest), 0, 'назад — в настройки, проверка выключена');
-  await a.ev(() => setSm('tw'));
+  await a.ev(() => togGh());
   const st = await a.ev(() => JSON.parse(ser()).settings);
-  assert.deepEqual([st.shakeAction, st.shakeMotion, st.shakeStrength], ['dayCard', 'doubleTwist', 'strong']);
-  // карточка дня: открыть движением и тем же движением закрыть
+  assert.deepEqual([st.shakeAction, st.shakeStrength, st.gestureHints, 'shakeMotion' in st], ['dayCard', 'strong', 'on', false]);
+  // карточка дня: открыть жестом и сразу тем же жестом закрыть
   await a.ev(() => cl()); await a.wait(400);
-  await a.ev(() => __sim('tw', { r: 420 })); await a.wait(300);
+  await a.ev(() => { S.set.ss = 'norm'; __sim('tl2', { after: 0 }); }); await a.wait(50);
   assert.equal(await a.ev(() => !!REP), true);
-  await a.ev(() => __sim('tw', { r: 420 })); await a.wait(300);
+  await a.ev(() => __sim('tl2')); await a.wait(300);
   assert.equal(await a.ev(() => !!REP), false);
   assert.deepEqual(a.errors, []);
   await a.close();
 });
 
-test('подсказки «потянуть вниз / вверх» стоят под своими списками и скрыты, когда жест выключен', async () => {
-  const a = await openApp();
-  await a.ev(() => { S.set = Object.assign({}, S.set, { sw: 'stat', dw: 'cal' }); }); await a.ev(() => sets()); await a.wait(400);
-  const r = await a.ev(() => [['dwm', 'dwh'], ['sgm', 'sgh']].map(([l, h]) => { const L = $(l).getBoundingClientRect(), H = $(h).getBoundingClientRect(); return H.top >= L.bottom - 1 && H.top - L.bottom < 30 && getComputedStyle($(h)).position === 'static'; }));
-  assert.deepEqual(r, [true, true]);
-  await a.ev(() => { setSw('off'); setDw('off'); });
-  assert.deepEqual(await a.ev(() => [$('dwh').hidden, $('sgh').hidden]), [true, true]);
-  await a.close();
-});
