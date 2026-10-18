@@ -27,9 +27,9 @@ function repHTML(dense){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f
  const kp=[t.p*4,t.f*9,t.c*4],ks=kp[0]+kp[1]+kp[2],col=["var(--p)","var(--f)","var(--c)"];
  // кольцо долей калорий Б / Ж / У: чёткие границы и ровные зазоры между цветами (как на иконке приложения)
  let grad="var(--sub)";
- if(ks>0){const seg=kp.map((v,i)=>[v/ks*100,col[i]]).filter(x=>x[0]>0);if(seg.length===1)grad=seg[0][1];else{const gap=1.6;let st=0,parts=[];
+ if(ks>0){const seg=kp.map((v,i)=>[v/ks*100,col[i]]).filter(x=>x[0]>0);if(seg.length===1)grad=seg[0][1];else{const gap=.32;let st=0,parts=[];
   seg.forEach(([w,c])=>{const a=st,b=st+w;parts.push(`${c} ${(a+gap/2).toFixed(2)}% ${(b-gap/2).toFixed(2)}%`,`transparent ${(b-gap/2).toFixed(2)}% ${Math.min(100,b+gap/2).toFixed(2)}%`);st=b});
-  grad=`conic-gradient(from ${-gap*1.8}deg,transparent 0% ${(gap/2).toFixed(2)}%,${parts.join(",")})`}}
+  grad=`conic-gradient(from 0deg,transparent 0% ${(gap/2).toFixed(2)}%,${parts.join(",")})`}}
  const ring=`<div class="rp-ring" style="--rg:${grad}"><div class="rp-rc"><b>${gk?Math.round(k/gk*100):0}%</b><span>нормы</span></div></div>`;
  // Б / Ж / У — те же плитки, что на главном экране (съедено / норма, полоска, остаток, доля калорий)
  const sh=ks>0?kp.map(v=>Math.round(v/ks*100)):[];

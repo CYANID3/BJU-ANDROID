@@ -5,7 +5,7 @@ const onEn2=e=>{if(e._f)return;e._f=1;if(dgd&&!e.touches.length){gd=0;undrag()}}
 function bindT(t){if(!t||!t.addEventListener||t===document||t===window)return;const rm=()=>{t.removeEventListener("touchmove",onMv);t.removeEventListener("touchend",fin);t.removeEventListener("touchcancel",fin)};const fin=e=>{onEn(e);onEn2(e);if(e.type==="touchcancel")onCn();if(!e.touches.length)rm()};t.addEventListener("touchmove",onMv,{passive:true});t.addEventListener("touchend",fin);t.addEventListener("touchcancel",fin)}
 addEventListener("blur",()=>undrag(1));document.addEventListener("visibilitychange",()=>undrag(1));
 (()=>{const s=document.querySelector("#ov .sh");let y0=null,x0=0,dy=0,on=0,st0=0,ly=0,lt=0,v=0;
- s.addEventListener("touchstart",e=>{if(e.touches.length>1){y0=null;return}const t=e.touches[0];y0=t.clientY;x0=t.clientX;dy=0;on=0;v=0;ly=y0;lt=performance.now();st0=s.scrollTop},{passive:true});
+ s.addEventListener("touchstart",e=>{if(e.touches.length>1||e.target.closest&&e.target.closest(".nodrag")){y0=null;return}const t=e.touches[0];y0=t.clientY;x0=t.clientX;dy=0;on=0;v=0;ly=y0;lt=performance.now();st0=s.scrollTop},{passive:true});
  s.addEventListener("touchmove",e=>{if(y0===null)return;const t=e.touches[0],ddy=t.clientY-y0,ddx=t.clientX-x0;
   if(!on){if(Math.abs(ddx)>10&&Math.abs(ddx)>Math.abs(ddy)){y0=null;return}
    if(ddy>8&&st0<=0&&s.scrollTop<=0){on=1;y0=t.clientY;s.style.transition="none"}else if(Math.abs(ddy)>8){y0=null;return}else return}

@@ -42,12 +42,34 @@
 .srow:not(:has(+.srow)){border-bottom-left-radius:var(--r-ctl);border-bottom-right-radius:var(--r-ctl)}
 .srow+.srow{border-top:0;position:relative}.srow+.srow::before{content:"";position:absolute;left:16px;right:16px;top:0;height:1px;background:var(--sub)}
 .sgt+.srow{margin-top:0}
-/* ползунок «Длина свайпа»: точки стоят по центрам трёх подписей — всё симметрично */
-.sld{--v:.5;background:var(--card);border-radius:var(--r-ctl);padding:14px 0 6px}
-.sldt{position:relative;height:28px;margin:0 calc(100% / 6);touch-action:none;cursor:pointer}
-.sldt::before{content:"";position:absolute;left:-7px;right:-7px;top:50%;height:6px;margin-top:-3px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--mu) 24%,var(--card))}
-.sldf{position:absolute;left:-7px;top:50%;height:6px;margin-top:-3px;width:calc(var(--v) * 100% + 7px);border-radius:var(--r-pill);background:var(--ac)}
-.sldd{position:absolute;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:color-mix(in srgb,var(--mu) 60%,var(--card));transition:background-color var(--t2)}.sldd.in{background:color-mix(in srgb,var(--on) 85%,transparent)}
-.sldk{position:absolute;top:50%;left:calc(var(--v) * 100%);width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px var(--ac),0 3px 10px rgba(0,0,0,.28);transition:transform var(--t1) var(--ease)}
-.sldf,.sldk{transition:left var(--t3) var(--ease),width var(--t3) var(--ease),transform var(--t1) var(--ease)}.sld.drag .sldf,.sld.drag .sldk{transition:transform var(--t1) var(--ease)}.sld.drag .sldk{transform:scale(1.12)}
-.sldl{display:grid;grid-template-columns:repeat(3,1fr);margin-top:4px}.sldl button{min-height:34px;font-size:14px;font-weight:600;color:var(--mu);transition:color var(--t2)}.sldl button.on{color:var(--tx)}.sldl button:active{transform:none;color:var(--tx)}
+/* ползунок «Длина свайпа»: точки стоят по центрам трёх подписей — всё симметрично.
+   Дорожка от первой точки до последней, пройденная часть — акцентом, бегунок — белый круг с мягкой тенью и ореолом */
+.sld{--v:.5;background:var(--card);border-radius:var(--r-ctl);padding:12px 0 4px}
+.sldt{position:relative;height:32px;margin:0 calc(100% / 6);touch-action:none;cursor:pointer}
+.sldt::before{content:"";position:absolute;left:0;right:0;top:50%;height:6px;margin-top:-3px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--mu) 22%,var(--card))}
+.sldf{position:absolute;left:0;top:50%;height:6px;margin-top:-3px;width:calc(var(--v) * 100%);border-radius:var(--r-pill);background:var(--ac)}
+.sldd{position:absolute;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:color-mix(in srgb,var(--mu) 70%,var(--card));transition:opacity var(--t2),transform var(--t2) var(--ease)}.sldd.in{opacity:0;transform:scale(.4)}
+.sldk{position:absolute;top:50%;left:calc(var(--v) * 100%);width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:#fff;
+ box-shadow:0 0 0 6px color-mix(in srgb,var(--ac) 22%,transparent),0 2px 6px rgba(0,0,0,.3)}
+.sldk::after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--ac)}
+.sldf,.sldk{transition:left var(--t3) var(--ease),width var(--t3) var(--ease),transform var(--t1) var(--ease),box-shadow var(--t2)}.sld.drag .sldf,.sld.drag .sldk{transition:transform var(--t1) var(--ease),box-shadow var(--t2)}
+.sld.drag .sldk{transform:scale(1.1);box-shadow:0 0 0 9px color-mix(in srgb,var(--ac) 18%,transparent),0 3px 10px rgba(0,0,0,.32)}
+.sldl{display:grid;grid-template-columns:repeat(3,1fr);margin-top:2px}.sldl button{min-height:34px;font-size:14px;font-weight:600;color:var(--mu);transition:color var(--t2)}.sldl button.on{color:var(--tx)}.sldl button:active{transform:none;color:var(--tx)}
+/* строка «Свой цвет»: справа — текущий цвет (и код, если он свой) и стрелка */
+button.cc{width:100%;text-align:left;padding-right:12px}.cc .ccv{display:flex;align-items:center;gap:10px;color:var(--mu)}.cc .ccv em{font-style:normal;font-size:var(--fs-sm);font-variant-numeric:tabular-nums}
+.cc .ccv i{width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}.cc .ccv svg.i{width:18px;height:18px}
+/* экран «Свой цвет» */
+.cpk{display:flex;flex-direction:column;gap:16px}
+.cpa{--h:210;--x:.7;--y:.1;position:relative;height:210px;border-radius:var(--r-block);touch-action:none;cursor:crosshair;
+ background:linear-gradient(to top,#000,rgba(0,0,0,0)),linear-gradient(to right,#fff,hsl(calc(var(--h) * 1deg) 100% 50%))}
+.cpa i,.cph i{position:absolute;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35),inset 0 0 0 1px rgba(0,0,0,.15);pointer-events:none;transition:transform var(--t1) var(--ease)}
+.cpa i{left:calc(var(--x) * 100%);top:calc(var(--y) * 100%)}
+.cph{--x:.5;position:relative;height:16px;margin:4px 14px;border-radius:var(--r-pill);touch-action:none;cursor:pointer;
+ background:linear-gradient(to right,#f00 0%,#ff0 16.66%,#0f0 33.33%,#0ff 50%,#00f 66.66%,#f0f 83.33%,#f00 100%)}
+.cph::before{content:"";position:absolute;inset:-14px -14px;}.cph i{left:calc(var(--x) * 100%);top:50%}
+.cpa.drag i,.cph.drag i{transform:scale(1.15)}
+.cpr{display:flex;gap:10px;align-items:center}.cpv{flex:none;width:var(--h-ctl);height:var(--h-ctl);border-radius:var(--r-ctl);box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}
+.cpr input{margin:0;flex:1;font-variant-numeric:tabular-nums;letter-spacing:.04em;font-weight:600;text-transform:uppercase}
+.cps{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}.cps button{aspect-ratio:1;border-radius:50%;transition:transform var(--t2) var(--spring),box-shadow var(--t2)}
+.cps button.on{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--tx);transform:scale(.9)}
+#cpok{margin-top:0}

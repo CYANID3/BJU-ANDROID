@@ -306,3 +306,24 @@ test('поле количества: режим замены — подсвеч�
   assert.deepEqual(a.errors, []);
   await a.close();
 });
+
+test('свой цвет: экран выбора — квадрат, оттенок, код; «Готово» применяет, «Назад» — в настройки', async () => {
+  const a = await openApp();
+  await a.ev(() => sets()); await a.wait(400);
+  await a.pg.click('#v7 .cc'); await a.wait(400);
+  assert.equal(await a.ev(() => !$('v11').hidden && $('st').textContent), 'Свой цвет');
+  await a.pg.fill('#cpx', '#7c3aed'); await a.wait(50);
+  const r = await a.ev(() => { const b = $('cph').getBoundingClientRect(); return { x: b.left, y: b.top + b.height / 2, w: b.width }; });
+  assert.equal(await a.ev(() => hsv2hex(cpH, cpS, cpV)), '#7c3aed');
+  await a.pg.mouse.click(r.x + r.w * 0, r.y); await a.wait(50);
+  assert.equal(await a.ev(() => Math.round(cpH)), 0, 'полоса оттенка — к красному');
+  await a.ev(() => cpSet('#0891b2'));
+  await a.pg.click('#cpok'); await a.wait(400);
+  assert.equal(await a.ev(() => [S.set.ac, !$('v7').hidden].join()), '#0891b2,true');
+  assert.equal(await a.ev(() => $('cpn').textContent), '#0891B2', 'в настройках виден код своего цвета');
+  await a.pg.click('#v7 .cc'); await a.wait(350);
+  await a.ev(() => window.BJU_onBack ? BJU_onBack() : step()); await a.wait(350);
+  assert.equal(await a.ev(() => isOpen && !$('v7').hidden), true, '«Назад» возвращает в настройки');
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});

@@ -41,7 +41,27 @@ function drawSet(k){optList("dwm",DWL,dwAct(),"setDw");$("hpm").innerHTML=[["on"
  $("snm").innerHTML=[["row","Строкой"],["tap","Двойным касанием"]].map(([v,t])=>`<button class="${snv()===v?"on":""}" onclick="setSn('${v}')">${t}</button>`).join("");$("snd").textContent=snv()==="tap"?"Два касания по названию приёма — показать или скрыть его перекус.":"";$("snd").hidden=snv()!=="tap";
  optList("sgm",SWL.filter(([v])=>v!=="wt"||wton()),a,"setSw");
  $("swc").innerHTML=PRE.map(h=>`<button class="${c===h?"on":""}" style="background:${h||"#3b82f6"}" onclick="setAc('${h}')" aria-label="${h?"Цвет "+h:"Стандартный цвет"}">${ic("check")}</button>`).join("");
- if(!k)$("cp").value=c||"#3b82f6"}
+ $("cpd").style.background=c||"var(--ac)";$("cpn").textContent=c&&!PRE.includes(c)?c.toUpperCase():""}
 function setHp(v){S.set=Object.assign({},S.set,{hp:v});saveq();drawSet();hap(10)}
 function setSw(v){S.set=Object.assign({},S.set,{sw:v});saveq();drawSet();render();hap(6)}
 function setAc(h,k){S.set=Object.assign({},S.set,{ac:h});saveq();applyAc();drawSet(k)}
+
+// «Свой цвет»: свой экран в листе — квадрат насыщенности и яркости, полоса оттенка, поле для кода; «Готово» применяет цвет
+let cpH=210,cpS=.7,cpV=.9;
+const hsv2hex=(h,s,v)=>{const f=n=>{const k=(n+h/60)%6;return v-v*s*Math.max(0,Math.min(k,4-k,1))};return"#"+[f(5),f(3),f(1)].map(x=>Math.round(x*255).toString(16).padStart(2,"0")).join("")};
+function hex2hsv(x){const n=parseInt(x.slice(1),16),r=(n>>16&255)/255,g=(n>>8&255)/255,b=(n&255)/255,M=Math.max(r,g,b),m=Math.min(r,g,b),d=M-m;
+ let h=0;if(d){h=M===r?((g-b)/d)%6:M===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360}return[h,M?d/M:0,M]}
+const CPS=["#e11d48","#f97316","#eab308","#16a34a","#0d9488","#0891b2","#2563eb","#7c3aed","#c026d3","#57534e"];
+function cpOpen(){const c=(S.set&&/^#[0-9a-f]{6}$/i.test(S.set.ac||"")&&S.set.ac)||getComputedStyle(document.documentElement).getPropertyValue("--ac").trim()||"#2f7de1";
+ [cpH,cpS,cpV]=hex2hsv(c);$("cps").innerHTML=CPS.map(h=>`<button style="background:${h}" onclick="cpSet('${h}')" aria-label="Цвет ${h}"></button>`).join("");cpDraw(1);sv(11,"Свой цвет")}
+function cpSet(h){[cpH,cpS,cpV]=hex2hsv(h);cpDraw(1);hap(4)}
+function cpDraw(hx){const c=hsv2hex(cpH,cpS,cpV),a=$("cpa");a.style.setProperty("--h",cpH);a.style.setProperty("--x",cpS);a.style.setProperty("--y",1-cpV);$("cph").style.setProperty("--x",cpH/360);
+ $("cpak").style.background=c;$("cphk").style.background=`hsl(${cpH} 100% 50%)`;$("cpv").style.background=c;if(hx)$("cpx").value=c.toUpperCase();
+ const ok=$("cpok");ok.style.background=c;ok.style.color=crt("#ffffff",c)>=3.1?"#fff":"#141922";
+ $("cps").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.getAttribute("onclick").includes(c)))}
+function cpHex(v){v=v.trim();if(v&&v[0]!=="#")v="#"+v;if(/^#[0-9a-f]{6}$/i.test(v)){[cpH,cpS,cpV]=hex2hsv(v.toLowerCase());cpDraw(0)}}
+function cpOk(){setAc(hsv2hex(cpH,cpS,cpV));hap(8);drawSet();svBack=1;sv(7,"Настройки")}
+(()=>{const drag=(el,fn)=>{let on=0;const at=e=>{const r=el.getBoundingClientRect();fn(Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),Math.max(0,Math.min(1,(e.clientY-r.top)/r.height)));cpDraw(1)};
+  el.addEventListener("pointerdown",e=>{on=1;el.classList.add("drag");try{el.setPointerCapture(e.pointerId)}catch(_){}at(e)});
+  el.addEventListener("pointermove",e=>{if(on)at(e)});const up=()=>{on=0;el.classList.remove("drag")};el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up)};
+ drag($("cpa"),(x,y)=>{cpS=x;cpV=1-y});drag($("cph"),x=>{cpH=Math.min(359.9,x*360)})})();
