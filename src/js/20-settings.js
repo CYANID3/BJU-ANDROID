@@ -39,14 +39,14 @@ function olTap(id,fn,v){const el=$(id);if(el.classList.contains("cl")){olOpen.ad
 function sets(){olOpen.clear();drawSet();sv(7,"Настройки");show()}
 function drawSet(k){optList("dwm",DWL,dwAct(),"setDw");$("hpm").innerHTML=[["on","Вкл."],["nodays","Кроме дней"],["off","Выкл."]].map(([v,t])=>`<button class="${hpv()===v?"on":""}" onclick="setHp('${v}')">${t}</button>`).join("");const a=swAct(),c=(S.set&&S.set.ac)||"",th=(S.set&&S.set.th)||"auto";$("thm").innerHTML=[["auto","Авто"],["light","Светлая"],["dark","Тёмная"]].map(([v,t])=>`<button class="${th===v?"on":""}" onclick="setTh('${v}')">${t}</button>`).join("");
  sldDraw("slm",{keys:Object.keys(SLV),labels:Object.values(SLV).map(x=>x[5]),get:slv,set:setSl,aria:"Длина свайпа"});
- // сила встряхивания — только когда встряхивание включено
- $("ssr").hidden=skAct()==="off";sldDraw("ssm",{keys:Object.keys(SSV),labels:Object.values(SSV).map(x=>x[3]),get:ssv,set:setSs,aria:"Сила встряхивания"});
+ // какое движение и его сила — только когда действие выбрано
+ $("ssr").hidden=skAct()==="off";sldDraw("ssm",{keys:Object.keys(SSV),labels:Object.values(SSV).map(x=>x[2]),get:ssv,set:setSs,aria:"Сила движения"});
  $("sver").textContent="Версия "+BUILD
  {const t=tnv();$("tnm").innerHTML=[["off","Выкл."],["soft","Лёгкий"],["strong","Заметный"]].map(([v,n])=>`<button class="${t===v?"on":""}" onclick="setTn('${v}')">${n}</button>`).join("")}
  // переключатели «да / нет»
  [["wtm",wton()],["bbm",bbv()==="fix"],["nbm",nbv()==="top"],["mgm",mgOn()]].forEach(([id,on])=>{const b=$(id);b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});
  $("snm").innerHTML=[["row","Строкой"],["tap","Двойным касанием"]].map(([v,t])=>`<button class="${snv()===v?"on":""}" onclick="setSn('${v}')">${t}</button>`).join("");$("snd").textContent=snv()==="tap"?"Два касания по названию приёма — показать или скрыть его перекус.":"";$("snd").hidden=snv()!=="tap";
- optList("sgm",SWL.filter(([v])=>v!=="wt"||wton()),a,"setSw");optList("skm",SKL.filter(([v])=>v!=="wt"||wton()),skAct(),"setSk");
+ optList("sgm",SWL.filter(([v])=>v!=="wt"||wton()),a,"setSw");optList("skm",SKL.filter(([v])=>v!=="wt"||wton()),skAct(),"setSk");optList("smm",SML,smv(),"setSm");
  $("swc").innerHTML=PRE.map(h=>`<button class="${c===h?"on":""}" style="background:${h||"#3b82f6"}" onclick="setAc('${h}')" aria-label="${h?"Цвет "+h:"Стандартный цвет"}">${ic("check")}</button>`).join("");
  $("cpd").style.background=c||"var(--ac)";$("cpn").textContent=c&&!PRE.includes(c)?c.toUpperCase():""}
 function setHp(v){S.set=Object.assign({},S.set,{hp:v});saveq();drawSet();hap(10)}

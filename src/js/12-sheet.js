@@ -10,7 +10,8 @@ function svTargetH(sh,willKb){const nat=document.documentElement.classList.conta
  return Math.min(sh.scrollHeight,Math.min(ov*.92,ov-sat-12)-kbF)}
 function sv(n,t){const sh_=document.querySelector("#ov .sh"),prev=VWS.find(i=>!$("v"+i).hidden),h0=isOpen?sh_.offsetHeight:0,back=svBack,willKb=svFocus;svBack=0;svFocus=0;clearH(1);
  VWS.forEach(i=>$("v"+i).hidden=i!==n);$("st").textContent=t||"";
- if(!isOpen||prev===n)return;sh_.scrollTop=0;if(RM()||!sh_.animate)return;
+ // открытие листа и смена экрана — всегда с начала (лист помнил прокрутку с прошлого раза и открывался с середины)
+ if(!isOpen||prev!==n)sh_.scrollTop=0;if(!isOpen||prev===n)return;if(RM()||!sh_.animate)return;
  const E={duration:MO.t2,easing:MO.E};
  try{$("v"+n).animate([{opacity:0,transform:`translateX(${back?-24:24}px)`},{opacity:1,transform:"none"}],E);$("st").animate([{opacity:0},{opacity:1}],{duration:MO.t2})}catch(e){}
  const kbF=kbFuture(willKb);

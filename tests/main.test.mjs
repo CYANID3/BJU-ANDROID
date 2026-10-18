@@ -210,3 +210,15 @@ test('цвета Б / Ж / У заданы во всех темах (их не �
     await a.close();
   }
 });
+
+test('список продуктов при открытии — всегда с начала, даже если в прошлый раз его прокрутили', async () => {
+  const db = Array.from({ length: 60 }, (_, i) => ['Продукт ' + (i + 1), 10, 5, 20]);
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: {}, db } });
+  await a.ev(() => op(0)); await a.wait(400);
+  await a.ev(() => document.querySelector('#ov .sh').scrollTop = 2000); await a.wait(100);
+  assert.ok(await a.ev(() => document.querySelector('#ov .sh').scrollTop) > 500);
+  await a.ev(() => cl()); await a.wait(400);
+  await a.ev(() => op(2)); await a.wait(400);
+  assert.equal(await a.ev(() => document.querySelector('#ov .sh').scrollTop), 0);
+  await a.close();
+});

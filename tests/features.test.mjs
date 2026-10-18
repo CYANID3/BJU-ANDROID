@@ -2,6 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { openApp, day, entry } from './helpers.mjs';
+import { readFileSync } from 'node:fs';
 
 const sections = a => a.ev(() => [...document.querySelectorAll('#ls .lh')].map(e => e.textContent));
 const names = a => a.ev(() => [...document.querySelectorAll('#ls .pk .n')].map(e => e.textContent));
@@ -325,34 +326,11 @@ test('свой цвет: экран выбора — квадрат, оттен�
   await a.close();
 });
 
-test('встряхивание: выключено по умолчанию; выбранное действие срабатывает на три толчка', async () => {
-  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(0, 'Яйцо', 50, 6, 5, .5)] }, db: [] } });
-  // три толчка с «виртуальными» отметками времени (каждое встряхивание — на 2 с позже предыдущего): от скорости машины не зависит
-  let T = 1e7; const shake = () => { T += 2000; return a.ev(t => { for (let i = 0; i < 3; i++) skMotion({ acceleration: { x: i % 2 ? -20 : 20, y: 0, z: 0 }, timeStamp: t + i * 150 }); }, T); };
-  assert.equal(await a.ev(() => skAct()), 'off');
-  assert.deepEqual(await a.ev(() => SKL.map(x => x[1])), ['Выключено', 'Приём пищи', 'Новый продукт', 'Статистика', 'Вес', 'Карточка дня']);
-  await shake(); await a.wait(300);
-  assert.equal(await a.ev(() => isOpen), false, 'выключено — ничего не происходит');
-  await a.ev(() => setSk('stat')); await shake(); await a.wait(400);
-  assert.equal(await a.ev(() => isOpen && !$('v9').hidden), true, 'встряхнули — статистика');
-  await a.ev(() => cl()); await a.wait(400);
-  await a.ev(() => setSk('prod')); await shake(); await a.wait(400);
-  assert.equal(await a.ev(() => isOpen && !$('v3').hidden), true, '«Новый продукт»');
-  await a.ev(() => cl()); await a.wait(400);
-  await a.ev(() => setSk('rep')); await shake(); await a.wait(400);
-  assert.equal(await a.ev(() => !!REP), true, 'карточка дня открылась');
-  await shake(); await a.wait(400);
-  assert.equal(await a.ev(() => !!REP), false, 'ещё раз — закрылась');
-  assert.equal(await a.ev(() => JSON.parse(ser()).settings.shakeAction), 'dayCard');
-  assert.deepEqual(a.errors, []);
-  await a.close();
-});
-
 test('настройки жестов: сначала «вниз в начале дня», потом «вверх в конце дня»; крестик на «Свой цвет» — назад в настройки', async () => {
   const a = await openApp();
   await a.ev(() => sets()); await a.wait(400);
   const order = await a.ev(() => [...document.querySelectorAll('#v7 .sg:nth-child(3) .srl')].map(e => e.textContent));
-  assert.deepEqual(order.slice(0, 3), ['Потянуть вниз в начале дня', 'Потянуть вверх в конце дня', 'Встряхнуть телефон']);
+  assert.deepEqual(order.slice(0, 3), ['Потянуть вниз в начале дня', 'Потянуть вверх в конце дня', 'Движение телефоном']);
   await a.ev(() => cpOpen()); await a.wait(400);
   await a.pg.click('.hd .x'); await a.wait(400);
   assert.equal(await a.ev(() => isOpen && !$('v7').hidden), true);
@@ -361,26 +339,46 @@ test('настройки жестов: сначала «вниз в начале
   await a.close();
 });
 
-test('сила встряхивания: ползунок виден только при включённом встряхивании; сильнее — нужен резче и больше толчков', async () => {
+
+test('движение телефоном: каждое движение срабатывает только на себя; ходьба не срабатывает; сила отсекает слабые', async () => {
   const a = await openApp();
-  let T = 2e7; const shake = (g, n) => { T += 2000; return a.ev(([t, g, n]) => { for (let i = 0; i < n; i++) skMotion({ acceleration: { x: i % 2 ? -g : g, y: 0, z: 0 }, timeStamp: t + i * 150 }); }, [T, g, n]); };
+  await a.ev(c => { new Function(c)(); }, readFileSync('tests/sim.js', 'utf8'));
+  const r = await a.ev(() => { window.__f = 0; skDo = () => window.__f++; S.set = Object.assign({}, S.set, { sk: 'stat' }); skBind();
+    const run = (m, s, g, o) => { S.set.sm = m; S.set.ss = s; skReset(); window.__f = 0; __sim(g, o); return window.__f; }, M = {};
+    for (const m of ['ud', 'dn', 'rot', 'wig']) M[m] = ['ud', 'dn', 'rot', 'wig', 'walk'].map(g => run(m, 'norm', g)).join('');
+    return { M, flat: run('dn', 'norm', 'dnflat'), rotback: run('rot', 'norm', 'rotback'),
+      weakUD: run('ud', 'max', 'ud'), strongUD: run('ud', 'max', 'ud', { g: 30, n: 5 }),
+      weakDN: run('dn', 'strong', 'dn', { g: 12 }), strongDN: run('dn', 'strong', 'dn', { g: 20 }),
+      weakRot: run('rot', 'max', 'rot'), strongRot: run('rot', 'max', 'rot', { r: 520, deg: 100 }),
+      weakWig: run('wig', 'max', 'wig', { r: 260 }), strongWig: run('wig', 'max', 'wig', { r: 520, n: 5 }) }; });
+  assert.deepEqual(r.M, { ud: '10000', dn: '01000', rot: '00100', wig: '00010' }, 'строка: вверх-вниз, вниз, поворот, покачивание, ходьба');
+  assert.equal(r.flat, 1, '«Резко вниз» и когда телефон лежит экраном вверх');
+  assert.equal(r.rotback, 1, 'поворот, потом спокойный возврат — один раз');
+  assert.deepEqual([r.weakUD, r.strongUD, r.weakDN, r.strongDN, r.weakRot, r.strongRot, r.weakWig, r.strongWig], [0, 1, 0, 1, 0, 1, 0, 1], 'на большей силе слабое не срабатывает: ' + JSON.stringify(r));
+  await a.close();
+});
+
+test('движение телефоном: настройки — действие, какое движение, сила; всё сохраняется в файле', async () => {
+  const a = await openApp();
   await a.ev(() => sets()); await a.wait(400);
-  assert.equal(await a.ev(() => $('ssr').hidden), true, 'встряхивание выключено — ползунка нет');
-  await a.ev(() => setSk('stat'));
-  assert.equal(await a.ev(() => !$('ssr').hidden && ssv() + ':' + $('ssm').querySelector('.sldl .on').textContent), 'norm:Обычное');
+  assert.equal(await a.ev(() => $('ssr').hidden), true, 'действие выключено — выбора движения и силы нет');
+  assert.deepEqual(await a.ev(() => SKL.map(x => x[1])), ['Выключено', 'Приём пищи', 'Новый продукт', 'Статистика', 'Вес', 'Карточка дня']);
+  await a.ev(() => setSk('rep'));
+  assert.equal(await a.ev(() => !$('ssr').hidden && smv() + ':' + ssv()), 'ud:norm');
+  assert.deepEqual(await a.ev(() => [...$('smm').querySelectorAll('button')].filter(b => b.offsetParent).map(b => b.querySelector('.ot b').textContent)), ['Вверх-вниз'], 'список свёрнут до выбранного');
+  await a.pg.click('#smm button.on'); await a.wait(200);
+  await a.pg.click('#smm button:has-text("Поворот")'); await a.wait(200);
   await a.pg.click('#ssm .sldl button:nth-child(2)'); await a.wait(100);
-  assert.equal(await a.ev(() => ssv()), 'strong');
+  assert.equal(await a.ev(() => smv() + ':' + ssv()), 'rot:strong');
+  const st = await a.ev(() => JSON.parse(ser()).settings);
+  assert.deepEqual([st.shakeAction, st.shakeMotion, st.shakeStrength], ['dayCard', 'twist', 'strong']);
+  // карточка дня: открыть движением и тем же движением закрыть
   await a.ev(() => cl()); await a.wait(400);
-  await shake(17, 3); await a.wait(300);
-  assert.equal(await a.ev(() => isOpen), false, '«Сильное»: обычного встряхивания мало');
-  await shake(22, 3); await a.wait(300);
-  assert.equal(await a.ev(() => isOpen && !$('v9').hidden), true, '«Сильное»: резкое — срабатывает');
-  await a.ev(() => { cl(); setSs('max'); }); await a.wait(400);
-  await shake(27, 3); await a.wait(300);
-  assert.equal(await a.ev(() => isOpen), false, '«Резкое»: трёх толчков мало');
-  await shake(27, 4); await a.wait(300);
-  assert.equal(await a.ev(() => isOpen), true, '«Резкое»: четыре резких толчка');
-  assert.equal(await a.ev(() => JSON.parse(ser()).settings.shakeStrength), 'sharp');
+  await a.ev(c => { new Function(c)(); }, readFileSync('tests/sim.js', 'utf8'));
+  await a.ev(() => __sim('rot', { r: 420, deg: 90 })); await a.wait(300);
+  assert.equal(await a.ev(() => !!REP), true);
+  await a.ev(() => __sim('rot', { r: 420, deg: 90 })); await a.wait(300);
+  assert.equal(await a.ev(() => !!REP), false);
   assert.deepEqual(a.errors, []);
   await a.close();
 });
