@@ -287,3 +287,22 @@ test('длина свайпа — ползунок: касание подпис�
   assert.ok(r.w > 0);
   await a.close();
 });
+
+test('поле количества: режим замены — подсвечено поле, первая цифра заменяет значение; касание — обычное выделение', async () => {
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: {}, db: [['Банан', 1.5, .2, 21.8]], lg: { 'Банан': 120 } } });
+  await a.ev(() => op(0)); await a.wait(300);
+  await a.pg.locator('#ls .pk').first().click(); await a.wait(400);
+  const st = await a.ev(() => { const i = $('gr'); return { v: i.value, rp: i.classList.contains('rp'), s: i.selectionStart, e: i.selectionEnd }; });
+  assert.deepEqual(st, { v: '120', rp: true, s: 3, e: 3 }, 'текст не выделен, поле в режиме замены');
+  await a.pg.keyboard.press('8');
+  assert.equal(await a.ev(() => [$('gr').value, $('gr').classList.contains('rp')].join()), '8,false');
+  await a.pg.keyboard.press('0');
+  assert.equal(await a.ev(() => $('gr').value), '80', 'дальше — обычный ввод');
+  await a.ev(() => qg(150));
+  await a.pg.keyboard.press('Backspace');
+  assert.equal(await a.ev(() => $('gr').value), '', 'после быстрого значения стереть — очищает');
+  await a.ev(() => qg(200)); await a.pg.click('#gr'); await a.wait(100);
+  assert.equal(await a.ev(() => { const i = $('gr'); return !i.classList.contains('rp') && i.selectionStart === 0 && i.selectionEnd === 3; }), true, 'касание поля — значение выделено');
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});

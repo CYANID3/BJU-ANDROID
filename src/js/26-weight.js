@@ -13,9 +13,9 @@ function wtTile(){if(!wton()||cur>today)return"";const v=(S.wt||{})[cur],pr=wPre
  if(swAct()==="wt")return"";
  return `<button class="dtl wtl" onclick="wtOpen()" aria-label="Записать вес"><span class="ti">${ic("plus")}</span><span class="tx"><small>Вес</small><b class="wa">Записать</b><em>${pr?"было "+wFmt(pr[1])+" кг":"за этот день"}</em></span></button>`}
 function wtOpen(){const v=(S.wt||{})[cur];$("wv").value=v?wFmt(v):"";$("wdl").hidden=!v;wPv();svFocus=1;sv(10,"Вес · "+new Date(cur+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"long"}));show();
- const f=()=>{const g=$("wv");try{g.focus({preventScroll:true})}catch(e){g.focus()}g.select()};isOpen?f():requestAnimationFrame(f)}
+ const f=()=>{const g=$("wv");try{g.focus({preventScroll:true})}catch(e){g.focus()}rpOn(g)};isOpen?f():requestAnimationFrame(f)}
 const wIn=()=>num($("wv").value);
-function wSt(n){const pr=wPrev(cur),b=wIn()||(S.wt||{})[cur]||(pr&&pr[1])||70;$("wv").value=wFmt(Math.max(1,Math.round(b*10+n)/10));wPv();hap(4)}
+function wSt(n){const pr=wPrev(cur),b=wIn()||(S.wt||{})[cur]||(pr&&pr[1])||70;$("wv").value=wFmt(Math.max(1,Math.round(b*10+n)/10));wPv();hap(4);if(document.activeElement===$("wv"))rpOn($("wv"))}
 function wPv(){const v=wIn(),pr=wPrev(cur),el=$("wpv");
  if(!pr){el.textContent="Лучше взвешиваться в одно время — например, утром.";return}
  const d=v>0?r1(v-pr[1]):null;el.innerHTML=`Прошлая запись: <b>${wFmt(pr[1])}</b> кг · ${wDate(pr[0])}`+(d?` · <span style="color:var(--tx)">${wSg(d)} кг</span>`:"")}

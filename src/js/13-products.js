@@ -21,7 +21,7 @@ const nf=x=>String(x).replace(".",",");
 function pv(){const q=num($("gr").value),g=q*UM(),el=$("pvw");
  el.innerHTML=g>0?`<b>${kc(sel[1]*g/100,sel[2]*g/100,sel[3]*g/100)}</b><small>ккал</small><span>Б ${nf(r1(sel[1]*g/100))}</span><span>Ж ${nf(r1(sel[2]*g/100))}</span><span>У ${nf(r1(sel[3]*g/100))}</span>${uu>=0?`<em>${nf(r1(g))} г</em>`:""}`:"";el.classList.toggle("on",g>0);
  $("ch").querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.v===q))}
-function gv(t,v,u){uu=u==null?-1:u;$("pn").textContent=sel[0];$("gr").value=v?nf(v):"";$("ab").textContent=ei>=0||ik>=0?"Сохранить":"Добавить";drawU();drawMc();svFocus=1;sv(2,t);const f=()=>{const g=$("gr");try{g.focus({preventScroll:true})}catch(e){g.focus()}g.select()};isOpen?f():requestAnimationFrame(f)}
+function gv(t,v,u){uu=u==null?-1:u;$("pn").textContent=sel[0];$("gr").value=v?nf(v):"";$("ab").textContent=ei>=0||ik>=0?"Сохранить":"Добавить";drawU();drawMc();svFocus=1;sv(2,t);const f=()=>{const g=$("gr");try{g.focus({preventScroll:true})}catch(e){g.focus()}rpOn(g)};isOpen?f():requestAnimationFrame(f)}
 function drawU(){const nd=`onmousedown="event.preventDefault()"`;
  
  $("pm").textContent=`Б ${nf(r1(sel[1]))} · Ж ${nf(r1(sel[2]))} · У ${nf(r1(sel[3]))} · ${kc(sel[1],sel[2],sel[3])} ккал на 100 г`;
@@ -32,7 +32,7 @@ function drawU(){const nd=`onmousedown="event.preventDefault()"`;
  const qs=uu<0?[...new Set([lg,50,100,150,200].filter(Boolean).map(r1))].slice(0,5):[.5,1,2,3];
  $("ch").innerHTML=qs.map(g=>`<button data-v="${g}" ${nd} onclick="qg(${g})">${uu<0&&g===r1(lg||0)?`<i>${ic("check")}</i>`:""}${nf(g)}${uu<0?"<small> г</small>":""}</button>`).join("");pv()}
 function su(i){uu=i;$("gr").value="";drawU();try{$("gr").focus({preventScroll:true})}catch(e){}}
-function qg(g){$("gr").value=nf(g);pv()}
+function qg(g){const i=$("gr");i.value=nf(g);pv();if(document.activeElement===i)rpOn(i)}
 function ee(i){const e=S.d[cur][i],pr=S.db.find(x=>x[0]===e.n);ei=i;am=e.m;sel=[e.n,e.p/e.g*100,e.f/e.g*100,e.c/e.g*100,pr&&pr[4]];const k=e.ul&&sel[4]?sel[4].findIndex(x=>x[0]===e.ul):-1;gv("Изменить · "+LBL[am],k>=0?e.q:e.g,k);show()}
 function ad(){const q=num($("gr").value),g=q*UM();if(!(g>0)){$("gr").focus();return toast("Введите количество")}const R=x=>Math.round(x*1e3)/1e3,o={m:am,n:sel[0],g:R(g),p:R(sel[1]*g/100),f:R(sel[2]*g/100),c:R(sel[3]*g/100)};if(uu>=0){o.q=q;o.ul=sel[4][uu][0]}
  if(mode==="ing"){delete o.m;if(ik>=0)dr.i[ik]=o;else dr.i.push(o);ik=-1;return drawDish()}
