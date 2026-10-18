@@ -72,4 +72,5 @@ button.cc{width:100%;text-align:left;padding-right:12px}.cc .ccv{display:flex;al
 .cpr input{margin:0;flex:1;font-variant-numeric:tabular-nums;letter-spacing:.04em;font-weight:600;text-transform:uppercase}
 .cps{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}.cps button{aspect-ratio:1;border-radius:50%;transition:transform var(--t2) var(--spring),box-shadow var(--t2)}
 .cps button.on{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--tx);transform:scale(.9)}
-#cpok{margin-top:0}
+/* кнопка «Готово» окрашивается вслед за пальцем — без перехода цвета (иначе запаздывает) */
+#cpok{margin-top:0;transition:transform var(--t1) var(--ease)}
