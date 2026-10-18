@@ -1,6 +1,7 @@
 package kg.bju.app;
 
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebView;
 import com.getcapacitor.BridgeActivity;
 
@@ -10,12 +11,14 @@ public class MainActivity extends BridgeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         registerPlugin(BjuNativePlugin.class);
         super.onCreate(savedInstanceState);
-        // системная полоса прокрутки WebView (CSS её не убирает): в приложении она не нужна
+        // системная полоса прокрутки и «резиновый» эффект на краю страницы (растяжение в Android 12+) — их CSS не убирает:
+        // растяжение сдвигает всю страницу под жестами «потянуть вверх/вниз», и индикатор жеста дёргается
         try {
             WebView w = getBridge() != null ? getBridge().getWebView() : null;
             if (w != null) {
                 w.setVerticalScrollBarEnabled(false);
                 w.setHorizontalScrollBarEnabled(false);
+                w.setOverScrollMode(View.OVER_SCROLL_NEVER);
             }
         } catch (Exception ignored) { }
     }

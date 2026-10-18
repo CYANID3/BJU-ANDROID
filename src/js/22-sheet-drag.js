@@ -2,7 +2,7 @@
 const onEn2=e=>{if(e._f)return;e._f=1;if(dgd&&!e.touches.length){gd=0;undrag()}};addEventListener("touchend",onEn2,{passive:true});
 // render() пересобирает #app и удаляет элемент, где началось касание: события тогда не доходят до window.
 // Поэтому слушаем касание ещё и на самом элементе-старте.
-function bindT(t){if(!t||!t.addEventListener||t===document||t===window)return;const rm=()=>{t.removeEventListener("touchmove",onMv);t.removeEventListener("touchend",fin);t.removeEventListener("touchcancel",fin)};const fin=e=>{onEn(e);onEn2(e);if(e.type==="touchcancel")onCn();if(!e.touches.length)rm()};t.addEventListener("touchmove",onMv,{passive:true});t.addEventListener("touchend",fin);t.addEventListener("touchcancel",fin)}
+function bindT(t){if(!t||!t.addEventListener||t===document||t===window)return;const rm=()=>{t.removeEventListener("touchmove",onMv);t.removeEventListener("touchend",fin);t.removeEventListener("touchcancel",fin)};const fin=e=>{onEn(e);onEn2(e);if(e.type==="touchcancel")onCn();if(!e.touches.length)rm()};t.addEventListener("touchmove",onMv,{passive:false});t.addEventListener("touchend",fin);t.addEventListener("touchcancel",fin)}
 addEventListener("blur",()=>undrag(1));document.addEventListener("visibilitychange",()=>undrag(1));
 (()=>{const s=document.querySelector("#ov .sh");let y0=null,x0=0,dy=0,on=0,st0=0,ly=0,lt=0,v=0;
  s.addEventListener("touchstart",e=>{if(e.touches.length>1||e.target.closest&&e.target.closest(".nodrag")){y0=null;return}const t=e.touches[0];y0=t.clientY;x0=t.clientX;dy=0;on=0;v=0;ly=y0;lt=performance.now();st0=s.scrollTop},{passive:true});

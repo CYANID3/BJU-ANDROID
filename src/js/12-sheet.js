@@ -38,5 +38,5 @@ const num=v=>parseFloat(String(v).replace(",","."))||0,nn=v=>Math.max(0,num(v));
 let ei=-1,lastDel=null,tmr,isOpen=false;
 function show(){if(!isOpen){isOpen=true;oa=Date.now();if(!NATIVE)try{history.pushState({o:1},"")}catch(e){}}$("ov").classList.add("on");document.documentElement.classList.add("lk")}
 function closeUI(){if(!isOpen)return;clearH(1);fch=0;cpm=-1;isOpen=false;if(mode==="ing")mode=pmode;ik=-1;$("ov").classList.remove("on");document.documentElement.classList.remove("lk");ei=-1;try{document.activeElement.blur()}catch(e){}}
-async function xcl(){if(!v3ok&&!$("v3").hidden&&v3sig()!==v3snap&&!await ask("Продукт не сохранён. Закрыть без сохранения?","Закрыть",1))return;if(!$("v8").hidden&&($("dn").value.trim()||dr.i.length)&&!await ask("Закрыть без сохранения блюда?","Закрыть",1))return;cl()}
+async function xcl(){if(!$("v11").hidden){step();return}if(!v3ok&&!$("v3").hidden&&v3sig()!==v3snap&&!await ask("Продукт не сохранён. Закрыть без сохранения?","Закрыть",1))return;if(!$("v8").hidden&&($("dn").value.trim()||dr.i.length)&&!await ask("Закрыть без сохранения блюда?","Закрыть",1))return;cl()}
 function cl(){const was=isOpen;closeUI();if(was&&!NATIVE){try{if(history.state&&history.state.o)history.back()}catch(e){}}}

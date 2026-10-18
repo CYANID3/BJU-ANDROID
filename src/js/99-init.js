@@ -4,5 +4,5 @@ const say=m=>ask(m,"ОК",0,1);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)return;const n=iso(new Date());if(n!==today){const f=cur===today;today=n;if(f)cur=n;if(isOpen)cl();render()}});
 $("ov").addEventListener("click",e=>{if(e.target===$("ov")&&Date.now()-oa>450)xcl()});addEventListener("keydown",e=>{if(e.key==="Escape"&&isOpen&&!$("dg").classList.contains("on"))xcl()},true);
 try{matchMedia("(prefers-color-scheme:dark)").addEventListener("change",()=>applyAc())}catch(e){}
-applyAc();render();Promise.resolve(initH()).finally(()=>scSync());
+applyAc();skBind();render();Promise.resolve(initH()).finally(()=>scSync());
 {const m=new URLSearchParams(location.search).get("m");if(/^[0-5]$/.test(m||"")){try{history.replaceState(history.state,"",location.pathname)}catch(e){}op(+m)}}

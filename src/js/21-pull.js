@@ -43,7 +43,9 @@ const onMv=e=>{if(e._m)return;e._m=1;if(isOpen)return;const t=e.touches[0],dx=t.
  PS.push([e.timeStamp,v]);if(PS.length>8)PS.shift();
  if(Math.abs(dx)>Math.max(70,v*.9)/SL(4)*1.5){if(pAct)phide();return}
  if(REP){const d=repDense();if(up>0&&!d)pull(up);else if(dn>0&&d)pull(dn,1);else if(pAct)pull(0,pDn);return}
- if(up>0)pull(up);else if(dn>0&&dwOn())pull(dn,1);else if(pAct)pull(0,pDn)};addEventListener("touchmove",onMv,{passive:true});
+ if(up>0)pull(up);else if(dn>0&&dwOn())pull(dn,1);else if(pAct)pull(0,pDn);
+ // пока тянется индикатор, страница под пальцем не прокручивается (иначе при отмене она едет вместе с пальцем и всё дёргается)
+ if(pAct&&e.cancelable)e.preventDefault()};addEventListener("touchmove",onMv,{passive:false});
 const onEn=e=>{if(e._e)return;e._e=1;if(isOpen||!gd){if(pAct)phide();return}const t=e.changedTouches[0],dx=t.clientX-sx,g=gd;gd=0;
  if(g===1){if(pAct)phide();const gf=GF();if(Math.abs(dx)>56*gf||(Math.abs(dx)>56*gf*SL(2)&&Date.now()-st<(gf<1?320:gf>1?200:260))){GQ=dgx;go(dx<0?1:-1);GQ=0;undrag(1)}else undrag();return}
  if(!pAct)return;

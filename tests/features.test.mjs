@@ -327,3 +327,38 @@ test('свой цвет: экран выбора — квадрат, оттен�
   assert.deepEqual(a.errors, []);
   await a.close();
 });
+
+test('встряхивание: выключено по умолчанию; выбранное действие срабатывает на три толчка', async () => {
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [entry(0, 'Яйцо', 50, 6, 5, .5)] }, db: [] } });
+  const shake = () => a.ev(async () => { for (let i = 0; i < 4; i++) { window.dispatchEvent(new DeviceMotionEvent('devicemotion', { acceleration: { x: i % 2 ? -20 : 20, y: 0, z: 0 } })); await new Promise(r => setTimeout(r, 150)); } });
+  assert.equal(await a.ev(() => skAct()), 'off');
+  assert.deepEqual(await a.ev(() => SKL.map(x => x[1])), ['Выключено', 'Приём пищи', 'Новый продукт', 'Статистика', 'Вес', 'Карточка дня']);
+  await shake(); await a.wait(300);
+  assert.equal(await a.ev(() => isOpen), false, 'выключено — ничего не происходит');
+  await a.ev(() => setSk('stat')); await shake(); await a.wait(400);
+  assert.equal(await a.ev(() => isOpen && !$('v9').hidden), true, 'встряхнули — статистика');
+  await a.ev(() => cl()); await a.wait(400);
+  await a.ev(() => setSk('prod')); await a.wait(1600); await shake(); await a.wait(400);
+  assert.equal(await a.ev(() => isOpen && !$('v3').hidden), true, '«Новый продукт»');
+  await a.ev(() => cl()); await a.wait(400);
+  await a.ev(() => setSk('rep')); await a.wait(1600); await shake(); await a.wait(400);
+  assert.equal(await a.ev(() => !!REP), true, 'карточка дня открылась');
+  await a.wait(1600); await shake(); await a.wait(400);
+  assert.equal(await a.ev(() => !!REP), false, 'ещё раз — закрылась');
+  assert.equal(await a.ev(() => JSON.parse(ser()).settings.shakeAction), 'dayCard');
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});
+
+test('настройки жестов: сначала «вниз в начале дня», потом «вверх в конце дня»; крестик на «Свой цвет» — назад в настройки', async () => {
+  const a = await openApp();
+  await a.ev(() => sets()); await a.wait(400);
+  const order = await a.ev(() => [...document.querySelectorAll('#v7 .sg:nth-child(3) .srl')].map(e => e.textContent));
+  assert.deepEqual(order.slice(0, 3), ['Потянуть вниз в начале дня', 'Потянуть вверх в конце дня', 'Встряхнуть телефон']);
+  await a.ev(() => cpOpen()); await a.wait(400);
+  await a.pg.click('.hd .x'); await a.wait(400);
+  assert.equal(await a.ev(() => isOpen && !$('v7').hidden), true);
+  await a.pg.click('.hd .x'); await a.wait(400);
+  assert.equal(await a.ev(() => isOpen), false, 'из настроек крестик закрывает');
+  await a.close();
+});
