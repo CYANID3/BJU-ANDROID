@@ -2,7 +2,7 @@
 let NAV=0,RDEF=0,NF=[],NB=0,ND=1,NP=null,NABS=0,GQ=0;const RM=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;
 function curX(el){try{const t=getComputedStyle(el).transform;return t&&t!=="none"?new DOMMatrix(t).m41:0}catch(e){return 0}}
 function slide(el,n,fn){
- if(el.id!=="app"){fn();if(RM()||!el.animate)return;try{el.animate([{opacity:.3,transform:`translateX(${n*28}px)`},{opacity:1,transform:"none"}],{duration:MO.t2,easing:MO.E})}catch(e){}return}
+ if(el.id!=="app"){fn();mo(el,[{opacity:.3,transform:`translateX(${n*28}px)`},{opacity:1,transform:"none"}]);return}
  if(RM()||!el.animate){NABS=0;fn();render();return}
  NF.push(fn);ND=n>0?1:-1;if(!NB)pump(el)}
 function pump(el){NB=1;const x=curX(el),o=parseFloat(getComputedStyle(el).opacity)||1,a=el._a;el._a=null;if(a)a.cancel();
@@ -14,4 +14,4 @@ function apply(el,out,d){if(out){if(out._d)return;out._d=1}
  try{render();head()}finally{NAV=0}
  try{const inn=el.animate([{transform:`translateX(${d*56}px)`,opacity:0},{transform:"none",opacity:1}],{duration:MO.t3,easing:MO.E});el._a=inn;inn.onfinish=inn.oncancel=()=>{if(el._a===inn)el._a=null}}catch(e){}
  if(out)out.cancel()}
-function fade(el){if(RM())return;try{el.animate([{opacity:0,transform:"scale(.97)"},{opacity:1,transform:"none"}],{duration:MO.t2,easing:MO.E})}catch(e){}}
+function fade(el){moSwap(el,0)}

@@ -24,9 +24,6 @@
 .rp-empty{text-align:center;color:var(--mu);padding:26px 0 10px}
 .rp-f{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;padding:12px 2px 0;border-top:1px dashed var(--bd);font-size:12px;color:var(--mu)}.rp-f span:last-child{display:flex;align-items:center;gap:6px;font-weight:700;color:var(--tx)}.rp-f img{width:18px;height:18px;border-radius:5px}
 .rep-in{animation:repin var(--t3) var(--ease)}@keyframes repin{from{opacity:0;transform:scale(.97)}}
-/* полоса долей калорий (используется в статистике) */
-.rp-sh{display:flex;height:8px;border-radius:var(--r-pill);overflow:hidden;gap:3px;margin:14px 0 6px}.rp-sh i{display:block;border-radius:var(--r-pill)}
-.rp-sl{display:flex;justify-content:space-between;font-size:12px;color:var(--mu)}
 .rp-k span,.rp-mh b,.rp-d{white-space:nowrap}.rp-d{overflow:hidden;text-overflow:ellipsis}
 @media (max-width:390px){.rep{padding:18px 14px 14px}.rp-k{font-size:38px}.rp-k span{font-size:13.5px;margin-left:4px}.rp-ring{width:90px;height:90px}.rp-rc b{font-size:18px}.rp-h{gap:10px}}
 /* очень насыщенный день: продукты в две колонки (колонки по-прежнему ровные) */

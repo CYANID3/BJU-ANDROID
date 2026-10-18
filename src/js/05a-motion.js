@@ -1,8 +1,8 @@
 // Анимации: одни кривые и длительности для всего приложения (те же значения — в CSS: --ease, --ease-in, --spring, --t1…--t3)
 //  - E   — основная кривая: быстрый старт, мягкое торможение (появление, перемещение, смена экрана)
 //  - EI  — уход: плавный разгон (скрытие)
-//  - ESP — лёгкая пружина для мелких откликов (галочки, переключатели)
-const MO={E:"cubic-bezier(.22,1,.36,1)",EI:"cubic-bezier(.4,0,.8,.3)",ESP:"cubic-bezier(.3,1.3,.5,1)",t1:160,t2:260,t3:360};
+//  - EIO — плавно в обе стороны (сжатие по высоте)
+const MO={E:"cubic-bezier(.22,1,.36,1)",EI:"cubic-bezier(.4,0,.8,.3)",EIO:"cubic-bezier(.4,0,.2,1)",t1:160,t2:260,t3:360};
 function moOk(el){return el&&el.animate&&!matchMedia("(prefers-reduced-motion:reduce)").matches}
 function mo(el,kf,o){if(!moOk(el))return null;try{return el.animate(kf,Object.assign({duration:MO.t2,easing:MO.E},typeof o==="number"?{duration:o}:o))}catch(e){return null}}
 // появление: из прозрачности, чуть снизу и чуть меньше
@@ -12,7 +12,7 @@ function moOut(el,done,o){const a=mo(el,[{opacity:1,transform:"none"},{opacity:0
 // выезд / уезд по высоте (элемент раздвигает соседей плавно): open — от нуля до своей высоты, иначе — до нуля, затем done()
 function moH(el,open,done){const cs=getComputedStyle(el),h=el.offsetHeight,f={height:h+"px",minHeight:cs.minHeight,marginTop:cs.marginTop,marginBottom:cs.marginBottom,opacity:1,transform:"none"},
   z={height:"0px",minHeight:"0px",marginTop:"0px",marginBottom:"0px",opacity:0,transform:"scale(.96)"};el.style.overflow="hidden";
- const a=mo(el,open?[z,f]:[f,z],open?{duration:MO.t3}:{duration:MO.t2,easing:"cubic-bezier(.4,0,.2,1)",fill:"forwards"});
+ const a=mo(el,open?[z,f]:[f,z],open?{duration:MO.t3}:{duration:MO.t2,easing:MO.EIO,fill:"forwards"});
  const end=()=>{el.style.overflow="";done&&done()};if(a)a.onfinish=end;else end();return a}
 // смена содержимого на месте (месяц, режим): короткий сдвиг по направлению
 function moSwap(el,dir){return mo(el,[{opacity:0,transform:`translateX(${(dir||0)*20}px)`+(dir?"":" scale(.985)")},{opacity:1,transform:"none"}])}
@@ -48,7 +48,3 @@ function segSync(){document.querySelectorAll(".seg").forEach(s=>{const b=s.query
  new MutationObserver(go).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["class","hidden"]});
  addEventListener("resize",()=>{document.querySelectorAll(".seg.sk").forEach(s=>{s._sk="";s.classList.remove("sk")});go()})})();
 
-// поле ввода: значение выделено целиком — курсор прячется (класс .all), начали печатать или сдвинули курсор — снова виден
-(()=>{const chk=e=>{const i=e.target;if(!i||i.tagName!=="INPUT")return;try{const n=i.value.length;i.classList.toggle("all",n>0&&i.selectionStart===0&&i.selectionEnd===n)}catch(_){}};
- ["select","input","keyup","pointerup","focusin"].forEach(t=>document.addEventListener(t,chk,true));document.addEventListener("selectionchange",()=>chk({target:document.activeElement}));
- document.addEventListener("focusout",e=>{if(e.target&&e.target.classList)e.target.classList.remove("all")},true)})();

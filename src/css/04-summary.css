@@ -8,8 +8,6 @@
 .mtn{font-size:var(--fs-sm);font-weight:700;color:var(--dot);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mtv{margin:5px 0 9px;white-space:nowrap}.mtv b{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}.mtv small{font-size:12px;font-weight:500;color:var(--mu);margin-left:2px;font-variant-numeric:tabular-nums}
 .mtl .bar{height:6px;background:var(--card)}.mtr{display:flex;justify-content:space-between;gap:4px;overflow:hidden;margin-top:7px;font-size:12px;color:var(--mu);white-space:nowrap;font-variant-numeric:tabular-nums}.mtr .ov{color:var(--dg);font-weight:600}.mtr em{font-style:normal;font-weight:600}
-/* строка (используется в статистике): точка цвета + название слева, значение справа */
-.row{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;font-weight:600}.row span:first-child{display:flex;align-items:center;gap:8px}.row span:first-child::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--dot)}.row .mu{font-weight:400;font-size:var(--fs-sm)}
 /* плитки под итогом: вес и неделя */
 .duo{display:flex;gap:var(--gap);margin-bottom:var(--gap)}
 .dtl{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:14px 14px 14px 12px;min-height:64px;background:var(--card);border-radius:var(--r-block);box-shadow:var(--shd);text-align:left}.dtl:active{transform:scale(.98);background:var(--acs)}

@@ -1,7 +1,6 @@
 // Вес: одна запись в день (S.wt = { "ГГГГ-ММ-ДД": кг }), плашка в итоге дня, график в статистике, плашка на карточке дня
 // включено, пока в настройках не выбрано «Выкл.»
 const wtm=()=>S.set&&S.set.wt==="off"?"off":"on",wton=()=>wtm()!=="off";
-const dDiff=(a,b)=>Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/864e5);
 // последняя запись веса строго до дня k
 function wPrev(k){let b=null;for(const d in S.wt||{})if(d<k&&(!b||d>b))b=d;return b?[b,S.wt[b]]:null}
 const wFmt=v=>String(r1(v)).replace(".",","),wDate=k=>new Date(k+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"short"});

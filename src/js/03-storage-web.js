@@ -21,4 +21,6 @@ function fo2(){if(NATIVE)return nfOpen();window.showSaveFilePicker?of():$("fin")
 function fp(){const t=S.saved?new Date(S.saved).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"ещё не сохранялось";
  $("fi").textContent=NATIVE?(MF?(mfOk?"Основной файл: «"+MF.name+"» · автосохранение включено":"Нет доступа к файлу «"+MF.name+"» — выберите его заново"):"Файл не выбран: данные хранятся только внутри приложения и пропадут при его удалении")+" · сохранено "+t+" · версия "+BUILD
   :(H?(perm?"Автосохранение включено · ":"Автосохранение на паузе · ")+(H.name||"файл"):"Файл не подключён")+" · "+t+" · сборка "+BUILD;
- $("foff").hidden=!(NATIVE&&MF);sv(5,"Файл с данными");show()}
+ $("foff").hidden=!(NATIVE&&MF);
+ // резервная копия (делается перед заменой данных при открытии другого файла) — её можно вернуть
+ let bak=0;try{bak=!!localStorage.getItem("bju2bak")}catch(e){}$("frb").hidden=!bak;sv(5,"Файл с данными");show()}

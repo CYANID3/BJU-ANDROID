@@ -7,7 +7,7 @@ function applyLay(){const r=document.documentElement,fix=bbv()!=="page",bt=docum
  if(fix&&bt){const m=()=>r.style.setProperty("--bth",bt.offsetHeight+"px");m();if(!bthRO&&window.ResizeObserver){bthRO=new ResizeObserver(m);bthRO.observe(bt)}}
  const lr=document.querySelector("#v1 .lr");if(lr){if(nbv()==="top")document.getElementById("q").after(lr);else document.getElementById("ls").after(lr);lr.classList.toggle("top",nbv()==="top")}}
 function setBb(v){if(bbv()===v)return;const was=scrollY;S.set=Object.assign({},S.set,{bb:v});saveq();applyLay();drawSet();hap(8);
- const bt=document.querySelector(".bt");if(!RM()&&bt)try{bt.animate([{opacity:0,transform:"translateY(14px)"},{opacity:1,transform:"none"}],{duration:MO.t2,easing:MO.E})}catch(e){}scrollTo(0,was)}
+ mo(document.querySelector(".bt"),[{opacity:0,transform:"translateY(14px)"},{opacity:1,transform:"none"}]);scrollTo(0,was)}
 function setNb(v){S.set=Object.assign({},S.set,{nb:v});saveq();applyLay();drawSet();hap(8)}
 // перекусы на главном: «Тонкой строкой» — пустые видны тонкой строкой между приёмами;
 // «По двойному касанию» — пустых не видно; два касания по названию основного приёма (Завтрак / Обед / Ужин)

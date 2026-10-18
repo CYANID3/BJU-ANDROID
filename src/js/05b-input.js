@@ -13,3 +13,7 @@ function rpOff(i){if(!i||!i._rp)return;i._rp=0;i.classList.remove("rp")}
  document.addEventListener("pointerup",e=>{const i=e.target;if(!i||!i._rp||i.tagName!=="INPUT")return;rpOff(i);setTimeout(()=>{try{i.select()}catch(_){}},0)},true);
  document.addEventListener("keydown",e=>{const i=e.target;if(i&&i._rp&&/^Arrow|^Home|^End/.test(e.key))rpOff(i)},true);
  document.addEventListener("focusout",e=>rpOff(e.target),true)})();
+// поле ввода: значение выделено целиком — курсор прячется (класс .all), начали печатать или сдвинули курсор — снова виден
+(()=>{const chk=e=>{const i=e.target;if(!i||i.tagName!=="INPUT")return;try{const n=i.value.length;i.classList.toggle("all",n>0&&i.selectionStart===0&&i.selectionEnd===n)}catch(_){}};
+ ["select","input","keyup","pointerup","focusin"].forEach(t=>document.addEventListener(t,chk,true));document.addEventListener("selectionchange",()=>chk({target:document.activeElement}));
+ document.addEventListener("focusout",e=>{if(e.target&&e.target.classList)e.target.classList.remove("all")},true)})();
