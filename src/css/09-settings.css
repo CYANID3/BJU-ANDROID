@@ -3,10 +3,9 @@
 .sgt{display:flex;align-items:center;gap:12px;font-size:var(--fs-h);font-weight:700;margin-bottom:12px}.sgt span{width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac))}.sgt svg.i{width:19px;height:19px}
 .srl{font-size:var(--fs-sm);font-weight:600;color:var(--mu);margin:16px 4px 8px}.sgt+.sr .srl{margin-top:0}.sd{font-size:var(--fs-sm);color:var(--mu);margin:8px 4px 0;line-height:1.4}
 /* сегмент: контейнер 52, кнопки 44 — как поле ввода по высоте */
-.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;background:var(--sub);border-radius:var(--r-ctl);padding:3px}.sg .seg{background:var(--card)}
+.seg{position:relative;isolation:isolate;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;background:var(--sub);border-radius:var(--r-ctl);padding:3px}.sg .seg{background:var(--card)}
 /* выбранный вариант — «таблетка», которая плавно переезжает к нажатому (положение ставит segSync в JS);
    невыбранные — просто текст на подложке, без рамок */
-.seg{position:relative;isolation:isolate}
 .seg button{position:relative;min-height:var(--h-seg);padding:0 6px;border-radius:var(--r-in);font-size:14px;font-weight:600;color:var(--mu);transition:color var(--t3) var(--ease),background-color var(--t2),transform var(--t1) var(--ease)}
 .seg button:active{transform:scale(.96)}.seg button:not(.on):active{color:var(--tx)}
 .seg button.on{background:var(--ac);color:var(--on);box-shadow:0 2px 10px color-mix(in srgb,var(--ac) 32%,transparent)}
@@ -28,20 +27,17 @@
 /* свёрнутый список: видна только выбранная строка, справа — стрелка «раскрыть» */
 .ol .od{display:none;flex:none;color:var(--mu)}.ol .od svg.i{width:18px;height:18px;transform:rotate(90deg)}
 .ol.cl button:not(.on){display:none}.ol.cl button.on{background:transparent}.ol.cl .oc{display:none}.ol.cl .od{display:grid}
-/* строка с переключателем «да / нет»: подпись слева, переключатель справа; строки разделены тонкой линией */
-.srow{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:50px;padding:4px 4px 4px 4px;font-size:var(--fs-body);font-weight:500}
-.srow+.srow{border-top:1px solid color-mix(in srgb,var(--bd) 75%,transparent)}.srow+.sr .srl{margin-top:14px}.sgt+.srow{margin-top:-6px}
+/* строки с переключателем «да / нет» собраны в одну плашку карточного тона (как сегменты и списки вариантов):
+   подпись слева, переключатель справа, между строками — тонкая линия с отступами */
+.srow{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:var(--h-ctl);padding:4px 10px 4px 16px;background:var(--card);font-size:var(--fs-body);font-weight:500}
+:not(.srow)+.srow{border-top-left-radius:var(--r-ctl);border-top-right-radius:var(--r-ctl)}
+.srow:not(:has(+.srow)){border-bottom-left-radius:var(--r-ctl);border-bottom-right-radius:var(--r-ctl)}
+.srow+.srow{position:relative}.srow+.srow::before{content:"";position:absolute;left:16px;right:16px;top:0;height:1px;background:var(--sub)}.srow+.sr .srl{margin-top:14px}
 .tg{flex:none;position:relative;width:50px;height:30px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--mu) 35%,var(--card));transition:background-color var(--t2)}
 .tg i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform var(--t2) var(--spring)}
 .tg.on{background:var(--ac)}.tg.on i{transform:translateX(20px)}.tg:active{transform:none}.tg:active i{width:28px}.tg.on:active i{transform:translateX(16px)}
 /* свёрнутый список жестов: только название выбранного варианта, без пояснения */
 .ol.cl small{display:none}.ol.cl button{min-height:var(--h-ctl)}
-/* переключатели собраны в одну плашку карточного тона — как сегменты и списки вариантов */
-.srow{background:var(--card);padding:4px 10px 4px 16px;min-height:var(--h-ctl);border-radius:0}
-:not(.srow)+.srow{border-top-left-radius:var(--r-ctl);border-top-right-radius:var(--r-ctl)}
-.srow:not(:has(+.srow)){border-bottom-left-radius:var(--r-ctl);border-bottom-right-radius:var(--r-ctl)}
-.srow+.srow{border-top:0;position:relative}.srow+.srow::before{content:"";position:absolute;left:16px;right:16px;top:0;height:1px;background:var(--sub)}
-.sgt+.srow{margin-top:0}
 /* ползунок «Длина свайпа»: точки стоят по центрам трёх подписей — всё симметрично.
    Дорожка от первой точки до последней, пройденная часть — акцентом, бегунок — белый круг с мягкой тенью и ореолом */
 .sld{--slv:.5;background:var(--card);border-radius:var(--r-ctl);padding:12px 0 4px}

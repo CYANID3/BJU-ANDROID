@@ -11,8 +11,7 @@ function wtTile(){if(!wton()||cur>today)return"";const v=(S.wt||{})[cur],pr=wPre
  if(v){const d=pr?r1(v-pr[1]):null;return `<button class="dtl wtl on" onclick="wtOpen()" aria-label="Вес ${wFmt(v)} кг, изменить"><span class="ti">${ic("scale")}</span><span class="tx"><small>Вес</small><b>${wFmt(v)}<i>кг</i></b><em>${d?wSg(d)+" кг с "+wDate(pr[0]):pr?"без изменений":"первая запись"}</em></span></button>`}
  if(swAct()==="wt")return"";
  return `<button class="dtl wtl" onclick="wtOpen()" aria-label="Записать вес"><span class="ti">${ic("plus")}</span><span class="tx"><small>Вес</small><b class="wa">Записать</b><em>${pr?"было "+wFmt(pr[1])+" кг":"за этот день"}</em></span></button>`}
-function wtOpen(){const v=(S.wt||{})[cur];$("wv").value=v?wFmt(v):"";$("wdl").hidden=!v;wPv();svFocus=1;sv(10,"Вес · "+new Date(cur+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"long"}));show();
- const f=()=>{const g=$("wv");try{g.focus({preventScroll:true})}catch(e){g.focus()}rpOn(g)};isOpen?f():requestAnimationFrame(f)}
+function wtOpen(){const v=(S.wt||{})[cur];$("wv").value=v?wFmt(v):"";$("wdl").hidden=!v;wPv();svFocus=1;sv(10,"Вес · "+new Date(cur+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"long"}));show();fIn("wv",1)}
 const wIn=()=>num($("wv").value);
 function wSt(n){const pr=wPrev(cur),b=wIn()||(S.wt||{})[cur]||(pr&&pr[1])||70;$("wv").value=wFmt(Math.max(1,Math.round(b*10+n)/10));wPv();hap(4);if(document.activeElement===$("wv"))rpOn($("wv"))}
 function wPv(){const v=wIn(),pr=wPrev(cur),el=$("wpv");
@@ -25,17 +24,15 @@ function setWt(v){S.set=Object.assign({},S.set,{wt:v});saveq();drawSet();render(
 // (вызывается и из applyAc — в том числе до объявления let-переменных, поэтому состояние хранится в window)
 function scSync(){const N=window.BJU_NATIVE;if(!N||!N.native||!N.shortcuts)return;const w=wton();if(window.__scL===w)return;window.__scL=w;N.shortcuts({weight:w})}
 // график веса за месяц: линия через все записи (между записями — прямая), точки на днях с записью
-function chWt(days,W){const H=130,L=34,Rr=26,T=12,B=20,iw=W-L-Rr,ih=H-T-B,st=iw/days.length,X=i=>L+i*st+st/2;
+function chWt(days,W){const f=chF(days,W,130,26),{T,ih,X}=f;
  const pts=days.map((x,i)=>x.w?[i,x.w]:null).filter(Boolean),vs=pts.map(p=>p[1]);
  let lo=Math.floor((Math.min(...vs)-.4)*2)/2,hi=Math.ceil((Math.max(...vs)+.4)*2)/2;if(hi-lo<2){const m=(hi+lo)/2;lo=Math.floor(m-1);hi=lo+2}
  const Y=v=>T+ih-(v-lo)/(hi-lo)*ih,stp=[.5,1,2,5,10].find(s=>(hi-lo)/s<=4)||10;let g="";
- for(let v=Math.ceil(lo/stp)*stp;v<=hi+1e-9;v+=stp)g+=`<line x1="${L}" x2="${W-Rr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--bd)"/><text x="${L-6}" y="${Y(v)+3.5}" text-anchor="end">${wFmt(v)}</text>`;
+ for(let v=Math.ceil(lo/stp)*stp;v<=hi+1e-9;v+=stp)g+=chGrid(f,Y(v),wFmt(v));
  if(pts.length>1)g+=`<polyline points="${pts.map(([i,v])=>X(i)+","+Y(v)).join(" ")}" fill="none" stroke="var(--ac)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
  pts.forEach(([i,v])=>{g+=`<circle data-i="${i}" cx="${X(i)}" cy="${Y(v)}" r="3.4" fill="var(--ac)" stroke="var(--sub)" stroke-width="2"/>`});
  const [li,lv]=pts[pts.length-1];g+=`<text x="${X(li)+7}" y="${Y(lv)+3.5}" style="fill:var(--tx);font-weight:600">${wFmt(lv)}</text>`;
- days.forEach((x,i)=>{if(x.d===1||x.d%7===1&&x.d<=29||x.d===days.length&&x.d%7!==1)g+=`<text x="${X(i)}" y="${H-5}" text-anchor="middle">${x.d}</text>`});
- g+=`<line class="cx" x1="0" x2="0" y1="${T}" y2="${T+ih}" stroke="var(--mu)" stroke-width="1" opacity="0"/>`;
- return{svg:`<svg viewBox="0 0 ${W} ${H}" height="${H}">${g}</svg>`,L,st,X,pts}}
+ return chOut(f,g+chDays(f,days)+chCross(f),{f,pts})}
 function wtBlock(days,W){if(!wton())return null;const pts=days.filter(x=>x.w);if(!pts.length)return null;const c=chWt(days,W),a=pts[0].w,b=pts[pts.length-1].w,d=r1(b-a);
  const def=pts.length>1?`${wFmt(a)} → ${wFmt(b)} кг · ${d?wSg(d)+" кг":"без изменений"} за месяц`:`Одна запись: ${wFmt(a)} кг`;
  return{c,html:`<div class="stb"><h4>Вес</h4><div class="sd rdo" id="rd3" data-def="${def}">${def}</div><div class="chw" id="ch3">${c.svg}</div></div>`}}

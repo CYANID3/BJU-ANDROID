@@ -1,6 +1,8 @@
 // «Режим замены» для полей количества и веса: при открытии значение не выделяется как текст — подсвечивается всё поле,
 // курсора нет, а первое нажатие цифры заменяет значение целиком (стереть — очищает поле). Как обычное выделение, только без синей заливки.
 // Касание самого поля выходит из режима: значение выделяется как обычно, дальше поле ведёт себя стандартно.
+// фокус в поле без прокрутки страницы; rp — сразу в режим замены. Если лист ещё не открыт — в следующем кадре
+function fIn(id,rp){const f=()=>{const i=$(id);try{i.focus({preventScroll:true})}catch(e){i.focus()}if(rp)rpOn(i)};isOpen?f():requestAnimationFrame(f)}
 function rpOn(i){if(!i)return;i._rp=1;i.classList.add("rp");try{const n=i.value.length;i.setSelectionRange(n,n)}catch(e){}}
 function rpOff(i){if(!i||!i._rp)return;i._rp=0;i.classList.remove("rp")}
 (()=>{const fire=i=>{i.dispatchEvent(new Event("input",{bubbles:true}));const n=i.value.length;try{i.setSelectionRange(n,n)}catch(e){}};

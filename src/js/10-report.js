@@ -21,7 +21,7 @@ addEventListener("resize",()=>{if(REP)requestAnimationFrame(()=>{if(REP){const y
 const mxs=e=>[["p","Б",e.p],["f","Ж",e.f],["c","У",e.c]].map(([k,l,v])=>`<i class="mx ${k}">${l}</i>${f1(v)}`).join(" ");
 // полоса состава приёма: вклад Б / Ж / У в его калории, на всю ширину
 function cbar(t){const part=[t.p*4,t.f*9,t.c*4],sum=part[0]+part[1]+part[2]||1;return `<div class="bar km cb">${part.map((v,i)=>v>0?`<i style="flex:${v/sum};background:${["var(--p)","var(--f)","var(--c)"][i]}"></i>`:"").join("")}</div>`}
-function repHTML(dense){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
+function repHTML(dense){const E=S.d[cur]||[],t=sumE(E),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
  const dd=new Date(cur+"T12:00:00"),title=cap(dd.toLocaleDateString("ru-RU",{weekday:"long"}))+", "+dd.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+(dd.getFullYear()!==new Date().getFullYear()?" "+dd.getFullYear():"");
  const kp=[t.p*4,t.f*9,t.c*4],ks=kp[0]+kp[1]+kp[2],col=["var(--p)","var(--f)","var(--c)"];
  // кольцо долей калорий Б / Ж / У — дугами SVG (сглаживаются чисто, в отличие от conic-gradient): ровные узкие зазоры между цветами
@@ -33,12 +33,12 @@ function repHTML(dense){const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f
  // Б / Ж / У — те же плитки, что на главном экране (съедено / норма, полоска, остаток, доля калорий)
  const sh=ks>0?kp.map(v=>Math.round(v/ks*100)):[];
  let h=`<div class="rep rep-in${dense?" dense":""}"><div class="rp-h"><div><div class="rp-d">${esc(title)}</div><div class="rp-k">${k}<span>из ${gk} ккал</span></div><div class="rp-l${left<0?" ov":""}">${left>=0?`Осталось <b>${left}</b> ккал`:`Перебор <b>${-left}</b> ккал`}</div>${wtRep()}</div>${ring}</div>`;
- h+=`<div class="mac rp-mac">${mtile("Белки",t.p,G.p,"var(--p)",1,sh[0])}${mtile("Жиры",t.f,G.f,"var(--f)",0,sh[1])}${mtile("Углеводы",t.c,G.c,"var(--c)",0,sh[2])}</div>`;
+ h+=`<div class="mac rp-mac">${mtiles(t,G,sh)}</div>`;
  // приёмы пищи — один блок, приёмы через тонкую линию; продукты — ровные строки: название · количество · ккал
  // (компактный вид — те же колонки мельче и плотнее, без БЖУ приёма)
  const meals=MEALS.map((m,mi)=>[m,E.filter(e=>e.m===mi),mi]).filter(x=>x[1].length);
  if(!meals.length)h+=`<div class="rp-empty">Записей за этот день нет</div>`;
- else{h+=`<div class="rp-ml">`;meals.forEach(([m,it,mi])=>{const s0=it.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),amt=e=>e.ul?f1(e.q)+" "+esc(e.ul):f1(e.g)+" г";
+ else{h+=`<div class="rp-ml">`;meals.forEach(([m,it,mi])=>{const s0=sumE(it),amt=e=>e.ul?f1(e.q)+" "+esc(e.ul):f1(e.g)+" г";
   h+=`<div class="rp-meal"><div class="rp-mh"><b>${LBL[mi]}</b>${dense?"":`<span class="rp-mm">${mxs(s0)}</span>`}<span class="kp">${kc(s0.p,s0.f,s0.c)} ккал</span></div>`+
    (dense?"":`<div class="rp-mb">${cbar(s0)}<span>${gk?Math.round(kc(s0.p,s0.f,s0.c)/gk*100):0}% нормы</span></div>`)+`<div class="rp-its">`+it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b>${dense?"":`<small>${mxs(e)}</small>`}</div>`).join("")+`</div></div>`});h+=`</div>`}
  h+=`<div class="rp-f"><span>Норма: ${gk} ккал · Б ${G.p} · Ж ${G.f} · У ${G.c} г</span><span><img src="icon-192.png" alt="">БЖУ</span></div></div>`;

@@ -1,7 +1,9 @@
 // Настройки: жесты, длина свайпа, вибрация, оформление
 // жест «потянуть вверх»: приём пищи по времени / новый продукт / статистика / вес (если вес включён) / выкл.
 function swAct(){const v=(S.set&&S.set.sw)||"off";return v==="wt"&&!wton()?"off":v}
-function swipeAct(){const a=swAct();if(a==="prod"){mode="mng";drawMc();nw();show()}else if(a==="stat")stats();else if(a==="wt"){if(cur>today){cur=today;head();render()}wtOpen()}else op(autoMeal())}
+// действие жеста (общее для «потянуть вверх» и «встряхнуть»): новый продукт / статистика / вес (будущий день — на сегодня) / приём пищи по времени
+function actRun(a){if(a==="prod"){mode="mng";drawMc();nw();show()}else if(a==="stat")stats();else if(a==="wt"){if(cur>today){cur=today;head();render()}wtOpen()}else op(autoMeal())}
+const swipeAct=()=>actRun(swAct());
 
 // Длина свайпа: множитель расстояния для жестов в стороны (дни, календарь, месяцы статистики, смахивание листа) + порог рывка.
 // Сильнее всего уровни отличаются для жестов «потянуть вверх/вниз» — у них свои значения PLV (21-pull.js)

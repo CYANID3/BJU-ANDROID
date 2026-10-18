@@ -12,11 +12,11 @@
 .it{position:relative;display:flex;align-items:center;gap:8px;min-height:52px;padding:8px 4px 8px 12px;border-radius:var(--r-ctl);transition:background-color var(--t2);-webkit-user-select:none;user-select:none}.it+.it::before,.pk+.pk::before{content:"";position:absolute;left:12px;right:12px;top:0;height:1px;background:var(--bd);transition:opacity var(--t2)}.it.pr,.pk.pr{background:var(--acs);transition-duration:.06s}.it.pr::before,.it.pr+.it::before,.pk.pr::before,.pk.pr+.pk::before{opacity:0}
 .it>div{flex:1;min-width:0}.it .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--fs-body);font-weight:500}.it .mu{font-size:var(--fs-xs);margin-top:2px}.it b{font-size:var(--fs-body);font-weight:700}.it b small{font-size:11px;font-weight:500;color:var(--mu);margin-left:2px}
 /* кнопка-иконка (закрыть, удалить, копировать, стрелки): 44×44, одно скругление */
-.x{width:var(--h-ib);height:var(--h-ib);color:var(--mu);display:grid;place-items:center;flex:none;border-radius:var(--r-in)}.x:active{background:var(--acs);color:var(--ac)}.it .x{width:40px;height:40px}.it .x svg{width:18px;height:18px}
+.x{width:var(--h-ib);height:var(--h-ib);color:var(--mu);display:grid;place-items:center;flex:none;border-radius:var(--r-in)}.x:active{background:var(--acs);color:var(--ac)}.it .x{width:40px;height:40px;opacity:.55}.it .x svg{width:18px;height:18px}
 /* пустой перекус — тонкая строка «+ Перекус N» между карточками */
 .snk{display:flex;align-items:center;gap:10px;width:100%;min-height:42px;margin:0 0 var(--gap);padding:0 18px 0 14px;border:1.5px dashed var(--bd);border-radius:var(--r-block);color:var(--mu);font-size:15px;font-weight:600;text-align:left}
 .snk svg.i{width:20px;height:20px;padding:3px;box-sizing:content-box;border-radius:50%;background:var(--acs);color:var(--act,var(--ac))}.snk:active{background:var(--acs);border-color:var(--acb);transform:scale(.99)}
 /* выдвинутый двойным касанием перекус — прижат к своему приёму */
 .snk.tap{margin-top:calc(-1*var(--gap) + 4px);border-style:solid;border-color:var(--acb);background:var(--acs);color:var(--act,var(--ac))}
 /* тихие действия: удалить и копировать — приглушены, становятся заметны при касании */
-.it .x{opacity:.55}.it .x:active{opacity:1}.ma .x{opacity:.7}
+.it .x:active{opacity:1}.ma .x{opacity:.7}

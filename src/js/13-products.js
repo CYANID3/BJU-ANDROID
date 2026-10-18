@@ -21,7 +21,7 @@ const nf=x=>String(x).replace(".",",");
 function pv(){const q=num($("gr").value),g=q*UM(),el=$("pvw");
  el.innerHTML=g>0?`<b>${kc(sel[1]*g/100,sel[2]*g/100,sel[3]*g/100)}</b><small>ккал</small><span>Б ${nf(r1(sel[1]*g/100))}</span><span>Ж ${nf(r1(sel[2]*g/100))}</span><span>У ${nf(r1(sel[3]*g/100))}</span>${uu>=0?`<em>${nf(r1(g))} г</em>`:""}`:"";el.classList.toggle("on",g>0);
  $("ch").querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.v===q))}
-function gv(t,v,u){uu=u==null?-1:u;$("pn").textContent=sel[0];$("gr").value=v?nf(v):"";$("ab").textContent=ei>=0||ik>=0?"Сохранить":"Добавить";drawU();drawMc();svFocus=1;sv(2,t);const f=()=>{const g=$("gr");try{g.focus({preventScroll:true})}catch(e){g.focus()}rpOn(g)};isOpen?f():requestAnimationFrame(f)}
+function gv(t,v,u){uu=u==null?-1:u;$("pn").textContent=sel[0];$("gr").value=v?nf(v):"";$("ab").textContent=ei>=0||ik>=0?"Сохранить":"Добавить";drawU();drawMc();svFocus=1;sv(2,t);fIn("gr",1)}
 function drawU(){const nd=`onmousedown="event.preventDefault()"`;
  
  $("pm").textContent=`Б ${nf(r1(sel[1]))} · Ж ${nf(r1(sel[2]))} · У ${nf(r1(sel[3]))} · ${kc(sel[1],sel[2],sel[3])} ккал на 100 г`;
@@ -47,7 +47,7 @@ function unAdd(){$("unr").insertAdjacentHTML("beforeend",unRow("",""));$("unr").
 function unDel(b){const r=b.closest(".ur");if($("unr").children.length>1)r.remove();else r.querySelectorAll("input").forEach(i=>i.value="")}
 function unGet(){return[...$("unr").children].map(r=>{const i=r.querySelectorAll("input");return[i[0].value.trim(),num(i[1].value)]}).filter(x=>x[0]&&x[1]>0)}
 let v3from=0,v3snap="",v3ok=0;const v3sig=()=>JSON.stringify([["nn","np","nf","nc"].map(i=>$(i).value.trim()),unGet()]);
-function nw(){v3from=isOpen&&!$("v1").hidden?1:0;ed=-1;["nn","np","nf","nc"].forEach(i=>$(i).value="");unDraw();nkc();$("dl").hidden=true;v3snap=v3sig();svFocus=1;sv(3,"Новый продукт");const f=()=>{try{$("nn").focus({preventScroll:true})}catch(e){}};isOpen?f():requestAnimationFrame(f)}
+function nw(){v3from=isOpen&&!$("v1").hidden?1:0;ed=-1;["nn","np","nf","nc"].forEach(i=>$(i).value="");unDraw();nkc();$("dl").hidden=true;v3snap=v3sig();svFocus=1;sv(3,"Новый продукт");fIn("nn")}
 function edit(i){const p0=S.db[i];if(p0[5]){ed=i;pmode=mode;ik=-1;dr={n:p0[0],i:p0[5].i.map(x=>({...x})),w:p0[5].w};return drawDish()}ed=i;const p=S.db[i];$("nn").value=p[0];$("np").value=p[1];$("nf").value=p[2];$("nc").value=p[3];unDraw(p[4]);nkc();$("dl").hidden=false;v3from=1;v3snap=v3sig();sv(3,"Изменить продукт")}
 async function mk(){const n=$("nn").value.trim();if(!n){$("nn").focus();return toast("Введите название")}const a=[n,nn($("np").value),nn($("nf").value),nn($("nc").value)],un=unGet();if(un.length)a[4]=un;
  if(a[1]+a[2]+a[3]>100.5&&!await ask("Б+Ж+У больше 100 г на 100 г. Сохранить как есть?","Сохранить"))return;

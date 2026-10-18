@@ -5,6 +5,11 @@ let nativeSaveTimer=0,MF=null,mfOk=true;
 try{MF=JSON.parse(localStorage.getItem("bju_file"))||null}catch(e){}
 const NX=()=>window.BJU_NATIVE&&window.BJU_NATIVE.native?window.BJU_NATIVE:null;
 const dnc=d=>Object.keys(d).filter(k=>d[k].length).length;
+// чтение файла пользователя: данные или null (тогда уже показано, что не так)
+function pRead(t){try{return parseData(t)}catch(e){say("Не удалось прочитать файл: "+(e.message||"неверный формат"));return null}}
+// замена текущих данных данными из файла: спросить, только если сейчас есть записи (перед заменой — резервная копия)
+async function askRepl(o,name,lead){const a=dnc(S.d);if(!a)return true;
+ if(!await ask((lead||"Заменить")+" текущие данные (дней с записями: "+a+") данными из файла"+(name?" «"+name+"»":"")+" (дней: "+dnc(o.d)+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return false;bk();return true}
 function setMF(f){const N=NX();if(MF&&N&&(!f||f.uri!==MF.uri))N.file.release(MF.uri).catch(()=>{});MF=f;mfOk=true;try{f?localStorage.setItem("bju_file",JSON.stringify(f)):localStorage.removeItem("bju_file")}catch(e){}}
 async function nativeFlush(){clearTimeout(nativeSaveTimer);nativeSaveTimer=0;const N=NX();if(!N)return;
  S.saved=Date.now();const t=ser();let ok=true;
@@ -27,9 +32,8 @@ async function initNative(){const N=NX();if(!N)return;const cand=[];
 async function nfCreate(){const N=NX();if(!N||!N.file.available)return say("Выбор файла недоступен в этой сборке");let r;try{r=await N.file.create("bju-data.json")}catch(e){return}
  setMF({uri:r.uri,name:r.name});await nativeFlush();cl();render();toast(mfOk?"Файл «"+r.name+"» создан · автосохранение включено":"Не удалось записать в файл «"+r.name+"»")}
 async function nfOpen(){const N=NX();if(!N||!N.file.available)return $("fin").click();let r,o;try{r=await N.file.open()}catch(e){return}
- try{o=parseData((await N.file.read(r.uri)))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}
- const a=dnc(S.d),b=dnc(o.d);
- if(a&&JSON.stringify(o.d)!==JSON.stringify(S.d)&&!await ask("Заменить текущие данные (дней с записями: "+a+") данными из файла «"+r.name+"» (дней: "+b+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;
- if(a)bk();adopt(o);store();setMF(r.writable?{uri:r.uri,name:r.name}:null);await nativeFlush();cl();render();
+ try{o=pRead(await N.file.read(r.uri))}catch(e){o=pRead("")}if(!o)return;
+ if(JSON.stringify(o.d)!==JSON.stringify(S.d)&&!await askRepl(o,r.name))return;
+ adopt(o);store();setMF(r.writable?{uri:r.uri,name:r.name}:null);await nativeFlush();cl();render();
  toast(r.writable?"Файл «"+r.name+"» подключён как основной · автосохранение включено":"Данные загружены, но файл доступен только для чтения")}
 async function nfOff(){if(!MF)return;if(!await ask("Отключить файл «"+MF.name+"»?\nДанные останутся в приложении, но файл перестанет обновляться.","Отключить"))return;setMF(null);fp();render()}

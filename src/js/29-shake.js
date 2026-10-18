@@ -12,9 +12,4 @@ function skMotion(e){const a=e.acceleration&&e.acceleration.x!=null?e.accelerati
  const n=e.timeStamp||performance.now();if(m<14||n-skLast<1500)return;if(skT.length&&n-skT[skT.length-1]<110)return;
  skT=skT.filter(t=>n-t<1000);skT.push(n);if(skT.length>=3){skT=[];skLast=n;skDo()}}
 function skBind(){const on=skAct()!=="off";if(on===!!skOn)return;skOn=on;if(on)addEventListener("devicemotion",skMotion);else removeEventListener("devicemotion",skMotion)}
-function skDo(){const a=skAct();if(a==="off"||isOpen||$("dg").classList.contains("on")||REP&&a!=="rep")return;hap(12);
- if(a==="rep")return togRep(!REP);
- if(a==="stat")return stats();
- if(a==="wt"){if(cur!==today){cur=today;head();render()}return wtOpen()}
- if(a==="prod"){mode="mng";drawMc();nw();return show()}
- op(autoMeal())}
+function skDo(){const a=skAct();if(a==="off"||isOpen||$("dg").classList.contains("on")||REP&&a!=="rep")return;hap(12);a==="rep"?togRep(!REP):actRun(a)}

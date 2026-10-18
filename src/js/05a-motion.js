@@ -3,7 +3,7 @@
 //  - EI  — уход: плавный разгон (скрытие)
 //  - EIO — плавно в обе стороны (сжатие по высоте)
 const MO={E:"cubic-bezier(.22,1,.36,1)",EI:"cubic-bezier(.4,0,.8,.3)",EIO:"cubic-bezier(.4,0,.2,1)",t1:160,t2:260,t3:360};
-function moOk(el){return el&&el.animate&&!matchMedia("(prefers-reduced-motion:reduce)").matches}
+function moOk(el){return el&&el.animate&&!RM()}
 function mo(el,kf,o){if(!moOk(el))return null;try{return el.animate(kf,Object.assign({duration:MO.t2,easing:MO.E},typeof o==="number"?{duration:o}:o))}catch(e){return null}}
 // появление: из прозрачности, чуть снизу и чуть меньше
 function moIn(el,o){return mo(el,[{opacity:0,transform:"translateY(8px) scale(.985)"},{opacity:1,transform:"none"}],Object.assign({fill:"backwards"},o))}
@@ -45,6 +45,7 @@ function segSync(){document.querySelectorAll(".seg").forEach(s=>{const b=s.query
  ["--skx","--sky","--skw","--skh"].forEach((n,i)=>s.style.setProperty(n,v[i]));s._sk=k;s.classList.add("sk");
  if(first){void s.offsetWidth;requestAnimationFrame(()=>s.classList.remove("sn"))}})}
 (()=>{let q=0;const go=()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;segSync()})};
- new MutationObserver(go).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["class","hidden"]});
+ // все сегменты — внутри нижнего листа: следим только за ним, а не за всей страницей
+ new MutationObserver(go).observe($("ov"),{subtree:true,childList:true,attributes:true,attributeFilter:["class","hidden"]});
  addEventListener("resize",()=>{document.querySelectorAll(".seg.sk").forEach(s=>{s._sk="";s.classList.remove("sk")});go()})})();
 

@@ -22,7 +22,7 @@ function mgApply(mine,theirs,plan,yes){const db=mine.map(p=>p.slice()),added=[];
  theirs.forEach((p,i)=>{const x=plan[i];if(x.t==="dup")return;if(x.t==="same"||x.t==="maybe"&&yes.has(i))addUnits(db[x.k],p);else{db.push(JSON.parse(JSON.stringify(p)));added.push(p[0])}});
  return{db,added,units}}
 let lastDb=null,mgS=null;
-function mgRun(t,name){let o;try{o=parseData(t)}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}
+function mgRun(t,name){const o=pRead(t);if(!o)return;
  const th=o.db||[],plan=mgPlan(S.db,th),mb=plan.map((x,i)=>x.t==="maybe"?i:-1).filter(i=>i>=0);
  mgS={th,plan,yes:new Set(),name};if(mb.length)return mgView();mgDone()}
 // экран «Похожие продукты»: пара «из файла ↔ ваш» и переключатель «Разные / Это одно»
