@@ -43,7 +43,7 @@ function ad(){const q=num($("gr").value),g=q*UM();if(!(g>0)){$("gr").focus();ret
  const edit_=ei>=0;if(edit_)S.d[cur][ei]=o;else{(S.d[cur]=S.d[cur]||[]).push(o);S.uc=S.uc||{};S.uc[sel[0]]=(S.uc[sel[0]]||0)+1;rcPush(sel[0])}
  if(uu<0){S.lg=S.lg||{};S.lg[sel[0]]=g}hap(8);save();
  // добавили из списка — возвращаемся в список (тот же приём), чтобы следующий продукт был в одно касание; изменение записи — лист закрывается
- if(!edit_&&mode==="add"&&isOpen){try{document.activeElement.blur()}catch(e){}render();$("q").value="";lst();drawMc();svBack=1;sv(1,vt());lastDel=lastDb=null;lastAdd={o,k:cur};toast(`${LBL[o.m]}: ${o.n} · ${kc(o.p,o.f,o.c)} ккал`,1,3500);return}
+ if(!edit_&&mode==="add"&&isOpen){try{document.activeElement.blur()}catch(e){}render();$("q").value="";lst();drawMc();sv(1,vt());lastDel=lastDb=null;lastAdd={o,k:cur};toast(`${LBL[o.m]}: ${o.n} · ${kc(o.p,o.f,o.c)} ккал`,1,3500);return}
  cl();render()}
 function unRow(l,g){return `<div class="ur"><input placeholder="Например, банка" value="${esc(l)}" autocomplete="off" enterkeyhint="next"><input placeholder="Граммы" inputmode="decimal" value="${g||""}" autocomplete="off"><button class="x" onclick="unDel(this)" aria-label="Удалить единицу">${ic("close")}</button></div>`}
 function unDraw(a){$("unr").innerHTML=(a&&a.length?a:[["",""]]).map(x=>unRow(x[0],x[1])).join("")}

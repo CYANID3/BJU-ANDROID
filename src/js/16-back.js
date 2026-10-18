@@ -1,7 +1,6 @@
 // «Назад»: шаги внутри листа, системная кнопка, popstate
 const vt=()=>mode==="mng"?"Все продукты ("+S.db.length+")":mode==="ing"?"Ингредиент":"Добавить: "+LBL[am];
-function step(){svBack=1;const r=step_();svBack=0;return r}
-function step_(){const on=i=>!$("v"+i).hidden;
+function step(){const on=i=>!$("v"+i).hidden;
  if(on(2)){if(ik>=0){ik=-1;drawDish();return 1}if(ei>=0)return 0;lst();drawMc();sv(1,vt());return 1}
  if(on(3)){if(!v3from)return 0;$("q").value="";lst();drawMc();sv(1,vt());return 1}
  if(on(1)&&mode==="ing"){drawDish();return 1}

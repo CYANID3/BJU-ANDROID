@@ -5,6 +5,16 @@ const PLV={short:[.22,.15,.15],mid:[1,.45,.45],long:[3.4,9,1]},PL=i=>PLV[slv()][
 // скорость (px/мс) по последним ~100 мс жеста
 const pVel=()=>{const l=PS[PS.length-1];if(!l)return 0;let o=l;for(const q of PS)if(l[0]-q[0]<=100){o=q;break}return l[0]>o[0]?(l[1]-o[1])/(l[0]-o[0]):0};
 const atBot=()=>scrollY+innerHeight>=document.documentElement.scrollHeight-6;
+// «Откуда тянуть вверх»: edge — от нижней панели (если закреплена) или от низа экрана (если нет), в любом месте списка; end — только в конце списка.
+// В конце списка тянуть можно всегда. pZ: 1 — жест начат на панели, 2 — в полоске у низа экрана (над системной полоской Android:
+// с самого края свайп забирает система), 0 — обычный.
+const sfv=()=>S.set&&S.set.sf==="end"?"end":"edge";
+function setSf(v){S.set=Object.assign({},S.set,{sf:v});saveq();drawSet();hap(6)}
+let pZ=0,pNoClick=0;
+function pEdge(t,y){if(REP||sfv()!=="edge"||swAct()==="off")return 0;if(t&&t.closest&&t.closest(".bt"))return 1;
+ return bbv()!=="fix"&&y>=innerHeight-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sab"))||0)-32?2:0}
+// жест от панели не должен заодно нажать её кнопку
+addEventListener("click",e=>{if(pNoClick&&e.target.closest&&e.target.closest(".bt")){e.stopPropagation();e.preventDefault()}},true);
 // Индикатор «потянуть»: всегда идёт за пальцем в одном темпе (0.7 от движения, дальше — «резина»),
 // при движении назад так же плавно возвращается; исчезает только после отпускания пальца.
 function pull(v,dn){const u=$("pu"),a=REP?"on":dn?(dwOn()?"on":"off"):swAct();dn=!!dn;
@@ -34,7 +44,9 @@ function dwOn(){const a=dwAct();return a==="cal"||(a==="today"&&cur!==today)}
 function dwDo(){if(dwAct()==="today"){if(cur!==today){const d=today>cur?1:-1;NABS=1;slide($("app"),d,()=>{cur=today})}}else if(dwAct()==="cal")cal()}
 function setDw(v){S.set=Object.assign({},S.set,{dw:v});saveq();drawSet()}
 const onMv=e=>{if(e._m)return;e._m=1;if(isOpen)return;const t=e.touches[0],dx=t.clientX-sx,dy=t.clientY-sy;
- if(!gd){const s0=SL(3),k=SL(4);if(Math.abs(dx)>s0&&Math.abs(dx)>Math.abs(dy)*k)gd=1;else if(Math.abs(dy)>s0)gd=2}
+ if(!gd){const s0=SL(3),k=SL(4);if(Math.abs(dx)>s0&&Math.abs(dx)>Math.abs(dy)*k)gd=1;else if(Math.abs(dy)>s0)gd=2;if(pZ&&gd===1)gd=3}
+ // от панели / низа экрана — страница не прокручивается с первого же движения (иначе дальше её уже не остановить)
+ if(pZ&&e.cancelable&&dy<=0)e.preventDefault();
  if(gd===1&&e.touches.length===1){drag(dx);if(pAct)phide();return}
  if(dgd&&e.touches.length>1){undrag(1);return}
  if(gd!==2||e.touches.length>1){if(pAct)phide();return}
@@ -45,13 +57,15 @@ const onMv=e=>{if(e._m)return;e._m=1;if(isOpen)return;const t=e.touches[0],dx=t.
  PS.push([e.timeStamp,v]);if(PS.length>8)PS.shift();
  if(Math.abs(dx)>Math.max(70,v*.9)/SL(4)*1.5){if(pAct)phide();return}
  if(REP){const d=repDense();if(up>0&&!d)pull(up);else if(dn>0&&d)pull(dn,1);else if(pAct)pull(0,pDn);return}
- if(up>0)pull(up);else if(dn>0&&dwOn())pull(dn,1);else if(pAct)pull(0,pDn);
+ if(up>0){pull(up);if(pAct&&pZ===1)pNoClick=1}else if(dn>0&&dwOn())pull(dn,1);else if(pAct)pull(0,pDn);
  // пока тянется индикатор, страница под пальцем не прокручивается (иначе при отмене она едет вместе с пальцем и всё дёргается)
  if(pAct&&e.cancelable)e.preventDefault()};addEventListener("touchmove",onMv,{passive:false});
-const onEn=e=>{if(e._e)return;e._e=1;if(isOpen||!gd){if(pAct)phide();return}const t=e.changedTouches[0],dx=t.clientX-sx,g=gd;gd=0;
+const onEn=e=>{if(e._e)return;e._e=1;const z=pZ;pZ=0;if(pNoClick)setTimeout(()=>pNoClick=0,400);if(isOpen||!gd){if(pAct)phide();return}const t=e.changedTouches[0],dx=t.clientX-sx,g=gd;gd=0;
  if(g===1){if(pAct)phide();const gf=GF();if(Math.abs(dx)>56*gf||(Math.abs(dx)>56*gf*SL(2)&&Date.now()-st<(gf<1?320:gf>1?200:260))){GQ=dgx;go(dx<0?1:-1);GQ=0;undrag(1)}else undrag();return}
  if(!pAct)return;
  const ve=pDn?(ptY!==null?t.clientY-ptY:0):(pbY!==null?pbY-t.clientY:0);PS.push([e.timeStamp,ve]);
- // сработало: дотянули до порога или резко дёрнули (почти половина пути и > 0.45 px/мс)
- if(rd||(ve>THv()*PL(2)&&pVel()>PL(1))){const dn=pDn;if(!rd)hap(12);pgo();if(REP)setRepMode(dn?2:1);else if(dn)dwDo();else swipeAct()}else phide()};addEventListener("touchend",onEn);
-const onCn=()=>{if(pAct)phide();gd=0;undrag()};addEventListener("touchcancel",onCn);
+ // сработало: дотянули до порога или резко дёрнули (почти половина пути и > 0.45 px/мс).
+ // От низа экрана — только дотянув и не махом: быстрый мах оттуда — это попытка прокрутить, а не жест
+ const ok=z===2?rd&&pVel()<1.6:rd||(ve>THv()*PL(2)&&pVel()>PL(1));
+ if(ok){const dn=pDn;if(!rd)hap(12);pgo();if(REP)setRepMode(dn?2:1);else if(dn)dwDo();else swipeAct()}else phide()};addEventListener("touchend",onEn);
+const onCn=()=>{if(pAct)phide();gd=0;pZ=0;undrag()};addEventListener("touchcancel",onCn);

@@ -88,6 +88,10 @@ button.cc{width:100%;text-align:left;padding-right:12px}.cc .ccv{display:flex;al
 .smh.phd i,.smh.phu i{overflow:hidden}
 .smh.phd u{top:4px;animation:pdF 2.4s var(--ease) infinite}.smh.phd s{animation:pdS 2.4s var(--ease) infinite}
 .smh.phu u{bottom:4px;animation:puF 2.4s var(--ease) infinite}.smh.phu s{animation:puS 2.4s var(--ease) infinite}
+/* «от панели / от низа экрана»: список стоит, палец тянет вверх от панели (полоска внизу) или от нижнего края */
+.smh.phu.edge s{animation:none}.smh.phu.edge u{bottom:2px}.smh.phu.edge.fx u{bottom:5px}
+.smh.phu.edge.fx i::before{content:"";position:absolute;left:3px;right:3px;bottom:3px;height:6px;border-radius:2px;background:var(--ac);opacity:.55}
+.sfl{margin-top:12px}
 @keyframes pdF{0%,8%{opacity:0;transform:none}16%{opacity:.9;transform:none}52%{opacity:.9;transform:translateY(20px)}64%,100%{opacity:0;transform:translateY(20px)}}
 @keyframes pdS{0%,16%{transform:none}52%{transform:translateY(8px)}70%,100%{transform:none}}
 @keyframes puF{0%,8%{opacity:0;transform:none}16%{opacity:.9;transform:none}52%{opacity:.9;transform:translateY(-20px)}64%,100%{opacity:0;transform:translateY(-20px)}}

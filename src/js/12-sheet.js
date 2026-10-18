@@ -1,5 +1,5 @@
 // Нижний лист: переходы между экранами, открытие/закрытие
-let svBack=0,svFocus=0;const VWS=[1,2,3,4,5,6,7,8,9,10,11,12];
+let svFocus=0;const VWS=[1,2,3,4,5,6,7,8,9,10,11,12];
 // Высота листа после смены экрана с учётом того, где окажется клавиатура (откроется / закроется / останется)
 let hPend=0,hT=0;
 // убрать временную высоту листа (после того как клавиатура доехала); небольшую разницу — плавно
@@ -8,12 +8,13 @@ const kbFuture=willKb=>willKb?(kbH>0?kbH:kbLast||Math.round(innerHeight*.38)):0;
 function svTargetH(sh,willKb){const nat=document.documentElement.classList.contains("native"),kbF=!nat?0:willKb?(kbH>0?kbH:kbLast):0;
  if(!nat||kbF===kbH)return sh.offsetHeight;const ov=$("ov").clientHeight,sat=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sat"))||0;
  return Math.min(sh.scrollHeight,Math.min(ov*.92,ov-sat-12)-kbF)}
-function sv(n,t){const sh_=document.querySelector("#ov .sh"),prev=VWS.find(i=>!$("v"+i).hidden),h0=isOpen?sh_.offsetHeight:0,back=svBack,willKb=svFocus;svBack=0;svFocus=0;clearH(1);
+function sv(n,t){const sh_=document.querySelector("#ov .sh"),prev=VWS.find(i=>!$("v"+i).hidden),h0=isOpen?sh_.offsetHeight:0,willKb=svFocus;svFocus=0;clearH(1);
  VWS.forEach(i=>$("v"+i).hidden=i!==n);$("st").textContent=t||"";
  // открытие листа и смена экрана — всегда с начала (лист помнил прокрутку с прошлого раза и открывался с середины)
  if(!isOpen||prev!==n)sh_.scrollTop=0;if(!isOpen||prev===n)return;if(RM()||!sh_.animate)return;
  const E={duration:MO.t2,easing:MO.E};
- try{$("v"+n).animate([{opacity:0,transform:`translateX(${back?-24:24}px)`},{opacity:1,transform:"none"}],E);$("st").animate([{opacity:0},{opacity:1}],{duration:MO.t2})}catch(e){}
+ // новый экран проявляется на месте (чуть снизу): вбок не сдвигаем — вместе с ростом листа это выглядело как въезд «снизу-справа»
+ try{$("v"+n).animate([{opacity:0,transform:"translateY(8px)"},{opacity:1,transform:"none"}],E);$("st").animate([{opacity:0},{opacity:1}],{duration:MO.t2})}catch(e){}
  const kbF=kbFuture(willKb);
  if(document.documentElement.classList.contains("native")&&kbF!==kbH){
   // клавиатура сейчас поедет: высота = (содержимое + клавиатура в конце) − текущая клавиатура.

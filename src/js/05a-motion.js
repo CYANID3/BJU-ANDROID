@@ -9,9 +9,11 @@ function mo(el,kf,o){if(!moOk(el))return null;try{return el.animate(kf,Object.as
 function moIn(el,o){return mo(el,[{opacity:0,transform:"translateY(8px) scale(.985)"},{opacity:1,transform:"none"}],Object.assign({fill:"backwards"},o))}
 // скрытие: затем done() (сразу, если анимации выключены)
 function moOut(el,done,o){const a=mo(el,[{opacity:1,transform:"none"},{opacity:0,transform:"scale(.97)"}],Object.assign({duration:MO.t1+20,easing:MO.EI,fill:"forwards"},o));if(a)a.onfinish=()=>done&&done();else if(done)done()}
-// выезд / уезд по высоте (элемент раздвигает соседей плавно): open — от нуля до своей высоты, иначе — до нуля, затем done()
-function moH(el,open,done){const cs=getComputedStyle(el),h=el.offsetHeight,f={height:h+"px",minHeight:cs.minHeight,marginTop:cs.marginTop,marginBottom:cs.marginBottom,opacity:1,transform:"none"},
-  z={height:"0px",minHeight:"0px",marginTop:"0px",marginBottom:"0px",opacity:0,transform:"scale(.96)"};el.style.overflow="hidden";
+// выезд / уезд по высоте (элемент раздвигает соседей плавно): open — от нуля до своей высоты, иначе — до нуля, затем done().
+// Вместе с высотой сжимаются внутренние отступы и рамка: иначе блок «застревает» на их высоте и в конце пропадает рывком
+function moH(el,open,done){const cs=getComputedStyle(el),h=el.offsetHeight,B=["marginTop","marginBottom","paddingTop","paddingBottom","borderTopWidth","borderBottomWidth"],
+  f=Object.assign({height:h+"px",minHeight:cs.minHeight,opacity:1,transform:"none"},...B.map(k=>({[k]:cs[k]}))),
+  z=Object.assign({height:"0px",minHeight:"0px",opacity:0,transform:"scale(.98)"},...B.map(k=>({[k]:"0px"})));el.style.overflow="hidden";
  const a=mo(el,open?[z,f]:[f,z],open?{duration:MO.t3}:{duration:MO.t2,easing:MO.EIO,fill:"forwards"});
  const end=()=>{el.style.overflow="";done&&done()};if(a)a.onfinish=end;else end();return a}
 // смена содержимого на месте (месяц, режим): короткий сдвиг по направлению

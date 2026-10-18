@@ -44,7 +44,12 @@ function drawSet(k){optList("dwm",DWL,dwAct(),"setDw");$("hpm").innerHTML=[["on"
  // переключатели «да / нет»
  [["wtm",wton()],["bbm",bbv()==="fix"],["nbm",nbv()==="top"],["mgm",mgOn()]].forEach(([id,on])=>{const b=$(id);b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});
  $("snm").innerHTML=[["row","Строкой"],["tap","Двойным касанием"]].map(([v,t])=>`<button class="${snv()===v?"on":""}" onclick="setSn('${v}')">${t}</button>`).join("");$("snd").textContent=snv()==="tap"?"Два касания по названию приёма — показать или скрыть его перекус.":"";$("snd").hidden=snv()!=="tap";
- optList("sgm",SWL.filter(([v])=>v!=="wt"||wton()),a,"setSw");ghSync();
+ optList("sgm",SWL.filter(([v])=>v!=="wt"||wton()),a,"setSw");
+ // откуда тянуть вверх и подсказка под выбранный вариант
+ {const fx=bbv()==="fix",e=sfv()==="edge";$("sfr").hidden=a==="off";
+  $("sfm").innerHTML=[["edge",fx?"От панели":"От низа экрана"],["end","В конце списка"]].map(([v,t])=>`<button class="${sfv()===v?"on":""}" onclick="setSf('${v}')">${t}</button>`).join("");
+  const h=$("sgh");h.classList.toggle("edge",e);h.classList.toggle("fx",fx);
+  h.querySelector(".smt").innerHTML=e?(fx?"Потяните вверх <b>от нижней панели</b> — где угодно в списке":"Потяните вверх <b>от низа экрана</b>, чуть выше края, — где угодно в списке"):"Долистайте до конца дня и <b>потяните вверх</b>"}ghSync();
  $("swc").innerHTML=PRE.map(h=>`<button class="${c===h?"on":""}" style="background:${h||"#3b82f6"}" onclick="setAc('${h}')" aria-label="${h?"Цвет "+h:"Стандартный цвет"}">${ic("check")}</button>`).join("");
  $("cpd").style.background=c||"var(--ac)";$("cpn").textContent=c&&!PRE.includes(c)?c.toUpperCase():""}
 // подсказки к жестам («?» у раздела): мини-телефон с анимацией под каждым включённым жестом
@@ -73,7 +78,7 @@ function cpDraw(hx){const c=hsv2hex(cpH,cpS,cpV),a=$("cpa");a.style.setProperty(
  const ok=$("cpok");ok.style.background=c;ok.style.color=crt("#ffffff",c)>=3.1?"#fff":"#141922";
  $("cps").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.getAttribute("onclick").includes(c)))}
 function cpHex(v){v=v.trim();if(v&&v[0]!=="#")v="#"+v;if(/^#[0-9a-f]{6}$/i.test(v)){[cpH,cpS,cpV]=hex2hsv(v.toLowerCase());cpDraw(0)}}
-function cpOk(){setAc(hsv2hex(cpH,cpS,cpV));hap(8);drawSet();svBack=1;sv(7,"Настройки")}
+function cpOk(){setAc(hsv2hex(cpH,cpS,cpV));hap(8);drawSet();sv(7,"Настройки")}
 (()=>{const drag=(el,fn)=>{let on=0;const at=e=>{const r=el.getBoundingClientRect();fn(Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),Math.max(0,Math.min(1,(e.clientY-r.top)/r.height)));cpDraw(1)};
   el.addEventListener("pointerdown",e=>{on=1;el.classList.add("drag");try{el.setPointerCapture(e.pointerId)}catch(_){}at(e)});
   el.addEventListener("pointermove",e=>{if(on)at(e)});const up=()=>{on=0;el.classList.remove("drag")};el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up)};
