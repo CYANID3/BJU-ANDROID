@@ -19,7 +19,7 @@
 // }
 // В products числа на 100 г можно не указывать (будет 0). Старые файлы (без "format") тоже открываются.
 const MK=["breakfast","snack1","lunch","snack2","dinner","snack3"];
-const STM={th:["theme",{}],tn:["backgroundTint",{}],ac:["accentColor",{}],sw:["pullUpAction",{prod:"product",stat:"stats",wt:"weight"}],dw:["pullDownAction",{cal:"calendar"}],hp:["vibration",{nodays:"exceptDays"}],sl:["swipeLength",{mid:"medium"}],wt:["weightTracking",{}],bb:["bottomBar",{fix:"fixed"}],nb:["newButtons",{}],sn:["snacks",{row:"row",tap:"doubleTap"}],mg:["productImport",{}],sk:["shakeAction",{prod:"product",stat:"stats",wt:"weight",rep:"dayCard"}],ss:["shakeStrength",{norm:"normal",max:"sharp"}],sm:["shakeMotion",{ud:"upDown",dn:"down",rot:"twist",wig:"wiggle"}]};
+const STM={th:["theme",{}],tn:["backgroundTint",{}],ac:["accentColor",{}],sw:["pullUpAction",{prod:"product",stat:"stats",wt:"weight"}],dw:["pullDownAction",{cal:"calendar"}],hp:["vibration",{nodays:"exceptDays"}],sl:["swipeLength",{mid:"medium"}],wt:["weightTracking",{}],bb:["bottomBar",{fix:"fixed"}],nb:["newButtons",{}],sn:["snacks",{row:"row",tap:"doubleTap"}],mg:["productImport",{}],sk:["shakeAction",{prod:"product",stat:"stats",wt:"weight",rep:"dayCard"}],ss:["shakeStrength",{norm:"normal",max:"sharp"}],sm:["shakeMotion",{tw:"doubleTwist",ch:"doubleChop",fl:"flip"}]};
 const r3=x=>Math.round(x*1000)/1000,fnum=(x,d)=>x==null||x===""?d:typeof x==="number"?x:parseFloat(String(x).replace(",","."));
 const entOut=e=>{const o={name:e.n,grams:r3(e.g),protein:r3(e.p),fat:r3(e.f),carbs:r3(e.c)};if(e.ul)o.unit={name:e.ul,count:e.q};return o};
 const entIn=(o,w)=>{if(!o||typeof o!=="object")throw Error(w+": запись должна быть объектом");if(!o.name)throw Error(w+": нет названия (name)");

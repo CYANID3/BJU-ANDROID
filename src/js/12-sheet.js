@@ -1,5 +1,5 @@
 // Нижний лист: переходы между экранами, открытие/закрытие
-let svBack=0,svFocus=0;const VWS=[1,2,3,4,5,6,7,8,9,10,11,12];
+let svBack=0,svFocus=0;const VWS=[1,2,3,4,5,6,7,8,9,10,11,12,13];
 // Высота листа после смены экрана с учётом того, где окажется клавиатура (откроется / закроется / останется)
 let hPend=0,hT=0;
 // убрать временную высоту листа (после того как клавиатура доехала); небольшую разницу — плавно
@@ -38,6 +38,6 @@ function mng(){mode="mng";pFl=0;$("q").value="";lst();drawMc();sv(1,"Все пр
 const num=v=>parseFloat(String(v).replace(",","."))||0,nn=v=>Math.max(0,num(v));
 let ei=-1,lastDel=null,tmr,isOpen=false;
 function show(){if(!isOpen){isOpen=true;oa=Date.now();if(!NATIVE)try{history.pushState({o:1},"")}catch(e){}}$("ov").classList.add("on");document.documentElement.classList.add("lk")}
-function closeUI(){if(!isOpen)return;clearH(1);fch=0;cpm=-1;isOpen=false;if(mode==="ing")mode=pmode;ik=-1;$("ov").classList.remove("on");document.documentElement.classList.remove("lk");ei=-1;try{document.activeElement.blur()}catch(e){}}
-async function xcl(){if(!$("v11").hidden){step();return}if(!v3ok&&!$("v3").hidden&&v3sig()!==v3snap&&!await ask("Продукт не сохранён. Закрыть без сохранения?","Закрыть",1))return;if(!$("v8").hidden&&($("dn").value.trim()||dr.i.length)&&!await ask("Закрыть без сохранения блюда?","Закрыть",1))return;cl()}
+function closeUI(){if(!isOpen)return;if(skTest)dgClose();clearH(1);fch=0;cpm=-1;isOpen=false;if(mode==="ing")mode=pmode;ik=-1;$("ov").classList.remove("on");document.documentElement.classList.remove("lk");ei=-1;try{document.activeElement.blur()}catch(e){}}
+async function xcl(){if(!$("v11").hidden||!$("v13").hidden){step();return}if(!v3ok&&!$("v3").hidden&&v3sig()!==v3snap&&!await ask("Продукт не сохранён. Закрыть без сохранения?","Закрыть",1))return;if(!$("v8").hidden&&($("dn").value.trim()||dr.i.length)&&!await ask("Закрыть без сохранения блюда?","Закрыть",1))return;cl()}
 function cl(){const was=isOpen;closeUI();if(was&&!NATIVE){try{if(history.state&&history.state.o)history.back()}catch(e){}}}

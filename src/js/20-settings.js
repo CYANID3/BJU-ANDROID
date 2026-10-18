@@ -42,9 +42,8 @@ function drawSet(k){optList("dwm",DWL,dwAct(),"setDw");$("hpm").innerHTML=[["on"
  // какое движение и его сила — только когда действие выбрано
  $("ssr").hidden=skAct()==="off";
  // живая подсказка под выбранным движением: телефон показывает, как его двигать
- {const m=smv(),n=SSV[ssv()][1],h=$("smh");h.className="smh "+m;h.querySelector(".smt").innerHTML={ud:`Резко потрясите вдоль длинной стороны: <b>${n} толчка</b> вверх-вниз за секунду`,
-  dn:"Подержите спокойно, <b>одним рывком</b> опустите вниз — и <b>замрите</b> на полсекунды",rot:"Поверните, как руль, <b>на 50° и больше</b> одним движением, обратно — спокойно",
-  wig:`Поверните <b>туда-обратно ${n} раза</b> подряд, быстро — примерно за секунду`}[m]}sldDraw("ssm",{keys:Object.keys(SSV),labels:Object.values(SSV).map(x=>x[2]),get:ssv,set:setSs,aria:"Сила движения"});
+ {const m=smv(),h=$("smh");h.className="smh "+m;h.querySelector(".smt").innerHTML={tw:"Держите как обычно и <b>дважды крутните кистью</b> туда-обратно, как отвёрткой, — быстро",
+  ch:"<b>Два коротких резких взмаха</b> вниз, как топориком, — и замрите",fl:"Переверните <b>экраном вниз</b> и <b>сразу обратно</b> — за пару секунд"}[m]}sldDraw("ssm",{keys:Object.keys(SSV),labels:Object.values(SSV).map(x=>x[1]),get:ssv,set:setSs,aria:"Сила движения"});
  $("sver").textContent="Версия "+BUILD
  {const t=tnv();$("tnm").innerHTML=[["off","Выкл."],["soft","Лёгкий"],["strong","Заметный"]].map(([v,n])=>`<button class="${t===v?"on":""}" onclick="setTn('${v}')">${n}</button>`).join("")}
  // переключатели «да / нет»
