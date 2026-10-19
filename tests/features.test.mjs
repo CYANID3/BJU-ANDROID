@@ -181,7 +181,7 @@ test('чипы под итогом: вес и неделя — одной выс
   let g = await geo();
   assert.equal(g.length, 2); assert.equal(g[0][0], g[1][0]); assert.equal(g[0][1], g[1][1], 'одна высота'); assert.ok(Math.abs(g[0][2] - g[1][2]) <= 1, 'одна ширина');
   assert.ok(g[0][1] >= 48, 'зона касания не меньше 48');
-  assert.match(await a.pg.textContent('#app .duo .dtl:not(.wtl)'), /Неделя333ккалБ 7 г$/);
+  assert.match(await a.ev(() => document.querySelector('#app .duo .dtl:not(.wtl)').innerText.replace(/\s+/g, ' ')), /^(В среднем за 7 дн\.|Среднее за 7 дн\.) 333 ?ккал( Б 7 г)?$/);
   await a.pg.click('#app .wtl'); await a.wait(300); await a.pg.fill('#wv', '80'); await a.pg.press('#wv', 'Enter'); await a.wait(300);
   const g2 = await geo(); assert.deepEqual(g2.map(x => x[1]), g.map(x => x[1]), 'после записи высота та же');
   assert.match(await a.pg.textContent('#app .wtl'), /80кг−1/);
@@ -190,6 +190,7 @@ test('чипы под итогом: вес и неделя — одной выс
   await a.ev(() => { cl(); S.set = { ...S.set, wt: 'off' }; render(); }); await a.wait(300);
   g = await geo(); const card = await a.pg.locator('#app .sum').boundingBox();
   assert.equal(g.length, 1); assert.ok(Math.abs(g[0][2] - card.width) <= 1, 'один чип — на всю ширину');
+  assert.match(await a.pg.textContent('#app .duo .dtl'), /Б 7 · Ж 1 · У 74 г$/, 'один чип — все три');
   await a.close();
 });
 test('компактная карточка дня целиком помещается на экран (разные экраны, до 25 продуктов)', async () => {
@@ -335,10 +336,11 @@ test('свой цвет: экран выбора — квадрат, оттен�
 test('«Ещё»: все настройки одной страницей, в группах по порядку; крестик закрывает, «‹» возвращает', async () => {
   const a = await openApp();
   await a.ev(() => sets()); await a.wait(400);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v7 .gh')].map(e => e.textContent)), ['Норма', 'Данные', 'Оформление', 'Главный экран', 'Жесты', 'Отклик']);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v7 .gh')].map(e => e.textContent)), ['Норма', 'Данные', 'Оформление', 'Главный экран', 'Добавление', 'Жесты', 'Отклик']);
   const rows = await a.ev(() => [...document.querySelectorAll('#v7 .row .tx')].map(e => e.firstChild.textContent));
-  for (const t of ['Норма на день', 'Файл данных', 'Тема', 'Цвет акцента', 'Оттенок фона', 'Кнопка «＋» в панели', 'Карточка дня', 'Кнопки «Новый продукт» и «Новое блюдо»', 'Пустые перекусы', 'Отслеживать вес', 'Потянуть вниз', 'Потянуть вверх', 'Длина свайпа', 'Подсказки к жестам', 'Вибрация', 'Показывать «Добавить продукты из файла»'])
+  for (const t of ['Норма на день', 'Файл данных', 'Тема', 'Цвет акцента', 'Оттенок фона', 'Кнопка «＋» в панели', 'Карточка дня', 'Кнопки «Новый продукт» и «Новое блюдо»', 'Пустые перекусы', 'Отслеживать вес', 'Потянуть вниз', 'Потянуть вверх', 'Длина свайпа', 'Запоминать единицу', 'Вибрация'])
     assert.ok(rows.includes(t), 'есть «' + t + '»');
+  for (const t of ['Подсказки к жестам', 'Показывать «Добавить продукты из файла»', 'Добавить продукты из файла']) assert.ok(!rows.includes(t), 'нет «' + t + '»');
   assert.equal(await a.ev(() => $('hb').hidden), true, 'у «Ещё» нет «назад»');
   await a.ev(() => pick('dw')); await a.wait(300);
   assert.equal(await a.ev(() => !$('hb').hidden && $('st').textContent), 'Потянуть вниз');
@@ -348,21 +350,16 @@ test('«Ещё»: все настройки одной страницей, в г
   assert.equal(await a.ev(() => isOpen), false, 'крестик закрывает');
   await a.close();
 });
-test('подсказки к жестам: на экранах жестов, только для включённых; выбор сохраняется в файле', async () => {
-  const a = await openApp();
+test('подсказки к жестам: всегда на экранах включённых жестов, без отдельного переключателя', async () => {
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: {}, set: { gh: 'off' } } });
   await a.ev(() => { setSw('stat'); setDw('cal'); pick('sw'); }); await a.wait(300);
-  assert.equal(await a.ev(() => !!$('sgh')), false, 'по умолчанию скрыты');
-  await a.ev(() => sets()); await a.wait(300);
-  await a.pg.click('#ghm'); await a.wait(200);
-  assert.equal(await a.ev(() => $('ghm').getAttribute('aria-checked')), 'true');
-  await a.ev(() => pick('sw')); await a.wait(300);
-  assert.equal(await a.ev(() => getComputedStyle($('sgh').querySelector('u')).animationName), 'puF');
-  assert.equal(await a.ev(() => $('sgh').classList.contains('edge')), true, '«От панели» — подсказка про панель');
+  assert.equal(await a.ev(() => getComputedStyle($('sgh').querySelector('u')).animationName), 'puF', 'старое «выключено» не прячет подсказку');
+  assert.match(await a.ev(() => $('sgh').textContent), /от нижней панели.*в конце дня/);
+  assert.equal(await a.ev(() => !!$('sfm')), false, 'выбора «Откуда тянуть» нет');
   await a.ev(() => pick('dw')); await a.wait(300);
   assert.equal(await a.ev(() => getComputedStyle($('dwh').querySelector('u')).animationName), 'pdF');
   await a.ev(() => { setDw('off'); }); await a.wait(100);
   assert.equal(await a.ev(() => !!$('dwh')), false, 'жест выключен — его подсказки нет');
-  assert.equal(await a.ev(() => JSON.parse(ser()).settings.gestureHints), 'on');
   assert.deepEqual(a.errors, []);
   await a.close();
 });
@@ -388,7 +385,7 @@ test('«К сегодня» под датой: возвращает на сег�
   await a.close();
 });
 
-test('потянуть вверх от панели — в любом месте списка; «В конце списка» — только там; кнопки панели не нажимаются', async () => {
+test('потянуть вверх — от панели в любом месте списка и в конце списка; кнопки панели не нажимаются', async () => {
   const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: {}, set: { sw: 'stat' } } });
   await a.ev(() => { S.d[today] = Array.from({ length: 30 }, (_, i) => ({ m: i % 5, n: 'Продукт ' + i, g: 100, p: 10, f: 5, c: 20 })); render(); }); await a.wait(300);
   const reset = async () => { await a.ev(() => { if (isOpen) closeUI(); scrollTo(0, 0); }); await a.wait(400); };
@@ -411,26 +408,32 @@ test('потянуть вверх от панели — в любом месте
   await a.drag(200, 600, 200, 300, { steps: 12, ms: 20 }); await a.wait(400);
   assert.equal(await a.ev(() => isOpen), false, 'прокрутка из середины — не жест ');
   await reset();
-  // «В конце списка»: от панели не работает, а в конце списка — работает
-  await a.ev(() => setSf('end')); await reset();
-  await a.drag(bt[0], bt[1], bt[0], bt[1] - 220, { steps: 16, ms: 30 }); await a.wait(500);
-  assert.equal(await a.ev(() => isOpen && !$('v9').hidden), false, '«В конце списка» — от панели не срабатывает');
-  await reset();
-  await a.ev(() => scrollTo(0, 1e6)); await a.wait(200);
+  // в конце списка тоже работает — одновременно с панелью (даже если в старом файле было «В конце списка»)
+  await a.ev(() => { S.set = { ...S.set, sf: 'end' } }); await a.ev(() => scrollTo(0, 1e6)); await a.wait(200);
   await a.drag(200, 500, 200, 300, { steps: 14, ms: 30 }); await a.wait(500);
   assert.equal(await a.ev(() => isOpen && !$('v9').hidden), true, 'в конце списка — как раньше');
-  assert.equal(await a.ev(() => JSON.parse(ser()).settings.pullUpFrom), 'listEnd');
-  // настройка «Откуда тянуть» — на экране жеста, скрыта при выключенном жесте
-  await a.ev(() => { closeUI(); pick('sw'); }); await a.wait(400);
-  assert.deepEqual(await a.ev(() => [...$('sfm').querySelectorAll('button')].map(b => b.textContent)), ['От панели', 'В конце списка']);
-  await a.ev(() => setSw('off'));
-  assert.equal(await a.ev(() => !!$('sfr')), false);
+  await reset();
+  await a.drag(bt[0], bt[1], bt[0], bt[1] - 220, { steps: 16, ms: 30 }); await a.wait(500);
+  assert.equal(await a.ev(() => isOpen && !$('v9').hidden), true, 'и от панели — тоже');
   assert.deepEqual(a.errors, []);
   await a.close();
 });
-test('смена экрана в листе: новый экран проявляется на месте, без сдвига вбок', async () => {
+test('смена экрана в листе: старый уходит, новый въезжает с другой стороны; пустых кадров нет; «назад» — в обратную сторону', async () => {
   const a = await openApp();
-  const kf = await a.ev(async () => { op(0); await new Promise(r => setTimeout(r, 500)); pc(0); return $('v2').getAnimations().flatMap(x => x.effect.getKeyframes().map(k => k.transform)); });
-  assert.ok(kf.length && kf.every(t => !/translateX/.test(t)), JSON.stringify(kf));
+  await a.ev(() => sets()); await a.wait(500);
+  // вперёд: «Ещё» → «Цвет акцента». Сразу после смены копия старого экрана видна, новый въезжает справа
+  const f = await a.ev(async () => { pick('ac'); await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
+    const g = [...document.querySelectorAll('#ov .sh > .svg')], A = $('v13').getAnimations().flatMap(x => x.effect.getKeyframes().map(k => k.transform).filter(Boolean));
+    return { ghosts: g.length, ghostText: g.map(x => x.textContent).join(' ').includes('Норма на день'), first: A[0] } });
+  assert.ok(f.ghosts >= 2, 'копии шапки и содержимого'); assert.ok(f.ghostText, 'в копии — прежний экран'); assert.match(f.first, /translateX\(28px\)/, 'вперёд — справа');
+  await a.wait(500);
+  assert.equal(await a.ev(() => document.querySelectorAll('#ov .svg').length), 0, 'после перехода копии убраны');
+  const b = await a.ev(async () => { backStep(); await Promise.resolve(); await Promise.resolve(); await Promise.resolve(); return $('v7').getAnimations().flatMap(x => x.effect.getKeyframes().map(k => k.transform).filter(Boolean))[0] });
+  assert.match(b, /translateX\(-28px\)/, 'назад — слева');
+  // закрытие посреди перехода не оставляет копий
+  await a.ev(async () => { pick('th'); await Promise.resolve(); await Promise.resolve(); cl() }); await a.wait(400);
+  await a.ev(() => sets()); await a.wait(100);
+  assert.equal(await a.ev(() => document.querySelectorAll('#ov .svg').length), 0);
+  assert.deepEqual(a.errors, []);
   await a.close();
 });

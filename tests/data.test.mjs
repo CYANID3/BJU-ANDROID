@@ -66,7 +66,16 @@ test('виджет получает итоги дня, ярлыки открыв
   await a.ev(() => { S.d[today] = [{ m: 2, n: 'Рис', g: 100, p: 7, f: 1, c: 74 }]; save(); render(); }); await a.wait(300);
   const w = await a.ev(() => __W[__W.length - 1]);
   assert.equal(w.date, day()); assert.equal(w.eaten, 333); assert.equal(w.p, 7); assert.equal(w.c, 74);
-  assert.ok(w.goal > 0 && /^#|^\d/.test(String(w.accent)));
+  assert.ok(w.goal > 0);
+  assert.equal(w.theme, 'auto');
+  for (const t of ['light', 'dark']) for (const k of ['bg', 'tx', 'mu', 'trk', 'ac', 'on']) assert.match(w[t][k], /^#[0-9a-f]{6}$/i, t + '.' + k);
+  assert.notEqual(w.light.bg, w.dark.bg, 'обе палитры — для темы телефона');
+  // «＋» виджета = «＋» панели (по настройке)
+  await a.ev(() => { lastU = ''; S.set = { ...S.set, fa: 'prod' }; BJU_onUrl('bju://fab') }); await a.wait(300);
+  assert.equal(await a.ev(() => isOpen && !$('v3').hidden), true, '«＋» виджета — новый продукт, как в панели');
+  await a.ev(() => { cl(); lastU = ''; S.set = { ...S.set, fa: 'hide' }; BJU_onUrl('bju://fab') }); await a.wait(300);
+  assert.equal(await a.ev(() => isOpen && !$('v1').hidden && mode === 'add'), true, 'кнопка скрыта — приём пищи по времени');
+  await a.ev(() => { cl(); lastU = ''; S.set = { ...S.set, fa: 'meal' } }); await a.wait(300);
   await a.ev(() => BJU_onUrl('bju://add?m=4')); await a.wait(300);
   assert.equal(await a.ev(() => isOpen && $('st').textContent), 'Добавить в ужин');
   await a.ev(() => { cl(); lastU = ''; cur = shiftDay(today, -3); render(); }); await a.wait(300);
@@ -92,16 +101,29 @@ test('ярлык «Вес» у иконки: есть, только когда �
   await a.close();
 });
 
-test('виджет: превью в списке виджетов — тёмное, с подписями Б / Ж / У и правдоподобным днём', async () => {
+test('виджет: превью в списке виджетов — тёмное, с кольцом, подписями Б / Ж / У и правдоподобным днём; все раскладки содержат нужные элементы', async () => {
   const fs = await import('node:fs');
   const info = fs.readFileSync('native/android/res/xml/bju_widget_info.xml', 'utf8');
   assert.match(info, /previewLayout="@layout\/bju_widget_preview"/);
   const x = fs.readFileSync('native/android/res/layout/bju_widget_preview.xml', 'utf8');
-  for (const t of ['Белки', 'Жиры', 'Углеводы', '964 ккал', '102 / 120 г']) assert.ok(x.includes(`"${t}"`), t);
-  assert.match(x, /bju_widget_shape_preview/);
-  assert.match(fs.readFileSync('native/android/res/drawable/bju_widget_shape_preview.xml', 'utf8'), /#F51A202B/);
+  for (const t of ['Белки', 'Жиры', 'Углеводы', 'Сегодня · съедено 1146 из 2110', '102', ' / 120 г']) assert.ok(x.includes(`"${t}"`), t);
+  assert.match(x, /bju_widget_shape_preview/); assert.match(x, /bju_widget_ring_preview/, 'кольцо в превью');
+  assert.match(fs.readFileSync('native/android/res/drawable/bju_widget_shape_preview.xml', 'utf8'), /#F5282B31/, 'графит тёмной темы');
   const base = fs.readFileSync('native/android/res/layout/bju_widget.xml', 'utf8');
   assert.ok(base.includes('"Жиры"') && base.includes('"Углеводы"'), 'до первого обновления — верные подписи');
+  // каждый элемент, который заполняет BjuWidget, есть в своей раскладке (иначе лаунчер покажет «Не удалось загрузить виджет»)
+  const L = ['t1', 'n2', 'w3', 'w4', 't2', 's', 'm', '', 't2x', 'sx', 'lx'], BASE = [0, 1, 2, 3, 4, 5, 6, 7, 4, 5, 7], RING = [72, 0, 0, 0, 104, 104, 92, 112, 132, 132, 150];
+  const java = fs.readFileSync('native/android/BjuWidget.java', 'utf8');
+  assert.ok(java.includes('{ 72, 0, 0, 0, 104, 104, 92, 112, 132, 132, 150 }'), 'размеры кольца в тесте совпадают с BjuWidget');
+  L.forEach((n, i) => {
+    const ids = new Set([...fs.readFileSync(`native/android/res/layout/bju_widget${n ? '_' + n : ''}.xml`, 'utf8').matchAll(/@\+id\/(\w+)/g)].map(m => m[1])), k = BASE[i], need = ['bju_w_bg', 'bju_w_root'];
+    if (RING[i]) need.push('bju_w_ring');
+    if ([1, 2, 3].includes(k)) need.push('bju_k_lbl', 'bju_k_val', 'bju_k_unit', 'bju_w_bar');
+    if ([6, 7].includes(k)) need.push('bju_w_head');
+    if (k) for (const m of 'pfc') { need.push(`bju_${m}_lbl`, `bju_${m}_val`); if ([2, 3, 6, 7].includes(k)) need.push(`bju_${m}_goal`); if (![0, 1, 4].includes(k)) need.push(`bju_${m}_bar`); }
+    if ([3, 6, 7].includes(k)) need.push('bju_w_add', 'bju_w_add_bg', 'bju_w_add_ic');
+    for (const id of need) assert.ok(ids.has(id), `${n || 'L'}: нет ${id}`);
+  });
 });
 
 test('слияние баз: тот же продукт склеивается, похожие — на выбор, новые добавляются, дневник не меняется', async () => {
@@ -118,18 +140,21 @@ test('слияние баз: тот же продукт склеивается, 
       { name: 'Гречка', per100g: { protein: 12.6, fat: 3.3, carbs: 62 } }];
     return JSON.stringify(o); });
   await a.ev(f => mgRun(f, 'другой.json'), file); await a.wait(400);
-  assert.equal(await a.ev(() => isOpen && !$('v12').hidden), true, 'открылся экран «Похожие продукты»');
-  const pairs = await a.ev(() => [...document.querySelectorAll('#mgl .mgp')].map(p => [...p.querySelectorAll('.mgr b')].map(b => b.textContent).join(' ↔ ')));
+  assert.equal(await a.ev(() => isOpen && !$('v12').hidden), true, 'открылся экран «Импорт продуктов»');
+  assert.equal(await a.ev(() => [...document.querySelectorAll('#mgl .mgs b')].map(b => b.textContent).join()), '2,0,2,2', 'сводка: новые, отличаются, похожие, уже есть');
+  assert.equal(await a.ev(() => $('mgok').textContent), 'Добавить 4', 'похожие по умолчанию «Разные» — тоже добавятся');
+  const pairs = await a.ev(() => [...document.querySelectorAll('#mgl .mgp:has(.mgr)')].map(p => [...p.querySelectorAll('.mgr b')].map(b => b.textContent).join(' ↔ ')));
   assert.deepEqual(pairs, ['Яйцо ↔ Яйцо сырое', 'Хлеб ↔ Хлеб белый'], 'похожее — самое близкое по БЖУ');
   assert.equal(await a.ev(() => S.db.length), 8, 'до «Готово» список не меняется');
-  await a.pg.click('#mgl .mgp:nth-child(2) button:has-text("Это одно")');
+  await a.pg.locator('#mgl .mgp:has(.mgr)').nth(1).locator('button:has-text("Это одно")').click();
+  assert.equal(await a.ev(() => $('mgok').textContent), 'Добавить 3');
   await a.pg.click('.ft[data-v="12"] .pb'); await a.wait(300);
   const r = await a.ev(() => ({ names: S.db.map(p => p[0]), bread: S.db.find(p => p[0] === 'Хлеб белый')[4], days: Object.keys(S.d), toast: $('tm').textContent, v5: !$('v5').hidden }));
   assert.deepEqual(r.names, ['Творог 5%', 'Творог 5% Савушкин', 'Куриная грудка', 'Молоко 2,5%', 'Яйцо (варёное)', 'Яйцо жареное', 'Яйцо сырое', 'Хлеб белый', 'Молоко 3,2%', 'Яйцо', 'Гречка']);
   assert.equal(r.bread, undefined, 'у «Хлеба» из файла мер не было');
   assert.deepEqual(await a.ev(() => S.db.find(p => p[0] === 'Куриная грудка')[4]), [['Филе', 200]], 'тот же набор слов — склеено, мера добавлена');
   assert.deepEqual(r.days, [day()], 'дневник не меняется');
-  assert.match(r.toast, /Добавлено продуктов: 3 .* новых мер: 1/);
+  assert.match(r.toast, /Добавлено: 3 .* новых мер: 1/);
   assert.equal(r.v5, true, 'после «Готово» — снова «Файл»');
   await a.ev(() => undo());
   assert.equal(await a.ev(() => S.db.length), 8, '«Отменить» возвращает прежний список');
@@ -139,15 +164,23 @@ test('слияние баз: тот же продукт склеивается, 
   await a.close();
 });
 
-test('настройка «Импорт продуктов из файла»: выключена — кнопки нет; сохраняется в файле', async () => {
-  const a = await openApp();
+test('импорт: «Отличаются БЖУ» — по умолчанию мои, можно взять из файла; новые можно снять; кнопка импорта — в «Файле»', async () => {
+  const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: {}, db: [['Творог 5%', 17, 5, 1.8], ['Банан', 1.5, .2, 21.8]], set: { mg: 'off' } } });
   await a.ev(() => fp()); await a.wait(300);
-  assert.equal(await a.ev(() => $('mgb').hidden), false);
-  await a.ev(() => cl()); await a.wait(400); await a.ev(() => sets()); await a.wait(400);
-  await a.pg.click('#mgm'); await a.wait(100);
-  assert.equal(await a.ev(() => [S.set.mg, $('mgm').getAttribute('aria-checked')].join()), 'off,false');
-  assert.equal(await a.ev(() => JSON.parse(ser()).settings.productImport), 'off');
-  await a.ev(() => cl()); await a.wait(400); await a.ev(() => fp()); await a.wait(400);
-  assert.equal(await a.ev(() => $('mgb').hidden), true);
+  assert.equal(await a.ev(() => $('mgb').hidden), false, 'старая настройка «выключено» больше не прячет кнопку');
+  assert.equal(await a.ev(() => $('v7').innerHTML.includes('mgm')), false);
+  const f = JSON.stringify({ v: 2, g: { p: 1, f: 1, c: 1 }, d: {}, db: [['Творог 5%', 18, 9, 3], ['Творог 5%', 18, 9, 3], ['Сыр', 25, 27, 0], ['Гречка', 12.6, 3.3, 57]] });
+  await a.ev(f => mgRun(f, 'x.json'), f); await a.wait(400);
+  assert.equal(await a.ev(() => [...document.querySelectorAll('#mgl .mgs b')].map(b => b.textContent).join()), '2,1,0,0', 'повтор в файле учтён один раз');
+  assert.equal(await a.ev(() => document.querySelector('#mgl .mgc button.on small').textContent), 'Мои');
+  await a.pg.click('#mgl .mgc button:has-text("Из файла")');
+  await a.pg.click('#mgl .mgk:has-text("Сыр")');
+  assert.equal(await a.ev(() => $('mgok').textContent), 'Добавить 1 · обновить 1');
+  await a.pg.click('#mgok'); await a.wait(300);
+  assert.deepEqual(await a.ev(() => S.db.map(p => p.slice(0, 4))), [['Творог 5%', 18, 9, 3], ['Банан', 1.5, .2, 21.8], ['Гречка', 12.6, 3.3, 57]]);
+  assert.match(await a.ev(() => $('tm').textContent), /Добавлено: 1 \(Гречка\) · обновлено: 1/);
+  await a.ev(() => undo());
+  assert.deepEqual(await a.ev(() => S.db[0].slice(0, 4)), ['Творог 5%', 17, 5, 1.8], '«Отменить» возвращает и обновлённые');
+  assert.deepEqual(a.errors, []);
   await a.close();
 });

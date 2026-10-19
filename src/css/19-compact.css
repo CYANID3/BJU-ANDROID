@@ -4,3 +4,7 @@
 @media (max-height:620px){:root{--h-key:40px}.sh.kpo .shf{padding-top:8px}.sh.kpo .pb{height:46px}}
 /* узкие экраны: подписи панели мельче, не наезжают друг на друга */
 @media (max-width:360px){.bt{grid-template-columns:1fr 1fr 72px 1fr 1fr}.bt>button{font-size:10px;letter-spacing:-.02em}.bt .fab{width:54px;height:54px;border-radius:18px}.dtl{padding:0 10px;gap:8px}}
+/* чип «В среднем за 7 дн.»: рядом с чипом веса на узком экране — подпись короче, белок прячется (он есть в статистике) */
+.dtl .l2,.dtl .l3{display:none}
+@media (max-width:420px){.duo:has(.wtl) .dtl:not(.wtl) .l1{display:none}.duo:has(.wtl) .dtl:not(.wtl) .l2{display:inline}.duo:has(.wtl) .dtl:not(.wtl) em{display:none}}
+@media (max-width:340px){.duo:has(.wtl) .dtl:not(.wtl) .l2{display:none}.duo:has(.wtl) .dtl:not(.wtl) .l3{display:inline}}

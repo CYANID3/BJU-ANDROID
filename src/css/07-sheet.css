@@ -1,7 +1,7 @@
 /* Нижний лист: прижат к низу, по высоте — по содержимому (не выше экрана).
    Шапка → прокручиваемое содержимое → низ: кнопки действия и своя клавиатура, всегда у нижнего края. */
 #ov{position:fixed;left:0;right:0;top:0;height:100%;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center;z-index:5;opacity:0;visibility:hidden;transition:opacity var(--t2),visibility 0s var(--t2)}#ov.on{opacity:1;visibility:visible;transition:opacity var(--t2)}
-.sh{background:var(--card);width:100%;max-width:520px;display:flex;flex-direction:column;max-height:calc(100% - var(--sat) - 36px - var(--kb));transform:translateY(100%);translate:0 calc(-1*var(--kb));
+.sh{position:relative;background:var(--card);width:100%;max-width:520px;display:flex;flex-direction:column;max-height:calc(100% - var(--sat) - 36px - var(--kb));transform:translateY(100%);translate:0 calc(-1*var(--kb));
  transition:transform var(--t3) var(--ease),translate var(--kbd) cubic-bezier(.2,0,0,1),max-height var(--kbd) cubic-bezier(.2,0,0,1);border-radius:24px 24px 0 0;will-change:transform;overflow:hidden}
 #ov.on .sh{transform:none}.sh::before{content:"";display:block;flex:none;width:36px;height:4px;border-radius:3px;background:var(--bd);margin:8px auto 2px}
 /* длинные экраны (настройки, статистика, продукты) — на всю высоту, прокрутка до самого низа */

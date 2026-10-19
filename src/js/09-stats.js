@@ -78,5 +78,4 @@ const stFmt=x=>new Date(x.k+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeri
   const off=()=>{clearTimeout(tm);tm=setTimeout(()=>{t.textContent=t.dataset.def;t.classList.remove("on");mark(-1)},1600)};w.addEventListener("pointerup",off);w.addEventListener("pointercancel",off)}
 function bindWt(days,W,c){stBind(days,W,"ch3","rd3",c,d=>wTip(d,c),i=>{$("ch3").querySelectorAll("circle").forEach(p=>p.setAttribute("r",+p.dataset.i===i?"5":"3.4"));chMark("ch3",c.f,i)},d=>d.w)}
 // свайп по экрану статистики (кроме графиков) — соседний месяц
-(()=>{const v=$("v9");let x0=null,y0=0;v.addEventListener("touchstart",e=>{x0=e.target.closest(".chw")?null:e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
- v.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70*GF()&&Math.abs(dx)>Math.abs(dy)*1.6){vib("days");stMv(dx<0?1:-1)}},{passive:true})})();
+

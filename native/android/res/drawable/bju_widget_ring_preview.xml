@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Кольцо для превью виджета: 54% нормы, «964 осталось» -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="112dp" android:height="112dp" android:viewportWidth="112" android:viewportHeight="112">
+    <path android:pathData="M56,4.5a51.5,51.5 0 1,1 0,103a51.5,51.5 0 1,1 0,-103" android:strokeColor="#3B3E45" android:strokeWidth="9" android:fillColor="#00000000"/>
+    <path android:pathData="M56,4.5A51.5,51.5 0 1,1 42.1,105.6" android:strokeColor="#7C70F0" android:strokeWidth="9" android:strokeLineCap="round" android:fillColor="#00000000"/>
+</vector>

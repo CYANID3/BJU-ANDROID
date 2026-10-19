@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- скругление виджета; на Android 12+ — системное (values-v31) -->
+    <dimen name="bju_widget_r">24dp</dimen>
+</resources>

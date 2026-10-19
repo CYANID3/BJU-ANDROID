@@ -6,10 +6,31 @@ const shEl = () => document.querySelector("#ov .sh"), shBody = () => document.qu
 let SUB = 0; // экран открыт из «Ещё» (7): «‹» в шапке и «Назад» возвращают туда
 /**
  * Показать экран n листа. t — заголовок, s — подпись под ним.
- * Лист прижат к низу и по высоте равен содержимому; смена экрана — новый проявляется на месте, лист плавно меняет высоту.
+ * Лист прижат к низу и по высоте равен содержимому. Смена экрана — «общая ось», как в Android:
+ * старый экран (его копия) уходит в сторону и гаснет, новый въезжает с другой стороны, лист одновременно плавно меняет высоту.
+ * Вглубь (из «Ещё» в раздел, из списка в количество) — справа налево, «назад» — слева направо.
  */
+let NAVD = 1, svG = [];
+function svKill() { svG.forEach(g => g.remove()); svG = []; try { shEl().getAnimations({ subtree: true }).forEach(a => a.finish()) } catch (e) { } }
+function svGhosts(sh, prev) {
+  const sr = sh.getBoundingClientRect(), out = [], strip = g => { g.removeAttribute("id"); g.querySelectorAll("[id]").forEach(x => x.removeAttribute("id")); g.hidden = false; return g };
+  // шапка целиком (кнопка «✕» на том же месте — в копии скрыта, чтобы не двоилась)
+  const hd = sh.querySelector(".hd"), hr = hd.getBoundingClientRect(), hg = strip(hd.cloneNode(true)); hg.querySelectorAll(".x").forEach(x => x.style.visibility = "hidden");
+  Object.assign(hg.style, { position: "absolute", left: hr.left - sr.left + "px", top: hr.top - sr.top + "px", width: hr.width + "px", margin: 0 }); out.push(hg);
+  // содержимое — в рамке видимой части (с учётом прокрутки)
+  const body = shBody(), br = body.getBoundingClientRect(), v = $("v" + prev), vr = v.getBoundingClientRect(), box = document.createElement("div"), vg = strip(v.cloneNode(true));
+  Object.assign(box.style, { position: "absolute", left: br.left - sr.left + "px", top: br.top - sr.top + "px", width: br.width + "px", height: br.height + "px", overflow: "hidden" });
+  Object.assign(vg.style, { position: "absolute", left: vr.left - br.left + "px", top: vr.top - br.top + "px", width: vr.width + "px", margin: 0 }); box.appendChild(vg); out.push(box);
+  // низ с кнопкой — прижат к нижнему краю
+  const ft = sh.querySelector(".shf .ft:not([hidden])");
+  if (ft) { const fr = ft.getBoundingClientRect(), fg = strip(ft.cloneNode(true)); Object.assign(fg.style, { position: "absolute", left: fr.left - sr.left + "px", bottom: sr.bottom - fr.bottom + "px", width: fr.width + "px", margin: 0 }); out.push(fg) }
+  out.forEach(g => { g.style.pointerEvents = "none"; g.style.zIndex = 2; g.setAttribute("aria-hidden", "true"); g.classList.add("svg") });
+  return out
+}
 function sv(n, t, s) {
-  const sh = shEl(), prev = VWS.find(i => !$("v" + i).hidden), h0 = isOpen ? sh.offsetHeight : 0;
+  const sh = shEl(), prev = VWS.find(i => !$("v" + i).hidden), anim = isOpen && prev && prev !== n && !RM() && !!sh.animate, dir = NAVD;
+  let G = [], h0 = 0, f0 = null;
+  if (anim) { svKill(); h0 = sh.getBoundingClientRect().height; f0 = sh.querySelector(".shf .ft:not([hidden])"); try { G = svGhosts(sh, prev) } catch (e) { G = [] } }
   VWS.forEach(i => $("v" + i).hidden = i !== n);
   $("st").textContent = t || ""; $("ss").textContent = s || "";
   document.querySelectorAll(".shf .ft").forEach(f => f.hidden = +f.dataset.v !== n);
@@ -17,10 +38,18 @@ function sv(n, t, s) {
   shHead(n); kpView(n);
   // открытие листа и смена экрана — всегда с начала
   if (!isOpen || prev !== n) shBody().scrollTop = 0;
-  if (!isOpen || prev === n || RM() || !sh.animate) return;
-  const E = { duration: MO.t2, easing: MO.E };
-  try { $("v" + n).animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }], E); $("st").parentElement.animate([{ opacity: 0 }, { opacity: 1 }], { duration: MO.t2 }) } catch (e) { }
-  const h1 = sh.offsetHeight; if (Math.abs(h1 - h0) > 4) try { sh.animate([{ height: h0 + "px" }, { height: h1 + "px" }], E) } catch (e) { }
+  if (!anim) return;
+  // запуск — после текущего кода: вызвавший успевает восстановить прокрутку («назад» в «Ещё»), кадр ещё не нарисован
+  queueMicrotask(() => {
+    const h1 = sh.getBoundingClientRect().height, X = 28 * dir, D = 320, E = MO.E;
+    G.forEach(g => sh.appendChild(g)); svG = G;
+    const out = { duration: 170, easing: "linear", fill: "forwards" }, mv = { duration: D, easing: E, fill: "forwards" };
+    const fin = []; G.forEach(g => { g.animate([{ opacity: 1 }, { opacity: 0 }], out); fin.push(g.animate([{ transform: "none" }, { transform: `translateX(${-X}px)` }], mv).finished) });
+    const f1 = sh.querySelector(".shf .ft:not([hidden])"), ins = [$("v" + n), sh.querySelector(".hd .ht")].concat(f1 && f1 !== f0 ? [f1] : []);
+    ins.forEach(el => { el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: 40, easing: "linear", fill: "backwards" }); el.animate([{ transform: `translateX(${X}px)` }, { transform: "none" }], { duration: D, easing: E }) });
+    let a = null; if (Math.abs(h1 - h0) > 2) a = sh.animate([{ height: h0 + "px" }, { height: h1 + "px" }], { duration: D, easing: E });
+    Promise.all(fin).catch(() => { }).then(() => { G.forEach(g => g.remove()); if (svG === G) svG = [] })
+  })
 }
 // шапка: «‹ назад» — если «Назад» ведёт на шаг внутри листа; у календаря и статистики — стрелки месяца
 function shHead(n) {
@@ -51,7 +80,7 @@ const plural = (n, a, b, c) => n % 10 === 1 && n % 100 !== 11 ? a : n % 10 >= 2 
 const num = v => parseFloat(String(v).replace(",", ".")) || 0, nn = v => Math.max(0, num(v));
 let ei = -1, lastDel = null, tmr, isOpen = false;
 function show() { if (!isOpen) { isOpen = true; oa = Date.now(); if (!NATIVE) try { history.pushState({ o: 1 }, "") } catch (e) { } } $("ov").classList.add("on"); document.documentElement.classList.add("lk") }
-function closeUI() { if (!isOpen) return; cpm = -1; isOpen = false; SUB = 0; if (mode === "ing") mode = pmode; ik = -1; $("ov").classList.remove("on"); document.documentElement.classList.remove("lk"); ei = -1; kpF = null; try { document.activeElement.blur() } catch (e) { } }
+function closeUI() { if (!isOpen) return; svKill(); cpm = -1; isOpen = false; SUB = 0; if (mode === "ing") mode = pmode; ik = -1; $("ov").classList.remove("on"); document.documentElement.classList.remove("lk"); ei = -1; kpF = null; try { document.activeElement.blur() } catch (e) { } }
 async function xcl() {
   if (!v3ok && !$("v3").hidden && v3sig() !== v3snap && !await ask("Продукт не сохранён. Закрыть без сохранения?", "Закрыть", 1)) return;
   if (!$("v8").hidden && dirtyDish() && !await ask("Закрыть без сохранения блюда?", "Закрыть", 1)) return;

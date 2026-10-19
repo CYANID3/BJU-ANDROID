@@ -70,3 +70,15 @@
 @keyframes pdS{0%,16%{transform:none}52%{transform:translateY(8px)}70%,100%{transform:none}}
 @keyframes puF{0%,8%{opacity:0;transform:none}16%{opacity:.9;transform:none}52%{opacity:.9;transform:translateY(-20px)}64%,100%{opacity:0;transform:translateY(-20px)}}
 @keyframes puS{0%,16%{transform:none}52%{transform:translateY(-8px)}70%,100%{transform:none}}
+/* экран «Импорт продуктов» */
+.mgs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px}.mgs div{background:var(--sub);border-radius:var(--r-in);padding:10px 4px;text-align:center}
+.mgs b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}.mgs small{font-size:var(--fs-xs);color:var(--mu);font-weight:600}.mgs .w b{color:var(--wr)}
+.mgh{font-size:var(--fs-sm);color:var(--mu);line-height:1.4;margin:-2px 2px 10px}
+.mgg{display:flex;justify-content:space-between;align-items:center}.mgg button{color:var(--act,var(--ac));font-weight:700;text-transform:none;letter-spacing:0;font-size:13.5px;min-height:44px;padding:0 6px;margin:-12px -6px}
+.mgp{background:var(--sub);border-radius:var(--r-block);padding:12px;display:flex;flex-direction:column;gap:10px;margin-bottom:8px}.mgpr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mgn{font-size:var(--fs-body);font-weight:700;padding:0 2px}
+.mgc{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mgc button{background:var(--card);border-radius:var(--r-in);padding:8px 10px;text-align:left;font-size:var(--fs-xs);color:var(--mu);font-weight:600;font-variant-numeric:tabular-nums;box-shadow:inset 0 0 0 1.5px transparent;line-height:1.35}
+.mgc button small{display:block;font-size:var(--fs-sm);color:var(--tx);font-weight:700;margin-bottom:2px}.mgc button.on{box-shadow:inset 0 0 0 2px var(--ac);background:var(--acs)}.mgc button.on small{color:var(--act,var(--ac))}
+.mgk .cb{flex:none;width:24px;height:24px;border-radius:7px;box-shadow:inset 0 0 0 2px var(--bd);display:grid;place-items:center;color:transparent}.mgk .cb svg.i{width:16px;height:16px;stroke-width:3}
+.mgk.on .cb{background:var(--ac);box-shadow:none;color:var(--on)}.mgk:not(.on) .tx{opacity:.55}
+.mgk.on .tx{color:var(--tx)}

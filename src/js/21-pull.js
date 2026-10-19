@@ -7,10 +7,9 @@ const pVel=()=>{const l=PS[PS.length-1];if(!l)return 0;let o=l;for(const q of PS
 const atBot=()=>scrollY+innerHeight>=document.documentElement.scrollHeight-6;
 // «Откуда тянуть вверх»: edge — от нижней панели, в любом месте списка; end — только в конце списка.
 // В конце списка тянуть можно всегда. pZ: 1 — жест начат на панели, 0 — обычный.
-const sfv=()=>S.set&&S.set.sf==="end"?"end":"edge";
-function setSf(v){S.set=Object.assign({},S.set,{sf:v});saveq();drawSet();vib("ui")}
+
 let pZ=0,pNoClick=0;const EDGE=24;
-function pEdge(t,y){if(REP||sfv()!=="edge"||swAct()==="off")return 0;return t&&t.closest&&t.closest(".bt")?1:0}
+function pEdge(t,y){if(REP||swAct()==="off")return 0;return t&&t.closest&&t.closest(".bt")?1:0}
 // жест от панели не должен заодно нажать её кнопку
 addEventListener("click",e=>{if(pNoClick&&e.target.closest&&e.target.closest(".bt")){e.stopPropagation();e.preventDefault()}},true);
 // Индикатор «потянуть»: всегда идёт за пальцем в одном темпе (0.7 от движения, дальше — «резина»),

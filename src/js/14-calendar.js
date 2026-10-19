@@ -27,16 +27,6 @@ function drawCal(){const[y,m]=cm,gk=kc(S.g.p,S.g.f,S.g.c),g=$("cg"),ty=+today.sl
   $("st").textContent=st+"–"+(st+11);$("cs").textContent=""}
  g.innerHTML=h}
 function pd(k){if(cpm>=0){const mi=cpm,it=(S.d[cur]||[]).filter(e=>e.m===mi).map(e=>({...e}));cpm=-1;if(k===cur){cl();return}(S.d[k]=S.d[k]||[]).push(...it);cl();cur=k;vib("save");save();render();toast("Скопировано записей: "+it.length);return}if(k===cur){cl();return}const dir=k>cur?1:-1;cl();NABS=1;slide($("app"),dir,()=>{cur=k})}
-(()=>{const v=$("v6");let x0=null,y0=0,dx=0,md=0,lx=0,lt=0,vx=0;
- v.addEventListener("touchstart",e=>{if(e.touches.length>1){x0=null;return}x0=e.touches[0].clientX;y0=e.touches[0].clientY;dx=0;md=0;vx=0;lx=x0;lt=performance.now()},{passive:true});
- v.addEventListener("touchmove",e=>{if(x0===null)return;const t=e.touches[0],ddx=t.clientX-x0,ddy=t.clientY-y0,el=$("cg");
-  if(!md){if(Math.abs(ddx)>10&&Math.abs(ddx)>Math.abs(ddy)*1.2){md=1;x0=t.clientX;if(el._ca){el._ca.cancel();el._ca=null}el.style.transition="none"}else if(Math.abs(ddy)>10){x0=null;return}else return}
-  dx=t.clientX-x0;const n=performance.now();vx=(t.clientX-lx)/Math.max(1,n-lt);lx=t.clientX;lt=n;
-  el.style.transform=`translateX(${dx}px)`;el.style.opacity=1-Math.min(.6,Math.abs(dx)/(el.offsetWidth*1.2||400))},{passive:true});
- const end=()=>{x0=null;if(!md)return;md=0;const el=$("cg"),w=el.offsetWidth||300;
-  if(Math.abs(dx)>w*.22*GF()||(Math.abs(vx)>SL(1)*.8&&Math.abs(dx)>w*.22*GF()*SL(2))){vib("days");calFlip(el,dx<0?1:-1,dx,parseFloat(el.style.opacity)||1)}
-  else{el.style.transition=`transform ${MO.t2}ms ${MO.E},opacity ${MO.t2}ms ${MO.E}`;el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!md)el.style.transition=""},MO.t2)}};
- v.addEventListener("touchend",end);v.addEventListener("touchcancel",()=>{dx=0;vx=0;end()})})();
 function calStep(n){if(cv===0){cm[1]+=n;if(cm[1]<0){cm[1]=11;cm[0]--}if(cm[1]>11){cm[1]=0;cm[0]++}}else if(cv===1)cm[0]+=n;else cm[0]+=n*12}
 function calFlip(el,dir,from,op){const w=el.offsetWidth||300;el.style.transition="";el.style.transform="";el.style.opacity="";
  if(el._co){el._co.cancel();el._co=null}if(el._ca){el._ca.cancel();el._ca=null}

@@ -24,7 +24,7 @@ const MK=["breakfast","snack1","lunch","snack2","dinner","snack3"];
 // внутренний ключ настройки → [имя в файле, {внутреннее значение: значение в файле}]
 // bottomBar больше не используется (панель всегда закреплена), но читается и сохраняется обратно без изменений —
 // файл остаётся совместимым со старой версией приложения на другом телефоне
-const STM={th:["theme",{}],tn:["backgroundTint",{}],ac:["accentColor",{}],sw:["pullUpAction",{prod:"product",stat:"stats",wt:"weight"}],dw:["pullDownAction",{cal:"calendar"}],hp:["vibration",{nodays:"exceptDays"}],sl:["swipeLength",{mid:"medium"}],wt:["weightTracking",{}],bb:["bottomBar",{fix:"fixed"}],nb:["newButtons",{}],sn:["snacks",{row:"row",tap:"doubleTap"}],mg:["productImport",{}],gh:["gestureHints",{}],sf:["pullUpFrom",{edge:"edge",end:"listEnd"}],
+const STM={th:["theme",{}],tn:["backgroundTint",{}],ac:["accentColor",{}],sw:["pullUpAction",{prod:"product",stat:"stats",wt:"weight"}],dw:["pullDownAction",{cal:"calendar"}],hp:["vibration",{nodays:"exceptDays"}],sl:["swipeLength",{mid:"medium"}],wt:["weightTracking",{}],bb:["bottomBar",{fix:"fixed"}],nb:["newButtons",{}],sn:["snacks",{row:"row",tap:"doubleTap"}],mg:["productImport",{}],gh:["gestureHints",{}],sf:["pullUpFrom",{edge:"edge",end:"listEnd"}],lu:["rememberUnit",{}],
  dc:["dayCard",{tap:"tripleTap",row:"row"}],fa:["fabAction",{prod:"product",wt:"weight",hide:"hidden"}],vs:["vibrationStrength",{}],ve:["vibrationEvents",{}]};
 const r3=x=>Math.round(x*1000)/1000,fnum=(x,d)=>x==null||x===""?d:typeof x==="number"?x:parseFloat(String(x).replace(",","."));
 const entOut=e=>{const o={name:e.n,grams:r3(e.g),protein:r3(e.p),fat:r3(e.f),carbs:r3(e.c)};if(e.ul)o.unit={name:e.ul,count:e.q};return o};
@@ -37,10 +37,10 @@ function toFile(D){
  return{format:"bju-diary",version:3,savedAt:D.saved?new Date(D.saved).toISOString():null,
   goals:{protein:D.g.p,fat:D.g.f,carbs:D.g.c},
   products:D.db.map(p=>{const o={name:p[0],per100g:{protein:p[1],fat:p[2],carbs:p[3]}};if(D.fav&&D.fav[p[0]])o.favorite=true;if(p[4]&&p[4].length&&!p[5])o.units=p[4].map(u=>({name:u[0],grams:u[1]}));if(p[5])o.dish={cookedWeight:p[5].w,ingredients:p[5].i.map(entOut)};return o}),
-  diary,weight:Object.fromEntries(Object.keys(D.wt||{}).sort().map(k=>[k,D.wt[k]])),settings,stats:{useCount:D.uc||{},lastGrams:D.lg||{},recent:D.rc||[]}}}
+  diary,weight:Object.fromEntries(Object.keys(D.wt||{}).sort().map(k=>[k,D.wt[k]])),settings,stats:{useCount:D.uc||{},lastGrams:D.lg||{},lastUnit:Object.fromEntries(Object.entries(D.lu||{}).map(([k,v])=>[k,v[0]?{unit:v[0],amount:v[1]}:{unit:null}])),recent:D.rc||[]}}}
 function fromFile(o){if(!o||typeof o!=="object"||o.format!=="bju-diary")return o;
  if(o.version>3)throw Error("файл создан в более новой версии приложения");
- const g=o.goals||{},D={v:STATE_VER,g:{p:fnum(g.protein,0),f:fnum(g.fat,0),c:fnum(g.carbs,0)},db:[],d:{},saved:Date.parse(o.savedAt)||0,set:{},uc:(o.stats&&o.stats.useCount)||{},lg:(o.stats&&o.stats.lastGrams)||{},fav:{},wt:{}};if(o.stats&&Array.isArray(o.stats.recent))D.rc=o.stats.recent.map(String).slice(0,10);
+ const g=o.goals||{},D={v:STATE_VER,g:{p:fnum(g.protein,0),f:fnum(g.fat,0),c:fnum(g.carbs,0)},db:[],d:{},saved:Date.parse(o.savedAt)||0,set:{},uc:(o.stats&&o.stats.useCount)||{},lg:(o.stats&&o.stats.lastGrams)||{},lu:Object.fromEntries(Object.entries((o.stats&&o.stats.lastUnit)||{}).filter(([,v])=>v&&typeof v==="object").map(([k,v])=>[k,v.unit?[String(v.unit),fnum(v.amount,0)]:[""]])),fav:{},wt:{}};if(o.stats&&Array.isArray(o.stats.recent))D.rc=o.stats.recent.map(String).slice(0,10);
  if(!Array.isArray(o.products||[]))throw Error("«products» должен быть списком");
  (o.products||[]).forEach((p,i)=>{const w="продукт №"+(i+1);if(!p||!p.name)throw Error(w+": нет названия (name)");const h=p.per100g||{};
   const a=[String(p.name),fnum(h.protein,0),fnum(h.fat,0),fnum(h.carbs,0)];if(p.favorite)D.fav[a[0]]=1;

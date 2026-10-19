@@ -38,13 +38,11 @@ function setSl(v) { S.set = Object.assign({}, S.set, { sl: v }); saveq(); drawSe
 const PRE = ["", "#22a06b", "#14b8a6", "#3b82f6", "#8b5cf6", "#e5589a", "#e5484d", "#f08a24", "#f5c518", "#64748b"];
 const SWL = [["meal", "Приём пищи", "plus", "Добавить в приём пищи по времени суток"], ["prod", "Новый продукт", "box", "Сразу открыть создание продукта"], ["stat", "Статистика", "chart", "Открыть статистику за месяц"], ["wt", "Вес", "scale", "Записать вес за день"], ["off", "Выключено", "close", "Жест не используется"]],
   DWL = [["cal", "Календарь", "cal", "Выбрать день в календаре"], ["today", "К сегодня", "today", "Вернуться к сегодняшнему дню"], ["off", "Выключено", "close", "Жест не используется"]];
-const ghOn = () => S.set && S.set.gh === "on";
-function togGh() { S.set = Object.assign({}, S.set, { gh: ghOn() ? "off" : "on" }); saveq(); drawSet(); vib("ui") }
 function setSw(v) { S.set = Object.assign({}, S.set, { sw: v }); saveq(); drawSet(); render(); vib("ui") }
 function setAc(h) { S.set = Object.assign({}, S.set, { ac: h }); saveq(); applyAc(); drawSet(); vib("ui") }
 
 // ===== экраны выбора =====
-const gHint = (dn, edge) => `<div id="${dn ? "dwh" : "sgh"}" class="smh ${dn ? "phd" : "phu"}${edge ? " edge" : ""}" aria-hidden="true"><div class="smp"><i><s></s><s></s><s></s><u></u></i></div><div class="smt">${dn ? "В начале списка <b>потяните вниз</b> и отпустите" : edge ? "Потяните вверх <b>от нижней панели</b> — где угодно в списке. Кнопки панели при этом не нажимаются" : "Долистайте до конца дня и <b>потяните вверх</b>"}</div></div>`;
+const gHint = (dn, edge) => `<div id="${dn ? "dwh" : "sgh"}" class="smh ${dn ? "phd" : "phu"}${edge ? " edge" : ""}" aria-hidden="true"><div class="smp"><i><s></s><s></s><s></s><u></u></i></div><div class="smt">${dn ? "В начале списка <b>потяните вниз</b> и отпустите" : edge ? "Потяните вверх <b>от нижней панели</b> из любого места списка или <b>в конце дня</b>. Кнопки панели при этом не нажимаются" : "Долистайте до конца дня и <b>потяните вверх</b>"}</div></div>`;
 // k: { t — заголовок, s — подпись, o() — варианты [значение, название, значок, пояснение], g() — текущее, set(v), x() — что ниже списка }
 const PK = {
   th: { t: "Тема", o: () => [["auto", "Как в системе", "auto", "Светлая или тёмная — по настройке телефона"], ["light", "Светлая", "sun", ""], ["dark", "Тёмная", "moon", ""]], g: () => (S.set && S.set.th) || "auto", set: v => setTh(v) },
@@ -54,9 +52,9 @@ const PK = {
   dc: { t: "Карточка дня", s: "Как открывать сводку дня для скриншота", o: () => [["tap", "Тройное касание", "tap", "Три касания по итогу дня — открыть и закрыть"], ["row", "Строка в итоге дня", "layout", "«Карточка дня ›» внизу итога, закрыть — «Назад» или ✕"]], g: () => dcv(), set: v => setDc(v), x: () => `<div class="hint">Свайп вверх и вниз на карточке переключает компактный и подробный вид в обоих режимах.</div>` },
   nb: { t: "Кнопки «Новый продукт» и «Новое блюдо»", s: "Во всех списках продуктов", o: () => [["top", "Сверху", "up", "Под поиском, перед списком"], ["bottom", "Снизу", "down", "После списка продуктов"]], g: () => nbv(), set: v => setNb(v) },
   sn: { t: "Пустые перекусы", o: () => [["row", "Ссылкой", "plus", "«＋ Перекус» внизу карточки приёма"], ["tap", "По двойному касанию", "tap", "Два касания по названию приёма — показать или скрыть «＋ Перекус»"]], g: () => snv(), set: v => setSn(v) },
-  dw: { t: "Потянуть вниз", s: "в начале дня", o: () => DWL, g: () => dwAct(), set: v => setDw(v), x: () => ghOn() && dwAct() !== "off" ? gHint(1) : "" },
-  sw: { t: "Потянуть вверх", s: "в конце дня или от нижней панели", o: () => SWL.filter(([v]) => v !== "wt" || wton()), g: () => swAct(), set: v => setSw(v), x: () => swAct() === "off" ? "" : `<div id="sfr"><div class="gh">Откуда тянуть</div><div id="sfm" class="seg">${[["edge", "От панели"], ["end", "В конце списка"]].map(([v, t]) => `<button class="${sfv() === v ? "on" : ""}" onclick="setSf('${v}')">${t}</button>`).join("")}</div></div>` + (ghOn() ? gHint(0, sfv() === "edge") : "") },
-  sl: { t: "Длина свайпа", s: "для всех жестов", x: () => `<div id="slm" class="sld"></div><div class="hint">${SLV[slv()][6]} Действует на листание дней, месяцев, смахивание листа и «потянуть вверх/вниз».</div>`, after: () => sldDraw("slm", { keys: Object.keys(SLV), labels: Object.values(SLV).map(x => x[5]), get: slv, set: setSl, aria: "Длина свайпа" }) }
+  dw: { t: "Потянуть вниз", s: "в начале дня", o: () => DWL, g: () => dwAct(), set: v => setDw(v), x: () => dwAct() !== "off" ? gHint(1) : "" },
+  sw: { t: "Потянуть вверх", s: "в конце дня или от нижней панели", o: () => SWL.filter(([v]) => v !== "wt" || wton()), g: () => swAct(), set: v => setSw(v), x: () => swAct() === "off" ? "" : gHint(0, 1) },
+  sl: { t: "Длина свайпа", s: "для всех жестов", x: () => `<div id="slm" class="sld"></div><div class="hint">${SLV[slv()][6]} Действует на главном экране: листание дней и «потянуть вверх / вниз», а также смахивание листа вниз. Месяцы в календаре и статистике и вкладки списка продуктов листаются коротким взмахом при любой длине.</div>`, after: () => sldDraw("slm", { keys: Object.keys(SLV), labels: Object.values(SLV).map(x => x[5]), get: slv, set: setSl, aria: "Длина свайпа" }) }
 };
 let pkCur = "", hubY = 0;
 function pick(k) { if (!$("v7").hidden) hubY = shBody().scrollTop; pkCur = k; SUB = 7; drawPick(); sv(13, PK[k].t, PK[k].s || ""); show() }
@@ -78,17 +76,18 @@ function acPick() {
 const srow = (id, icn, t, sub, v, act, o = {}) => `<button class="row"${id ? ` id="${id}"` : ""}${o.sw != null ? ` role="switch" aria-checked="${!!o.sw}"` : ""} onclick="${act}">${icn ? `<span class="ic">${ic(icn)}</span>` : ""}<span class="tx">${t}${sub ? `<small${o.sc ? ` class="${o.sc}"` : ""}>${sub}</small>` : ""}</span>${v != null ? `<span class="v">${v}</span>` : ""}${o.sw != null ? `<i class="tg${o.sw ? " on" : ""}"><i></i></i>` : `<span class="ch">${ic("chevR")}</span>`}</button>`;
 const lbl = (k) => { const P = PK[k], v = P.g(), x = P.o().find(o => o[0] === v); return k === "fa" && v === "meal" ? "Приём пищи" : x ? x[1] : "" };
 function sets(back) {
-  const y = hubY; SUB = 0; drawSet(); sv(7, "Ещё"); show();
+  const y = hubY; SUB = 0; drawSet(); if (back) NAVD = -1; try { sv(7, "Ещё") } finally { NAVD = 1 } show();
   if (back) { shBody().scrollTop = y; vib("ui") }
 }
 function drawSet() {
   const G = S.g, gk = kc(G.p, G.f, G.c), fs = fileState(), vn = VIB.filter(x => veOn(x[0])).length;
   $("v7").innerHTML =
     `<div class="gh">Норма</div><div class="grp">${srow("", "target", "Норма на день", `Б ${G.p} · Ж ${G.f} · У ${G.c} г`, gk + " ккал", "goals(1)")}</div>` +
-    `<div class="gh">Данные</div><div class="grp">${srow("", "file", "Файл данных", fs[1], "", "fp(1)", { sc: fs[0] })}${mgOn() ? srow("", "merge", "Добавить продукты из файла", "", null, "mgPick()") : ""}${srow("mgm", "import", "Показывать «Добавить продукты из файла»", "", null, "setMg(mgOn()?'off':'on')", { sw: mgOn() })}</div>` +
+    `<div class="gh">Данные</div><div class="grp">${srow("", "file", "Файл данных", fs[1], "", "fp(1)", { sc: fs[0] })}</div>` +
     `<div class="gh">Оформление</div><div class="grp">${srow("", "moon", "Тема", "", lbl("th"), "pick('th')")}${srow("", "pal", "Цвет акцента", "", `<i style="background:var(--ac)"></i>`, "pick('ac')")}${srow("", "tint", "Оттенок фона", "", lbl("tn"), "pick('tn')")}</div>` +
     `<div class="gh">Главный экран</div><div class="grp">${srow("", "fab", "Кнопка «＋» в панели", "", lbl("fa"), "pick('fa')")}${srow("", "layout", "Карточка дня", "", lbl("dc"), "pick('dc')")}${srow("", "btn", "Кнопки «Новый продукт» и «Новое блюдо»", "", lbl("nb"), "pick('nb')")}${srow("", "snack", "Пустые перекусы", "", lbl("sn"), "pick('sn')")}${srow("wtm", "scale", "Отслеживать вес", "", null, "setWt(wton()?'off':'on')", { sw: wton() })}</div>` +
-    `<div class="gh">Жесты</div><div class="grp">${srow("", "down", "Потянуть вниз", "в начале дня", lbl("dw"), "pick('dw')")}${srow("", "up", "Потянуть вверх", "в конце дня или от панели", lbl("sw"), "pick('sw')")}${srow("", "swipe", "Длина свайпа", "", SLV[slv()][5], "pick('sl')")}${srow("ghm", "hint", "Подсказки к жестам", "Анимация на экранах жестов", null, "togGh()", { sw: ghOn() })}</div>` +
+    `<div class="gh">Добавление</div><div class="grp">${srow("lum", "ruler", "Запоминать единицу", "Продукт откроется в той же мере, что и в прошлый раз: граммы, штуки, банки, дольки…", null, "setLu(luOn()?'off':'on')", { sw: luOn() })}</div>` +
+    `<div class="gh">Жесты</div><div class="grp">${srow("", "down", "Потянуть вниз", "в начале дня", lbl("dw"), "pick('dw')")}${srow("", "up", "Потянуть вверх", "в конце дня или от панели", lbl("sw"), "pick('sw')")}${srow("", "swipe", "Длина свайпа", "", SLV[slv()][5], "pick('sl')")}</div>` +
     `<div class="gh">Отклик</div><div class="grp">${srow("", "vib", "Вибрация", vbOn() ? "Где включена и какая сила" : "", vbOn() ? vn + " из " + VIB.length : "Выкл.", "vibOpen()")}</div>` +
     `<div class="ver">Версия ${BUILD}</div>`;
   if (!$("v13").hidden) drawPick(); if (!$("v14").hidden) drawVib()
@@ -132,3 +131,7 @@ function cpOk() { setAc(hsv2hex(cpH, cpS, cpV)); vib("save"); pick("ac") }
   };
   drag($("cpa"), (x, y) => { cpS = x; cpV = 1 - y }); drag($("cph"), x => { cpH = Math.min(359.9, x * 360) })
 })();
+
+// «Запоминать единицу»: продукт открывается в той единице, в которой его вводили в прошлый раз (по умолчанию включено)
+const luOn = () => !(S.set && S.set.lu === "off");
+function setLu(v) { S.set = Object.assign({}, S.set, { lu: v }); saveq(); drawSet(); vib("ui") }

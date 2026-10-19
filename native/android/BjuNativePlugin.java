@@ -289,16 +289,18 @@ public class BjuNativePlugin extends Plugin {
             Float v = call.getFloat(k, 0f);
             e.putFloat(k, v != null ? v : 0f);
         }
-        e.putBoolean("dark", Boolean.TRUE.equals(call.getBoolean("dark", true)));
-        try {
-            e.putInt("accent", Color.parseColor(call.getString("accent", "#22a565")));
-        } catch (IllegalArgumentException ignored) {}
-        String bg = call.getString("bg", "");
-        try {
-            if (bg != null && !bg.isEmpty()) e.putInt("bg", Color.parseColor(bg));
-            else e.remove("bg");
-        } catch (IllegalArgumentException ignored) {
-            e.remove("bg");
+        // тема («auto» — как в системе) и обе палитры приложения: виджет сам выбирает светлую или тёмную
+        String th = call.getString("theme", "auto");
+        e.putString("theme", "light".equals(th) || "dark".equals(th) ? th : "auto");
+        for (String[] pk : new String[][] { { "light", "l_" }, { "dark", "d_" } }) {
+            JSObject pal = call.getObject(pk[0]);
+            if (pal == null) continue;
+            for (String k : new String[] { "bg", "tx", "mu", "trk", "ac", "on" }) {
+                String c = pal.getString(k);
+                try {
+                    if (c != null && !c.isEmpty()) e.putInt(pk[1] + k, Color.parseColor(c));
+                } catch (IllegalArgumentException ignored) {}
+            }
         }
         e.apply();
         BjuWidget.renderAll(getContext());

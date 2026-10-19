@@ -26,16 +26,26 @@ function lst() {
   lstQ++; const q0 = lstQ, el = $("ls"); el.innerHTML = IX.length ? IX.slice(0, 24).map(row).join("") : (pFl === 2 ? '<div class="mu">Блюд не найдено — создайте новое блюдо</div>' : '<div class="mu">Ничего не найдено — создайте новый продукт</div>');
   if (IX.length > 24) (window.requestIdleCallback || requestAnimationFrame)(() => { if (q0 === lstQ) el.insertAdjacentHTML("beforeend", IX.slice(24).map((x, n) => row(x, n + 24)).join("")) }, { timeout: 300 })
 }
-function pc(k) { const i = IX[k]; if (mode === "mng") return edit(i); sel = S.db[i]; const u = sel[4] && sel[4].length ? 0 : -1; gv(u < 0 ? (S.lg || {})[sel[0]] : "", u) }
+// единица при открытии: «Запоминать единицу» — та, в которой продукт вводили в прошлый раз (граммы, шт, банка, долька…);
+// иначе (или впервые) — первая мера продукта, без мер — граммы
+function pc(k) {
+  const i = IX[k]; if (mode === "mng") return edit(i); sel = S.db[i]; const us = sel[4] || [], L = luOn() && (S.lu || {})[sel[0]];
+  let u = us.length ? 0 : -1, q = "";
+  if (L) { const j = L[0] ? us.findIndex(x => x[0] === L[0]) : -1; if (!L[0] || j >= 0) { u = j; q = j >= 0 ? L[1] || "" : "" } }
+  gv(u < 0 ? (S.lg || {})[sel[0]] : q, u)
+}
 const UM = () => uu < 0 ? 1 : sel[4][uu][1];
 const nf = x => String(x).replace(".", ",");
+// крупные числа — с неразрывным пробелом между тысячами: 11 796
+const nk = x => Math.round(x) >= 10000 ? String(Math.round(x)).replace(/\B(?=(\d{3})+$)/g, "\u202f") : String(Math.round(x));
 // экран количества: единицы — сегментом, поле значения, быстрые значения, итог порции; ввод — своей клавиатурой
 const amtSub = () => (ei >= 0 ? "Изменить · " + LBL[am] + " · " : ik >= 0 || mode === "ing" ? "Ингредиент · " : "") + kc(sel[1], sel[2], sel[3]) + " ккал на 100 г" + (ei >= 0 || ik >= 0 ? "" : ` · Б ${nf(r1(sel[1]))} · Ж ${nf(r1(sel[2]))} · У ${nf(r1(sel[3]))}`);
 function pv() {
   const q = num($("gr").value), g = q * UM(), el = $("pvw"); vfUnit($("gr"));
-  el.innerHTML = g > 0 ? `<b>${kc(sel[1] * g / 100, sel[2] * g / 100, sel[3] * g / 100)}</b><small>ккал</small><span>${mxl(sel[1] * g / 100, sel[2] * g / 100, sel[3] * g / 100)}</span>${uu >= 0 ? `<em>${nf(r1(g))} г</em>` : ""}` : "";
+  const K = kc(sel[1] * g / 100, sel[2] * g / 100, sel[3] * g / 100);
+  el.innerHTML = g > 0 ? `<b>${nk(K)}</b><small>ккал</small><span>${mxl(sel[1] * g / 100, sel[2] * g / 100, sel[3] * g / 100)}</span>${uu >= 0 ? `<em>${nf(r1(g))} г</em>` : ""}` : "";
   $("ch").querySelectorAll("button").forEach(b => b.classList.toggle("on", +b.dataset.v === q));
-  $("ab").textContent = (ei >= 0 || ik >= 0 ? "Сохранить" : "Добавить") + (g > 0 && ei < 0 && ik < 0 ? " · " + kc(sel[1] * g / 100, sel[2] * g / 100, sel[3] * g / 100) + " ккал" : "")
+  $("ab").textContent = (ei >= 0 || ik >= 0 ? "Сохранить" : "Добавить") + (g > 0 && ei < 0 && ik < 0 ? " · " + nk(K) + " ккал" : "")
 }
 function gv(v, u) { uu = u == null ? -1 : u; $("gr").value = v ? nf(v) : ""; drawU(); drawMc(); sv(2, sel[0], amtSub()); fIn("gr", 1) }
 function drawU() {
@@ -59,9 +69,9 @@ function ad() {
   const R = x => Math.round(x * 1e3) / 1e3, o = { m: am, n: sel[0], g: R(g), p: R(sel[1] * g / 100), f: R(sel[2] * g / 100), c: R(sel[3] * g / 100) }; if (uu >= 0) { o.q = q; o.ul = sel[4][uu][0] }
   if (mode === "ing") { delete o.m; if (ik >= 0) dr.i[ik] = o; else dr.i.push(o); ik = -1; vib("save"); return drawDish() }
   const edit_ = ei >= 0; if (edit_) S.d[cur][ei] = o; else { (S.d[cur] = S.d[cur] || []).push(o); S.uc = S.uc || {}; S.uc[sel[0]] = (S.uc[sel[0]] || 0) + 1; rcPush(sel[0]) }
-  if (uu < 0) { S.lg = S.lg || {}; S.lg[sel[0]] = g } vib("save"); save();
+  if (uu < 0) { S.lg = S.lg || {}; S.lg[sel[0]] = g } if (mode !== "ing") { S.lu = S.lu || {}; S.lu[sel[0]] = uu < 0 ? [""] : [sel[4][uu][0], q] } vib("save"); save();
   // добавили из списка — возвращаемся в список (тот же приём), чтобы следующий продукт был в одно касание; изменение записи — лист закрывается
-  if (!edit_ && mode === "add" && isOpen) { try { document.activeElement.blur() } catch (e) { } render(); $("q").value = ""; lst(); drawMc(); sv(1, vt()); lastDel = lastDb = null; lastAdd = { o, k: cur }; toast(`${LBL[o.m]}: ${o.n} · ${kc(o.p, o.f, o.c)} ккал`, 1, 3500); return }
+  if (!edit_ && mode === "add" && isOpen) { try { document.activeElement.blur() } catch (e) { } render(); $("q").value = ""; lst(); drawMc(); sv(1, vt()); lastDel = lastDb = null; lastAdd = { o, k: cur }; toast(`${LBL[o.m]}: ${o.n} · ${o.ul ? nf(o.q) + " " + o.ul : nf(r1(o.g)) + " г"} · ${nk(kc(o.p, o.f, o.c))} ккал`, 1, 3500); return }
   cl(); render()
 }
 // единицы измерения продукта: строки появляются только по кнопке «＋ Единица измерения»
@@ -78,7 +88,7 @@ async function mk() {
   const a = [n, nn($("np").value), nn($("nf").value), nn($("nc").value)], un = unGet(); if (un.length) a[4] = un;
   if (a[1] + a[2] + a[3] > 100.5 && !await ask("Б+Ж+У больше 100 г на 100 г. Сохранить как есть?", "Сохранить")) return;
   if (S.db.some((x, i) => i !== ed && nz(x[0]) === nz(n)) && !await ask("Продукт «" + n + "» уже есть. Создать ещё один?", "Создать")) return;
-  if (ed >= 0) { const o = S.db[ed][0]; if (o !== a[0]) for (const m of ["uc", "lg", "fav"]) if (S[m] && o in S[m]) { S[m][a[0]] = S[m][o]; delete S[m][o] } if (S.rc) S.rc = S.rc.map(x => x === o ? a[0] : x); S.db[ed] = a } else S.db.unshift(a); vib("save"); save();
+  if (ed >= 0) { const o = S.db[ed][0]; if (o !== a[0]) for (const m of ["uc", "lg", "lu", "fav"]) if (S[m] && o in S[m]) { S[m][a[0]] = S[m][o]; delete S[m][o] } if (S.rc) S.rc = S.rc.map(x => x === o ? a[0] : x); S.db[ed] = a } else S.db.unshift(a); vib("save"); save();
   if ((mode === "add" || mode === "ing") && ed < 0) { sel = a; gv("", a[4] ? 0 : -1) } else if (v3from) listBack(); else cl()
 }
 async function rm() {
