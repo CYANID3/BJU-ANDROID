@@ -47,11 +47,12 @@ test('смена темы и карточки дня — одним кадром
   const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: { [day()]: [{ m: 0, n: 'Рис', g: 100, p: 7, f: 1, c: 74 }] }, set: { dc: 'row' } } });
   const r = await a.ev(async () => {
     const has = !!document.startViewTransition; setTh('light');
-    const during = document.documentElement.classList.contains('notr'), names = !!document.querySelector('#app>[data-fk]').style.viewTransitionName;
+    // ревизия 8: тема — общим плавным переходом цвета (класс thx), без снимков кадра: касания не теряются
+    const during = document.documentElement.classList.contains('thx'), names = !!document.querySelector('#app>[data-fk]').style.viewTransitionName;
     await new Promise(r => setTimeout(r, 600));
-    return { has, during, names, after: document.documentElement.classList.contains('notr'), left: [...document.querySelectorAll('[style*="view-transition-name"]')].length, bg: getComputedStyle(document.querySelector('.sum')).backgroundColor };
+    return { has, during, names, after: document.documentElement.classList.contains('notr'), left: [...document.querySelectorAll('[style*="view-transition-name"]')].length, thx: document.documentElement.classList.contains('thx'), bg: getComputedStyle(document.querySelector('.sum')).backgroundColor };
   });
-  assert.ok(r.has, 'в Chromium есть View Transitions'); assert.ok(r.during, 'во время смены переходы цвета выключены'); assert.equal(r.names, false, 'ревизия 6: один общий кадр — отдельные карточки больше не рисуются поверх панели');
+  assert.ok(r.has, 'в Chromium есть View Transitions'); assert.ok(r.during, 'во время смены все цвета меняются одним переходом'); assert.equal(r.names, false, 'ревизия 6: один общий кадр — отдельные карточки больше не рисуются поверх панели');
   assert.equal(r.after, false); assert.equal(r.left, 0, 'имена убраны после смены'); assert.equal(r.bg, 'rgb(255, 255, 255)');
   // карточка дня — тоже сменой кадра
   await a.ev(() => togRep(true)); await a.wait(600);
@@ -59,8 +60,8 @@ test('смена темы и карточки дня — одним кадром
   await a.ev(() => togRep(false)); await a.wait(600);
   assert.equal(await a.ev(() => !!document.querySelector('#app .rep')), false);
   // без View Transitions (старый WebView) — сразу, но тоже без запоздалых переходов
-  const old = await a.ev(async () => { const v = document.startViewTransition; document.startViewTransition = undefined; setTh('dark'); const c = document.documentElement.classList.contains('notr'); await new Promise(r => setTimeout(r, 100)); document.startViewTransition = v; return [c, document.documentElement.classList.contains('notr'), document.documentElement.dataset.theme].join() });
-  assert.equal(old, 'true,false,dark');
+  const old = await a.ev(async () => { setTh('dark'); await new Promise(r => setTimeout(r, 400)); return [document.documentElement.classList.contains('thx'), document.documentElement.dataset.theme].join() });
+  assert.equal(old, 'false,dark', 'после смены переходы цвета снова обычные');
   assert.deepEqual(a.errors, []);
   await a.close();
 });

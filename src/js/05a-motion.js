@@ -2,7 +2,8 @@
 //  - E   — основная кривая: плавный старт, долгое мягкое торможение (появление, перемещение, смена экрана)
 //  - EI  — уход: плавный разгон (скрытие)
 //  - EIO — плавно в обе стороны (сжатие по высоте)
-const MO={E:"cubic-bezier(.25,.8,.25,1)",EI:"cubic-bezier(.4,0,.8,.3)",EIO:"cubic-bezier(.4,0,.2,1)",t1:160,t2:260,t3:360};
+// темп анимаций: короткие и «упругие» в начале (быстрый старт, мягкая остановка) — отзывчиво, без тягучего хвоста
+const MO={E:"cubic-bezier(.2,0,0,1)",EI:"cubic-bezier(.3,0,.8,.15)",EIO:"cubic-bezier(.4,0,.2,1)",t1:140,t2:200,t3:280};
 function moOk(el){return el&&el.animate&&!RM()}
 function mo(el,kf,o){if(!moOk(el))return null;try{return el.animate(kf,Object.assign({duration:MO.t2,easing:MO.E},typeof o==="number"?{duration:o}:o))}catch(e){return null}}
 // появление: из прозрачности, чуть снизу и чуть меньше
@@ -61,13 +62,16 @@ function segSync(){document.querySelectorAll(".seg").forEach(s=>{if(s.closest(".
 // Без View Transitions (старый WebView) или при «Уменьшить движение» — сразу, но тоже одновременно.
 function vtx(fn) {
   const d = document.documentElement;
-  if (vtx.t) { fn(); return }
   if (!document.startViewTransition || RM() || document.hidden) { allAtOnce(fn); return }
+  // новая смена во время текущей: текущая сразу завершается, новая начинается с того, что сейчас на экране (без «кулдауна»)
+  if (vtx.t) try { vtx.t.skipTransition() } catch (e) { }
   d.classList.add("notr");
   let t; try { t = document.startViewTransition(fn) } catch (e) { d.classList.remove("notr"); fn(); return }
-  vtx.t = t; t.finished.catch(() => { }).then(() => { vtx.t = null; d.classList.remove("notr") })
+  vtx.t = t; t.finished.catch(() => { }).then(() => { if (vtx.t !== t) return; vtx.t = null; d.classList.remove("notr") })
 }
 // мгновенная смена, но одновременно: без запоздалых переходов цвета у отдельных элементов (цвет акцента, оттенок фона)
+// плавная смена цветов всего экрана (тема, оттенок, акцент) — обычными переходами цвета, без снимков кадра
+function themeFade(fn) { const d = document.documentElement; if (RM() || document.hidden) { allAtOnce(fn); return } clearTimeout(themeFade.t); d.classList.remove("notr"); d.classList.add("thx"); fn(); themeFade.t = setTimeout(() => d.classList.remove("thx"), 260) }
 function allAtOnce(fn) { const d = document.documentElement; d.classList.add("notr"); fn(); requestAnimationFrame(() => requestAnimationFrame(() => d.classList.remove("notr"))) }
 // экран погас или приложение свёрнуто посреди смены кадра — смена завершается сразу (иначе после разблокировки мог остаться пустой кадр)
 // возврат после блокировки экрана: незаконченная смена кадра завершается сразу, а страница перерисовывается целиком

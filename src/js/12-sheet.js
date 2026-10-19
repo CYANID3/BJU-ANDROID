@@ -63,10 +63,10 @@ function sv(n, t, s) {
 }
 // общий переход: верхний край листа переезжает со старой высоты на новую, старое гаснет, новое проявляется на своих местах
 function svPlay(sh, snap, ins) {
-  const { L, r0 } = snap, r1 = sh.getBoundingClientRect(); svAlign(snap.fix || []); const d = r1.top - r0.top, D = 320, E = "cubic-bezier(.3,0,.1,1)", R = "24px 24px 0 0";
+  const { L, r0 } = snap, r1 = sh.getBoundingClientRect(); svAlign(snap.fix || []); const d = r1.top - r0.top, D = 260, E = "cubic-bezier(.2,0,0,1)", R = "24px 24px 0 0";
   const ov = $("ov"); ov.appendChild(L); const out = [L], fin = [];
-  // старое гаснет быстро (0,12 с), новое проявляется чуть позже: текст двух экранов почти не накладывается
-  L.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, easing: "cubic-bezier(.2,0,.4,1)", fill: "forwards" });
+  // плавная смена без провала: старое быстро тускнеет (основная часть — за первые 0,06 с), новое проявляется почти сразу
+  L.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 110, easing: "cubic-bezier(0,0,.2,1)", fill: "forwards" });
   if (d > 1) {
     // лист стал ниже: фон старой высоты (под листом) плавно опускается к новому краю
     const ed = document.createElement("div"); ed.className = "sve";
@@ -78,9 +78,9 @@ function svPlay(sh, snap, ins) {
     // лист стал выше: верхний край открывается снизу вверх
     fin.push(sh.animate([{ clipPath: `inset(${-d}px 0 0 0 round ${R})` }, { clipPath: `inset(0 0 0 0 round ${R})` }], { duration: D, easing: E }).finished);
   }
-  ins.filter(Boolean).forEach(el => fin.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: 80, easing: "linear", fill: "backwards" }).finished));
+  ins.filter(Boolean).forEach(el => fin.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 170, delay: 45, easing: "cubic-bezier(.2,0,.2,1)", fill: "backwards" }).finished));
   // «ручка» листа тоже проявляется на новом краю, а не стоит поверх старого содержимого
-  if (Math.abs(d) > 1) try { sh.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: 80, easing: "linear", fill: "backwards", pseudoElement: "::before" }) } catch (e) { }
+  if (Math.abs(d) > 1) try { sh.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 170, delay: 45, easing: "linear", fill: "backwards", pseudoElement: "::before" }) } catch (e) { }
   svG = out; Promise.all(fin).catch(() => { }).then(() => { out.forEach(x => x.remove()); if (svG === out) svG = [] });
   // страховка: если WebView приостановили посреди перехода (системное окно выбора файла), через 0,7 с всё доводится до конца
   setTimeout(() => { if (svG === out) svKill() }, 700)
@@ -96,7 +96,7 @@ function shResize(fn, watch) {
   fn();
   const fresh = (watch || []).filter(q => document.querySelector(q) && !was.some(w => w[0] === q)).map(q => document.querySelector(q));
 
-  const r1 = sh.getBoundingClientRect(), d = r1.top - r0.top, D = 280, R = "24px 24px 0 0", E = "cubic-bezier(.3,0,.1,1)";
+  const r1 = sh.getBoundingClientRect(), d = r1.top - r0.top, D = 240, R = "24px 24px 0 0", E = "cubic-bezier(.2,0,0,1)";
   // шапка и содержимое едут вместе с краем листа (лист прижат к низу: без этого строки прыгнули бы на новое место сразу)
   if (Math.abs(d) > 1) {
     // лист стал ниже: шапка начинает выше нового края — на время пути лист её не обрезает (фон старой высоты — под ней)

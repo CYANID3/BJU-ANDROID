@@ -7,11 +7,11 @@ function slide(el,n,fn){
  NF.push(fn);ND=n>0?1:-1;if(!NB)pump(el)}
 function pump(el){NB=1;const x=curX(el),o=parseFloat(getComputedStyle(el).opacity)||1,a=el._a;el._a=null;if(a)a.cancel();
  // уход продолжает движение пальца (без отката назад); при быстром перелистывании — короче
- const d=ND,to=-d*Math.max(48,(x*-d>0?Math.abs(x):0)+32);let out;try{out=el.animate([{transform:`translateX(${x}px)`,opacity:o},{transform:`translateX(${to}px)`,opacity:0}],{duration:a?80:120,easing:MO.EI,fill:"forwards"})}catch(e){NB=0;apply(el,null,d);return}
+ const d=ND,to=-d*Math.max(48,(x*-d>0?Math.abs(x):0)+32);let out;try{out=el.animate([{transform:`translateX(${x}px)`,opacity:o},{transform:`translateX(${to}px)`,opacity:0}],{duration:a?70:110,easing:MO.EI,fill:"forwards"})}catch(e){NB=0;apply(el,null,d);return}
  out.onfinish=()=>apply(el,out,d);setTimeout(()=>{if(NB&&el._o===out)apply(el,out,d)},400);el._o=out}
 function apply(el,out,d){if(out){if(out._d)return;out._d=1}
  const fns=NF;NF=[];NP=null;NABS=0;NB=0;NAV=1;RDEF=1;try{fns.forEach(f=>f())}finally{RDEF=0}
  try{render();head()}finally{NAV=0}
- try{const inn=el.animate([{transform:`translateX(${d*44}px)`,opacity:0},{transform:"none",opacity:1}],{duration:300,easing:MO.E});el._a=inn;inn.onfinish=inn.oncancel=()=>{if(el._a===inn)el._a=null}}catch(e){}
+ try{const inn=el.animate([{transform:`translateX(${d*44}px)`,opacity:0},{transform:"none",opacity:1}],{duration:260,easing:MO.E});el._a=inn;inn.onfinish=inn.oncancel=()=>{if(el._a===inn)el._a=null}}catch(e){}
  if(out)out.cancel()}
 function fade(el){moSwap(el,0)}

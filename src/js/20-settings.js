@@ -39,7 +39,7 @@ const PRE = ["", "#22a06b", "#14b8a6", "#3b82f6", "#8b5cf6", "#e5589a", "#e5484d
 const SWL = [["meal", "Приём пищи", "plus", "Добавить в приём пищи по времени суток"], ["prod", "Новый продукт", "box", "Сразу открыть создание продукта"], ["stat", "Статистика", "chart", "Открыть статистику за месяц"], ["wt", "Вес", "scale", "Записать вес за день"], ["off", "Выключено", "close", "Жест не используется"]],
   DWL = [["cal", "Календарь", "cal", "Выбрать день в календаре"], ["today", "К сегодня", "today", "Вернуться к сегодняшнему дню"], ["off", "Выключено", "close", "Жест не используется"]];
 function setSw(v) { S.set = Object.assign({}, S.set, { sw: v }); saveq(); drawSet(); render(); vib("ui") }
-function setAc(h) { S.set = Object.assign({}, S.set, { ac: h }); saveq(); vib("ui"); allAtOnce(() => { applyAc(); drawSet() }) }
+function setAc(h) { S.set = Object.assign({}, S.set, { ac: h }); saveq(); vib("ui"); themeFade(() => { applyAc(); drawSet() }) }
 
 // ===== экраны выбора =====
 const gHint = (dn, edge) => `<div id="${dn ? "dwh" : "sgh"}" class="smh ${dn ? "phd" : "phu"}${edge ? " edge" : ""}" aria-hidden="true"><div class="smp"><i><s></s><s></s><s></s><u></u></i></div><div class="smt">${dn ? "В начале списка <b>потяните вниз</b> и отпустите" : edge ? "Потяните вверх <b>от нижней панели</b> из любого места списка или <b>в конце дня</b>. Кнопки панели при этом не нажимаются" : "Долистайте до конца дня и <b>потяните вверх</b>"}</div></div>`;
@@ -61,7 +61,11 @@ function pick(k) { if (!$("v7").hidden) hubY = shBody().scrollTop; pkCur = k; SU
 function drawPick() {
   const P = PK[pkCur]; if (!P) return; const cur_ = P.g ? P.g() : null;
   $("pko").hidden = !P.o;
-  if (P.o) $("pko").innerHTML = P.o().map(([v, t, i, d]) => `<button class="row${v === cur_ ? " on" : ""}" role="radio" aria-checked="${v === cur_}" onclick="pkSet('${v}')"><span class="ic">${ic(i)}</span><span class="tx">${t}${d ? `<small>${d}</small>` : ""}</span><span class="ok">${ic("check")}</span></button>`).join("");
+  // тот же список вариантов уже на экране — меняется только отметка (строки не пересоздаются: цвет и галочка переходят плавно)
+  const o = P.o ? P.o() : null, key = o ? pkCur + "|" + o.map(x => x.join("~")).join("|") : "", pk = $("pko");
+  if (o && pk._k === key) { pk.querySelectorAll(".row").forEach(r => { const on = r.dataset.v === cur_; r.classList.toggle("on", on); r.setAttribute("aria-checked", on) }) }
+  else if (o) { pk._k = key; pk.innerHTML = o.map(([v, t, i, d]) => `<button class="row${v === cur_ ? " on" : ""}" role="radio" data-v="${v}" aria-checked="${v === cur_}" onclick="pkSet('${v}')"><span class="ic">${ic(i)}</span><span class="tx">${t}${d ? `<small>${d}</small>` : ""}</span><span class="ok">${ic("check")}</span></button>`).join("") }
+  if (!o) pk._k = "";
   $("pkx").innerHTML = P.x ? P.x() : ""; if (P.after) P.after()
 }
 function pkSet(v) { const P = PK[pkCur]; if (P.g() === v) return; P.set(v) }
