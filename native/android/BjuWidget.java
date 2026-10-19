@@ -46,20 +46,21 @@ public class BjuWidget extends AppWidgetProvider {
     private static final int T1 = 0;
     private static final int[] LAYOUT = {
         R.layout.bju_widget_t1, R.layout.bju_widget_n2, R.layout.bju_widget_w3, R.layout.bju_widget_w4,
-        R.layout.bju_widget_s, R.layout.bju_widget_m, R.layout.bju_widget, R.layout.bju_widget_sx, R.layout.bju_widget_lx
+        R.layout.bju_widget_s, R.layout.bju_widget_m, R.layout.bju_widget, R.layout.bju_widget_sx, R.layout.bju_widget_lx,
+        R.layout.bju_widget_v2
     };
-    // увеличенные варианты ведут себя как обычные
-    private static final int[] BASE = { 0, 1, 2, 3, 4, 5, 6, 4, 6 };
+    // увеличенные варианты ведут себя как обычные; v2 (узкий высокий 1×2) — с Б / Ж / У, как 2×2
+    private static final int[] BASE = { 0, 1, 2, 3, 4, 5, 6, 4, 6, 4 };
     // минимальный размер (dp), с которого включается раскладка. Крупные (4×1 с «＋», высокая 4×2, увеличенная) — только
     // при полной ширине: в 3 колонки (≈270 dp) в них не помещались числа («Углев…», «съедено 28…»), там — средние раскладки
-    private static final float[][] MIN = { { 40, 40 }, { 95, 40 }, { 210, 40 }, { 290, 40 }, { 95, 115 }, { 240, 115 }, { 290, 165 }, { 95, 240 }, { 360, 240 } };
+    private static final float[][] MIN = { { 40, 40 }, { 95, 40 }, { 210, 40 }, { 290, 40 }, { 95, 115 }, { 240, 115 }, { 290, 165 }, { 95, 240 }, { 360, 240 }, { 40, 160 } };
     // кольцо: размер картинки (dp) и толщина линии; картинка масштабируется под место в разметке
-    private static final int[] RING = { 72, 0, 0, 0, 104, 92, 112, 132, 150 };
+    private static final int[] RING = { 72, 0, 0, 0, 104, 92, 112, 132, 150, 64 };
     // что есть в раскладке (по номеру раскладки): кольцо — RING > 0; колонка калорий, шапка с нормой «/ 200 г», полоски, «＋»
-    private static final boolean[] KCAL = { false, true, true, true, false, false, false, false, false };
-    private static final boolean[] HEAD = { false, false, false, false, false, true, true, false, true };
-    private static final boolean[] BARS = { false, false, true, true, true, true, true, true, true };
-    private static final boolean[] ADD = { false, false, false, true, false, true, true, false, true };
+    private static final boolean[] KCAL = { false, true, true, true, false, false, false, false, false, false };
+    private static final boolean[] HEAD = { false, false, false, false, false, true, true, false, true, false };
+    private static final boolean[] BARS = { false, false, true, true, true, true, true, true, true, true };
+    private static final boolean[] ADD = { false, false, false, true, false, true, true, false, true, false };
 
     @Override
     public void onUpdate(Context ctx, AppWidgetManager mgr, int[] ids) {

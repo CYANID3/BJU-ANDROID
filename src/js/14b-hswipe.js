@@ -39,7 +39,7 @@ function hSlide(el, dir, from, change) {
   const E = MO.E, s = w * .3;
   // старое гаснет за первые ~0,1 с (общие строки «Все» и «Блюда» не двоятся), новое въезжает следом
   g.animate([{ transform: `translateX(${from}px)`, opacity: op }, { opacity: 0, offset: .65 }, { transform: `translateX(${from - dir * s}px)`, opacity: 0 }], { duration: 130, easing: "cubic-bezier(.3,0,.6,1)", fill: "forwards" }).finished.catch(() => { }).then(() => box.remove());
-  el.animate([{ transform: `translateX(${dir * s * .8}px)`, opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 240, delay: 40, easing: E, fill: "backwards" })
+  el.animate([{ transform: `translateX(${dir * s * .8}px)`, opacity: 0, offset: 0 }, { transform: `translateX(${dir * s * .8}px)`, opacity: 0, offset: 40 / 280, easing: E }, { transform: "none", opacity: 1 }], { duration: 280 })
 }
 hSwipe($("v6"), () => $("cg"), () => true, (dir, dx, el) => { calFlip(el, dir, dx); return 1 });
 hSwipe($("v9"), () => $("stc"), e => !e.target.closest(".chw"), (dir, dx, el) => { hSlide(el, dir, dx, () => { stM[1] += dir; if (stM[1] < 0) { stM[1] = 11; stM[0]-- } if (stM[1] > 11) { stM[1] = 0; stM[0]++ } drawStats() }); return 1 });

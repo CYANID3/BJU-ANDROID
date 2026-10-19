@@ -84,9 +84,9 @@ test('виджет: в 3 колонки — средняя раскладка, �
   const java = fs.readFileSync('native/android/BjuWidget.java', 'utf8');
   const MIN = java.match(/MIN = \{(.*?)\};/s)[1].match(/\{[^}]*\}/g).map(x => x.slice(1, -1).split(',').map(Number));
   const pick = (w, h) => { let b = 0, ar = 0; MIN.forEach(([x, y], k) => { if (w >= x && h >= y && x * y > ar) { b = k; ar = x * y } }); return b };
-  const L = ['t1', 'n2', 'w3', 'w4', 's', 'm', 'L', 'sx', 'lx'];
+  const L = ['t1', 'n2', 'w3', 'w4', 's', 'm', 'L', 'sx', 'lx', 'v2'];
   assert.equal(L[pick(270, 190)], 'm', '3×2'); assert.equal(L[pick(270, 72)], 'w3', '3×1'); assert.equal(L[pick(300, 190)], 'L', '4×2');
-  assert.equal(L[pick(300, 72)], 'w4', '4×1'); assert.equal(L[pick(300, 280)], 'L', '4×3 на узком телефоне'); assert.equal(L[pick(75, 190)], 't1', '1×2');
+  assert.equal(L[pick(300, 72)], 'w4', '4×1'); assert.equal(L[pick(300, 280)], 'L', '4×3 на узком телефоне'); assert.equal(L[pick(75, 190)], 'v2', '1×2 — ревизия 10: кольцо и Б / Ж / У столбиком'); assert.equal(L[pick(75, 120)], 't1', 'чуть выше 1×1 — по-прежнему кольцо');
   assert.match(java, /"Съедено " \+ d\.kcal \+ " из " \+ d\.kcalGoal/);
   const t1 = fs.readFileSync('native/android/res/layout/bju_widget_t1.xml', 'utf8');
   assert.match(t1, /scaleType="fitCenter" android:src="@drawable\/bju_widget_tile"/);

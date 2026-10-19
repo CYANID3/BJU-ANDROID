@@ -106,6 +106,10 @@ public class BjuNativePlugin extends Plugin {
                             Insets ime = r.getInsets(WindowInsets.Type.ime());
                             sendInsets(bars.top, bars.bottom, bars.left, bars.right, Math.max(0, ime.bottom - bars.bottom), "end");
                         }
+                        // после того как клавиатура убралась, WebView на некоторых телефонах не рисует новый кадр, пока его
+                        // не коснутся (часть экрана остаётся «пустой»): просим перерисоваться сразу и ещё раз чуть позже
+                        webView.postInvalidate();
+                        webView.postDelayed(webView::postInvalidate, 150);
                     }
                 }
             );

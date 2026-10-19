@@ -45,6 +45,8 @@ function palette(dark) {
   T.tst = dark ? okHex(.42, C || .011, H) : "#ffffff"; T.tsx = dark ? "#f1f2f5" : "#1a1c22";
   T.tsa = dark ? okHex(.84, Math.min(aC, .13), aH) : ensC(a, ["#ffffff"], 4.5, false);
   T.ac = a; T.on = crt("#ffffff", a) >= 3.1 ? "#ffffff" : "#141922";
+  // мелкий текст на заливке акцентом (выбранная вкладка, калории в выбранном дне): нужен контраст 4,5 : 1, а не 3 : 1 как у кнопок
+  T.ons = crt("#ffffff", a) >= 4.5 ? "#ffffff" : crt("#141922", a) >= crt("#ffffff", a) ? "#141922" : "#ffffff";
   return T
 }
 function applyTint() {
@@ -64,7 +66,7 @@ function applyAc() {
   const cs = getComputedStyle(r), gv_ = (k, d) => { const v = cs.getPropertyValue(k).trim(); return /^#[0-9a-f]{6}$/i.test(v) ? v : d }, card = gv_("--card", dark ? "#1a202b" : "#ffffff"), sub = gv_("--sub", dark ? "#232a37" : "#f2f4f8"),
     bar = dark ? hexMix("#ffffff", card, .03) : card; r.style.setProperty("--bar", bar);
   r.style.setProperty("--act", ensC(a, [card, sub, bar].map(b => hexMix(a, b, dark ? .18 : .14)), 4.5, dark));
-  r.style.setProperty("--on", palette(dark).on); tc()
+  const P_ = palette(dark); r.style.setProperty("--on", P_.on); r.style.setProperty("--ons", P_.ons); tc()
 }
 // цвет строки состояния и стиль значков системных панелей (снизу под панелью приложения — её же тон)
 function tc() { const m = document.querySelector('meta[name="theme-color"]'), cs = getComputedStyle(document.documentElement), bg = cs.getPropertyValue("--bg").trim() || "#eef1f5"; if (m) m.setAttribute("content", bg); const N = NX(); if (N && /^#[0-9a-f]{6}$/i.test(bg)) N.bars(bg, lum(bg) > .5); try { wUpd() } catch (e) { } }

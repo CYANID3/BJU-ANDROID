@@ -8,4 +8,4 @@
 #dgt{font-size:var(--fs-title);font-weight:700;margin-bottom:8px}#dgt:empty{display:none}
 #dgm{white-space:pre-line;line-height:1.45;font-size:15px;color:var(--mu);font-weight:500}#dgt:empty+#dgm{color:var(--tx);font-size:16px}
 .dbs{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}.dbs button{height:var(--h-ib);padding:0 18px;border-radius:var(--r-ctl);font-weight:700;font-size:15px;color:var(--act,var(--ac))}
-.dbs button:active{background:var(--acs)}#dgy.dg{background:color-mix(in srgb,var(--dg) 16%,transparent);color:var(--dg)}
+.dbs button:active{background:var(--acs)}#dgy.dg{background:color-mix(in srgb,var(--dg) 16%,transparent);color:var(--dgt)}

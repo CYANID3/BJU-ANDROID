@@ -3,7 +3,7 @@
 Запуск: python3 scripts/widget-layouts.py
 
 Раскладки (ширина × высота в ячейках):
-  t1  1×1 — кольцо калорий;                       n2  2×1 — остаток калорий слева, Б / Ж / У столбиком справа;
+  t1  1×1 — кольцо калорий;  v2  1×2 и выше в одну колонку — кольцо и Б / Ж / У строками с полосками;                       n2  2×1 — остаток калорий слева, Б / Ж / У столбиком справа;
   w3  3×1 — колонки «Осталось», Б, Ж, У с полосками; w4  4×1 — то же + «＋»;
   s   2×2 — кольцо + Б / Ж / У + полоски (вытянутых узких раскладок нет: узкий высокий виджет показывает квадрат 1×1);
   m   3×2 и низкий 4×2 — шапка с «＋», кольцо и строки Б / Ж / У;
@@ -75,6 +75,14 @@ out = {}
 # в узкий высокий (1×2, 1×3…), это выглядит как обычный 1×1 посередине ячеек, а не как вытянутая белая полоса
 TILE = f'<ImageView {A}id="@+id/bju_w_bg" {A}layout_width="match_parent" {A}layout_height="match_parent" {A}scaleType="fitCenter" {A}src="@drawable/bju_widget_tile" {A}importantForAccessibility="no"/>'
 out['bju_widget_t1'] = root(ring(), "vertical", "6dp", TILE)
+# 1×2 (узкий высокий): кольцо сверху на всю ширину, под ним Б / Ж / У строками — буква цветом, число справа, тонкая полоска.
+# Всё по центру и с одинаковыми отступами; при большей высоте кольцо растёт, строки остаются внизу
+def vrow(m):
+    return LL(LL(tv(f"bju_{m}_lbl", SHORT[m], 12, COL[m], True, extra=f'{A}layout_marginEnd="4dp"') + val(f"bju_{m}_val", "0", 13, 9, w="0dp", grav="end", extra=W1), "horizontal", gravity="center_vertical")
+              + mbar(m, 4, 3), extra=f'{A}layout_marginTop="7dp"')
+SP = f'<View {A}layout_width="match_parent" {A}layout_height="0dp" {A}layout_weight="1"/>'
+# кольцо — квадрат по ширине (не больше 96 dp); вся группа стоит по центру: в высоком виджете нет пустоты между кольцом и строками
+out['bju_widget_v2'] = root(SP + ring("match_parent", "wrap_content", f'{A}maxHeight="96dp"') + LL(''.join(vrow(m) for m in M3), extra=f'{A}layout_marginTop="4dp"') + SP, "vertical", "12dp 12dp")
 # 2×1 — слева остаток калорий крупно, справа столбик Б / Ж / У (буква и число в строку) — две равные половины
 def mstack(k=1.0):
     return ''.join(LL(tv(f"bju_{m}_lbl", SHORT[m], round(12.5 * k), COL[m], True, extra=f'{A}layout_marginEnd="6dp"')

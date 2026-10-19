@@ -9,7 +9,7 @@
 .bar.km.ov{box-shadow:0 0 0 2px var(--dg)}
 /* столбцы Б / Ж / У: название цветом, «съедено / норма», полоска, «ещё N г» (и доля калорий — в статистике) */
 .mcols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.mcol{min-width:0}.mcol .n{font-size:var(--fs-sm);font-weight:700;color:var(--dot)}
+.mcol{min-width:0}.mcol .n{font-size:var(--fs-sm);font-weight:700;color:var(--dot);color:color-mix(in oklab,var(--dot) 68%,var(--tx))}
 .mcol .v{font-size:17px;font-weight:800;margin:2px 0 6px;white-space:nowrap;letter-spacing:-.01em}.mcol .v small{font-size:var(--fs-sm);font-weight:600;color:var(--mu)}
 .mcol .bar{height:4px}.mcol .r{display:flex;justify-content:space-between;gap:4px;font-size:12px;color:var(--mu);margin-top:5px;white-space:nowrap}.mcol .r .ov{color:var(--dg);font-weight:700}
 /* строка «Карточка дня» внизу итога (режим «Строка в итоге дня») */
@@ -19,7 +19,7 @@
 /* плитки Б / Ж / У карточки дня (там они остаются плитками) */
 .mac{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .mtl{background:var(--sub);border-radius:var(--r-block);padding:10px 11px;min-width:0}
-.mtn{font-size:var(--fs-sm);font-weight:700;color:var(--dot);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mtn{font-size:var(--fs-sm);font-weight:700;color:var(--dot);color:color-mix(in oklab,var(--dot) 68%,var(--tx));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mtv{margin:5px 0 9px;white-space:nowrap}.mtv b{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}.mtv small{font-size:12px;font-weight:500;color:var(--mu);margin-left:2px;font-variant-numeric:tabular-nums}
 .mtl .bar{height:6px;background:var(--card)}.mtr{display:flex;justify-content:space-between;gap:4px;overflow:hidden;margin-top:7px;font-size:12px;color:var(--mu);white-space:nowrap;font-variant-numeric:tabular-nums}.mtr .ov{color:var(--dg);font-weight:600}.mtr em{font-style:normal;font-weight:600}
 @media (max-width:390px){.mcols{gap:10px}.mcol .v{font-size:16px}.mcol .r{font-size:11px}.mac{gap:6px}.mtl{padding:11px 8px 10px}.mtr{font-size:11px}}

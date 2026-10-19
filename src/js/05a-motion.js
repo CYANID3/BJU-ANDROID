@@ -7,7 +7,9 @@ const MO={E:"cubic-bezier(.2,0,0,1)",EI:"cubic-bezier(.3,0,.8,.15)",EIO:"cubic-b
 function moOk(el){return el&&el.animate&&!RM()}
 function mo(el,kf,o){if(!moOk(el))return null;try{return el.animate(kf,Object.assign({duration:MO.t2,easing:MO.E},typeof o==="number"?{duration:o}:o))}catch(e){return null}}
 // появление: из прозрачности, чуть снизу и чуть меньше
-function moIn(el,o){return mo(el,[{opacity:0,transform:"translateY(8px) scale(.985)"},{opacity:1,transform:"none"}],Object.assign({fill:"backwards"},o))}
+// проявление: пауза перед ним (delay) — часть ключевых кадров, без fill: backwards — застывшая анимация не прячет элемент
+function moIn(el,o){o=o||{};const dl=o.delay||0,du=o.duration||MO.t2,a={opacity:0,transform:"translateY(8px) scale(.985)"};
+ return mo(el,dl?[Object.assign({offset:0},a),Object.assign({offset:dl/(dl+du),easing:MO.E},a),{opacity:1,transform:"none"}]:[a,{opacity:1,transform:"none"}],{duration:dl+du,easing:dl?"linear":MO.E})}
 // скрытие: затем done() (сразу, если анимации выключены)
 function moOut(el,done,o){const a=mo(el,[{opacity:1,transform:"none"},{opacity:0,transform:"scale(.97)"}],Object.assign({duration:MO.t1+20,easing:MO.EI,fill:"forwards"},o));if(a)a.onfinish=()=>done&&done();else if(done)done()}
 // выезд / уезд по высоте (элемент раздвигает соседей плавно): open — от нуля до своей высоты, иначе — до нуля, затем done().

@@ -10,3 +10,8 @@
 :root{--acs:color-mix(in srgb,var(--ac) 14%,transparent);--acb:color-mix(in srgb,var(--ac) 35%,transparent);color-scheme:light dark}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--acs:color-mix(in srgb,var(--ac) 18%,transparent)}}:root[data-theme="dark"]{--acs:color-mix(in srgb,var(--ac) 18%,transparent)}
 :root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
+
+/* Цвета Б / Ж / У и состояний для ТЕКСТА: тот же оттенок, но сдвинут к цвету текста темы (в светлой — темнее, в тёмной —
+   светлее), чтобы мелкие подписи читались не хуже 4,5 : 1 (проверяется тестом контраста). Полоски и точки — исходными цветами */
+:root{--pt:color-mix(in oklab,var(--p) 70%,var(--tx));--ft:color-mix(in oklab,var(--f) 62%,var(--tx));--ct:color-mix(in oklab,var(--c) 78%,var(--tx));
+ --okt:color-mix(in oklab,var(--ok) 70%,var(--tx));--wrt:color-mix(in oklab,var(--wr) 66%,var(--tx));--dgt:color-mix(in oklab,var(--dg) 72%,var(--tx))}

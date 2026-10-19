@@ -20,7 +20,9 @@ function svKill() { svG.forEach(g => g.remove()); svG = []; document.querySelect
 function svSnap(sh) {
   // id в копии сохраняются: на них завязаны стили (#pkx, #ls…); копия стоит в документе после листа, поэтому $(id) находит оригинал
   const r0 = sh.getBoundingClientRect(), L = document.createElement("div"), strip = g => { g.hidden = false; g.setAttribute("aria-hidden", "true"); g.inert = true; return g }, fix = [];
-  L.className = "svl" + (sh.classList.contains("kpo") ? " kpo" : ""); Object.assign(L.style, { left: r0.left + "px", top: r0.top + "px", width: r0.width + "px", height: r0.height + "px" });
+  // копия непрозрачна (фон и скругление листа): новый экран под ней проявляется по мере того, как она гаснет — чистое
+  // растворение без наложения текста двух экранов
+  L.className = "svl" + (sh.classList.contains("kpo") ? " kpo" : ""); Object.assign(L.style, { left: r0.left + "px", top: r0.top + "px", width: r0.width + "px", height: r0.height + "px", background: getComputedStyle(sh).backgroundColor, borderRadius: "24px 24px 0 0" });
   const put = (el, clip) => {
     if (!el) return; const r = (clip || el).getBoundingClientRect();
     // метка на первом видимом «листовом» элементе каждого блока — по ней копия выравнивается точно по оригиналу
@@ -59,14 +61,14 @@ function sv(n, t, s) {
   if (!isOpen || prev !== n) shBody().scrollTop = 0;
   if (!snap) return;
   // запуск — после текущего кода: вызвавший успевает восстановить прокрутку («назад» в «Ещё»), кадр ещё не нарисован
-  queueMicrotask(() => svPlay(sh, snap, [$("v" + n), sh.querySelector(".hd"), sh.querySelector(".shf")]))
+  queueMicrotask(() => svPlay(sh, snap))
 }
 // общий переход: верхний край листа переезжает со старой высоты на новую, старое гаснет, новое проявляется на своих местах
-function svPlay(sh, snap, ins) {
+function svPlay(sh, snap) {
   const { L, r0 } = snap, r1 = sh.getBoundingClientRect(); svAlign(snap.fix || []); const d = r1.top - r0.top, D = 260, E = "cubic-bezier(.2,0,0,1)";
   const ov = $("ov"); ov.appendChild(L); const out = [L], fin = [];
   // плавная смена без провала: старое быстро тускнеет (основная часть — за первые 0,06 с), новое проявляется почти сразу
-  L.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 110, easing: "cubic-bezier(0,0,.2,1)", fill: "forwards" });
+  fin.push(L.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 110, easing: "cubic-bezier(0,0,.2,1)", fill: "forwards" }).finished);
   // только transform и opacity: их рисует видеокарта, и движение идёт ровно, даже пока приложение строит новый экран
   if (d > 1) {
     // лист стал ниже: полоса фона старой высоты (под листом) опускается к новому краю, старое содержимое тем временем гаснет
@@ -83,9 +85,9 @@ function svPlay(sh, snap, ins) {
     // лист стал выше: он поднимается целиком с прежней высоты (внизу он уходит за край экрана — там ничего не видно)
     fin.push(sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }).finished);
   }
-  ins.filter(Boolean).forEach(el => fin.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 170, delay: 45, easing: "cubic-bezier(.2,0,.2,1)", fill: "backwards" }).finished));
-  // «ручка» листа тоже проявляется на новом краю, а не стоит поверх старого содержимого
-  if (Math.abs(d) > 1) try { sh.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 170, delay: 45, easing: "linear", fill: "backwards", pseudoElement: "::before" }) } catch (e) { }
+  // Новый экран сразу виден целиком — его ничто не делает прозрачным: смену даёт гаснущая поверх копия старого.
+  // Раньше новые шапка и содержимое проявлялись из прозрачности; на некоторых телефонах WebView на миг переставал
+  // рисовать кадры, и шапка оставалась прозрачной (пустое место вместо «Изменить продукт», «‹» и «×»).
   svG = out; Promise.all(fin).catch(() => { }).then(() => { out.forEach(x => x.remove()); if (svG === out) svG = [] });
   // страховка: если WebView приостановили посреди перехода (системное окно выбора файла), через 0,7 с всё доводится до конца
   setTimeout(() => { if (svG === out) svKill() }, 700)
@@ -119,7 +121,7 @@ function shResize(fn, watch) {
   was.filter(w => !document.querySelector(w[0])).forEach(([, g]) => { $("ov").appendChild(g); g.animate([{ opacity: 1, transform: "none" }, { opacity: 0, offset: .4 }, { opacity: 0, transform: `translateY(${Math.max(0, d)}px)` }], { duration: D, easing: E, fill: "forwards" }).finished.catch(() => { }).then(() => g.remove()) });
   if (d > 1) { bg.className = "sve"; Object.assign(bg.style, { left: r0.left + "px", top: r0.top + "px", width: r0.width + "px", height: d + 30 + "px" }); $("ov").insertBefore(bg, sh); svG = [bg];
     bg.animate([{ transform: "none" }, { transform: `translateY(${d}px)` }], { duration: D, easing: E, fill: "forwards" }).finished.catch(() => { }).then(() => bg.remove()) }
-  fresh.forEach(el => el.animate([{ opacity: 0, transform: "scale(.97)" }, { opacity: 1, transform: "none" }], { duration: 220, delay: 90, easing: MO.E, fill: "backwards" }));
+  fresh.forEach(el => el.animate([{ opacity: 0, transform: "scale(.97)", offset: 0 }, { opacity: 0, transform: "scale(.97)", offset: 90 / 310, easing: MO.E }, { opacity: 1, transform: "none" }], { duration: 310 }));
 }
 // шапка: «‹ назад» — если «Назад» ведёт на шаг внутри листа; у календаря и статистики — стрелки месяца
 function shHead(n) {

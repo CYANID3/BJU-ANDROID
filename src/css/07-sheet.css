@@ -56,7 +56,7 @@ label{font-size:var(--fs-sm);font-weight:600;color:var(--mu);display:block;margi
 .seg{position:relative;isolation:isolate;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;background:var(--sub);border-radius:var(--r-ctl);padding:4px}
 .seg button{position:relative;min-height:var(--h-seg);padding:0 6px;border-radius:var(--r-in);font-size:14px;font-weight:600;color:var(--mu);transition:color var(--t3) var(--ease),background-color var(--t2),transform var(--t1) var(--ease)}
 .seg button:not(.on):active{color:var(--tx);background:color-mix(in srgb,var(--tx) 6%,transparent)}
-.seg button.on{background:var(--ac);color:var(--on);font-weight:700}
+.seg button.on{background:var(--ac);color:var(--on);color:var(--ons,var(--on));font-weight:700}
 .seg.sk button.on{background:transparent}
 .seg.sk::before{content:"";position:absolute;left:0;top:0;z-index:-1;width:var(--skw);height:var(--skh);transform:translate(var(--skx),var(--sky));border-radius:var(--r-in);background:var(--ac);transition:transform var(--t3) var(--ease),width var(--t3) var(--ease),height var(--t3) var(--ease),background-color var(--t2)}
 .seg.sn::before{transition:none}

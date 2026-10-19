@@ -28,11 +28,14 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;paddin
 .hint{font-size:var(--fs-sm);color:var(--mu);line-height:1.4;margin:8px 2px 0;min-height:18px}.hint.c{text-align:center}.hint b{color:var(--tx);font-weight:700}
 .lead{font-size:14px;color:var(--mu);line-height:1.45;margin:0 2px 14px}
 /* Б / Ж / У — всегда своими цветами */
-.mx{font-style:normal;font-weight:800;margin:0 3px 0 0}.mx.p{color:var(--p)}.mx.f{color:var(--f)}.mx.c{color:var(--c)}
+.mx{font-style:normal;font-weight:800;margin:0 3px 0 0}.mx.p{color:var(--pt)}.mx.f{color:var(--ft)}.mx.c{color:var(--ct)}
 #app.mv{will-change:transform,opacity}
 /* плавная смена кадра (vtx): тема, цвет, карточка дня, вид главного экрана */
 .notr *,.notr *::before,.notr *::after{transition:none!important}
-/* смена темы, оттенка, акцента: все цвета меняются одним плавным переходом — одновременно и одной длины (без запоздалых
-   элементов); экран остаётся живым, касания доходят сразу, переключать можно быстро подряд */
-html.thx,html.thx *,html.thx *::before,html.thx *::after{transition:background-color .22s ease-out,color .22s ease-out,border-color .22s ease-out,fill .22s ease-out,stroke .22s ease-out,box-shadow .22s ease-out,outline-color .22s ease-out!important}
+/* смена темы, оттенка, акцента: лист с настройками (то, на что смотрит глаз) меняет цвета одним плавным переходом (0,22 с),
+   главный экран под затемнением — сразу и целиком (иначе фон и текст карточек менялись бы с разной скоростью). Переход цвета у всех элементов страницы разом
+   пересчитывал стили всей страницы каждый кадр (на медленном телефоне — 3–4 кадра в 0,1 с); так — почти без потерь.
+   Касания доходят сразу, переключать можно быстро подряд */
+html.thx *,html.thx *::before,html.thx *::after{transition:none!important}
+html.thx #ov .sh,html.thx #ov .sh *{transition:background-color .22s ease-out,color .22s ease-out,border-color .22s ease-out!important}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:200ms;animation-timing-function:ease-out}
