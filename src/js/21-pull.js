@@ -56,7 +56,8 @@ const onMv=e=>{if(e._m)return;e._m=1;if(isOpen)return;const t=e.touches[0],dx=t.
  PS.push([e.timeStamp,v]);if(PS.length>8)PS.shift();
  if(Math.abs(dx)>Math.max(70,v*.9)/SL(4)*1.5){if(pAct)phide();return}
  if(REP){const d=repDense();if(up>0&&!d)pull(up);else if(dn>0&&d)pull(dn,1);else if(pAct)pull(0,pDn);return}
- if(up>0){pull(up);if(pAct&&pZ===1)pNoClick=1}else if(dn>0&&dwOn())pull(dn,1);else if(pAct)pull(0,pDn);
+ // от панели индикатор появляется только после явного движения вверх (16 px): дрожание пальца при нажатии кнопки панели — не жест
+ if(up>0){if(!(pZ===1&&!pAct&&up<16)){pull(up);if(pAct&&pZ===1)pNoClick=1}}else if(dn>0&&dwOn())pull(dn,1);else if(pAct)pull(0,pDn);
  // пока тянется индикатор, страница под пальцем не прокручивается (иначе при отмене она едет вместе с пальцем и всё дёргается)
  if(pAct&&e.cancelable)e.preventDefault()};addEventListener("touchmove",onMv,{passive:false});
 const onEn=e=>{if(e._e)return;e._e=1;const z=pZ;pZ=0;if(pNoClick)setTimeout(()=>pNoClick=0,400);if(isOpen||!gd){if(pAct)phide();return}const t=e.changedTouches[0],dx=t.clientX-sx,g=gd;gd=0;

@@ -63,20 +63,25 @@ function sv(n, t, s) {
 }
 // общий переход: верхний край листа переезжает со старой высоты на новую, старое гаснет, новое проявляется на своих местах
 function svPlay(sh, snap, ins) {
-  const { L, r0 } = snap, r1 = sh.getBoundingClientRect(); svAlign(snap.fix || []); const d = r1.top - r0.top, D = 260, E = "cubic-bezier(.2,0,0,1)", R = "24px 24px 0 0";
+  const { L, r0 } = snap, r1 = sh.getBoundingClientRect(); svAlign(snap.fix || []); const d = r1.top - r0.top, D = 260, E = "cubic-bezier(.2,0,0,1)";
   const ov = $("ov"); ov.appendChild(L); const out = [L], fin = [];
   // плавная смена без провала: старое быстро тускнеет (основная часть — за первые 0,06 с), новое проявляется почти сразу
   L.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 110, easing: "cubic-bezier(0,0,.2,1)", fill: "forwards" });
+  // только transform и opacity: их рисует видеокарта, и движение идёт ровно, даже пока приложение строит новый экран
   if (d > 1) {
-    // лист стал ниже: фон старой высоты (под листом) плавно опускается к новому краю
+    // лист стал ниже: полоса фона старой высоты (под листом) опускается к новому краю, старое содержимое тем временем гаснет
     const ed = document.createElement("div"); ed.className = "sve";
     Object.assign(ed.style, { left: r0.left + "px", top: r0.top + "px", width: r0.width + "px", height: d + 30 + "px" }); ov.insertBefore(ed, sh); out.push(ed);
-    fin.push(ed.animate([{ clipPath: `inset(0 0 0 0 round ${R})` }, { clipPath: `inset(${d}px 0 0 0 round ${R})` }], { duration: D, easing: E, fill: "forwards" }).finished);
-    // старое содержимое уходит вместе с краем, а не висит над главным экраном
-    L.animate([{ clipPath: "inset(0 0 0 0)" }, { clipPath: `inset(${d}px 0 0 0)` }], { duration: D, easing: E, fill: "forwards" });
+    fin.push(ed.animate([{ transform: "none" }, { transform: `translateY(${d}px)` }], { duration: D, easing: E, fill: "forwards" }).finished);
+    // старое содержимое обрезается опускающимся краем (а не висит над главным экраном): рамка едет вниз, копия внутри —
+    // на столько же вверх, поэтому копия стоит на месте, а уходит только её верх. Тоже только transform
+    const cb = document.createElement("div"); cb.className = "svl"; Object.assign(cb.style, { left: L.style.left, top: L.style.top, width: L.style.width, height: L.style.height, overflow: "hidden" });
+    L.style.position = "absolute"; L.style.left = L.style.top = "0px"; ov.insertBefore(cb, L); cb.appendChild(L); out.push(cb);
+    cb.animate([{ transform: "none" }, { transform: `translateY(${d}px)` }], { duration: D, easing: E, fill: "forwards" });
+    L.animate([{ transform: "none" }, { transform: `translateY(${-d}px)` }], { duration: D, easing: E, fill: "forwards" });
   } else if (d < -1) {
-    // лист стал выше: верхний край открывается снизу вверх
-    fin.push(sh.animate([{ clipPath: `inset(${-d}px 0 0 0 round ${R})` }, { clipPath: `inset(0 0 0 0 round ${R})` }], { duration: D, easing: E }).finished);
+    // лист стал выше: он поднимается целиком с прежней высоты (внизу он уходит за край экрана — там ничего не видно)
+    fin.push(sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }).finished);
   }
   ins.filter(Boolean).forEach(el => fin.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 170, delay: 45, easing: "cubic-bezier(.2,0,.2,1)", fill: "backwards" }).finished));
   // «ручка» листа тоже проявляется на новом краю, а не стоит поверх старого содержимого
@@ -96,21 +101,24 @@ function shResize(fn, watch) {
   fn();
   const fresh = (watch || []).filter(q => document.querySelector(q) && !was.some(w => w[0] === q)).map(q => document.querySelector(q));
 
-  const r1 = sh.getBoundingClientRect(), d = r1.top - r0.top, D = 240, R = "24px 24px 0 0", E = "cubic-bezier(.2,0,0,1)";
-  // шапка и содержимое едут вместе с краем листа (лист прижат к низу: без этого строки прыгнули бы на новое место сразу)
-  if (Math.abs(d) > 1) {
-    // лист стал ниже: шапка начинает выше нового края — на время пути лист её не обрезает (фон старой высоты — под ней)
-    if (d > 1) sh.style.overflow = "visible";
+  const r1 = sh.getBoundingClientRect(), d = r1.top - r0.top, D = 240, E = "cubic-bezier(.2,0,0,1)";
+  // только transform и opacity (рисует видеокарта — ровно даже при занятом приложении)
+  if (d > 1) {
+    // лист стал ниже: шапка и содержимое едут вниз вместе с краем; шапка начинает выше нового края — на время пути
+    // лист её не обрезает (под ней — полоса фона старой высоты, она опускается следом)
+    sh.style.overflow = "visible";
     const an = [sh.querySelector(".hd"), shBody()].map(el => el.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }));
     // «ручка» листа (::before) едет вместе с шапкой, а не стоит на новом краю поверх заголовка
     try { sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E, pseudoElement: "::before" }) } catch (e) { }
     an[0].finished.catch(() => { }).then(() => { sh.style.overflow = "" })
+  } else if (d < -1) {
+    // лист стал выше: поднимается целиком со старой высоты (низ уходит за край экрана — там его не видно)
+    sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E })
   }
   // пропавший блок уходит вниз вместе со всеми и гаснет — быстро, в первые 40 % пути, чтобы не наложиться на новый текст
   was.filter(w => !document.querySelector(w[0])).forEach(([, g]) => { $("ov").appendChild(g); g.animate([{ opacity: 1, transform: "none" }, { opacity: 0, offset: .4 }, { opacity: 0, transform: `translateY(${Math.max(0, d)}px)` }], { duration: D, easing: E, fill: "forwards" }).finished.catch(() => { }).then(() => g.remove()) });
   if (d > 1) { bg.className = "sve"; Object.assign(bg.style, { left: r0.left + "px", top: r0.top + "px", width: r0.width + "px", height: d + 30 + "px" }); $("ov").insertBefore(bg, sh); svG = [bg];
-    bg.animate([{ clipPath: `inset(0 0 0 0 round ${R})` }, { clipPath: `inset(${d}px 0 0 0 round ${R})` }], { duration: D, easing: E, fill: "forwards" }).finished.catch(() => { }).then(() => bg.remove()) }
-  else if (d < -1) sh.animate([{ clipPath: `inset(${-d}px 0 0 0 round ${R})` }, { clipPath: `inset(0 0 0 0 round ${R})` }], { duration: D, easing: E });
+    bg.animate([{ transform: "none" }, { transform: `translateY(${d}px)` }], { duration: D, easing: E, fill: "forwards" }).finished.catch(() => { }).then(() => bg.remove()) }
   fresh.forEach(el => el.animate([{ opacity: 0, transform: "scale(.97)" }, { opacity: 1, transform: "none" }], { duration: 220, delay: 90, easing: MO.E, fill: "backwards" }));
 }
 // шапка: «‹ назад» — если «Назад» ведёт на шаг внутри листа; у календаря и статистики — стрелки месяца

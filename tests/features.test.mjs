@@ -429,9 +429,10 @@ test('смена экрана в листе: содержимое меняетс
   assert.deepEqual(f.tf, [], 'новое содержимое не едет вбок');
   await a.wait(500);
   assert.equal(await a.ev(() => document.querySelectorAll('#ov > .svl, #ov > .sve').length), 0, 'после перехода копии убраны');
-  // «назад» в высокий экран: край открывается снизу вверх (clip-path листа)
-  const b = await a.ev(async () => { backStep(); await Promise.resolve(); await Promise.resolve(); await Promise.resolve(); return shEl().getAnimations().flatMap(x => x.effect.getKeyframes().map(k => k.clipPath).filter(Boolean)) });
-  assert.match(b[0], /^inset\(\d+(\.\d+)?px/, 'край листа едет'); assert.match(b[1], /^inset\(0px/);
+  // «назад» в высокий экран: лист поднимается целиком со старой высоты (только transform — плавно на видеокарте)
+  const b = await a.ev(async () => { backStep(); await Promise.resolve(); await Promise.resolve(); await Promise.resolve(); return shEl().getAnimations().filter(x => !x.effect.pseudoElement).flatMap(x => x.effect.getKeyframes().map(k => k.transform).filter(Boolean)) });
+  assert.match(b[0], /^translateY\(\d+(\.\d+)?px\)/, 'край листа едет'); assert.equal(b[1], 'none');
+  assert.equal(await a.ev(() => document.getAnimations().filter(x => x.effect.getKeyframes().some(k => k.clipPath)).length), 0, 'без анимаций clip-path');
   // закрытие посреди перехода не оставляет копий
   await a.ev(async () => { pick('th'); await Promise.resolve(); await Promise.resolve(); cl() }); await a.wait(400);
   await a.ev(() => sets()); await a.wait(100);
