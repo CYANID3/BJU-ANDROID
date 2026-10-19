@@ -48,8 +48,8 @@ function segSync(){document.querySelectorAll(".seg").forEach(s=>{if(s.closest(".
  const first=!s.classList.contains("sk")||!s._sk;if(first)s.classList.add("sn");
  ["--skx","--sky","--skw","--skh"].forEach((n,i)=>s.style.setProperty(n,v[i]));s._sk=k;s.classList.add("sk");
  if(first){void s.offsetWidth;requestAnimationFrame(()=>s.classList.remove("sn"))}})}
-(()=>{let q=0;const go=()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;segSync()})};
- // все сегменты — внутри нижнего листа: следим только за ним, а не за всей страницей
+(()=>{let q=0;const go=()=>{if(q||!isOpen&&!$("ov").classList.contains("on"))return;q=requestAnimationFrame(()=>{q=0;segSync()})};
+ // все сегменты — внутри нижнего листа: следим только за ним и только пока он открыт (листание дней его не трогает)
  new MutationObserver(go).observe($("ov"),{subtree:true,childList:true,attributes:true,attributeFilter:["class","hidden"]});
  addEventListener("resize",()=>{document.querySelectorAll(".seg.sk").forEach(s=>{s._sk="";s.classList.remove("sk")});go()})})();
 
@@ -72,7 +72,7 @@ function allAtOnce(fn) { const d = document.documentElement; d.classList.add("no
 // экран погас или приложение свёрнуто посреди смены кадра — смена завершается сразу (иначе после разблокировки мог остаться пустой кадр)
 // возврат после блокировки экрана: незаконченная смена кадра завершается сразу, а страница перерисовывается целиком
 // (прозрачность 0,999 на два кадра — незаметно, но заставляет WebView нарисовать новый кадр; transform тут нельзя — сдвинул бы закреплённые панели)
-document.addEventListener("visibilitychange", () => { if (vtx.t) try { vtx.t.skipTransition() } catch (e) { } if (!document.hidden) { const b = document.body; b.style.opacity = ".999"; requestAnimationFrame(() => requestAnimationFrame(() => { b.style.opacity = "" })) } });
+document.addEventListener("visibilitychange", () => { if (vtx.t) try { vtx.t.skipTransition() } catch (e) { } if (!document.hidden) { if (isOpen) svKill(); const b = document.body; b.style.opacity = ".999"; requestAnimationFrame(() => requestAnimationFrame(() => { b.style.opacity = "" })) } });
 
 // Главный экран: блок появляется (раскрывается по высоте) или исчезает (сжимается) плавно — для настроек, меняющих вид
 // главного экрана: пустые перекусы, строка «Карточка дня», чип веса. Без View Transitions: касания не теряются.

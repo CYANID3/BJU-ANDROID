@@ -11,7 +11,7 @@
 .row .v i{width:18px;height:18px;border-radius:50%;flex:none}
 .row .ch{flex:none;color:var(--mu);opacity:.7}.row .ch svg.i{width:18px;height:18px}
 /* выбор варианта: выбранный — акцентом и галочкой */
-.row .ok{flex:none;color:var(--act,var(--ac));display:none}.row.on .ok{display:block}.row.on .tx{color:var(--act,var(--ac))}
+.row .ok{flex:none;color:var(--act,var(--ac));visibility:hidden;opacity:0;transform:scale(.6);transition:opacity var(--t2) var(--ease),transform var(--t2) var(--ease),visibility 0s var(--t2)}.row.on .ok{visibility:visible;opacity:1;transform:none;transition:opacity var(--t2) var(--ease),transform var(--t2) var(--ease)}.row.on .tx{color:var(--act,var(--ac))}
 .row.dis{opacity:.45;pointer-events:none}
 /* выключатель «да / нет» */
 .tg{flex:none;position:relative;width:46px;height:28px;border-radius:var(--r-pill);background:var(--bd);transition:background-color var(--t2)}

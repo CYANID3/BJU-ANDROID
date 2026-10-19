@@ -14,7 +14,7 @@
 .hd>.x{border-radius:50%;background:var(--sub);color:var(--tx)}.hd>.x svg.i{width:18px;height:18px}
 .shb{flex:0 1 auto;min-height:0;overflow:hidden auto;overscroll-behavior:contain;padding:4px 16px 16px}
 .sh.full .shb{flex:1 1 auto}
-.shf{flex:none;padding:0 16px calc(16px + var(--sab))}.shf:not(:has(.ft:not([hidden]),.kpd:not([hidden]))){padding-bottom:var(--sab)}
+.shf{flex:none;position:relative;z-index:1;background:var(--card);padding:0 16px calc(16px + var(--sab))}.shf:not(:has(.ft:not([hidden]),.kpd:not([hidden]))){padding-bottom:var(--sab)}
 .shf .ft{display:flex;gap:8px}.shf .ft.two>*{flex:1}
 /* с клавиатурой низ листа — панель своего тона на всю ширину */
 .sh.kpo .shf,.svl.kpo .shf{background:var(--kbg);padding:10px 10px calc(12px + var(--sab));box-shadow:0 -1px 0 var(--bd)}

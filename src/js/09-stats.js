@@ -4,7 +4,7 @@ let stM=null;
 function stats(){const d=new Date(cur+"T12:00:00");stM=[d.getFullYear(),d.getMonth()];SUB=0;sv(9,"","Статистика");drawStats();show()}
 // день относительно нормы: в норме ±10 % / перебор / недобор (календарь и статистика)
 const dayStat=(k,gk)=>!gk||!k?"":Math.abs(k-gk)<=gk*.1?"ok":k>gk?"o":"lo";
-function stMv(n){stM[1]+=n;if(stM[1]<0){stM[1]=11;stM[0]--}if(stM[1]>11){stM[1]=0;stM[0]++}const el=$("stc");drawStats();moSwap(el,n)}
+function stMv(n){hSlide($("stc"),n,0,()=>{stM[1]+=n;if(stM[1]<0){stM[1]=11;stM[0]--}if(stM[1]>11){stM[1]=0;stM[0]++}drawStats()})}
 function stData(){const[y,m]=stM,n=new Date(y,m+1,0).getDate(),pad=x=>String(x).padStart(2,"0"),days=[];
  for(let d=1;d<=n;d++){const k=y+"-"+pad(m+1)+"-"+pad(d),E=S.d[k]||[],t=sumE(E);days.push({d,k,w:(S.wt||{})[k]||0,n:E.length,kc:kc(t.p,t.f,t.c),p:t.p,f:t.f,c:t.c,E})}
  return days}

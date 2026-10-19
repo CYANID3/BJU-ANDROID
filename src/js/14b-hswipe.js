@@ -22,15 +22,26 @@ function hSwipe(zone, target, can, flip) {
   };
   zone.addEventListener("touchend", end); zone.addEventListener("touchcancel", () => { dx = 0; end() })
 }
-// перелистывание: текущее уходит в сторону взмаха, change() меняет содержимое, новое въезжает с другой стороны
-function hFlip(el, dir, from, change) {
-  const w = el.offsetWidth || 360, op = parseFloat(el.style.opacity) || 1; el.style.transform = el.style.opacity = "";
+// смена вкладки одним движением, без пустого кадра: копия видимых строк уходит в сторону и гаснет,
+// новый список в то же время въезжает с другой стороны. from — где сейчас палец (0 — касание вкладки)
+function hSlide(el, dir, from, change) {
+  const op = parseFloat(el.style.opacity) || 1; el.style.transform = el.style.opacity = "";
   if (!moOk(el)) { change(); return }
-  el.getAnimations().forEach(a => a.cancel());
-  const out = el.animate([{ transform: `translateX(${from}px)`, opacity: op }, { transform: `translateX(${-dir * w * .4}px)`, opacity: 0 }], { duration: Math.max(80, 140 * (1 - Math.abs(from) / w)), easing: MO.EI, fill: "forwards" });
-  out.onfinish = () => { change(); out.cancel(); el.animate([{ transform: `translateX(${dir * w * .4}px)`, opacity: 0 }, { transform: "none", opacity: 1 }], { duration: MO.t3, easing: MO.E }) }
+  el.getAnimations().forEach(a => a.cancel()); document.querySelectorAll("#ov > .hsg").forEach(x => x.remove());
+  const er = el.getBoundingClientRect(), sb = shBody().getBoundingClientRect(), w = er.width || 360, cs = getComputedStyle(el);
+  const box = document.createElement("div"), g = document.createElement("div"); box.className = "svl hsg";
+  Object.assign(box.style, { left: sb.left + "px", top: sb.top + "px", width: sb.width + "px", height: sb.height + "px", overflow: "hidden" });
+  g.className = el.className; Object.assign(g.style, { position: "absolute", left: er.left - sb.left + "px", top: er.top - sb.top + "px", width: w + "px", color: cs.color, font: cs.font });
+  [...el.children].forEach(c => { const r = c.getBoundingClientRect(); if (!r.height || r.bottom < sb.top || r.top > sb.bottom) return;
+    const k = noIds(c.cloneNode(true)); Object.assign(k.style, { position: "absolute", left: r.left - er.left + "px", top: r.top - er.top + "px", width: r.width + "px", margin: 0 }); g.appendChild(k) });
+  // копия вставляется после change(): иначе её раскладка считалась бы лишний раз внутри change (замеры высоты листа)
+  box.appendChild(g); change(); $("ov").appendChild(box);
+  const E = "cubic-bezier(.2,.8,.2,1)", s = w * .3;
+  // старое гаснет за первые ~0,1 с (общие строки «Все» и «Блюда» не двоятся), новое въезжает следом
+  g.animate([{ transform: `translateX(${from}px)`, opacity: op }, { opacity: 0, offset: .65 }, { transform: `translateX(${from - dir * s}px)`, opacity: 0 }], { duration: 160, easing: "cubic-bezier(.3,0,.6,1)", fill: "forwards" }).finished.catch(() => { }).then(() => box.remove());
+  el.animate([{ transform: `translateX(${dir * s * .8}px)`, opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 280, delay: 70, easing: E, fill: "backwards" })
 }
-hSwipe($("v6"), () => $("cg"), () => true, (dir, dx, el) => { calFlip(el, dir, dx, parseFloat(el.style.opacity) || 1); return 1 });
-hSwipe($("v9"), () => $("stc"), e => !e.target.closest(".chw"), (dir, dx, el) => { hFlip(el, dir, dx, () => { stM[1] += dir; if (stM[1] < 0) { stM[1] = 11; stM[0]-- } if (stM[1] > 11) { stM[1] = 0; stM[0]++ } drawStats() }); return 1 });
+hSwipe($("v6"), () => $("cg"), () => true, (dir, dx, el) => { calFlip(el, dir, dx); return 1 });
+hSwipe($("v9"), () => $("stc"), e => !e.target.closest(".chw"), (dir, dx, el) => { hSlide(el, dir, dx, () => { stM[1] += dir; if (stM[1] < 0) { stM[1] = 11; stM[0]-- } if (stM[1] > 11) { stM[1] = 0; stM[0]++ } drawStats() }); return 1 });
 // вкладки продуктов: взмах в любом месте листа, и по пустому месту под коротким списком
-hSwipe(shBody(), () => $("ls"), e => !$("v1").hidden && !$("pf").hidden && !e.target.closest(".seg,#mc,.fs,.lr"), (dir, dx, el) => { const n = pFl + dir; if (n < 0 || n > 2) return 0; hFlip(el, dir, dx, () => { pFl = n; lst() }); return 1 });
+hSwipe(shBody(), () => $("ls"), e => !$("v1").hidden && !$("pf").hidden && !e.target.closest(".seg,#mc,.fs,.lr"), (dir, dx, el) => { const n = pFl + dir; if (n < 0 || n > 2) return 0; hSlide(el, dir, dx, () => { pFl = n; lst() }); return 1 });

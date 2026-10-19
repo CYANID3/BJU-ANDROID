@@ -11,8 +11,11 @@ let SUB = 0; // экран открыт из «Ещё» (7): «‹» в шапк
  */
 let svG = [], svSnapPending = null;
 // снимок заранее (перед шагом «назад»): sv() возьмёт его вместо нового
-function svPre() { const sh = shEl(); if (!isOpen || RM() || !sh.animate) return; svKill(); try { svSnapPending = svSnap(sh) } catch (e) { svSnapPending = null } }
-function svKill() { svG.forEach(g => g.remove()); svG = []; try { shEl().getAnimations().forEach(a => a.finish()) } catch (e) { } }
+function svPre() { const sh = shEl(); if (!isOpen || RM() || !sh.animate || document.hidden) return; svKill(); try { svSnapPending = svSnap(sh) } catch (e) { svSnapPending = null } }
+// прервать незаконченный переход: копии убрать, а все анимации листа и его содержимого (шапка, строки, «ручка») довести
+// до конца — иначе шапка могла остаться прозрачной (пустое место сверху после выбора файла в системном окне)
+function svKill() { svG.forEach(g => g.remove()); svG = []; document.querySelectorAll("#ov > .svl:not(.hsg), #ov > .sve, #ov > .smh").forEach(x => x.remove());
+  try { shEl().getAnimations({ subtree: true }).forEach(a => { if (typeof CSSTransition !== "undefined" && (a instanceof CSSTransition || a instanceof CSSAnimation)) return; try { a.finish() } catch (e) { a.cancel() } }) } catch (e) { } }
 // снимок старого экрана: шапка, видимая часть содержимого и низ — копии на тех же местах экрана
 function svSnap(sh) {
   // id в копии сохраняются: на них завязаны стили (#pkx, #ls…); копия стоит в документе после листа, поэтому $(id) находит оригинал
@@ -44,7 +47,7 @@ function svSnap(sh) {
 function svAlign(fix) { fix.forEach(([a, g], i) => { const c = g && (g.dataset.sva == i ? g : g.querySelector(`[data-sva="${i}"]`)); if (!c) return; const b = c.getBoundingClientRect(), dy = a.top - b.top, dx = a.left - b.left;
   if (Math.abs(dy) > .1 || Math.abs(dx) > .1) g.style.translate = `${dx}px ${dy}px`; delete c.dataset.sva }) }
 function sv(n, t, s) {
-  const sh = shEl(), prev = VWS.find(i => !$("v" + i).hidden), anim = isOpen && prev && prev !== n && !RM() && !!sh.animate;
+  const sh = shEl(), prev = VWS.find(i => !$("v" + i).hidden), anim = isOpen && prev && prev !== n && !RM() && !!sh.animate && !document.hidden;
   let snap = null;
   if (anim) { if (svSnapPending) { snap = svSnapPending; svSnapPending = null } else { svKill(); try { snap = svSnap(sh) } catch (e) { snap = null } } } else if (svSnapPending) { svSnapPending.L.remove(); svSnapPending = null }
   VWS.forEach(i => $("v" + i).hidden = i !== n);
@@ -78,12 +81,14 @@ function svPlay(sh, snap, ins) {
   ins.filter(Boolean).forEach(el => fin.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: 80, easing: "linear", fill: "backwards" }).finished));
   // «ручка» листа тоже проявляется на новом краю, а не стоит поверх старого содержимого
   if (Math.abs(d) > 1) try { sh.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: 80, easing: "linear", fill: "backwards", pseudoElement: "::before" }) } catch (e) { }
-  svG = out; Promise.all(fin).catch(() => { }).then(() => { out.forEach(x => x.remove()); if (svG === out) svG = [] })
+  svG = out; Promise.all(fin).catch(() => { }).then(() => { out.forEach(x => x.remove()); if (svG === out) svG = [] });
+  // страховка: если WebView приостановили посреди перехода (системное окно выбора файла), через 0,7 с всё доводится до конца
+  setTimeout(() => { if (svG === out) svKill() }, 700)
 }
 // содержимое того же экрана поменяло высоту (подсказка жеста появилась или ушла, другой вариант выбора):
 // fn() перерисовывает, край листа плавно переезжает, изменившийся блок проявляется
 function shResize(fn, watch) {
-  const sh = shEl(); if (!isOpen || RM() || !sh.animate || vtx.on) { fn(); return }
+  const sh = shEl(); if (!isOpen || RM() || !sh.animate || vtx.on || document.hidden) { fn(); return }
   svKill(); const r0 = sh.getBoundingClientRect(), bg = document.createElement("div");
   // блоки, которые могут появиться или пропасть (подсказка жеста): пропавший гаснет на старом месте, новый проявляется
   const was = (watch || []).map(q => { const el = document.querySelector(q); if (!el) return null; const r = el.getBoundingClientRect(), g = noIds(el.cloneNode(true));

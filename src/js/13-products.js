@@ -6,7 +6,8 @@ function rcList() { if (!S.rc) { const r = []; for (const k of Object.keys(S.d).
 function rcPush(n) { S.rc = [n, ...rcList().filter(x => x !== n)].slice(0, 10) }
 function fav(el, i) { const n = S.db[i][0]; S.fav = Object.assign({}, S.fav); if (S.fav[n]) delete S.fav[n]; else S.fav[n] = 1; const on = !!S.fav[n]; el.classList.toggle("on", on); el.setAttribute("aria-pressed", on); el.setAttribute("aria-label", on ? "Убрать из избранного" : "В избранное"); vib("ui"); saveq() }
 // фильтр в «Продуктах»: 0 — все, 1 — только продукты, 2 — только блюда (кнопки видны, если есть хотя бы одно блюдо)
-let pFl = 0; function setPf(v) { pFl = v; lst(); vib("ui") }
+// касание вкладки — тем же движением, что и взмах: список уезжает в сторону выбранной вкладки
+let pFl = 0; function setPf(v) { const d = Math.sign(v - pFl); if (!d) return; vib("ui"); hSlide($("ls"), d, 0, () => { pFl = v; lst() }) }
 function drawPf() { const has = mode === "mng" && S.db.some(p => p[5]); if (!has) pFl = 0; $("pf").hidden = !has; if (has) { const nD = S.db.filter(p => p[5]).length; $("pf").innerHTML = [["Все", 0, S.db.length], ["Продукты", 1, S.db.length - nD], ["Блюда", 2, nD]].map(([t, v, n]) => `<button class="${pFl === v ? "on" : ""}" onmousedown="event.preventDefault()" onclick="setPf(${v})">${t}<small>${n}</small></button>`).join("") } }
 // Б / Ж / У цветными буквами: «Б 22,1 · Ж 1,3 · У 0»
 const mxl = (p, f, c) => `<i class="mx p">Б</i>${f1(p)} · <i class="mx f">Ж</i>${f1(f)} · <i class="mx c">У</i>${f1(c)}`;

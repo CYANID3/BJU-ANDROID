@@ -8,7 +8,7 @@ function cal(){const d=new Date(cur+"T12:00:00");cm=[d.getFullYear(),d.getMonth(
 function vw(v){cb=cv;cv=v;drawCal();fade($("cg"))}
 // касание заголовка: дни → месяцы → годы → обратно к дням
 function calTitle(){vib("ui");if(cv===0)vw(1);else if(cv===1)vw(2);else{cv=cb===1?1:0;drawCal();fade($("cg"))}}
-function mv(n){const el=$("cg");if(RM()||!el.animate){calStep(n);drawCal();return}if(el._co){el._co.finish()}calFlip(el,n,0,1)}
+function mv(n){const el=$("cg");if(RM()||!el.animate){calStep(n);drawCal();return}calFlip(el,n,0)}
 function pm(i){cm[1]=i;cv=0;drawCal();fade($("cg"))}
 function py(y){cm[0]=y;cv=cb===1?1:0;drawCal();fade($("cg"))}
 // день: число и калории цветом — в норме ±10 % (зелёный), перебор (красный), недобор (жёлтый); внизу — счётчики месяца
@@ -32,7 +32,6 @@ function drawCal(){const[y,m]=cm,gk=kc(S.g.p,S.g.f,S.g.c),g=$("cg"),ty=+today.sl
  g.innerHTML=h}
 function pd(k){if(cpm>=0){const mi=cpm,it=(S.d[cur]||[]).filter(e=>e.m===mi).map(e=>({...e}));cpm=-1;if(k===cur){cl();return}(S.d[k]=S.d[k]||[]).push(...it);cl();cur=k;vib("save");save();render();toast("Скопировано записей: "+it.length);return}if(k===cur){cl();return}const dir=k>cur?1:-1;cl();NABS=1;slide($("app"),dir,()=>{cur=k})}
 function calStep(n){if(cv===0){cm[1]+=n;if(cm[1]<0){cm[1]=11;cm[0]--}if(cm[1]>11){cm[1]=0;cm[0]++}}else if(cv===1)cm[0]+=n;else cm[0]+=n*12}
-function calFlip(el,dir,from,op){const w=el.offsetWidth||300;el.style.transition="";el.style.transform="";el.style.opacity="";
- if(el._co){el._co.cancel();el._co=null}if(el._ca){el._ca.cancel();el._ca=null}
- const out=el.animate([{transform:`translateX(${from}px)`,opacity:op},{transform:`translateX(${-dir*w*.5}px)`,opacity:0}],{duration:Math.max(90,150*(1-Math.abs(from)/w)),easing:MO.EI,fill:"forwards"});el._co=out;
- out.onfinish=()=>{calStep(dir);shResize(drawCal);out.cancel();el._co=null;el._ca=el.animate([{transform:`translateX(${dir*w*.5}px)`,opacity:0},{transform:"none",opacity:1}],{duration:MO.t3,easing:MO.E})}}
+// перелистывание месяца — одним движением (как вкладки продуктов): старый месяц уходит и гаснет, новый сразу въезжает;
+// если в новом месяце другое число недель, край листа плавно меняет высоту
+function calFlip(el,dir,from){hSlide(el,dir,from,()=>{calStep(dir);shResize(drawCal)})}
