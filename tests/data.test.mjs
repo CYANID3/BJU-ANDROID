@@ -116,7 +116,8 @@ test('виджет: превью с числом в кольце и «＋» цв
   const arr = n => java.match(new RegExp(n + ' = \\{([^}]*)\\}'))[1].split(',').map(v => v.trim()).map(v => v === 'true' ? 1 : v === 'false' ? 0 : +v);
   const RING = arr('RING'), KCAL = arr('KCAL'), HEAD = arr('HEAD'), BARS = arr('BARS'), ADD = arr('ADD'), BASE = arr('BASE');
   assert.deepEqual(L, ['t1', 'n2', 'w3', 'w4', 's', 'm', '', 'sx', 'lx'], 'вытянутых узких (t2, t2x) нет');
-  for (const n of ['t2', 't2x']) assert.equal(fs.existsSync(`native/android/res/layout/bju_widget_${n}.xml`), false);
+  // старые файлы раскладок (если остались в папке после распаковки поверх) ни откуда не используются
+  for (const n of ['t2', 't2x']) assert.ok(!java.includes(`bju_widget_${n}`) && !info.includes(`bju_widget_${n}`), `bju_widget_${n} не используется`);
   assert.equal(java.match(/MIN = \{(.*?)\};/s)[1].match(/\{[^}]*\}/g).length, L.length); for (const a of [RING, KCAL, HEAD, BARS, ADD, BASE]) assert.equal(a.length, L.length);
   L.forEach((n, i) => {
     const ids = new Set([...fs.readFileSync(`native/android/res/layout/bju_widget${n ? '_' + n : ''}.xml`, 'utf8').matchAll(/@\+id\/(\w+)/g)].map(m => m[1])), need = ['bju_w_bg', 'bju_w_root'];
