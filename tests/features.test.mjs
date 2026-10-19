@@ -418,22 +418,24 @@ test('потянуть вверх — от панели в любом месте
   assert.deepEqual(a.errors, []);
   await a.close();
 });
-test('смена экрана в листе: старый уходит, новый въезжает с другой стороны; пустых кадров нет; «назад» — в обратную сторону', async () => {
+test('смена экрана в листе: содержимое меняется на месте (без сдвига вбок), едет только край листа; копии убираются', async () => {
   const a = await openApp();
   await a.ev(() => sets()); await a.wait(500);
-  // вперёд: «Ещё» → «Цвет акцента». Сразу после смены копия старого экрана видна, новый въезжает справа
+  // «Ещё» (высокий) → «Цвет акцента» (низкий): снимок старого экрана поверх, фон старой высоты под листом, новое — без сдвига
   const f = await a.ev(async () => { pick('ac'); await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
-    const g = [...document.querySelectorAll('#ov .sh > .svg')], A = $('v13').getAnimations().flatMap(x => x.effect.getKeyframes().map(k => k.transform).filter(Boolean));
-    return { ghosts: g.length, ghostText: g.map(x => x.textContent).join(' ').includes('Норма на день'), first: A[0] } });
-  assert.ok(f.ghosts >= 2, 'копии шапки и содержимого'); assert.ok(f.ghostText, 'в копии — прежний экран'); assert.match(f.first, /translateX\(28px\)/, 'вперёд — справа');
+    const L = document.querySelector('#ov > .svl'), E = document.querySelector('#ov > .sve'), tf = [$('v13'), document.querySelector('#ov .hd .ht')].flatMap(el => el.getAnimations().flatMap(x => x.effect.getKeyframes().map(k => k.transform).filter(Boolean)));
+    return { snap: !!L && L.textContent.includes('Норма на день'), edge: !!E, under: E && E.nextElementSibling === shEl(), tf } });
+  assert.ok(f.snap, 'снимок прежнего экрана'); assert.ok(f.edge && f.under, 'фон старой высоты — под листом');
+  assert.deepEqual(f.tf, [], 'новое содержимое не едет вбок');
   await a.wait(500);
-  assert.equal(await a.ev(() => document.querySelectorAll('#ov .svg').length), 0, 'после перехода копии убраны');
-  const b = await a.ev(async () => { backStep(); await Promise.resolve(); await Promise.resolve(); await Promise.resolve(); return $('v7').getAnimations().flatMap(x => x.effect.getKeyframes().map(k => k.transform).filter(Boolean))[0] });
-  assert.match(b, /translateX\(-28px\)/, 'назад — слева');
+  assert.equal(await a.ev(() => document.querySelectorAll('#ov > .svl, #ov > .sve').length), 0, 'после перехода копии убраны');
+  // «назад» в высокий экран: край открывается снизу вверх (clip-path листа)
+  const b = await a.ev(async () => { backStep(); await Promise.resolve(); await Promise.resolve(); await Promise.resolve(); return shEl().getAnimations().flatMap(x => x.effect.getKeyframes().map(k => k.clipPath).filter(Boolean)) });
+  assert.match(b[0], /^inset\(\d+(\.\d+)?px/, 'край листа едет'); assert.match(b[1], /^inset\(0px/);
   // закрытие посреди перехода не оставляет копий
   await a.ev(async () => { pick('th'); await Promise.resolve(); await Promise.resolve(); cl() }); await a.wait(400);
   await a.ev(() => sets()); await a.wait(100);
-  assert.equal(await a.ev(() => document.querySelectorAll('#ov .svg').length), 0);
+  assert.equal(await a.ev(() => document.querySelectorAll('#ov > .svl, #ov > .sve').length), 0);
   assert.deepEqual(a.errors, []);
   await a.close();
 });

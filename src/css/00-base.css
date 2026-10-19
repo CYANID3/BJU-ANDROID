@@ -30,3 +30,9 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;paddin
 /* Б / Ж / У — всегда своими цветами */
 .mx{font-style:normal;font-weight:800;margin:0 3px 0 0}.mx.p{color:var(--p)}.mx.f{color:var(--f)}.mx.c{color:var(--c)}
 #app.mv{will-change:transform,opacity}
+/* плавная смена кадра (vtx): тема, цвет, карточка дня, вид главного экрана */
+.notr *,.notr *::before,.notr *::after{transition:none!important}
+::view-transition-old(root),::view-transition-new(root){animation-duration:280ms;animation-timing-function:cubic-bezier(.2,0,0,1)}
+::view-transition-group(*){animation-duration:320ms;animation-timing-function:cubic-bezier(.2,0,0,1)}
+/* старый кадр карточки уходит быстро — без «двойного» текста при переезде */
+::view-transition-old(*){animation-duration:120ms}::view-transition-new(*){animation-duration:280ms}

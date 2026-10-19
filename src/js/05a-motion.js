@@ -51,3 +51,20 @@ function segSync(){document.querySelectorAll(".seg").forEach(s=>{const b=s.query
  new MutationObserver(go).observe($("ov"),{subtree:true,childList:true,attributes:true,attributeFilter:["class","hidden"]});
  addEventListener("resize",()=>{document.querySelectorAll(".seg.sk").forEach(s=>{s._sk="";s.classList.remove("sk")});go()})})();
 
+
+// Смена всего кадра (тема, цвет, карточка дня, вид главного экрана) — плавно, через View Transitions:
+// старый кадр растворяется в новом, карточки главного экрана переезжают и меняют высоту сами.
+// На время смены CSS-переходы выключены, чтобы все элементы сменились одновременно, а не с запозданием.
+// Без поддержки в WebView или при «Уменьшить движение» — сразу, как раньше.
+function vtx(fn) {
+  const d = document.documentElement;
+  if (vtx.on) { fn(); return }
+  // без View Transitions (старый WebView) или при «Уменьшить движение» — сразу, но тоже одновременно (без запоздалых переходов цвета)
+  if (!document.startViewTransition || RM()) { d.classList.add("notr"); fn(); requestAnimationFrame(() => requestAnimationFrame(() => d.classList.remove("notr"))); return }
+  // свои имена у карточек (переезжают), у шапки, нижней панели и листа (остаются поверх карточек)
+  const names = on => { document.querySelectorAll("#app>[data-fk]").forEach(el => el.style.viewTransitionName = on ? "c-" + el.dataset.fk.replace(/[^\w-]/g, "_") : "");
+    [[".nav", "nav"], [".bt", "bar"], ["#ov.on", "ov"]].forEach(([q, n]) => { const el = document.querySelector(q); if (el) el.style.viewTransitionName = on ? n : "" }) };
+  vtx.on = 1; d.classList.add("notr"); names(1);
+  let t; try { t = document.startViewTransition(() => { fn(); names(1) }) } catch (e) { vtx.on = 0; d.classList.remove("notr"); names(0); fn(); return }
+  t.finished.catch(() => { }).then(() => { vtx.on = 0; d.classList.remove("notr"); names(0) })
+}

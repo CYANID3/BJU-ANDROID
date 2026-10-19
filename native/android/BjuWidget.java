@@ -29,12 +29,11 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Виджет рабочего стола: БЖУ за сегодня. Одиннадцать раскладок под размер (ширина 1–4 × высота 1–2 ячейки):
- *   T1 1×1 — кольцо калорий;                         N2 2×1 — остаток калорий + Б / Ж / У строкой;
- *   W3 3×1 — колонки «Осталось», Б, Ж, У с полосками;  W4 4×1 — то же + «＋»;
- *   T2 1×2 — кольцо + Б / Ж / У;                      S  2×2 — кольцо + Б / Ж / У + полоски;
- *   M  3×2 и низкий 4×2 — шапка с «＋», кольцо, строки Б / Ж / У;  L высокий 4×2 — то же крупнее;
- *   T2x / Sx / Lx — увеличенные варианты, если лаунчер растянул виджет выше двух строк.
+ * Виджет рабочего стола: БЖУ за сегодня. Девять раскладок под размер (ширина 1–4 × высота 1–2 ячейки):
+ *   T1 1×1 — кольцо калорий (оно же — если виджет растянут в узкую высокую полоску: вытянутых раскладок нет);
+ *   N2 2×1 — остаток калорий + Б / Ж / У строкой;   W3 3×1 — колонки «Осталось», Б, Ж, У с полосками;  W4 4×1 — то же + «＋»;
+ *   S  2×2 — кольцо + Б / Ж / У + полоски;           M  3×2 и низкий 4×2 — шапка с «＋», кольцо, строки Б / Ж / У;
+ *   L  высокий 4×2 — то же крупнее;                 Sx / Lx — увеличенные варианты, если лаунчер растянул виджет выше двух строк.
  * Кольцо рисуется картинкой: размер числа считается от свободного места внутри, поэтому цифры не касаются кольца.
  * Цвета — из приложения: светлая и тёмная палитры сразу. При теме «Как в системе» на Android 12+ виджет
  * переключается вместе с телефоном сам (цвета «день / ночь» в RemoteViews), на старых — при каждом обновлении.
@@ -44,18 +43,22 @@ public class BjuWidget extends AppWidgetProvider {
 
     static final String PREFS = "bju_widget";
     static final String ACTION_MIDNIGHT = "kg.bju.app.WIDGET_MIDNIGHT";
-    private static final int T1 = 0, N2 = 1, W3 = 2, W4 = 3, T2 = 4, S = 5, M = 6, L = 7;
+    private static final int T1 = 0;
     private static final int[] LAYOUT = {
         R.layout.bju_widget_t1, R.layout.bju_widget_n2, R.layout.bju_widget_w3, R.layout.bju_widget_w4,
-        R.layout.bju_widget_t2, R.layout.bju_widget_s, R.layout.bju_widget_m, R.layout.bju_widget,
-        R.layout.bju_widget_t2x, R.layout.bju_widget_sx, R.layout.bju_widget_lx
+        R.layout.bju_widget_s, R.layout.bju_widget_m, R.layout.bju_widget, R.layout.bju_widget_sx, R.layout.bju_widget_lx
     };
     // увеличенные варианты ведут себя как обычные
-    private static final int[] BASE = { 0, 1, 2, 3, 4, 5, 6, 7, 4, 5, 7 };
+    private static final int[] BASE = { 0, 1, 2, 3, 4, 5, 6, 4, 6 };
     // минимальный размер (dp), с которого включается раскладка
-    private static final float[][] MIN = { { 40, 40 }, { 95, 40 }, { 210, 40 }, { 270, 40 }, { 40, 115 }, { 95, 115 }, { 240, 115 }, { 250, 165 }, { 40, 240 }, { 95, 240 }, { 250, 240 } };
+    private static final float[][] MIN = { { 40, 40 }, { 95, 40 }, { 210, 40 }, { 270, 40 }, { 95, 115 }, { 240, 115 }, { 250, 165 }, { 95, 240 }, { 250, 240 } };
     // кольцо: размер картинки (dp) и толщина линии; картинка масштабируется под место в разметке
-    private static final int[] RING = { 72, 0, 0, 0, 104, 104, 92, 112, 132, 132, 150 };
+    private static final int[] RING = { 72, 0, 0, 0, 104, 92, 112, 132, 150 };
+    // что есть в раскладке (по номеру раскладки): кольцо — RING > 0; колонка калорий, шапка с нормой «/ 200 г», полоски, «＋»
+    private static final boolean[] KCAL = { false, true, true, true, false, false, false, false, false };
+    private static final boolean[] HEAD = { false, false, false, false, false, true, true, false, true };
+    private static final boolean[] BARS = { false, false, true, true, true, true, true, true, true };
+    private static final boolean[] ADD = { false, false, false, true, false, true, true, false, true };
 
     @Override
     public void onUpdate(Context ctx, AppWidgetManager mgr, int[] ids) {
@@ -221,9 +224,8 @@ public class BjuWidget extends AppWidgetProvider {
         // фон — цвет карточки приложения
         color(v, R.id.bju_w_bg, "setColorFilter", d, now, p -> p.bg);
 
-        boolean hasRing = RING[layoutKind] > 0, hasKcal = kind == N2 || kind == W3 || kind == W4;
-        boolean hasGoal = kind == W3 || kind == W4 || kind == M || kind == L, hasBar = kind != T1 && kind != N2 && kind != T2;
-        boolean hasHead = kind == M || kind == L, hasAdd = kind == W4 || kind == M || kind == L, hasMacro = kind != T1;
+        boolean hasRing = RING[layoutKind] > 0, hasKcal = KCAL[layoutKind], hasHead = HEAD[layoutKind], hasGoal = HEAD[layoutKind];
+        boolean hasBar = BARS[layoutKind], hasAdd = ADD[layoutKind], hasMacro = kind != T1;
 
         if (hasRing) {
             String num = d.kcalGoal <= 0 ? String.valueOf(Math.max(0, d.kcal)) : over ? "+" + (-left) : String.valueOf(left);
@@ -241,13 +243,15 @@ public class BjuWidget extends AppWidgetProvider {
         }
 
         if (hasKcal) {
-            v.setTextViewText(R.id.bju_k_lbl, over ? "Перебор" : "Осталось");
-            v.setTextViewText(R.id.bju_k_val, d.kcalGoal <= 0 ? "—" : String.valueOf(Math.abs(left)));
+            // крупно — остаток или перебор («+9021»), под ним подпись; без нормы — сколько съедено
+            v.setTextViewText(R.id.bju_k_val, d.kcalGoal <= 0 ? String.valueOf(Math.max(0, d.kcal)) : over ? "+" + (-left) : String.valueOf(left));
+            v.setTextViewText(R.id.bju_k_lbl, d.kcalGoal <= 0 ? "ккал" : over ? "перебор" : "осталось");
             color(v, R.id.bju_k_lbl, "setTextColor", d, now, p -> p.mu);
             color(v, R.id.bju_k_val, "setTextColor", d, now, p -> over ? p.danger : p.tx);
-            color(v, R.id.bju_k_unit, "setTextColor", d, now, p -> p.mu);
-            v.setProgressBar(R.id.bju_w_bar, 1000, (int) (Math.min(1, frac) * 1000), false);
-            tint(v, R.id.bju_w_bar, d, now, p -> over ? p.danger : p.ac, p -> p.trk);
+            if (hasBar) {
+                v.setProgressBar(R.id.bju_w_bar, 1000, (int) (Math.min(1, frac) * 1000), false);
+                tint(v, R.id.bju_w_bar, d, now, p -> over ? p.danger : p.ac, p -> p.trk);
+            }
         }
 
         if (hasHead) {
@@ -260,12 +264,12 @@ public class BjuWidget extends AppWidgetProvider {
                 final int k = i;
                 float e = d.eaten[i], g = d.goal[i];
                 boolean warn = g > 0 && e > g && i > 0; // перебор белка — не ошибка
-                String val = kind == M || kind == L ? r1(e) : r(e);
+                String val = r(e); // целые граммы: «2742», а не «2742,3» — короче и не обрезается
                 v.setTextViewText(VAL[i], val);
                 color(v, LBL[i], "setTextColor", d, now, p -> p.macro[k]);
                 color(v, VAL[i], "setTextColor", d, now, p -> warn ? p.danger : p.tx);
                 if (hasGoal) {
-                    v.setTextViewText(GOAL[i], (kind == M || kind == L ? " / " : "/") + r(g) + (kind == M || kind == L ? " г" : ""));
+                    v.setTextViewText(GOAL[i], " / " + r(g));
                     color(v, GOAL[i], "setTextColor", d, now, p -> p.mu);
                 }
                 if (hasBar) {
@@ -334,8 +338,4 @@ public class BjuWidget extends AppWidgetProvider {
         return String.valueOf(Math.round(x));
     }
 
-    private static String r1(float x) {
-        float v = Math.round(x * 10) / 10f;
-        return (v == Math.rint(v) ? String.valueOf((int) v) : String.valueOf(v)).replace('.', ',');
-    }
 }

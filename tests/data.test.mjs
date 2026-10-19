@@ -101,28 +101,33 @@ test('ярлык «Вес» у иконки: есть, только когда �
   await a.close();
 });
 
-test('виджет: превью в списке виджетов — тёмное, с кольцом, подписями Б / Ж / У и правдоподобным днём; все раскладки содержат нужные элементы', async () => {
+test('виджет: превью с числом в кольце и «＋» цветом акцента; каждая раскладка содержит то, что заполняет BjuWidget; вытянутых нет', async () => {
   const fs = await import('node:fs');
   const info = fs.readFileSync('native/android/res/xml/bju_widget_info.xml', 'utf8');
   assert.match(info, /previewLayout="@layout\/bju_widget_preview"/);
   const x = fs.readFileSync('native/android/res/layout/bju_widget_preview.xml', 'utf8');
-  for (const t of ['Белки', 'Жиры', 'Углеводы', 'Сегодня · съедено 1146 из 2110', '102', ' / 120 г']) assert.ok(x.includes(`"${t}"`), t);
+  for (const t of ['Белки', 'Жиры', 'Углеводы', 'Сегодня · съедено 1146 из 2110', '102', ' / 120', '964', 'осталось']) assert.ok(x.includes(`"${t}"`), t);
   assert.match(x, /bju_widget_shape_preview/); assert.match(x, /bju_widget_ring_preview/, 'кольцо в превью');
+  assert.match(x, /bju_widget_add"[^>]*tint="#7C70F0"/, '«＋» в превью — цветом акцента, а не белым квадратом');
   assert.match(fs.readFileSync('native/android/res/drawable/bju_widget_shape_preview.xml', 'utf8'), /#F5282B31/, 'графит тёмной темы');
-  const base = fs.readFileSync('native/android/res/layout/bju_widget.xml', 'utf8');
-  assert.ok(base.includes('"Жиры"') && base.includes('"Углеводы"'), 'до первого обновления — верные подписи');
-  // каждый элемент, который заполняет BjuWidget, есть в своей раскладке (иначе лаунчер покажет «Не удалось загрузить виджет»)
-  const L = ['t1', 'n2', 'w3', 'w4', 't2', 's', 'm', '', 't2x', 'sx', 'lx'], BASE = [0, 1, 2, 3, 4, 5, 6, 7, 4, 5, 7], RING = [72, 0, 0, 0, 104, 104, 92, 112, 132, 132, 150];
+  // раскладки и флаги берём прямо из BjuWidget.java — тест не разойдётся с кодом
   const java = fs.readFileSync('native/android/BjuWidget.java', 'utf8');
-  assert.ok(java.includes('{ 72, 0, 0, 0, 104, 104, 92, 112, 132, 132, 150 }'), 'размеры кольца в тесте совпадают с BjuWidget');
+  const L = [...java.match(/LAYOUT = \{([^}]*)\}/)[1].matchAll(/R\.layout\.bju_widget(?:_(\w+))?/g)].map(m => m[1] || '');
+  const arr = n => java.match(new RegExp(n + ' = \\{([^}]*)\\}'))[1].split(',').map(v => v.trim()).map(v => v === 'true' ? 1 : v === 'false' ? 0 : +v);
+  const RING = arr('RING'), KCAL = arr('KCAL'), HEAD = arr('HEAD'), BARS = arr('BARS'), ADD = arr('ADD'), BASE = arr('BASE');
+  assert.deepEqual(L, ['t1', 'n2', 'w3', 'w4', 's', 'm', '', 'sx', 'lx'], 'вытянутых узких (t2, t2x) нет');
+  for (const n of ['t2', 't2x']) assert.equal(fs.existsSync(`native/android/res/layout/bju_widget_${n}.xml`), false);
+  assert.equal(java.match(/MIN = \{(.*?)\};/s)[1].match(/\{[^}]*\}/g).length, L.length); for (const a of [RING, KCAL, HEAD, BARS, ADD, BASE]) assert.equal(a.length, L.length);
   L.forEach((n, i) => {
-    const ids = new Set([...fs.readFileSync(`native/android/res/layout/bju_widget${n ? '_' + n : ''}.xml`, 'utf8').matchAll(/@\+id\/(\w+)/g)].map(m => m[1])), k = BASE[i], need = ['bju_w_bg', 'bju_w_root'];
+    const ids = new Set([...fs.readFileSync(`native/android/res/layout/bju_widget${n ? '_' + n : ''}.xml`, 'utf8').matchAll(/@\+id\/(\w+)/g)].map(m => m[1])), need = ['bju_w_bg', 'bju_w_root'];
     if (RING[i]) need.push('bju_w_ring');
-    if ([1, 2, 3].includes(k)) need.push('bju_k_lbl', 'bju_k_val', 'bju_k_unit', 'bju_w_bar');
-    if ([6, 7].includes(k)) need.push('bju_w_head');
-    if (k) for (const m of 'pfc') { need.push(`bju_${m}_lbl`, `bju_${m}_val`); if ([2, 3, 6, 7].includes(k)) need.push(`bju_${m}_goal`); if (![0, 1, 4].includes(k)) need.push(`bju_${m}_bar`); }
-    if ([3, 6, 7].includes(k)) need.push('bju_w_add', 'bju_w_add_bg', 'bju_w_add_ic');
+    if (KCAL[i]) { need.push('bju_k_lbl', 'bju_k_val'); if (BARS[i]) need.push('bju_w_bar') }
+    if (HEAD[i]) need.push('bju_w_head');
+    if (BASE[i]) for (const m of 'pfc') { need.push(`bju_${m}_lbl`, `bju_${m}_val`); if (HEAD[i]) need.push(`bju_${m}_goal`); if (BARS[i]) need.push(`bju_${m}_bar`) }
+    if (ADD[i]) need.push('bju_w_add', 'bju_w_add_bg', 'bju_w_add_ic');
     for (const id of need) assert.ok(ids.has(id), `${n || 'L'}: нет ${id}`);
+    // числа подстраиваются под место (а не обрезаются «…»)
+    if (BASE[i]) assert.match(fs.readFileSync(`native/android/res/layout/bju_widget${n ? '_' + n : ''}.xml`, 'utf8'), /bju_p_val"[^>]*autoSizeTextType="uniform"/, `${n || 'L'}: автоподбор размера`);
   });
 });
 

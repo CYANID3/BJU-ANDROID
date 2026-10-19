@@ -14,7 +14,7 @@ function stepTo() {
   if ((on(13) || on(14) || on(4) || on(5)) && SUB) return () => sets(1);
   return null;
 }
-function step() { const t = stepTo(); if (!t) return 0; NAVD = -1; try { t() } finally { NAVD = 1 } return 1 }
+function step() { const t = stepTo(); if (!t) return 0; t(); return 1 }
 addEventListener("popstate", async () => {
   if (popSkip) { popSkip--; return }
   if (!isOpen) return;

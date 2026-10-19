@@ -39,7 +39,7 @@ const PRE = ["", "#22a06b", "#14b8a6", "#3b82f6", "#8b5cf6", "#e5589a", "#e5484d
 const SWL = [["meal", "Приём пищи", "plus", "Добавить в приём пищи по времени суток"], ["prod", "Новый продукт", "box", "Сразу открыть создание продукта"], ["stat", "Статистика", "chart", "Открыть статистику за месяц"], ["wt", "Вес", "scale", "Записать вес за день"], ["off", "Выключено", "close", "Жест не используется"]],
   DWL = [["cal", "Календарь", "cal", "Выбрать день в календаре"], ["today", "К сегодня", "today", "Вернуться к сегодняшнему дню"], ["off", "Выключено", "close", "Жест не используется"]];
 function setSw(v) { S.set = Object.assign({}, S.set, { sw: v }); saveq(); drawSet(); render(); vib("ui") }
-function setAc(h) { S.set = Object.assign({}, S.set, { ac: h }); saveq(); applyAc(); drawSet(); vib("ui") }
+function setAc(h) { S.set = Object.assign({}, S.set, { ac: h }); saveq(); vib("ui"); vtx(() => { applyAc(); drawSet() }) }
 
 // ===== экраны выбора =====
 const gHint = (dn, edge) => `<div id="${dn ? "dwh" : "sgh"}" class="smh ${dn ? "phd" : "phu"}${edge ? " edge" : ""}" aria-hidden="true"><div class="smp"><i><s></s><s></s><s></s><u></u></i></div><div class="smt">${dn ? "В начале списка <b>потяните вниз</b> и отпустите" : edge ? "Потяните вверх <b>от нижней панели</b> из любого места списка или <b>в конце дня</b>. Кнопки панели при этом не нажимаются" : "Долистайте до конца дня и <b>потяните вверх</b>"}</div></div>`;
@@ -76,7 +76,7 @@ function acPick() {
 const srow = (id, icn, t, sub, v, act, o = {}) => `<button class="row"${id ? ` id="${id}"` : ""}${o.sw != null ? ` role="switch" aria-checked="${!!o.sw}"` : ""} onclick="${act}">${icn ? `<span class="ic">${ic(icn)}</span>` : ""}<span class="tx">${t}${sub ? `<small${o.sc ? ` class="${o.sc}"` : ""}>${sub}</small>` : ""}</span>${v != null ? `<span class="v">${v}</span>` : ""}${o.sw != null ? `<i class="tg${o.sw ? " on" : ""}"><i></i></i>` : `<span class="ch">${ic("chevR")}</span>`}</button>`;
 const lbl = (k) => { const P = PK[k], v = P.g(), x = P.o().find(o => o[0] === v); return k === "fa" && v === "meal" ? "Приём пищи" : x ? x[1] : "" };
 function sets(back) {
-  const y = hubY; SUB = 0; drawSet(); if (back) NAVD = -1; try { sv(7, "Ещё") } finally { NAVD = 1 } show();
+  const y = hubY; SUB = 0; drawSet(); sv(7, "Ещё"); show();
   if (back) { shBody().scrollTop = y; vib("ui") }
 }
 function drawSet() {
@@ -90,7 +90,7 @@ function drawSet() {
     `<div class="gh">Жесты</div><div class="grp">${srow("", "down", "Потянуть вниз", "в начале дня", lbl("dw"), "pick('dw')")}${srow("", "up", "Потянуть вверх", "в конце дня или от панели", lbl("sw"), "pick('sw')")}${srow("", "swipe", "Длина свайпа", "", SLV[slv()][5], "pick('sl')")}</div>` +
     `<div class="gh">Отклик</div><div class="grp">${srow("", "vib", "Вибрация", vbOn() ? "Где включена и какая сила" : "", vbOn() ? vn + " из " + VIB.length : "Выкл.", "vibOpen()")}</div>` +
     `<div class="ver">Версия ${BUILD}</div>`;
-  if (!$("v13").hidden) drawPick(); if (!$("v14").hidden) drawVib()
+  if (!$("v13").hidden) shResize(drawPick, ["#dwh", "#sgh"]); if (!$("v14").hidden) shResize(drawVib)
 }
 
 // ===== вибрация: общий выключатель, сила, отдельные случаи =====

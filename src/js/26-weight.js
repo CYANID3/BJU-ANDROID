@@ -23,7 +23,7 @@ function wPv() {
 }
 function wSave() { const v = wIn(); if (!(v >= 20 && v <= 400)) return badField("wv", "Введите вес в кг"); S.wt = Object.assign({}, S.wt, { [cur]: Math.round(v * 100) / 100 }); vib("save"); save(); cl(); render() }
 async function wDel() { if (!await ask("Запись веса за этот день будет удалена.", "Удалить", 1, 0, "Удалить вес?")) return; const w = Object.assign({}, S.wt); delete w[cur]; S.wt = w; vib("del"); save(); cl(); render() }
-function setWt(v) { S.set = Object.assign({}, S.set, { wt: v }); saveq(); drawSet(); render(); scSync(); vib("ui") }
+function setWt(v) { S.set = Object.assign({}, S.set, { wt: v }); saveq(); vib("ui"); vtx(() => { drawSet(); render() }); scSync() }
 // ярлык «Вес» у иконки приложения — по настройке (вызывается при запуске и при переключении)
 // (вызывается и из applyAc — в том числе до объявления let-переменных, поэтому состояние хранится в window)
 function scSync(){const N=window.BJU_NATIVE;if(!N||!N.native||!N.shortcuts)return;const w=wton();if(window.__scL===w)return;window.__scL=w;N.shortcuts({weight:w})}

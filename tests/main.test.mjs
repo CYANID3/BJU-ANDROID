@@ -168,7 +168,7 @@ test('настройки: длина свайпа, оттенок фона и а
   assert.equal(await a.ev(() => slv()), 'long');
   await a.ev(() => pick('tn')); await a.wait(300);
   const bg0 = await a.ev(() => getComputedStyle(document.documentElement).getPropertyValue('--bg'));
-  await a.pg.click('#pko .row:nth-child(3)');
+  await a.pg.click('#pko .row:nth-child(3)'); await a.wait(450); // смена кадра (View Transition) — асинхронно
   const bg1 = await a.ev(() => getComputedStyle(document.documentElement).getPropertyValue('--bg'));
   assert.notEqual(bg0, bg1, 'оттенок фона меняет --bg');
   await a.ev(() => pick('ac')); await a.wait(300);

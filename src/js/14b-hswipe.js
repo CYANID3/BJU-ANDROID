@@ -30,4 +30,5 @@ function hFlip(el, dir, from, change) {
 }
 hSwipe($("v6"), () => $("cg"), () => true, (dir, dx, el) => { calFlip(el, dir, dx, parseFloat(el.style.opacity) || 1); return 1 });
 hSwipe($("v9"), () => $("stc"), e => !e.target.closest(".chw"), (dir, dx, el) => { hFlip(el, dir, dx, () => { stM[1] += dir; if (stM[1] < 0) { stM[1] = 11; stM[0]-- } if (stM[1] > 11) { stM[1] = 0; stM[0]++ } drawStats() }); return 1 });
-hSwipe($("v1"), () => $("ls"), e => !$("pf").hidden && !e.target.closest(".seg,#mc,.fs,.lr"), (dir, dx, el) => { const n = pFl + dir; if (n < 0 || n > 2) return 0; hFlip(el, dir, dx, () => { pFl = n; lst() }); return 1 });
+// вкладки продуктов: взмах в любом месте листа, и по пустому месту под коротким списком
+hSwipe(shBody(), () => $("ls"), e => !$("v1").hidden && !$("pf").hidden && !e.target.closest(".seg,#mc,.fs,.lr"), (dir, dx, el) => { const n = pFl + dir; if (n < 0 || n > 2) return 0; hFlip(el, dir, dx, () => { pFl = n; lst() }); return 1 });
