@@ -4,7 +4,7 @@ let REP=0;
 // Карточка всегда целиком помещается на экран (чтобы её можно было снять одним скриншотом):
 // 1) продукты в каждом приёме — компактной строкой; 2) если всё ещё длинная — карточка уменьшается целиком
 let repMode=1;// 1 — компактный (по умолчанию), 2 — подробный, 0 — авто (подробный, если помещается)
-function setRepMode(m){repMode=m;render();scrollTo(0,0);hap(10);mo($("app").querySelector(".rep"),[{opacity:.4,transform:`scale(${m===1?1.02:.98})`},{opacity:1,transform:"none"}])}
+function setRepMode(m){repMode=m;render();scrollTo(0,0);vib("ui");mo($("app").querySelector(".rep"),[{opacity:.4,transform:`scale(${m===1?1.02:.98})`},{opacity:1,transform:"none"}])}
 const repDense=()=>{const c=$("app").querySelector(".rep");return !!c&&(c.classList.contains("dense")||!!c.style.zoom)};
 // Подгонка под экран (авто и компактный вид): 1) компактный вид; 2) продукты в две колонки;
 // 3) лёгкое уменьшение всей карточки (две колонки — только для очень насыщенного дня) — с повторным замером, пока низ карточки не окажется на экране
@@ -32,7 +32,7 @@ function repHTML(dense){const E=S.d[cur]||[],t=sumE(E),G=S.g,gk=kc(G.p,G.f,G.c),
  const ring=`<div class="rp-ring"><svg viewBox="0 0 100 100" aria-hidden="true"><g transform="rotate(-90 50 50)">${arcs}</g></svg><div class="rp-rc"><b>${gk?Math.round(k/gk*100):0}%</b><span>нормы</span></div></div>`;
  // Б / Ж / У — те же плитки, что на главном экране (съедено / норма, полоска, остаток, доля калорий)
  const sh=ks>0?kp.map(v=>Math.round(v/ks*100)):[];
- let h=`<div class="rep rep-in${dense?" dense":""}"><div class="rp-h"><div><div class="rp-d">${esc(title)}</div><div class="rp-k">${k}<span>из ${gk} ккал</span></div><div class="rp-l${left<0?" ov":""}">${leftTxt(left)}</div>${wtRep()}</div>${ring}</div>`;
+ let h=(dcv()==="row"?`<button class="x rp-x" onclick="togRep(false)" aria-label="Закрыть карточку дня">${ic("close")}</button>`:"")+`<div class="rep rep-in${dense?" dense":""}"><div class="rp-h"><div><div class="rp-d">${esc(title)}</div><div class="rp-k">${k}<span>из ${gk} ккал</span></div><div class="rp-l${left<0?" ov":""}">${leftTxt(left)}</div>${wtRep()}</div>${ring}</div>`;
  h+=`<div class="mac rp-mac">${mtiles(t,G,sh)}</div>`;
  // приёмы пищи — один блок, приёмы через тонкую линию; продукты — ровные строки: название · количество · ккал
  // (компактный вид — те же колонки мельче и плотнее, без БЖУ приёма)
@@ -43,12 +43,12 @@ function repHTML(dense){const E=S.d[cur]||[],t=sumE(E),G=S.g,gk=kc(G.p,G.f,G.c),
    (dense?"":`<div class="rp-mb">${cbar(s0)}<span>${gk?Math.round(kc(s0.p,s0.f,s0.c)/gk*100):0}% нормы</span></div>`)+`<div class="rp-its">`+it.map(e=>`<div class="rp-it"><span>${esc(e.n)}</span><em>${amt(e)}</em><b>${kc(e.p,e.f,e.c)}</b>${dense?"":`<small>${mxs(e)}</small>`}</div>`).join("")+`</div></div>`});h+=`</div>`}
  h+=`<div class="rp-f"><span>Норма: ${gk} ккал · Б ${G.p} · Ж ${G.f} · У ${G.c} г</span><span><img src="icon-192.png" alt="">БЖУ</span></div></div>`;
  return h}
-function togRep(on){REP=on==null?!REP:on;repMode=1;document.documentElement.classList.toggle("repm",!!REP);hap(10);render();scrollTo(0,0);
+function togRep(on){REP=on==null?!REP:on;repMode=1;document.documentElement.classList.toggle("repm",!!REP);document.documentElement.classList.toggle("repx",!!REP&&dcv()==="row");vib("ui");render();scrollTo(0,0);
  if(!REP)moSwap($("app"),0)
- if(REP)toast("Свайп вверх/вниз — вид · три касания — назад",0,2600)}
+ if(REP)toast(dcv()==="row"?"Свайп вверх/вниз — вид · «Назад» или ✕ — закрыть":"Свайп вверх/вниз — вид · три касания — назад",0,2600)}
 (()=>{let n=0,t=0,x=0,y=0,sw=0;
  addEventListener("pointerdown",e=>{x=e.clientX;y=e.clientY},true);
- addEventListener("pointerup",e=>{if(isOpen||e.button>0)return;if(Math.hypot(e.clientX-x,e.clientY-y)>12){n=0;return}
+ addEventListener("pointerup",e=>{if(isOpen||e.button>0||dcv()!=="tap")return;if(Math.hypot(e.clientX-x,e.clientY-y)>12){n=0;return}
   const el=e.target.closest&&e.target.closest(REP?"#app .rep":"#app .sum");if(!el){n=0;return}
   const now=Date.now();n=now-t<450?n+1:1;t=now;if(n>=3){n=0;sw=now+500;togRep()}},true);
  // клик от этого же касания не должен попасть в новую разметку под пальцем (например, в «+»)

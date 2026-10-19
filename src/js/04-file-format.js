@@ -13,13 +13,19 @@
 //   "settings": { "theme": "auto|light|dark", "accentColor": "#22a06b", "pullUpAction": "meal|product|stats|weight|off",
 //                 "pullDownAction": "calendar|today|off", "vibration": "on|exceptDays|off", "swipeLength": "short|medium|long",
 //                 "backgroundTint": "off|soft|strong", "weightTracking": "on|off",
-//                 "bottomBar": "page|fixed", "newButtons": "bottom|top" },
+//                 "newButtons": "top|bottom", "snacks": "row|doubleTap", "dayCard": "tripleTap|row",
+//                 "fabAction": "meal|product|dish|weight|hidden", "vibrationStrength": "light|normal|strong",
+//                 "vibrationEvents": { "kb": true, "save": true, "del": true, "days": false, "pull": true, "ui": true, "err": true } },
 //   "weight":   { "2026-10-16": 72.4 },                                    — вес по дням, кг
 //   "stats":    { "useCount": { "Яблоко": 12 }, "lastGrams": { "Яблоко": 55 }, "recent": [ "Яблоко" ] }   — для сортировки и подсказок
 // }
 // В products числа на 100 г можно не указывать (будет 0). Старые файлы (без "format") тоже открываются.
 const MK=["breakfast","snack1","lunch","snack2","dinner","snack3"];
-const STM={th:["theme",{}],tn:["backgroundTint",{}],ac:["accentColor",{}],sw:["pullUpAction",{prod:"product",stat:"stats",wt:"weight"}],dw:["pullDownAction",{cal:"calendar"}],hp:["vibration",{nodays:"exceptDays"}],sl:["swipeLength",{mid:"medium"}],wt:["weightTracking",{}],bb:["bottomBar",{fix:"fixed"}],nb:["newButtons",{}],sn:["snacks",{row:"row",tap:"doubleTap"}],mg:["productImport",{}],gh:["gestureHints",{}],sf:["pullUpFrom",{edge:"edge",end:"listEnd"}]};
+// внутренний ключ настройки → [имя в файле, {внутреннее значение: значение в файле}]
+// bottomBar больше не используется (панель всегда закреплена), но читается и сохраняется обратно без изменений —
+// файл остаётся совместимым со старой версией приложения на другом телефоне
+const STM={th:["theme",{}],tn:["backgroundTint",{}],ac:["accentColor",{}],sw:["pullUpAction",{prod:"product",stat:"stats",wt:"weight"}],dw:["pullDownAction",{cal:"calendar"}],hp:["vibration",{nodays:"exceptDays"}],sl:["swipeLength",{mid:"medium"}],wt:["weightTracking",{}],bb:["bottomBar",{fix:"fixed"}],nb:["newButtons",{}],sn:["snacks",{row:"row",tap:"doubleTap"}],mg:["productImport",{}],gh:["gestureHints",{}],sf:["pullUpFrom",{edge:"edge",end:"listEnd"}],
+ dc:["dayCard",{tap:"tripleTap",row:"row"}],fa:["fabAction",{prod:"product",wt:"weight",hide:"hidden"}],vs:["vibrationStrength",{}],ve:["vibrationEvents",{}]};
 const r3=x=>Math.round(x*1000)/1000,fnum=(x,d)=>x==null||x===""?d:typeof x==="number"?x:parseFloat(String(x).replace(",","."));
 const entOut=e=>{const o={name:e.n,grams:r3(e.g),protein:r3(e.p),fat:r3(e.f),carbs:r3(e.c)};if(e.ul)o.unit={name:e.ul,count:e.q};return o};
 const entIn=(o,w)=>{if(!o||typeof o!=="object")throw Error(w+": запись должна быть объектом");if(!o.name)throw Error(w+": нет названия (name)");
@@ -34,7 +40,7 @@ function toFile(D){
   diary,weight:Object.fromEntries(Object.keys(D.wt||{}).sort().map(k=>[k,D.wt[k]])),settings,stats:{useCount:D.uc||{},lastGrams:D.lg||{},recent:D.rc||[]}}}
 function fromFile(o){if(!o||typeof o!=="object"||o.format!=="bju-diary")return o;
  if(o.version>3)throw Error("файл создан в более новой версии приложения");
- const g=o.goals||{},D={v:VER,g:{p:fnum(g.protein,0),f:fnum(g.fat,0),c:fnum(g.carbs,0)},db:[],d:{},saved:Date.parse(o.savedAt)||0,set:{},uc:(o.stats&&o.stats.useCount)||{},lg:(o.stats&&o.stats.lastGrams)||{},fav:{},wt:{}};if(o.stats&&Array.isArray(o.stats.recent))D.rc=o.stats.recent.map(String).slice(0,10);
+ const g=o.goals||{},D={v:STATE_VER,g:{p:fnum(g.protein,0),f:fnum(g.fat,0),c:fnum(g.carbs,0)},db:[],d:{},saved:Date.parse(o.savedAt)||0,set:{},uc:(o.stats&&o.stats.useCount)||{},lg:(o.stats&&o.stats.lastGrams)||{},fav:{},wt:{}};if(o.stats&&Array.isArray(o.stats.recent))D.rc=o.stats.recent.map(String).slice(0,10);
  if(!Array.isArray(o.products||[]))throw Error("«products» должен быть списком");
  (o.products||[]).forEach((p,i)=>{const w="продукт №"+(i+1);if(!p||!p.name)throw Error(w+": нет названия (name)");const h=p.per100g||{};
   const a=[String(p.name),fnum(h.protein,0),fnum(h.fat,0),fnum(h.carbs,0)];if(p.favorite)D.fav[a[0]]=1;
@@ -46,5 +52,7 @@ function fromFile(o){if(!o||typeof o!=="object"||o.format!=="bju-diary")return o
  if(o.weight!=null&&typeof o.weight!=="object")throw Error("«weight» должен быть объектом { \"ГГГГ-ММ-ДД\": кг }");
  for(const k in o.weight||{}){const v=fnum(o.weight[k],NaN);if(!/^\d{4}-\d{2}-\d{2}$/.test(k))throw Error("вес: неверная дата «"+k+"»");if(!(v>0&&v<1000))throw Error("вес за "+k+": нужно число в кг");D.wt[k]=v}
  const st=o.settings||{};for(const k in STM){const[nm,map]=STM[k];if(nm in st){const v=st[nm];D.set[k]=Object.keys(map).find(x=>map[x]===v)||v}}
+ // случаи вибрации — только «да / нет» по известным ключам; остальное отбрасывается
+ if(D.set.ve!=null){const e=D.set.ve,ok={};if(e&&typeof e==="object")for(const k of ["kb","save","del","days","pull","ui","err"])if(typeof e[k]==="boolean")ok[k]=e[k];if(Object.keys(ok).length)D.set.ve=ok;else delete D.set.ve}
  return D}
 const ser=()=>JSON.stringify(toFile(S),null,2),parseData=t=>chk(fromFile(JSON.parse(t)));

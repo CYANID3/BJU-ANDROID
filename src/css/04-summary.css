@@ -1,24 +1,25 @@
-/* Итог дня: калории, полоса, остаток; ниже — три плитки Б / Ж / У */
-.big{display:flex;align-items:baseline;gap:8px}.big b{font-size:40px;font-weight:800;letter-spacing:-.025em;line-height:1}.big .mu{font-size:15px}
+/* Итог дня: съедено и «осталось» в одной строке, полоса калорий по вкладу Б / Ж / У, три столбца Б / Ж / У */
+.sum{position:relative}
+.big{display:flex;align-items:baseline;gap:8px}.big b{font-size:var(--fs-num);font-weight:800;letter-spacing:-.03em;line-height:1}.big .mu{font-size:14px;font-weight:500}
+.sumt{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.sumt .lf{text-align:right;font-size:var(--fs-sm);color:var(--mu);font-weight:500;white-space:nowrap}.sumt .lf b{display:block;font-size:22px;font-weight:800;color:var(--tx);letter-spacing:-.02em;line-height:1.15}.sumt .lf.ov b{color:var(--dg)}
 .bar{height:8px;background:var(--sub);border-radius:var(--r-pill);overflow:hidden}.bar i{display:block;height:100%;border-radius:var(--r-pill)}
-.bar.k{height:14px;margin:14px 0 0;background:var(--acs);border:0}
-.lf{margin:9px 2px 14px;font-size:14px;color:var(--mu)}.lf b{color:var(--act,var(--ac));font-weight:700}.lf.ov b{color:var(--dg)}
+/* полоса калорий по вкладу Б / Ж / У — главный элемент экрана; перебор — красная обводка */
+.bar.km{display:flex;gap:2px;height:8px;margin:14px 0;background:var(--sub);border-radius:var(--r-pill);overflow:hidden}.bar.km i{flex:none;border-radius:0;min-width:0;transition:width var(--t3) var(--ease)}.bar.km i[style*="width:0%"]{display:none}
+.bar.km.ov{box-shadow:0 0 0 2px var(--dg)}
+/* столбцы Б / Ж / У: название цветом, «съедено / норма», полоска, «ещё N г» (и доля калорий — в статистике) */
+.mcols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.mcol{min-width:0}.mcol .n{font-size:var(--fs-sm);font-weight:700;color:var(--dot)}
+.mcol .v{font-size:17px;font-weight:800;margin:2px 0 6px;white-space:nowrap;letter-spacing:-.01em}.mcol .v small{font-size:var(--fs-sm);font-weight:600;color:var(--mu)}
+.mcol .bar{height:4px}.mcol .r{display:flex;justify-content:space-between;gap:4px;font-size:12px;color:var(--mu);margin-top:5px;white-space:nowrap}.mcol .r .ov{color:var(--dg);font-weight:700}
+/* строка «Карточка дня» внизу итога (режим «Строка в итоге дня») */
+.crow{display:flex;align-items:center;gap:10px;width:calc(100% + 32px);margin:14px -16px -16px;padding:0 12px 0 16px;height:48px;border-top:1px solid var(--bd);color:var(--act,var(--ac));font-weight:700;font-size:14px;text-align:left;border-radius:0 0 var(--r-card) var(--r-card)}
+.crow span{flex:1}.crow small{color:var(--mu);font-weight:500;font-size:var(--fs-sm)}.crow svg.i{width:19px;height:19px}.crow .ch{color:var(--mu)}
+.crow:active{background:color-mix(in srgb,var(--ac) 9%,transparent)}
+/* плитки Б / Ж / У карточки дня (там они остаются плитками) */
 .mac{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.mtl{background:var(--sub);border-radius:var(--r-block);padding:10px 11px 10px;min-width:0}
+.mtl{background:var(--sub);border-radius:var(--r-block);padding:10px 11px;min-width:0}
 .mtn{font-size:var(--fs-sm);font-weight:700;color:var(--dot);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mtv{margin:5px 0 9px;white-space:nowrap}.mtv b{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}.mtv small{font-size:12px;font-weight:500;color:var(--mu);margin-left:2px;font-variant-numeric:tabular-nums}
 .mtl .bar{height:6px;background:var(--card)}.mtr{display:flex;justify-content:space-between;gap:4px;overflow:hidden;margin-top:7px;font-size:12px;color:var(--mu);white-space:nowrap;font-variant-numeric:tabular-nums}.mtr .ov{color:var(--dg);font-weight:600}.mtr em{font-style:normal;font-weight:600}
-/* плитки под итогом: вес и неделя */
-.duo{display:flex;gap:var(--gap);margin-bottom:var(--gap)}
-.dtl{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:14px 14px 14px 12px;min-height:64px;background:var(--card);border-radius:var(--r-block);box-shadow:var(--shd);text-align:left}.dtl:active{transform:scale(.98);background:var(--acs)}
-.dtl .ti{flex:none;width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac))}.dtl .ti svg.i{width:20px;height:20px}
-.dtl .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.dtl small{font-size:var(--fs-xs);color:var(--mu);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dtl b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}.dtl b i{font-style:normal;font-size:12.5px;font-weight:500;color:var(--mu);margin-left:4px}.dtl b.wa{font-size:16px;font-weight:700;color:var(--act,var(--ac))}
-.dtl em{font-style:normal;font-size:var(--fs-xs);color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wtl:not(.on) .ti{background:var(--ac);color:var(--on)}
-/* узкие экраны (до 390 px): плитки чуть плотнее, чтобы всё помещалось без обрезки */
-@media (max-width:390px){.sum{padding:18px 16px}.mac{gap:6px}.mtl{padding:11px 8px 10px}.mtn{font-size:12.5px}.mtv b{font-size:19px}.mtr{font-size:11px;gap:2px}
- .duo{gap:8px}.dtl{gap:10px;padding:12px 10px}.dtl .ti{width:34px;height:34px}.dtl b{font-size:18px}}
-/* полоса калорий по вкладу Б / Ж / У — главный элемент экрана */
-.bar.km{display:flex;gap:3px;height:14px;padding:3px;background:var(--sub);border-radius:var(--r-pill);overflow:hidden}.bar.km i{flex:none;border-radius:var(--r-pill);min-width:0;transition:width var(--t3) var(--ease)}.bar.km i[style*="width:0%"]{display:none}
-.bar.km.ov{box-shadow:0 0 0 2px var(--dg)}
+@media (max-width:390px){.mcols{gap:10px}.mcol .v{font-size:16px}.mcol .r{font-size:11px}.mac{gap:6px}.mtl{padding:11px 8px 10px}.mtr{font-size:11px}}

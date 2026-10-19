@@ -46,6 +46,15 @@ async function haptic(ms) {
   const style = ms >= 20 ? ImpactStyle.Heavy : ms >= 10 ? ImpactStyle.Medium : ImpactStyle.Light;
   try { await Haptics.impact({ style }); return true; } catch { return false; }
 }
+// Системный виброотклик Android: type — key (нажатие клавиши), confirm (сохранение), long (удаление), tick (листание,
+// переключатели), threshold (порог жеста), reject (ошибка ввода); strength — light / normal / strong.
+// Если система не выполнила отклик (например, старая версия Android) — обычная вибрация той же силы.
+const STRENGTH_MS = { light: 5, normal: 10, strong: 20 };
+async function feedback(type, strength = 'normal') {
+  if (!native) return false;
+  if (hasBju) { try { const r = await Bju.feedback({ type, strength }); if (r && r.ok) return true; } catch { } }
+  return haptic((STRENGTH_MS[strength] || 10) * (type === 'long' ? 2 : 1));
+}
 
 // Системные отступы и клавиатура → CSS-переменные
 function applyInsets(i) {
@@ -84,5 +93,5 @@ if (native) {
   App.getLaunchUrl().then(r => r && r.url && window.BJU_onUrl?.(r.url)).catch(() => {});
 }
 
-window.BJU_NATIVE = { native, readLocal, writeLocal, writeBackup, readLegacy, file, haptic, bars, widget, shortcuts };
+window.BJU_NATIVE = { native, readLocal, writeLocal, writeBackup, readLegacy, file, haptic, feedback, bars, widget, shortcuts };
 window.BJU_NATIVE_READY_RESOLVE?.();

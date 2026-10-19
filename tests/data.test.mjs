@@ -68,7 +68,7 @@ test('виджет получает итоги дня, ярлыки открыв
   assert.equal(w.date, day()); assert.equal(w.eaten, 333); assert.equal(w.p, 7); assert.equal(w.c, 74);
   assert.ok(w.goal > 0 && /^#|^\d/.test(String(w.accent)));
   await a.ev(() => BJU_onUrl('bju://add?m=4')); await a.wait(300);
-  assert.equal(await a.ev(() => isOpen && $('st').textContent), 'Добавить: Ужин');
+  assert.equal(await a.ev(() => isOpen && $('st').textContent), 'Добавить в ужин');
   await a.ev(() => { cl(); lastU = ''; cur = shiftDay(today, -3); render(); }); await a.wait(300);
   await a.ev(() => BJU_onUrl('bju://add?m=0')); await a.wait(300);
   assert.equal(await a.ev(() => cur === today), true, 'ярлык всегда добавляет на сегодня');
@@ -123,7 +123,7 @@ test('слияние баз: тот же продукт склеивается, 
   assert.deepEqual(pairs, ['Яйцо ↔ Яйцо сырое', 'Хлеб ↔ Хлеб белый'], 'похожее — самое близкое по БЖУ');
   assert.equal(await a.ev(() => S.db.length), 8, 'до «Готово» список не меняется');
   await a.pg.click('#mgl .mgp:nth-child(2) button:has-text("Это одно")');
-  await a.pg.click('#v12 .pb'); await a.wait(300);
+  await a.pg.click('.ft[data-v="12"] .pb'); await a.wait(300);
   const r = await a.ev(() => ({ names: S.db.map(p => p[0]), bread: S.db.find(p => p[0] === 'Хлеб белый')[4], days: Object.keys(S.d), toast: $('tm').textContent, v5: !$('v5').hidden }));
   assert.deepEqual(r.names, ['Творог 5%', 'Творог 5% Савушкин', 'Куриная грудка', 'Молоко 2,5%', 'Яйцо (варёное)', 'Яйцо жареное', 'Яйцо сырое', 'Хлеб белый', 'Молоко 3,2%', 'Яйцо', 'Гречка']);
   assert.equal(r.bread, undefined, 'у «Хлеба» из файла мер не было');
@@ -143,7 +143,7 @@ test('настройка «Импорт продуктов из файла»: в
   const a = await openApp();
   await a.ev(() => fp()); await a.wait(300);
   assert.equal(await a.ev(() => $('mgb').hidden), false);
-  await a.ev(() => cl()); await a.wait(400); await a.ev(() => { sets(); stGo(3); }); await a.wait(400);
+  await a.ev(() => cl()); await a.wait(400); await a.ev(() => sets()); await a.wait(400);
   await a.pg.click('#mgm'); await a.wait(100);
   assert.equal(await a.ev(() => [S.set.mg, $('mgm').getAttribute('aria-checked')].join()), 'off,false');
   assert.equal(await a.ev(() => JSON.parse(ser()).settings.productImport), 'off');

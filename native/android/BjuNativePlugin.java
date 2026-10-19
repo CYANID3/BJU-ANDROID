@@ -14,7 +14,10 @@ import android.graphics.Insets;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.provider.OpenableColumns;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
@@ -190,6 +193,58 @@ public class BjuNativePlugin extends Plugin {
             }
             call.resolve();
         });
+    }
+
+    // ---------- Виброотклик ----------
+
+    /**
+     * Системный виброотклик Android. type: key — нажатие клавиши, confirm — сохранение, long — удаление,
+     * tick — листание и переключатели, threshold — порог жеста, reject — ошибка ввода.
+     * strength: light — более тихие отклики, normal — стандартные, strong — короткая «тяжёлая» вибрация (Android 10+).
+     * Возвращает ok=false, если система отклик не выполнила (тогда страница вибрирует обычным способом).
+     */
+    @PluginMethod
+    public void feedback(PluginCall call) {
+        final String type = call.getString("type", "tick");
+        final String strength = call.getString("strength", "normal");
+        getActivity().runOnUiThread(() -> {
+            boolean ok = false;
+            try {
+                if ("strong".equals(strength) && Build.VERSION.SDK_INT >= 29) {
+                    Vibrator vib = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                    if (vib != null && vib.hasVibrator()) {
+                        boolean light = "key".equals(type) || "tick".equals(type);
+                        vib.vibrate(VibrationEffect.createPredefined(light ? VibrationEffect.EFFECT_CLICK : VibrationEffect.EFFECT_HEAVY_CLICK));
+                        ok = true;
+                    }
+                }
+                if (!ok) {
+                    View v = getBridge().getWebView();
+                    ok = v != null && v.performHapticFeedback(hapticConstant(type, "light".equals(strength)));
+                }
+            } catch (Exception ignored) {}
+            JSObject r = new JSObject();
+            r.put("ok", ok);
+            call.resolve(r);
+        });
+    }
+
+    private static int hapticConstant(String type, boolean light) {
+        final int sdk = Build.VERSION.SDK_INT;
+        switch (type) {
+            case "key":
+                return light ? HapticFeedbackConstants.CLOCK_TICK : HapticFeedbackConstants.KEYBOARD_TAP;
+            case "confirm":
+                return sdk >= 30 && !light ? HapticFeedbackConstants.CONFIRM : HapticFeedbackConstants.CONTEXT_CLICK;
+            case "long":
+                return light ? HapticFeedbackConstants.CONTEXT_CLICK : HapticFeedbackConstants.LONG_PRESS;
+            case "threshold":
+                return sdk >= 30 && !light ? HapticFeedbackConstants.GESTURE_START : HapticFeedbackConstants.CLOCK_TICK;
+            case "reject":
+                return sdk >= 30 ? HapticFeedbackConstants.REJECT : HapticFeedbackConstants.LONG_PRESS;
+            default:
+                return light ? HapticFeedbackConstants.CLOCK_TICK : HapticFeedbackConstants.VIRTUAL_KEY;
+        }
     }
 
     // ---------- Виджет рабочего стола ----------

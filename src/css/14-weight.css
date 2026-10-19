@@ -1,8 +1,0 @@
-/* Вес: ввод в нижнем листе (плитка «Вес» — в 04-summary.css) */
-
-.wtin{display:flex;align-items:center;gap:10px;margin:0 0 4px}
-.wtf{flex:1;position:relative}.wtf input{margin:0;height:60px;text-align:center;font-size:26px;font-weight:700;padding:0 44px;border-radius:var(--r-block);font-variant-numeric:tabular-nums}
-.wtf span{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--mu);font-size:15px;pointer-events:none}
-.wst{width:60px;height:60px;flex:none;border-radius:var(--r-block);background:var(--sub);font-size:24px;font-weight:500;color:var(--tx);display:grid;place-items:center}
-.wst:active{background:var(--acs)}
-.wpv{min-height:20px;margin:10px 4px 0;font-size:var(--fs-sm);color:var(--mu)}.wpv b{color:var(--tx);font-variant-numeric:tabular-nums}

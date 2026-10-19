@@ -30,7 +30,7 @@ const mgMac=p=>`Б ${f1(p[1])} · Ж ${f1(p[2])} · У ${f1(p[3])}`;
 function mgView(){const{th,plan,yes}=mgS;$("mgl").innerHTML=plan.map((x,i)=>x.t!=="maybe"?"":`<div class="mgp"><div class="mgr"><small>Из файла</small><b>${esc(th[i][0])}</b><span>${mgMac(th[i])}</span></div>
  <div class="mgr"><small>У вас</small><b>${esc(S.db[x.k][0])}</b><span>${mgMac(S.db[x.k])}</span></div><div class="seg"><button class="${yes.has(i)?"":"on"}" onclick="mgSet(${i},0)">Разные</button><button class="${yes.has(i)?"on":""}" onclick="mgSet(${i},1)">Это одно</button></div></div>`).join("");
  if($("v12").hidden)sv(12,"Похожие продукты");show()}
-function mgSet(i,v){if(v)mgS.yes.add(i);else mgS.yes.delete(i);hap(4);mgView()}
+function mgSet(i,v){if(v)mgS.yes.add(i);else mgS.yes.delete(i);vib("ui");mgView()}
 function mgDone(){const s=mgS;mgS=null;if(!s)return;const r=mgApply(S.db,s.th,s.plan,s.yes);
  if(!r.added.length&&!r.units){if(!$("v12").hidden)fp();return say(`В файле${s.name?" «"+s.name+"»":""} нет новых продуктов: все ${s.th.length} уже есть в вашем списке.`)}
  lastDb=S.db;lastDel=lastAdd=null;S.db=r.db;save();if(!$("v12").hidden)fp();
@@ -41,4 +41,4 @@ async function mgPick(){const N=NX();if(!N||!N.file.available)return $("fmg").cl
 function mgFile(el){const f=el.files[0];el.value="";if(f)f.text().then(t=>mgRun(t,f.name))}
 // настройка «Импорт продуктов»: выключен — кнопки «Добавить продукты из другого файла» нет
 const mgOn=()=>!(S.set&&S.set.mg==="off");
-function setMg(v){S.set=Object.assign({},S.set,{mg:v});saveq();drawSet();hap(8)}
+function setMg(v){S.set=Object.assign({},S.set,{mg:v});saveq();drawSet();vib("ui")}

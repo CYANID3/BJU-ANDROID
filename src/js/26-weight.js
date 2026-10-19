@@ -5,21 +5,25 @@ const wtm=()=>S.set&&S.set.wt==="off"?"off":"on",wton=()=>wtm()!=="off";
 function wPrev(k){let b=null;for(const d in S.wt||{})if(d<k&&(!b||d>b))b=d;return b?[b,S.wt[b]]:null}
 const wFmt=v=>String(r1(v)).replace(".",","),wDate=k=>new Date(k+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"short"});
 const wSg=d=>(d>0?"+":d<0?"−":"±")+wFmt(Math.abs(d));
-// плитка «Вес» под итогом дня: записан за этот день — «72,4 кг», ниже разница с прошлой записью;
-// не записан — «Записать» (и прошлый вес мелко). Если вес пишется жестом «потянуть вверх» — пустой плитки нет.
-function wtTile(){if(!wton()||cur>today)return"";const v=(S.wt||{})[cur],pr=wPrev(cur);
- if(v){const d=pr?r1(v-pr[1]):null;return `<button class="dtl wtl on" onclick="wtOpen()" aria-label="Вес ${wFmt(v)} кг, изменить"><span class="ti">${ic("scale")}</span><span class="tx"><small>Вес</small><b>${wFmt(v)}<i>кг</i></b><em>${d?wSg(d)+" кг с "+wDate(pr[0]):pr?"без изменений":"первая запись"}</em></span></button>`}
- if(swAct()==="wt")return"";
- return `<button class="dtl wtl" onclick="wtOpen()" aria-label="Записать вес"><span class="ti">${ic("plus")}</span><span class="tx"><small>Вес</small><b class="wa">Записать</b><em>${pr?"было "+wFmt(pr[1])+" кг":"за этот день"}</em></span></button>`}
-function wtOpen(){const v=(S.wt||{})[cur];$("wv").value=v?wFmt(v):"";$("wdl").hidden=!v;wPv();svFocus=1;sv(10,"Вес · "+new Date(cur+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"long"}));show();fIn("wv",1)}
-const wIn=()=>num($("wv").value);
-function wSt(n){const pr=wPrev(cur),b=wIn()||(S.wt||{})[cur]||(pr&&pr[1])||70;$("wv").value=wFmt(Math.max(1,Math.round(b*10+n)/10));wPv();hap(4);if(document.activeElement===$("wv"))rpOn($("wv"))}
-function wPv(){const v=wIn(),pr=wPrev(cur),el=$("wpv");
- if(!pr){el.textContent="Лучше взвешиваться в одно время — например, утром.";return}
- const d=v>0?r1(v-pr[1]):null;el.innerHTML=`Прошлая запись: <b>${wFmt(pr[1])}</b> кг · ${wDate(pr[0])}`+(d?` · <span style="color:var(--tx)">${wSg(d)} кг</span>`:"")}
-function wSave(){const v=wIn();if(!(v>=20&&v<=400)){$("wv").focus();return toast("Введите вес в кг")}S.wt=Object.assign({},S.wt,{[cur]:Math.round(v*100)/100});hap(8);save();cl();render()}
-async function wDel(){if(!await ask("Удалить запись веса за этот день?","Удалить",1))return;const w=Object.assign({},S.wt);delete w[cur];S.wt=w;save();cl();render()}
-function setWt(v){S.set=Object.assign({},S.set,{wt:v});saveq();drawSet();render();scSync();hap(8)}
+// чип «Вес» под итогом дня: записан за этот день — «72,4 кг» и разница с прошлой записью;
+// не записан — «Записать» (и прошлый вес мелко). Если вес пишется жестом «потянуть вверх» — пустого чипа нет.
+function wtTile() {
+  if (!wton() || cur > today) return ""; const v = (S.wt || {})[cur], pr = wPrev(cur);
+  if (v) { const d = pr ? r1(v - pr[1]) : null; return `<button class="dtl wtl on" onclick="wtOpen()" aria-label="Вес ${wFmt(v)} кг, изменить"><span class="ti">${ic("scale")}</span><span class="tx"><small>Вес</small><b>${wFmt(v)}<i>кг</i></b></span><em>${d ? wSg(d) : pr ? "±0" : ""}</em></button>` }
+  if (swAct() === "wt") return "";
+  return `<button class="dtl wtl" onclick="wtOpen()" aria-label="Записать вес"><span class="ti">${ic("plus")}</span><span class="tx"><small>Вес</small><b class="wa">Записать</b></span><em>${pr ? "было " + wFmt(pr[1]) : ""}</em></button>`
+}
+function wtOpen(sub) { SUB = 0; const v = (S.wt || {})[cur], pr = wPrev(cur); $("wv").value = v ? wFmt(v) : ""; $("wdl").hidden = !v; sv(10, "Вес · " + new Date(cur + "T12:00:00").toLocaleDateString("ru-RU", { day: "numeric", month: "long" }), pr ? `Прошлая запись: ${wFmt(pr[1])} кг · ${wDate(pr[0])}` : ""); wPv(); show(); fIn("wv", 1) }
+const wIn = () => num($("wv").value);
+function wSt(n) { const pr = wPrev(cur), b = wIn() || (S.wt || {})[cur] || (pr && pr[1]) || 70; $("wv").value = wFmt(Math.max(1, Math.round(b * 10 + n) / 10)); wPv(); vib("ui"); if (document.activeElement === $("wv")) rpOn($("wv")) }
+function wPv() {
+  const v = wIn(), pr = wPrev(cur), el = $("wpv"); vfUnit($("wv"));
+  if (!pr) { el.textContent = "Лучше взвешиваться в одно время — например, утром."; return }
+  const d = v > 0 ? r1(v - pr[1]) : null; el.innerHTML = (d ? `<b>${wSg(d)} кг</b> с ${new Date(pr[0] + "T12:00:00").toLocaleDateString("ru-RU", { day: "numeric", month: "long" })} · ` : v > 0 ? "Без изменений · " : "") + "кнопки ± меняют на 0,1"
+}
+function wSave() { const v = wIn(); if (!(v >= 20 && v <= 400)) return badField("wv", "Введите вес в кг"); S.wt = Object.assign({}, S.wt, { [cur]: Math.round(v * 100) / 100 }); vib("save"); save(); cl(); render() }
+async function wDel() { if (!await ask("Запись веса за этот день будет удалена.", "Удалить", 1, 0, "Удалить вес?")) return; const w = Object.assign({}, S.wt); delete w[cur]; S.wt = w; vib("del"); save(); cl(); render() }
+function setWt(v) { S.set = Object.assign({}, S.set, { wt: v }); saveq(); drawSet(); render(); scSync(); vib("ui") }
 // ярлык «Вес» у иконки приложения — по настройке (вызывается при запуске и при переключении)
 // (вызывается и из applyAc — в том числе до объявления let-переменных, поэтому состояние хранится в window)
 function scSync(){const N=window.BJU_NATIVE;if(!N||!N.native||!N.shortcuts)return;const w=wton();if(window.__scL===w)return;window.__scL=w;N.shortcuts({weight:w})}

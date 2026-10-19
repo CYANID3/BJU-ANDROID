@@ -1,23 +1,12 @@
-/* Палитра. Цвета БЖУ — как на логотипе: белки зелёные, жиры жёлтые, углеводы синие */
-:root{--bg:#eef1f4;--card:#fff;--sub:#f2f4f7;--tx:#151a21;--mu:#68717f;--bd:#e3e7ec;--ac:#2f7de1;--p:#22a565;--f:#e89a17;--c:#3a7ff0;--dg:#d64545;--on:#fff;--shd:0 1px 2px rgba(20,30,45,.035),0 6px 18px rgba(20,30,45,.045);box-sizing:border-box;padding-top:var(--sat);padding-bottom:var(--sab)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10141c;--card:#1a202b;--sub:#232a37;--tx:#eef2f7;--mu:#9ba5b7;--bd:#2c3442;--ac:#5b9cf0;--p:#3cc77f;--f:#f2b33d;--c:#5b9cf0;--dg:#ef6b6b;--shd:0 1px 0 rgba(255,255,255,.035) inset,0 6px 20px rgba(0,0,0,.22);--acs:color-mix(in srgb,var(--ac) 18%,transparent)}}
-:root[data-theme="dark"]{--bg:#10141c;--card:#1a202b;--sub:#232a37;--tx:#eef2f7;--mu:#9ba5b7;--bd:#2c3442;--ac:#5b9cf0;--p:#3cc77f;--f:#f2b33d;--c:#5b9cf0;--dg:#ef6b6b;--shd:0 1px 0 rgba(255,255,255,.035) inset,0 6px 20px rgba(0,0,0,.22);--acs:color-mix(in srgb,var(--ac) 18%,transparent)}
-:root{--acs:color-mix(in srgb,var(--ac) 14%,transparent);--acb:color-mix(in srgb,var(--ac) 35%,transparent);color-scheme:light dark}:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
-*{box-sizing:border-box}[hidden]{display:none!important}
-html{background:var(--bg);overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-action:pan-y;overflow-x:clip;overflow-y:scroll;scroll-padding-top:var(--sat)}html.lk{overflow:hidden}
-html,body,.sh{scrollbar-width:none}html::-webkit-scrollbar,body::-webkit-scrollbar,.sh::-webkit-scrollbar{display:none;width:0;height:0}
-body{margin:0 auto;background:var(--bg);color:var(--tx);font:16px/1.4 "Manrope Variable",Manrope,Roboto,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-feature-settings:"tnum" 0;letter-spacing:-.005em;max-width:520px;padding:8px 12px 28px;overflow-x:clip}
-body::before{content:"";position:fixed;left:0;right:0;top:0;height:var(--sat);background:var(--bg);z-index:4}
-.big b,.it b,.cd,.kp{font-variant-numeric:tabular-nums}
-svg.i{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
-button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0;transition:transform var(--t1) var(--ease),opacity var(--t1),background-color var(--t2),color var(--t2);-webkit-user-select:none;user-select:none}button:active{transform:scale(.96)}
-:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-/* на телефоне рамка фокуса не нужна (её видно только при программном фокусе) — поля подсвечиваются сами */
-.native :focus-visible,.dc :focus-visible{outline:none}
-.mu{color:var(--mu);font-size:14px}
-/* подписи и пояснения — один стиль везде */
-.hint{font-size:var(--fs-sm);color:var(--mu);line-height:1.4;margin:8px 4px 0;min-height:18px}.hint.c{text-align:center;margin-top:14px}
-.lead{font-size:14px;color:var(--mu);line-height:1.45;margin:0 4px 14px}
-.ver{font-size:var(--fs-xs);color:var(--mu);text-align:center;margin:6px 0 2px;opacity:.8}
-#app.mv{will-change:transform,opacity}
-
+/* Палитра. Цвета БЖУ — как на логотипе: белки зелёные, жиры жёлтые, углеводы синие.
+   Акцент по умолчанию — индиго: он не совпадает ни с одним из цветов БЖУ, поэтому кнопки не путаются с данными.
+   Глубина без рамок: фон → карточка → блок в листе; своя клавиатура — свой тон (--kbg). */
+:root{--bg:#eef1f5;--card:#fff;--sub:#f2f4f8;--tx:#151a21;--mu:#5f6877;--bd:#e3e7ec;--ac:#5b4fd6;--p:#1e9e5e;--f:#d98a0b;--c:#2f74e0;--dg:#d64545;--ok:#1e9e5e;--wr:#c97d06;--on:#fff;
+ --key:#fff;--keyp:#dde1e8;--kbg:#e4e8ee;--scrim:rgba(20,25,35,.38);--shd:0 1px 2px rgba(20,30,45,.035),0 6px 18px rgba(20,30,45,.045)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10141c;--card:#1a202b;--sub:#232a37;--tx:#eef2f7;--mu:#98a2b3;--bd:#2a3241;--ac:#7c70f0;--p:#3cc77f;--f:#f2b33d;--c:#5b9cf0;--dg:#ef6b6b;--ok:#3cc77f;--wr:#f2b33d;
+ --key:#2a3140;--keyp:#343c4d;--kbg:#141922;--scrim:rgba(4,6,10,.55);--shd:none}}
+:root[data-theme="dark"]{--bg:#10141c;--card:#1a202b;--sub:#232a37;--tx:#eef2f7;--mu:#98a2b3;--bd:#2a3241;--ac:#7c70f0;--p:#3cc77f;--f:#f2b33d;--c:#5b9cf0;--dg:#ef6b6b;--ok:#3cc77f;--wr:#f2b33d;
+ --key:#2a3140;--keyp:#343c4d;--kbg:#141922;--scrim:rgba(4,6,10,.55);--shd:none}
+:root{--acs:color-mix(in srgb,var(--ac) 14%,transparent);--acb:color-mix(in srgb,var(--ac) 35%,transparent);color-scheme:light dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--acs:color-mix(in srgb,var(--ac) 18%,transparent)}}:root[data-theme="dark"]{--acs:color-mix(in srgb,var(--ac) 18%,transparent)}
+:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}

@@ -1,110 +1,72 @@
-/* Настройки: разделы-блоки с заголовком-значком */
-.sg{background:var(--sub);border-radius:var(--r-block);padding:16px;margin-bottom:var(--gap)}
-.sgt{display:flex;align-items:center;gap:12px;font-size:var(--fs-h);font-weight:700;margin-bottom:12px}.sgt span{width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac))}.sgt svg.i{width:19px;height:19px}
-.srl{font-size:var(--fs-sm);font-weight:600;color:var(--mu);margin:16px 4px 8px}.sgt+.sr .srl{margin-top:0}.sd{font-size:var(--fs-sm);color:var(--mu);margin:8px 4px 0;line-height:1.4}
-/* сегмент: контейнер 52, кнопки 44 — как поле ввода по высоте */
-.seg{position:relative;isolation:isolate;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;background:var(--sub);border-radius:var(--r-ctl);padding:3px}.sg .seg{background:var(--card)}
-/* выбранный вариант — «таблетка», которая плавно переезжает к нажатому (положение ставит segSync в JS);
-   невыбранные — просто текст на подложке, без рамок */
-.seg button{position:relative;min-height:var(--h-seg);padding:0 6px;border-radius:var(--r-in);font-size:14px;font-weight:600;color:var(--mu);transition:color var(--t3) var(--ease),background-color var(--t2),transform var(--t1) var(--ease)}
-.seg button:active{transform:scale(.96)}.seg button:not(.on):active{color:var(--tx)}
-.seg button.on{background:var(--ac);color:var(--on);box-shadow:0 2px 10px color-mix(in srgb,var(--ac) 32%,transparent)}
-.seg.sk button.on{background:transparent;box-shadow:none}
-.seg.sk::before{content:"";position:absolute;left:0;top:0;z-index:-1;width:var(--skw);height:var(--skh);transform:translate(var(--skx),var(--sky));border-radius:var(--r-in);background:var(--ac);
- box-shadow:0 2px 10px color-mix(in srgb,var(--ac) 32%,transparent);transition:transform var(--t3) var(--ease),width var(--t3) var(--ease),height var(--t3) var(--ease),background-color var(--t2)}
-.seg.sn::before{transition:none}
-/* цвета акцента */
-.swc{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:4px 2px}.swc button{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;color:#fff}.swc button svg{opacity:0;width:20px;height:20px;transform:scale(.6);transition:opacity var(--t1),transform var(--t2) var(--spring)}.swc button.on{box-shadow:0 0 0 3px var(--sub),0 0 0 5px var(--tx)}.swc button.on svg{opacity:1;transform:none}
-.cc{display:flex;align-items:center;justify-content:space-between;min-height:var(--h-ctl);margin-top:12px;padding:0 6px 0 16px;border-radius:var(--r-ctl);background:var(--card);font-size:15px;font-weight:500;color:var(--tx)}input[type=color]{width:56px;height:40px;padding:3px;margin:0;cursor:pointer;border-radius:var(--r-in);background:var(--sub)}
-/* список вариантов (жесты): одна строка на вариант — значок, название, пояснение, отметка */
-.ol{background:var(--card);border-radius:var(--r-ctl);padding:3px;display:flex;flex-direction:column;gap:2px}
-.ol button{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:8px 12px 8px 8px;border-radius:var(--r-in);text-align:left;transition:background-color var(--t1)}
-.ol button:active{transform:none;background:var(--sub)}
-.ol .oi{flex:none;width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--sub);color:var(--mu);transition:background-color var(--t1),color var(--t1)}.ol .oi svg.i{width:19px;height:19px}
-.ol .ot{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.ol .ot b{font-size:var(--fs-body);font-weight:600}.ol .ot small{font-size:var(--fs-xs);color:var(--mu);line-height:1.3}
-.ol .oc{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--bd);display:grid;place-items:center;color:transparent;transition:background-color var(--t1),border-color var(--t1)}.ol .oc svg.i{width:14px;height:14px;stroke-width:3}
-.ol button.on{background:var(--acs)}.ol button.on .oi{background:var(--ac);color:var(--on)}.ol button.on .oc{background:var(--ac);border-color:var(--ac);color:var(--on)}
-/* свёрнутый список: видна только выбранная строка, справа — стрелка «раскрыть» */
-.ol .od{display:none;flex:none;color:var(--mu)}.ol .od svg.i{width:18px;height:18px;transform:rotate(90deg)}
-.ol.cl button:not(.on){display:none}.ol.cl button.on{background:transparent}.ol.cl .oc{display:none}.ol.cl .od{display:grid}
-/* строки с переключателем «да / нет» собраны в одну плашку карточного тона (как сегменты и списки вариантов):
-   подпись слева, переключатель справа, между строками — тонкая линия с отступами */
-.srow{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:var(--h-ctl);padding:4px 10px 4px 16px;background:var(--card);font-size:var(--fs-body);font-weight:500}
-:not(.srow)+.srow{border-top-left-radius:var(--r-ctl);border-top-right-radius:var(--r-ctl)}
-.srow:not(:has(+.srow)){border-bottom-left-radius:var(--r-ctl);border-bottom-right-radius:var(--r-ctl)}
-.srow+.srow{position:relative}.srow+.srow::before{content:"";position:absolute;left:16px;right:16px;top:0;height:1px;background:var(--sub)}.srow+.sr .srl{margin-top:14px}
-.tg{flex:none;position:relative;width:50px;height:30px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--mu) 35%,var(--card));transition:background-color var(--t2)}
-.tg i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform var(--t2) var(--spring)}
-.tg.on{background:var(--ac)}.tg.on i{transform:translateX(20px)}.tg:active{transform:none}.tg:active i{width:28px}.tg.on:active i{transform:translateX(16px)}
-/* свёрнутый список жестов: только название выбранного варианта, без пояснения */
-.ol.cl small{display:none}.ol.cl button{min-height:var(--h-ctl)}
-/* ползунок «Длина свайпа»: точки стоят по центрам трёх подписей — всё симметрично.
-   Дорожка от первой точки до последней, пройденная часть — акцентом, бегунок — белый круг с мягкой тенью и ореолом */
-.sld{--slv:.5;background:var(--card);border-radius:var(--r-ctl);padding:12px 0 4px}
+/* «Ещё»: группы строк. Строка — значок в тонированном квадрате, название, подпись, значение справа и шеврон
+   (выбор из нескольких вариантов открывает экран со списком и галочкой), «да / нет» — выключателем. */
+.gh{font-size:var(--fs-xs);font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mu);margin:18px 2px 8px}.gh:first-child{margin-top:4px}
+.grp{background:var(--sub);border-radius:var(--r-block);overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;width:100%;min-height:var(--h-row);padding:8px 14px;text-align:left;font-size:var(--fs-body);font-weight:600;color:var(--tx)}
+.row+.row{border-top:1px solid color-mix(in srgb,var(--bd) 70%,var(--sub))}
+.row:active{background:color-mix(in srgb,var(--tx) 6%,transparent)}
+.row .ic{flex:none;width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac))}.row .ic svg.i{width:19px;height:19px}
+.row .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}.row .tx small{font-size:var(--fs-sm);color:var(--mu);font-weight:500;line-height:1.35}.row .tx small.ok{color:var(--ok)}.row .tx small.bad{color:var(--dg)}
+.row .v{flex:none;max-width:45%;font-size:14px;color:var(--mu);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:8px}
+.row .v i{width:18px;height:18px;border-radius:50%;flex:none}
+.row .ch{flex:none;color:var(--mu);opacity:.7}.row .ch svg.i{width:18px;height:18px}
+/* выбор варианта: выбранный — акцентом и галочкой */
+.row .ok{flex:none;color:var(--act,var(--ac));display:none}.row.on .ok{display:block}.row.on .tx{color:var(--act,var(--ac))}
+.row.dis{opacity:.45;pointer-events:none}
+/* выключатель «да / нет» */
+.tg{flex:none;position:relative;width:46px;height:28px;border-radius:var(--r-pill);background:var(--bd);transition:background-color var(--t2)}
+.tg i{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--mu);transition:transform var(--t2) var(--spring),background-color var(--t2)}
+.tg.on{background:var(--ac)}.tg.on i{transform:translateX(18px);background:#fff}
+.row:active .tg i{width:26px}.row:active .tg.on i{transform:translateX(14px)}
+.ver{font-size:var(--fs-xs);color:var(--mu);text-align:center;margin:14px 0 2px;opacity:.8}
+#pkx>*{margin-top:12px}#pkx .gh{margin-top:18px}
+/* ползунок «Длина свайпа»: точки по центрам трёх подписей, бегунок плавно переезжает */
+.sld{--slv:.5;background:var(--sub);border-radius:var(--r-block);padding:14px 0 6px}
 .sldt{position:relative;height:32px;margin:0 calc(100% / 6);touch-action:none;cursor:pointer}
-.sldt::before{content:"";position:absolute;left:0;right:0;top:50%;height:6px;margin-top:-3px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--mu) 22%,var(--card))}
-.sldf{position:absolute;left:0;top:50%;height:6px;margin-top:-3px;width:calc(var(--slv) * 100%);border-radius:var(--r-pill);background:var(--ac)}
-.sldd{position:absolute;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:color-mix(in srgb,var(--mu) 70%,var(--card));transition:opacity var(--t2),transform var(--t2) var(--ease)}.sldd.in{opacity:0;transform:scale(.4)}
-.sldk{position:absolute;top:50%;left:calc(var(--slv) * 100%);width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:#fff;
- box-shadow:0 0 0 6px color-mix(in srgb,var(--ac) 22%,transparent),0 2px 6px rgba(0,0,0,.3)}
-.sldk::after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--ac)}
+.sldt::before{content:"";position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;border-radius:var(--r-pill);background:var(--bd)}
+.sldf{position:absolute;left:0;top:50%;height:4px;margin-top:-2px;width:calc(var(--slv) * 100%);border-radius:var(--r-pill);background:var(--ac)}
+.sldd{position:absolute;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:var(--mu);opacity:.7;transition:opacity var(--t2),transform var(--t2) var(--ease)}.sldd.in{opacity:0;transform:scale(.4)}
+.sldk{position:absolute;top:50%;left:calc(var(--slv) * 100%);width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:#fff;box-shadow:0 0 0 6px var(--acs),0 2px 6px rgba(0,0,0,.3)}
 .sldf,.sldk{transition:left var(--t3) var(--ease),width var(--t3) var(--ease),transform var(--t1) var(--ease),box-shadow var(--t2)}.sld.drag .sldf,.sld.drag .sldk{transition:transform var(--t1) var(--ease),box-shadow var(--t2)}
-.sld.drag .sldk{transform:scale(1.1);box-shadow:0 0 0 9px color-mix(in srgb,var(--ac) 18%,transparent),0 3px 10px rgba(0,0,0,.32)}
-.sldl{display:grid;grid-template-columns:repeat(3,1fr);margin-top:2px}.sldl button{min-height:34px;font-size:14px;font-weight:600;color:var(--mu);transition:color var(--t2)}.sldl button.on{color:var(--tx)}.sldl button:active{transform:none;color:var(--tx)}
-/* строка «Свой цвет»: справа — текущий цвет (и код, если он свой) и стрелка */
-button.cc{width:100%;text-align:left;padding-right:12px}.cc .ccv{display:flex;align-items:center;gap:10px;color:var(--mu)}.cc .ccv em{font-style:normal;font-size:var(--fs-sm);font-variant-numeric:tabular-nums}
-.cc .ccv i{width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}.cc .ccv svg.i{width:18px;height:18px}
+.sld.drag .sldk{transform:scale(1.1)}
+.sldl{display:grid;grid-template-columns:repeat(3,1fr);margin-top:2px}.sldl button{min-height:36px;font-size:13.5px;font-weight:600;color:var(--mu);transition:color var(--t2)}.sldl button.on{color:var(--act,var(--ac));font-weight:700}
+/* цвета акцента */
+.swc{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:14px;background:var(--sub);border-radius:var(--r-block)}.swc button{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;color:#fff}.swc button svg{opacity:0;width:20px;height:20px;transform:scale(.6);transition:opacity var(--t1),transform var(--t2) var(--spring)}.swc button.on{box-shadow:0 0 0 3px var(--sub),0 0 0 5px var(--tx)}.swc button.on svg{opacity:1;transform:none}
 /* экран «Свой цвет» */
 .cpk{display:flex;flex-direction:column;gap:16px}
-.cpa{--cph:210;--cpx:.7;--cpy:.1;position:relative;height:210px;border-radius:var(--r-block);touch-action:none;cursor:crosshair;
- background:linear-gradient(to top,#000,rgba(0,0,0,0)),linear-gradient(to right,#fff,hsl(calc(var(--cph) * 1deg) 100% 50%))}
+.cpa{--cph:210;--cpx:.7;--cpy:.1;position:relative;height:200px;border-radius:var(--r-block);touch-action:none;cursor:crosshair;background:linear-gradient(to top,#000,rgba(0,0,0,0)),linear-gradient(to right,#fff,hsl(calc(var(--cph) * 1deg) 100% 50%))}
 .cpa i,.cph i{position:absolute;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35),inset 0 0 0 1px rgba(0,0,0,.15);pointer-events:none;transition:transform var(--t1) var(--ease)}
 .cpa i{left:calc(var(--cpx) * 100%);top:calc(var(--cpy) * 100%)}
-.cph{--cpx:.5;position:relative;height:16px;margin:4px 14px;border-radius:var(--r-pill);touch-action:none;cursor:pointer;
- background:linear-gradient(to right,#f00 0%,#ff0 16.66%,#0f0 33.33%,#0ff 50%,#00f 66.66%,#f0f 83.33%,#f00 100%)}
-.cph::before{content:"";position:absolute;inset:-14px -14px;}.cph i{left:calc(var(--cpx) * 100%);top:50%}
+.cph{--cpx:.5;position:relative;height:16px;margin:4px 14px;border-radius:var(--r-pill);touch-action:none;cursor:pointer;background:linear-gradient(to right,#f00 0%,#ff0 16.66%,#0f0 33.33%,#0ff 50%,#00f 66.66%,#f0f 83.33%,#f00 100%)}
+.cph::before{content:"";position:absolute;inset:-14px -14px}.cph i{left:calc(var(--cpx) * 100%);top:50%}
 .cpa.drag i,.cph.drag i{transform:scale(1.15)}
 .cpr{display:flex;gap:10px;align-items:center}.cpv{flex:none;width:var(--h-ctl);height:var(--h-ctl);border-radius:var(--r-ctl);box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}
-.cpr input{margin:0;flex:1;font-variant-numeric:tabular-nums;letter-spacing:.04em;font-weight:600;text-transform:uppercase}
-.cps{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}.cps button{aspect-ratio:1;border-radius:50%;transition:transform var(--t2) var(--spring),box-shadow var(--t2)}
+.cpr input{flex:1;font-variant-numeric:tabular-nums;letter-spacing:.04em;text-transform:uppercase}
+.cps{display:grid;grid-template-columns:repeat(5,44px);justify-content:space-between;gap:10px}.cps button{width:44px;height:44px;border-radius:50%;transition:transform var(--t2) var(--spring),box-shadow var(--t2)}
 .cps button.on{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--tx);transform:scale(.9)}
-/* кнопка «Готово» окрашивается вслед за пальцем — без перехода цвета (иначе запаздывает) */
-#cpok{margin-top:0;transition:transform var(--t1) var(--ease)}
+#cpok{transition:transform var(--t1) var(--ease)}
 /* «Похожие продукты» при слиянии баз: пара «из файла / у вас» и выбор */
-#mgl{display:flex;flex-direction:column;gap:var(--gap);margin-bottom:4px}
+#mgl{display:flex;flex-direction:column;gap:var(--gap)}
 .mgp{background:var(--sub);border-radius:var(--r-block);padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .mgr{min-width:0;display:flex;flex-direction:column;gap:2px;padding:2px 4px}.mgr small{font-size:var(--fs-xs);color:var(--mu);font-weight:600}
 .mgr b{font-size:var(--fs-body);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mgr span{font-size:var(--fs-xs);color:var(--mu);font-variant-numeric:tabular-nums}
 .mgp .seg{grid-column:1/-1;background:var(--card)}
-/* подсказка «как двигать телефон»: маленький телефон повторяет выбранное движение */
-.smh{display:flex;align-items:center;gap:14px;margin-top:8px;padding:10px 14px 10px 10px;background:var(--card);border-radius:var(--r-ctl)}
-.smp{flex:none;position:relative;width:76px;height:76px;border-radius:var(--r-in);background:var(--sub);display:grid;place-items:center;overflow:hidden}
-.smp i{position:absolute;left:50%;top:50%;width:26px;height:44px;margin:-22px 0 0 -13px;border-radius:7px;border:2.5px solid var(--tx)}
+/* статус файла */
+.fst{display:flex;align-items:center;gap:12px;padding:14px;border-radius:var(--r-block);background:var(--sub);margin-bottom:10px}.fst svg.i{flex:none}.fst b{display:block;font-size:var(--fs-body)}.fst small{display:block;font-size:var(--fs-sm);color:var(--mu);font-weight:500;line-height:1.4;margin-top:2px}
+.fst.ok svg.i{color:var(--ok)}.fst.bad svg.i{color:var(--dg)}.fst.no svg.i{color:var(--wr)}
+/* подсказки «потянуть вниз / вверх»: мини-телефон, в нём карточки списка и палец */
+.smh{display:flex;align-items:center;gap:14px;padding:12px 14px 12px 12px;background:var(--sub);border-radius:var(--r-block)}
+.smp{flex:none;position:relative;width:64px;height:76px;border-radius:var(--r-in);background:var(--card);display:grid;place-items:center;overflow:hidden}
+.smp i{position:absolute;left:50%;top:50%;width:26px;height:44px;margin:-22px 0 0 -13px;border-radius:7px;border:2.5px solid var(--tx);overflow:hidden}
 .smp i::after{content:"";position:absolute;left:50%;top:3px;width:8px;height:2px;margin-left:-4px;border-radius:1px;background:var(--mu)}
-.smt{font-size:var(--fs-sm);line-height:1.4;color:var(--mu)}.smt b{color:var(--tx);font-weight:600}
-/* подсказки «потянуть вниз / вверх»: в телефоне — карточки списка и палец */
+.smt{font-size:var(--fs-sm);line-height:1.4;color:var(--mu)}.smt b{color:var(--tx);font-weight:700}
 .smp s{position:absolute;left:3px;right:3px;height:7px;border-radius:2px;background:var(--mu);opacity:.45}.smp s:nth-child(1){top:7px}.smp s:nth-child(2){top:17px}.smp s:nth-child(3){top:27px}
 .smp u{position:absolute;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--ac);opacity:0;box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 25%,transparent)}
-.smh.phd i,.smh.phu i{overflow:hidden}
 .smh.phd u{top:4px;animation:pdF 2.4s var(--ease) infinite}.smh.phd s{animation:pdS 2.4s var(--ease) infinite}
 .smh.phu u{bottom:4px;animation:puF 2.4s var(--ease) infinite}.smh.phu s{animation:puS 2.4s var(--ease) infinite}
-/* «от панели / от низа экрана»: список стоит, палец тянет вверх от панели (полоска внизу) или от нижнего края */
-.smh.phu.edge s{animation:none}.smh.phu.edge u{bottom:2px}.smh.phu.edge.fx u{bottom:5px}
-.smh.phu.edge.fx i::before{content:"";position:absolute;left:3px;right:3px;bottom:3px;height:6px;border-radius:2px;background:var(--ac);opacity:.55}
-.sfl{margin-top:12px}
+.smh.phu.edge s{animation:none}.smh.phu.edge u{bottom:5px}
+.smh.phu.edge i::before{content:"";position:absolute;left:3px;right:3px;bottom:3px;height:6px;border-radius:2px;background:var(--ac);opacity:.55}
 @keyframes pdF{0%,8%{opacity:0;transform:none}16%{opacity:.9;transform:none}52%{opacity:.9;transform:translateY(20px)}64%,100%{opacity:0;transform:translateY(20px)}}
 @keyframes pdS{0%,16%{transform:none}52%{transform:translateY(8px)}70%,100%{transform:none}}
 @keyframes puF{0%,8%{opacity:0;transform:none}16%{opacity:.9;transform:none}52%{opacity:.9;transform:translateY(-20px)}64%,100%{opacity:0;transform:translateY(-20px)}}
 @keyframes puS{0%,16%{transform:none}52%{transform:translateY(-8px)}70%,100%{transform:none}}
-
-
-/* вкладки настроек: закреплены сверху листа при прокрутке */
-.stb{position:sticky;top:-8px;z-index:3;margin:0 0 12px;box-shadow:0 -8px 0 8px var(--card),0 6px 10px -6px var(--card)}.stb button{font-size:var(--fs-body)}
-.sp>.srl:first-child{margin-top:2px}.sgap{margin-top:16px}.sp>.sd{margin-bottom:2px}
-/* «Жесты»: каждый жест — своя группа: заголовок со стрелкой, действие, подсказка */
-.gc{padding-bottom:16px;margin-bottom:4px}.gc+.gc{border-top:1px solid var(--bd);padding-top:16px}
-.gch{display:flex;align-items:center;gap:10px;font-size:var(--fs-body);font-weight:700;margin:0 4px 10px}.gch small{margin-left:auto;font-size:var(--fs-sm);font-weight:500;color:var(--mu)}
-.gch span{flex:none;width:28px;height:28px;border-radius:var(--r-in);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac))}.gch .i{width:17px;height:17px}
-.gc #sfr .srl{margin-top:12px}
-/* лист настроек — всегда в полную высоту: при смене вкладки он не «прыгает» */
-#ov .sh:has(#v7:not([hidden])){height:calc(min(92%,100% - var(--sat) - 12px) - var(--kb))}

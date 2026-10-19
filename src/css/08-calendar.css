@@ -1,4 +1,11 @@
-/* Календарь */
-.cw,.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.cw div{text-align:center;font-size:var(--fs-xs);color:var(--mu);padding:4px 0;font-weight:600}.cg{touch-action:pan-y;height:340px;grid-template-rows:repeat(6,1fr);will-change:transform}
-.cd{border-radius:var(--r-in);border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:15px;font-weight:600;background:var(--sub);padding:0}.cd small{font-size:10.5px;color:var(--act,var(--ac));min-height:13px;font-weight:600}.cd.e{visibility:hidden}.cd.t{border-color:var(--ac);border-width:2px}.cd.o small{color:var(--dg)}.cd.s{background:var(--ac);color:var(--on)}.cd.s small{color:var(--on)}.cd:active{background:var(--acs)}
-.ct{font-weight:700;font-size:var(--fs-h);height:40px;padding:0 10px;border-radius:var(--r-in)}.ct:active{background:var(--acs)}.cg.m{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:8px}.cg.m .cd{font-size:15px;border-radius:var(--r-ctl)}
+/* Календарь: калории под днём цветом — в норме ±10 % (зелёный), перебор (красный), недобор (жёлтый) */
+.cw,.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cw div{text-align:center;font-size:12px;color:var(--mu);padding:2px 0 6px;font-weight:600}.cg{touch-action:pan-y;height:332px;grid-template-rows:repeat(6,1fr);will-change:transform}
+.cd{border-radius:var(--r-key);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:15px;font-weight:700;background:var(--sub);padding:0;color:var(--tx)}
+.cd small{font-size:10.5px;min-height:13px;font-weight:700;color:var(--mu)}.cd.e{visibility:hidden}
+.cd.n0{background:transparent;color:var(--mu);font-weight:600}
+.cd.ok small{color:var(--ok)}.cd.o small{color:var(--dg)}.cd.lo small{color:var(--wr)}
+.cd.t{box-shadow:inset 0 0 0 2px var(--ac)}.cd.s{background:var(--ac);color:var(--on)}.cd.s small{color:var(--on)!important}.cd:active{background:var(--acs)}
+.cg.m{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:8px}.cg.m .cd{font-size:15px;border-radius:var(--r-ctl)}.cg.m .cd small{color:var(--mu)}
+/* легенда со счётчиками месяца */
+.leg{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:12.5px;color:var(--mu);font-weight:600;margin:0}.leg.c{justify-content:center;margin-top:14px;min-height:18px}
+.leg span{display:flex;align-items:center;gap:6px}.leg i{width:8px;height:8px;border-radius:50%}.leg svg{width:18px;height:6px}

@@ -1,5 +1,5 @@
 /* Жест «потянуть»: кольцо прогресса тянется за пальцем */
-.pu{position:fixed;left:0;right:0;bottom:calc(22px + var(--sab));display:flex;justify-content:center;pointer-events:none;z-index:6;opacity:0}
+.pu{position:fixed;left:0;right:0;bottom:calc(var(--h-nav) + 30px + var(--sab));display:flex;justify-content:center;pointer-events:none;z-index:6;opacity:0}
 .pw{display:flex;flex-direction:column-reverse;align-items:center;gap:10px;transform:translateY(90px)}
 .pu.tp{bottom:auto;top:calc(70px + var(--sat))}.pu.tp .pw{flex-direction:column;transform:translateY(-90px)}
 /* прогресс и подпись тоже уходят плавно (свойства зарегистрированы — их можно анимировать).
@@ -12,6 +12,4 @@
 .pl{font-size:13px;font-weight:700;background:var(--card);border-radius:var(--r-pill);padding:7px 14px;color:var(--tx);box-shadow:0 6px 18px rgba(0,0,0,.2);opacity:var(--plo,0);white-space:nowrap;transition:background var(--t2),color var(--t2)}
 .pu.rdy .pc{background:var(--ac);border-color:var(--ac);color:var(--on);transform:scale(1.12)}.pu.rdy .pc svg.r circle{stroke:var(--on);opacity:.35}.pu.rdy .pl{background:var(--ac);border-color:var(--ac);color:var(--on)}
 .pu.go{opacity:0;transition:opacity var(--t2) .05s}.pu.go .pc{transform:scale(1.6);transition:transform var(--t3) var(--ease)}
-
-
-
+.repm .pu:not(.tp){bottom:calc(22px + var(--sab))}

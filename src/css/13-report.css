@@ -1,6 +1,10 @@
 /* Карточка дня (тройное касание по итогу дня): для скриншота и отправки тренеру.
    Продукты — ровные строки с колонками «название · количество · ккал». Компактный вид (.dense) — те же колонки плотнее. */
-.repm .nav,.repm .bt{display:none}.repm body{padding-top:16px}
+.repm .nav,.repm .bt,.repm body::after{display:none}.repm body{padding-top:16px;padding-bottom:28px}
+/* в карточке дня сумма приёма — «пилюлей», как раньше */
+.rep .kp{font-size:var(--fs-xs);font-weight:700;color:var(--act,var(--ac));background:var(--acs);border-radius:var(--r-pill);padding:4px 9px;white-space:nowrap}
+/* режим «Строка в итоге дня»: закрыть карточку — ✕ в углу */
+.rp-x{position:fixed;right:12px;top:calc(var(--sat) + 8px);z-index:4;border-radius:50%;background:var(--card);color:var(--tx);box-shadow:var(--shd)}.rp-x svg.i{width:18px;height:18px}.repx body{padding-top:60px}
 .rep{background:var(--card);border-radius:var(--r-card);padding:22px 18px 16px;margin:6px 0 12px;box-shadow:var(--shd)}
 .rp-h{display:flex;align-items:center;gap:14px}.rp-h>div{min-width:0}
 .rp-d{font-size:14px;color:var(--mu);font-weight:500}
@@ -35,6 +39,4 @@
 .rep:not(.dense) .rp-it+.rp-it{border-top:1px dashed color-mix(in srgb,var(--bd) 70%,transparent);margin-top:8px}
 /* полоса состава приёма — сегменты делят всю ширину по доле калорий */
 .rp-mb .bar.cb i{flex-shrink:1;min-width:6px}
-/* цветные буквы Б / Ж / У */
-.mx{font-style:normal;font-weight:700;margin:0 3px 0 0}.mx.p{color:var(--p)}.mx.f{color:var(--f)}.mx.c{color:var(--c)}
 .rp-mm .mx,.rp-it small .mx{margin-left:6px}.rp-mm .mx:first-child,.rp-it small .mx:first-child{margin-left:0}

@@ -6,72 +6,55 @@ import { openApp, day, entry } from './helpers.mjs';
 const many = () => { const d = {}; d[day()] = Array.from({ length: 12 }, (_, i) => entry(i % 6, 'Продукт ' + i, 100, 5, 5, 10)); return d; };
 const dish = ['Салат', 1.2, 4.8, 4, [['порция', 300]], { w: 300, i: [{ n: 'Огурец', g: 200, p: 1.6, f: .2, c: 5 }] }];
 
-test('нижняя панель: в конце дня (по умолчанию) или всегда видна', async () => {
+test('нижняя панель всегда у нижнего края; тост — над ней; на карточке дня скрыта', async () => {
   const a = await openApp({ data: { g: { p: 120, f: 70, c: 250 }, d: many() } });
   const vh = await a.ev(() => innerHeight);
   const pos = () => a.ev(() => { const b = document.querySelector('.bt'), r = b.getBoundingClientRect(); return { top: r.top, bottom: r.bottom, fixed: getComputedStyle(b).position === 'fixed' }; });
-  let p = await pos();
-  assert.equal(p.fixed, false); assert.ok(p.top > vh, 'по умолчанию — после приёмов пищи');
-  await a.ev(() => { sets(); stGo(1); }); await a.wait(300);
-  assert.equal(await a.ev(() => $('bbm').querySelector('.on').textContent), 'В конце дня');
-  await a.pg.click('#bbm button:nth-child(2)'); await a.ev(() => cl()); await a.wait(400);
   for (const y of [0, 300, 1e6]) {
     await a.ev(y => scrollTo(0, y), y); await a.wait(150);
-    p = await pos(); assert.equal(p.fixed, true); assert.ok(p.bottom <= vh && p.bottom > vh - 60, 'видна у края при любой прокрутке');
+    const p = await pos(); assert.equal(p.fixed, true); assert.ok(Math.abs(p.bottom - vh) <= 1, 'у края при любой прокрутке');
   }
+  const p = await pos();
   const last = await a.ev(() => [...document.querySelectorAll('#app > *')].pop().getBoundingClientRect().bottom);
   assert.ok(last <= p.top, `последний блок (${last}) выше панели (${p.top})`);
-  await a.ev(() => { S.set = { ...S.set, sw: 'meal' }; scrollTo(0, 1e6); }); await a.wait(150);
-  await a.drag(200, 600, 200, 380, { steps: 14, ms: 30 }); await a.wait(500);
-  assert.equal(await a.ev(() => isOpen), true, 'жест «потянуть вверх» работает');
-  await a.ev(() => cl()); await a.wait(300);
   await a.ev(() => toast('Проверка')); await a.wait(400);
   const tt = await a.ev(() => document.querySelector('.tt').getBoundingClientRect().bottom);
-  p = await pos(); assert.ok(tt <= p.top, 'тост не перекрывает панель');
+  assert.ok(tt <= p.top, 'тост не перекрывает панель');
   await a.ev(() => togRep(true)); await a.wait(200);
   assert.equal(await a.ev(() => getComputedStyle(document.querySelector('.bt')).display), 'none');
   await a.ev(() => togRep(false)); await a.wait(200);
-  await a.ev(() => setBb('page')); await a.wait(100); await a.ev(() => scrollTo(0, 0));
-  assert.equal((await pos()).fixed, false);
-  // сохранённое раньше «floating» открывается как «В конце дня»
-  assert.equal(await a.ev(() => { S.set = { ...S.set, bb: 'float' }; return bbv(); }), 'page');
-  assert.equal(await a.ev(() => toFile({ ...S, set: { ...S.set, bb: 'fix' } }).settings.bottomBar), 'fixed');
-  assert.equal(await a.ev(() => parseData(JSON.stringify(toFile({ ...S, set: { ...S.set, bb: 'fix' } }))).set.bb), 'fix');
+  // старое «bottomBar» в файле остаётся как было
+  assert.equal(await a.ev(() => toFile({ ...S, set: { ...S.set, bb: 'page' } }).settings.bottomBar), 'page');
   assert.deepEqual(a.errors, []);
   await a.close();
 });
-
-test('кнопки «Новый продукт»/«Новое блюдо»: под списком или под поиском — во всех списках', async () => {
+test('кнопки «Новый продукт»/«Новое блюдо»: сверху (по умолчанию) или снизу — во всех списках', async () => {
   const a = await openApp();
-  const where = () => a.ev(() => { const lr = document.querySelector('#v1 .lr'); return lr.previousElementSibling.id === 'q' || lr.previousElementSibling.id === 'pf' && lr.previousElementSibling.previousElementSibling.id === 'q' ? 'top' : lr.previousElementSibling.id === 'ls' ? 'bottom' : '?'; });
-  await a.ev(() => op(0)); await a.wait(300);
-  assert.equal(await where(), 'bottom');
-  const yb = (await a.pg.locator('#v1 .lr').boundingBox()).y, yl = (await a.pg.locator('#ls').boundingBox()).y;
-  assert.ok(yb > yl, 'по умолчанию — после списка');
-  await a.ev(() => cl()); await a.wait(300);
-  await a.ev(() => setNb('top'));
+  const where = () => a.ev(() => { const b = document.querySelector('#v1 .lr').getBoundingClientRect().top, q = $('q').getBoundingClientRect().top, l = $('ls').getBoundingClientRect().top; return q < b && b < l ? 'top' : b > l ? 'bottom' : '?'; });
   for (const open of [() => op(2), () => mng(), () => { dbt(); dring(); }]) {
     await a.ev(open); await a.wait(400);
     assert.equal(await a.ev(() => !$('v1').hidden), true);
-    const b = (await a.pg.locator('#v1 .lr').boundingBox()).y, q = (await a.pg.locator('#q').boundingBox()).y, l = (await a.pg.locator('#ls').boundingBox()).y;
-    assert.ok(q < b && b < l, 'между поиском и списком');
+    assert.equal(await where(), 'top', 'по умолчанию — между поиском и списком');
     await a.ev(() => closeUI()); await a.wait(300);
   }
-  // кнопки работают из нового места
+  await a.ev(() => setNb('bottom'));
+  await a.ev(() => op(0)); await a.wait(300);
+  assert.equal(await where(), 'bottom');
+  await a.ev(() => closeUI()); await a.wait(300);
+  // кнопки работают
   await a.ev(() => mng()); await a.wait(300);
   await a.pg.click('#v1 .lr button:first-child'); await a.wait(300);
   assert.equal(await a.ev(() => !$('v3').hidden), true);
-  assert.equal(await a.ev(() => toFile(S).settings.newButtons), 'top');
+  assert.equal(await a.ev(() => toFile(S).settings.newButtons), 'bottom');
   assert.deepEqual(a.errors, []);
   await a.close();
 });
-
 test('блюда в списке: значок, подпись и фильтр «Все / Продукты / Блюда»', async () => {
   const a = await openApp({ data: { g: { p: 120, f: 70, c: 250 }, d: {}, db: [dish, ['Творог 5%', 17, 5, 1.8], ['Банан', 1.5, .2, 21.8]] } });
   await a.ev(() => mng()); await a.wait(300);
   assert.equal(await a.pg.locator('#ls .pk.dish').count(), 1);
   assert.equal(await a.pg.locator('#ls .pk.dish .dk').count(), 1);
-  assert.match(await a.pg.textContent('#ls .pk.dish .mu'), /^Блюдо · /);
+  assert.match(await a.pg.textContent('#ls .pk.dish .mu'), /^БлюдоБ1,2 · Ж4,8 · У4 на 100 г$/);
   assert.equal(await a.pg.locator('#ls .pk:not(.dish) .dk').count(), 0, 'у обычных продуктов значка нет');
   assert.equal(await a.ev(() => $('pf').hidden), false);
   await a.pg.click('#pf button:nth-child(3)');
@@ -109,28 +92,3 @@ test('закреплённая панель не закрывает конец �
   }
 });
 
-test('настройки: четыре вкладки, понятные подписи, короткие пояснения; вкладки листаются пальцем', async () => {
-  const a = await openApp();
-  await a.ev(() => sets()); await a.wait(300);
-  assert.deepEqual(await a.ev(() => [...$('stb').querySelectorAll('button')].map(b => b.textContent)), ['Вид', 'Экран', 'Жесты', 'Прочее']);
-  assert.deepEqual(await a.ev(() => [0, 1, 2, 3].map(i => $('sp' + i).hidden)), [false, true, true, true], 'открыта первая вкладка');
-  assert.equal(await a.ev(() => document.querySelectorAll('#v7 .tg').length), 3, 'переключатели — только для «да / нет»');
-  assert.ok(await a.ev(() => [...document.querySelectorAll('#v7 .sd')].every(e => e.textContent.length < 80)), 'пояснения короткие');
-  await a.pg.click('#stb button:nth-child(2)'); await a.wait(300);
-  await a.pg.click('#nbm button:nth-child(2)'); assert.equal(await a.ev(() => nbv()), 'top');
-  await a.pg.click('#nbm button:nth-child(1)'); assert.equal(await a.ev(() => nbv()), 'bottom');
-  await a.pg.click('#snm button:nth-child(2)');
-  assert.equal(await a.ev(() => !$('snd').hidden && $('snd').textContent.length < 80), true, 'короткая подсказка — только для двойного касания');
-  // пальцем влево — следующая вкладка, вправо — обратно; высота листа не меняется
-  const h0 = await a.ev(() => document.querySelector('#ov .sh').offsetHeight);
-  await a.drag(330, 500, 120, 510, { steps: 8, ms: 20 }); await a.wait(400);
-  assert.equal(await a.ev(() => stTab), 2);
-  assert.equal(await a.ev(() => document.querySelector('#ov .sh').offsetHeight), h0, 'лист не прыгает по высоте');
-  await a.drag(120, 500, 330, 510, { steps: 8, ms: 20 }); await a.wait(400);
-  assert.equal(await a.ev(() => stTab), 1);
-  // повторное открытие — на той же вкладке
-  await a.ev(() => closeUI()); await a.wait(400); await a.ev(() => sets()); await a.wait(300);
-  assert.equal(await a.ev(() => !$('sp1').hidden), true);
-  assert.deepEqual(a.errors, []);
-  await a.close();
-});

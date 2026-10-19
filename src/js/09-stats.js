@@ -1,7 +1,9 @@
 // Статистика за месяц: плитки, графики, средние, частые продукты
 // ===== Статистика за месяц =====
 let stM=null;
-function stats(){const d=new Date(cur+"T12:00:00");stM=[d.getFullYear(),d.getMonth()];drawStats();sv(9,"Статистика");show()}
+function stats(){const d=new Date(cur+"T12:00:00");stM=[d.getFullYear(),d.getMonth()];SUB=0;sv(9,"","Статистика");drawStats();show()}
+// день относительно нормы: в норме ±10 % / перебор / недобор (календарь и статистика)
+const dayStat=(k,gk)=>!gk||!k?"":Math.abs(k-gk)<=gk*.1?"ok":k>gk?"o":"lo";
 function stMv(n){stM[1]+=n;if(stM[1]<0){stM[1]=11;stM[0]--}if(stM[1]>11){stM[1]=0;stM[0]++}const el=$("stc");drawStats();moSwap(el,n)}
 function stData(){const[y,m]=stM,n=new Date(y,m+1,0).getDate(),pad=x=>String(x).padStart(2,"0"),days=[];
  for(let d=1;d<=n;d++){const k=y+"-"+pad(m+1)+"-"+pad(d),E=S.d[k]||[],t=sumE(E);days.push({d,k,w:(S.wt||{})[k]||0,n:E.length,kc:kc(t.p,t.f,t.c),p:t.p,f:t.f,c:t.c,E})}
@@ -39,17 +41,19 @@ function chMac(days,G,W){const f=chF(days,W,160,26),{T,ih,X}=f;
   ys.forEach(([y,k])=>{const m=MCH.find(x=>x[0]===k);g+=`<text x="${X(last)+7}" y="${y+3.5}" style="fill:var(--tx);font-weight:600">${m[1][0]}</text>`})}
  return chOut(f,g+chDays(f,days)+chCross(f),{f})}
 function drawStats(){const[y,m]=stM,days=stData(),G=S.g,gk=kc(G.p,G.f,G.c),lg=days.filter(x=>x.n),N=lg.length,W=Math.max(260,($("ov").clientWidth||360)-58);
- $("stm").textContent=MN[m]+" "+y;
+ $("st").textContent=MN[m]+" "+y;
  const WB=wtBlock(days,W);
  if(!N){$("stc").innerHTML=`<div class="stempty">В этом месяце записей нет</div>`+(WB?WB.html:"");if(WB)bindWt(days,W,WB.c);return}
- const av=k=>lg.reduce((a,x)=>a+x[k],0)/N,akc=Math.round(av("kc")),inN=lg.filter(x=>gk&&Math.abs(x.kc-gk)<=gk*.1).length;
+ const av=k=>lg.reduce((a,x)=>a+x[k],0)/N,akc=Math.round(av("kc"));
  // серия: подряд идущие дни с записями, заканчивая последним днём с записями
  let streak=0,best=0,run=0;days.forEach(x=>{run=x.n?run+1:0;best=Math.max(best,run)});for(let i=days.map(x=>x.n>0).lastIndexOf(true);i>=0&&days[i].n;i--)streak++;
  const A={p:av("p"),f:av("f"),c:av("c")},ash=shrD(A)||[];
  // главное: средний день месяца — как итог дня на главном экране
- let h=`<div class="stb sthero"><h4>В среднем за день</h4><div class="big"><b>${akc}</b><span class="mu">из ${gk} ккал${gk?` · ${Math.round(akc/gk*100)}%`:""}</span></div>${kbar(A,gk,akc)}<div class="mac">${mtiles(A,G,ash)}</div></div>`;
+ let h=`<div class="stb sthero"><h4>В среднем за день</h4><div class="big"><b>${akc}</b><span class="mu">из ${gk} ккал${gk?` · ${Math.round(akc/gk*100)}%`:""}</span></div>${kbar(A,gk,akc)}${mcols(A,G,ash)}</div>`;
  const dn=n=>n%10===1&&n%100!==11?"день":(n%10>=2&&n%10<=4&&(n%100<10||n%100>=20))?"дня":"дней";
- h+=`<div class="stt"><div><div class="v">${N}<small>из ${days.length}</small></div><div class="l">${dn(N)} с записями</div></div><div><div class="v">${inN}</div><div class="l">в норме ±10%</div></div><div><div class="v">${best}</div><div class="l">${streak&&streak!==best?`серия · сейчас ${streak}`:"дней подряд"}</div></div></div>`;
+ const dcn={ok:0,o:0,lo:0};lg.forEach(x=>{const t=dayStat(x.kc,gk);if(t)dcn[t]++});
+ h+=`<div class="stt two"><div><div class="v">${N}<small>из ${days.length}</small></div><div class="l">${dn(N)} с записями</div></div><div><div class="v">${best}</div><div class="l">${streak&&streak!==best?`лучшая серия · сейчас ${streak}`:"дней подряд · лучшая серия"}</div></div></div>`+
+  `<div class="stt"><div><div class="v ok">${dcn.ok}</div><div class="l">в норме ±10%</div></div><div><div class="v o">${dcn.o}</div><div class="l">перебор</div></div><div><div class="v lo">${dcn.lo}</div><div class="l">недобор</div></div></div>`;
  const c1=chKcal(days,gk,W);
  h+=`<div class="stb"><h4>Калории по дням</h4><div class="sd rdo" id="rd1" data-def="Столбец — день, цвета — вклад Б / Ж / У, пунктир — норма.">Столбец — день, цвета — вклад Б / Ж / У, пунктир — норма.</div><div class="chw" id="ch1">${c1.svg}</div></div>`+(WB?WB.html:"");
  const c2=chMac(days,{p:G.p,f:G.f,c:G.c},W);
@@ -57,7 +61,7 @@ function drawStats(){const[y,m]=stM,days=stData(),G=S.g,gk=kc(G.p,G.f,G.c),lg=da
  // чаще всего — строками, как записи дня
  const cnt={};lg.forEach(x=>x.E.forEach(e=>{const o=cnt[e.n]||(cnt[e.n]={n:e.n,c:0,k:0});o.c++;o.k+=kc(e.p,e.f,e.c)}));
  const top=Object.values(cnt).sort((a,b)=>b.c-a.c||b.k-a.k).slice(0,5);
- h+=`<div class="stb sttop"><h4>Чаще всего</h4><div class="il">${top.map(o=>`<div class="it"><span class="tc">${o.c}×</span><div><div class="n">${esc(o.n)}</div><div class="mu">≈ ${Math.round(o.k/o.c)} ккал за раз</div></div><b>${o.k}<small>ккал</small></b></div>`).join("")}</div></div>`;
+ h+=`<div class="stb sttop"><h4>Чаще всего</h4><div class="il">${top.map(o=>`<div class="it"><div><div class="n">${esc(o.n)}</div><div class="mu">${o.c} ${plural(o.c,"раз","раза","раз")} · ≈ ${Math.round(o.k/o.c)} ккал за раз</div></div><b>${o.k}<small>ккал</small></b></div>`).join("")}</div></div>`;
  $("stc").innerHTML=h;
  // касание столбца/точки — подсказка (сдвиг пальцем ведёт её по дням)
  const fmt=stFmt,bind=(...a)=>stBind(days,W,...a);
@@ -75,4 +79,4 @@ const stFmt=x=>new Date(x.k+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeri
 function bindWt(days,W,c){stBind(days,W,"ch3","rd3",c,d=>wTip(d,c),i=>{$("ch3").querySelectorAll("circle").forEach(p=>p.setAttribute("r",+p.dataset.i===i?"5":"3.4"));chMark("ch3",c.f,i)},d=>d.w)}
 // свайп по экрану статистики (кроме графиков) — соседний месяц
 (()=>{const v=$("v9");let x0=null,y0=0;v.addEventListener("touchstart",e=>{x0=e.target.closest(".chw")?null:e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
- v.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70*GF()&&Math.abs(dx)>Math.abs(dy)*1.6){hap(6,1);stMv(dx<0?1:-1)}},{passive:true})})();
+ v.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70*GF()&&Math.abs(dx)>Math.abs(dy)*1.6){vib("days");stMv(dx<0?1:-1)}},{passive:true})})();

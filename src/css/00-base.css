@@ -1,8 +1,32 @@
-/* Единая система размеров. Всё в интерфейсе берёт значения отсюда — так элементы одного рода выглядят одинаково.
-   Скругления: карточка/лист 24 → блок внутри 18 → элемент управления 15 → строка/кнопка внутри 12 → «пилюля».
-   Высоты: поле и кнопка 50, сегмент 50 (кнопки внутри 42), чип 38, кнопка-иконка 42, значок-плитка 36. */
+/* Единая система размеров. Всё в интерфейсе берёт значения отсюда — элементы одного рода выглядят одинаково.
+   Скругления: карточка/лист 20 → блок внутри 16 → элемент управления 14 → строка/клавиша 10–12 → «пилюля».
+   Высоты: кнопка и поле 52, строка списка от 56, клавиша 52, кнопка-иконка 44 (зона касания не меньше 44 dp),
+   нижняя панель 68 + системный отступ. Шрифт: число итога 40/800, заголовок 19/700, строка 15/600, подпись 12,5/500. */
 :root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--kb:0px;--kbd:220ms;--ease:cubic-bezier(.25,.8,.25,1);--spring:cubic-bezier(.3,1.3,.5,1);--t1:.16s;--t2:.26s;--t3:.36s;
- --r-card:24px;--r-block:18px;--r-ctl:15px;--r-in:12px;--r-pill:999px;
- --h-ctl:50px;--h-seg:42px;--h-chip:38px;--h-ib:42px;--h-tile:36px;
+ --r-card:20px;--r-block:16px;--r-ctl:14px;--r-in:10px;--r-key:12px;--r-pill:999px;
+ --h-ctl:52px;--h-seg:40px;--h-chip:40px;--h-ib:44px;--h-tile:34px;--h-row:56px;--h-key:52px;--h-nav:68px;
  --pad-card:16px;--gap:10px;
- --fs-title:19px;--fs-h:17px;--fs-body:15px;--fs-sm:13px;--fs-xs:12px}
+ --fs-num:40px;--fs-title:19px;--fs-h:17px;--fs-body:15px;--fs-sm:12.5px;--fs-xs:11.5px}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{background:var(--bg);overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-action:pan-y;overflow-x:clip;overflow-y:scroll;scroll-padding-top:var(--sat);box-sizing:border-box;padding-top:var(--sat)}html.lk{overflow:hidden}
+html,body,.shb{scrollbar-width:none}html::-webkit-scrollbar,body::-webkit-scrollbar,.shb::-webkit-scrollbar{display:none;width:0;height:0}
+/* снизу — место под закреплённую нижнюю панель и системный отступ */
+body{margin:0 auto;background:var(--bg);color:var(--tx);font:16px/1.4 "Manrope Variable",Manrope,Roboto,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;letter-spacing:-.005em;max-width:520px;padding:0 12px calc(var(--h-nav) + 28px + var(--sab));overflow-x:clip}
+body::before{content:"";position:fixed;left:0;right:0;top:0;height:var(--sat);background:var(--bg);z-index:4}
+.big b,.it b,.cd,.kp,.mcol,.vf input,.g3 input{font-variant-numeric:tabular-nums}
+svg.i{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* кнопки: отклик нажатия — тонированный слой (как в Android), крупные кнопки ещё чуть сжимаются */
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0;transition:transform var(--t1) var(--ease),opacity var(--t1),background-color var(--t2),color var(--t2);-webkit-user-select:none;user-select:none}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.native :focus-visible,.dc :focus-visible{outline:none}
+/* кнопка-иконка 44×44: стрелки, закрыть, копировать, удалить */
+.ib,.x{width:var(--h-ib);height:var(--h-ib);border-radius:var(--r-ctl);display:grid;place-items:center;flex:none;color:var(--mu)}
+.ib:active,.x:active{background:color-mix(in srgb,var(--tx) 9%,transparent)}
+.ib.t{background:var(--acs);color:var(--act,var(--ac))}.ib.t:active{background:color-mix(in srgb,var(--ac) 28%,transparent)}
+.mu{color:var(--mu);font-size:var(--fs-sm)}
+/* подписи и пояснения — один стиль везде */
+.hint{font-size:var(--fs-sm);color:var(--mu);line-height:1.4;margin:8px 2px 0;min-height:18px}.hint.c{text-align:center}.hint b{color:var(--tx);font-weight:700}
+.lead{font-size:14px;color:var(--mu);line-height:1.45;margin:0 2px 14px}
+/* Б / Ж / У — всегда своими цветами */
+.mx{font-style:normal;font-weight:800;margin:0 3px 0 0}.mx.p{color:var(--p)}.mx.f{color:var(--f)}.mx.c{color:var(--c)}
+#app.mv{will-change:transform,opacity}

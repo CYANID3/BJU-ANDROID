@@ -1,0 +1,8 @@
+/* Своя цифровая клавиатура: всегда у нижнего края листа, одной высоты во всех числовых экранах.
+   Верхняя строка панели — кнопка действия экрана («Добавить», «Сохранить», «Далее»), под ней 12 клавиш. */
+.kpd{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.kpd button{height:var(--h-key);border-radius:var(--r-key);background:var(--key);font-size:23px;font-weight:600;color:var(--tx);display:grid;place-items:center;box-shadow:0 1px 0 rgba(0,0,0,.08);transition:background-color .08s,transform .08s}
+.kpd button.fn{background:var(--keyp)}.kpd button svg.i{width:26px;height:26px}
+.kpd button.dn,.kpd button:active{background:var(--keyp);transform:scale(.97)}.kpd button.fn.dn,.kpd button.fn:active{background:color-mix(in srgb,var(--tx) 18%,var(--keyp))}
+/* появление и уход панели — движением снизу (как у системной клавиатуры) */
+.kpd.in{animation:kpin var(--t2) var(--ease)}@keyframes kpin{from{transform:translateY(40px);opacity:0}}
