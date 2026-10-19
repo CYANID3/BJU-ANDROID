@@ -52,7 +52,7 @@ function applyTint() {
   for (const k of [...Object.keys(PAL.dark.L), "acs", "tst", "tsx", "tsa"]) r.style.setProperty("--" + k, T[k]);
   if (dark) r.style.setProperty("--mu", T.mu); else r.style.removeProperty("--mu");
 }
-function setTn(v) { S.set = Object.assign({}, S.set, { tn: v }); saveq(); vib("ui"); vtx(() => { applyAc(); drawSet() }) }
+function setTn(v) { S.set = Object.assign({}, S.set, { tn: v }); saveq(); vib("ui"); allAtOnce(() => { applyAc(); drawSet() }) }
 function applyTh() { const t = S.set && S.set.th, r = document.documentElement; if (t === "light" || t === "dark") r.dataset.theme = t; else delete r.dataset.theme }
 function setTh(v) { S.set = Object.assign({}, S.set, { th: v }); saveq(); vib("ui"); vtx(() => { applyAc(); drawSet() }) }
 // акцент и производные от него цвета: --act — значки и текст акцентом (на мягкой подложке --acs читаются на любом фоне),

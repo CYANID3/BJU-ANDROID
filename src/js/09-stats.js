@@ -69,7 +69,7 @@ function drawStats(){const[y,m]=stM,days=stData(),G=S.g,gk=kc(G.p,G.f,G.c),lg=da
  bind("ch1","rd1",c1,d=>`${fmt(d)} · <b>${d.kc}</b> ккал${gk?` · ${Math.round(d.kc/gk*100)}%`:""}`,i=>$("ch1").querySelectorAll("[data-i]").forEach(p=>p.style.opacity=i<0||+p.dataset.i===i?"":".3"));
  bind("ch2","rd2",c2,d=>`${fmt(d)}`+MCH.map(([k,n,c])=>`<i style="background:${c}"></i>${n[0]} <b>${G[k]?Math.round(d[k]/G[k]*100):0}%</b>`).join(""),i=>chMark("ch2",c2.f,i));
 }
-const stFmt=x=>new Date(x.k+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"short"});
+const SDF=new Intl.DateTimeFormat("ru-RU",{day:"numeric",month:"short"}),stFmt=x=>SDF.format(new Date(x.k+"T12:00:00"));
  // табло под заголовком: при касании — данные дня, после отпускания — снова пояснение
  function stBind(days,W,id,rid,c,tip,mark,has=d=>d.n){const w=$(id),t=$(rid),sv_=w.querySelector("svg");let tm=0;
   const at=e=>{clearTimeout(tm);const r=sv_.getBoundingClientRect(),x=(e.clientX-r.left)*(W/r.width),i=Math.max(0,Math.min(days.length-1,Math.floor((x-c.L)/c.st)));const d=days[i];

@@ -9,41 +9,61 @@ let SUB = 0; // экран открыт из «Ещё» (7): «‹» в шапк
  * Лист прижат к низу и по высоте равен содержимому. Смена экрана: содержимое меняется на месте (старое гаснет,
  * новое проявляется — ничего не едет вбок), а верхний край листа плавно переезжает к новой высоте.
  */
-let svG = [];
+let svG = [], svSnapPending = null;
+// снимок заранее (перед шагом «назад»): sv() возьмёт его вместо нового
+function svPre() { const sh = shEl(); if (!isOpen || RM() || !sh.animate) return; svKill(); try { svSnapPending = svSnap(sh) } catch (e) { svSnapPending = null } }
 function svKill() { svG.forEach(g => g.remove()); svG = []; try { shEl().getAnimations().forEach(a => a.finish()) } catch (e) { } }
 // снимок старого экрана: шапка, видимая часть содержимого и низ — копии на тех же местах экрана
 function svSnap(sh) {
-  const r0 = sh.getBoundingClientRect(), L = document.createElement("div"), strip = g => { g.removeAttribute("id"); g.querySelectorAll("[id]").forEach(x => x.removeAttribute("id")); g.hidden = false; return g };
-  L.className = "svl"; Object.assign(L.style, { left: r0.left + "px", top: r0.top + "px", width: r0.width + "px", height: r0.height + "px" });
-  const put = (el, clip) => { if (!el) return; const r = (clip || el).getBoundingClientRect(), g = strip(el.cloneNode(true)), box = document.createElement("div");
+  // id в копии сохраняются: на них завязаны стили (#pkx, #ls…); копия стоит в документе после листа, поэтому $(id) находит оригинал
+  const r0 = sh.getBoundingClientRect(), L = document.createElement("div"), strip = g => { g.hidden = false; g.setAttribute("aria-hidden", "true"); g.inert = true; return g }, fix = [];
+  L.className = "svl" + (sh.classList.contains("kpo") ? " kpo" : ""); Object.assign(L.style, { left: r0.left + "px", top: r0.top + "px", width: r0.width + "px", height: r0.height + "px" });
+  const put = (el, clip) => {
+    if (!el) return; const r = (clip || el).getBoundingClientRect();
+    // метка на первом видимом «листовом» элементе каждого блока — по ней копия выравнивается точно по оригиналу
+    // (в абсолютной копии отступы детей не схлопываются с родителем, без выравнивания она съезжает на 4–12 px)
+    const mark = (src, unit) => { const an = [...src.querySelectorAll("*")].find(x => !x.firstElementChild && x.getBoundingClientRect().height > 0) || (src.getBoundingClientRect().height > 0 ? src : null); if (!an) return; an.dataset.sva = fix.length; fix.push([an.getBoundingClientRect(), unit]); return an };
+    let g, ms = []; if (clip) { g = strip(el.cloneNode(false)); const br = r, er = el.getBoundingClientRect(); [...el.children].forEach(c => { const cr = c.getBoundingClientRect(); if (!cr.height || cr.bottom < br.top || cr.top > br.bottom) return;
+      const an = mark(c, null), k = c.cloneNode(true); if (an) fix[fix.length - 1][1] = k; ms.push(an);
+      Object.assign(k.style, { position: "absolute", left: cr.left - er.left + "px", top: cr.top - er.top + "px", width: cr.width + "px", margin: 0 }); g.appendChild(k) }) }
+    else { ms.push(mark(el, null)); g = strip(el.cloneNode(true)); if (fix.length && !fix[fix.length - 1][1]) fix[fix.length - 1][1] = g }
+    ms.forEach(an => an && delete an.dataset.sva); const box = document.createElement("div");
     Object.assign(box.style, { position: "absolute", left: r.left - r0.left + "px", top: r.top - r0.top + "px", width: r.width + "px", height: r.height + "px", overflow: "hidden" });
-    if (clip) { const e = el.getBoundingClientRect(); Object.assign(g.style, { position: "absolute", left: e.left - r.left + "px", top: e.top - r.top + "px", width: e.width + "px", margin: 0 }) } else Object.assign(g.style, { margin: 0, width: "100%" });
-    box.appendChild(g); L.appendChild(box) };
+    if (clip) { const e = el.getBoundingClientRect(); Object.assign(g.style, { position: "absolute", left: e.left - r.left + "px", top: e.top - r.top + "px", width: e.width + "px", height: e.height + "px", margin: 0 }) }
+    else Object.assign(g.style, { margin: 0, width: "100%", height: "100%" });
+    box.appendChild(g); L.appendChild(box)
+  };
   put(sh.querySelector(".hd")); const v = VWS.map(i => $("v" + i)).find(x => !x.hidden); if (v) put(v, shBody());
   const sf = sh.querySelector(".shf"); if (sf && sf.offsetHeight) put(sf);
   L.querySelectorAll(".kpd button").forEach(b => b.classList.remove("dn"));
-  return { L, r0 }
+  // копия ставится сразу, а выравнивание (см. svAlign) — в одном пересчёте раскладки с новым экраном, без лишнего кадра работы
+  $("ov").appendChild(L);
+  return { L, r0, fix }
 }
+// копия совпадает с оригиналом до пикселя (поля и схлопывание отступов в копии иначе дают сдвиг на пару пикселей)
+function svAlign(fix) { fix.forEach(([a, g], i) => { const c = g && (g.dataset.sva == i ? g : g.querySelector(`[data-sva="${i}"]`)); if (!c) return; const b = c.getBoundingClientRect(), dy = a.top - b.top, dx = a.left - b.left;
+  if (Math.abs(dy) > .1 || Math.abs(dx) > .1) g.style.translate = `${dx}px ${dy}px`; delete c.dataset.sva }) }
 function sv(n, t, s) {
   const sh = shEl(), prev = VWS.find(i => !$("v" + i).hidden), anim = isOpen && prev && prev !== n && !RM() && !!sh.animate;
   let snap = null;
-  if (anim) { svKill(); try { snap = svSnap(sh) } catch (e) { snap = null } }
+  if (anim) { if (svSnapPending) { snap = svSnapPending; svSnapPending = null } else { svKill(); try { snap = svSnap(sh) } catch (e) { snap = null } } } else if (svSnapPending) { svSnapPending.L.remove(); svSnapPending = null }
   VWS.forEach(i => $("v" + i).hidden = i !== n);
   $("st").textContent = t || ""; $("ss").textContent = s || "";
-  document.querySelectorAll(".shf .ft").forEach(f => f.hidden = +f.dataset.v !== n);
+  sh.querySelectorAll(".shf .ft").forEach(f => f.hidden = +f.dataset.v !== n);
   sh.classList.toggle("full", FULL.has(n));
   shHead(n); kpView(n);
   // открытие листа и смена экрана — всегда с начала
   if (!isOpen || prev !== n) shBody().scrollTop = 0;
   if (!snap) return;
   // запуск — после текущего кода: вызвавший успевает восстановить прокрутку («назад» в «Ещё»), кадр ещё не нарисован
-  queueMicrotask(() => svPlay(sh, snap, [$("v" + n), sh.querySelector(".hd .ht"), sh.querySelector(".shf")]))
+  queueMicrotask(() => svPlay(sh, snap, [$("v" + n), sh.querySelector(".hd"), sh.querySelector(".shf")]))
 }
 // общий переход: верхний край листа переезжает со старой высоты на новую, старое гаснет, новое проявляется на своих местах
 function svPlay(sh, snap, ins) {
-  const { L, r0 } = snap, r1 = sh.getBoundingClientRect(), d = r1.top - r0.top, D = 320, E = "cubic-bezier(.3,0,.1,1)", R = "24px 24px 0 0";
+  const { L, r0 } = snap, r1 = sh.getBoundingClientRect(); svAlign(snap.fix || []); const d = r1.top - r0.top, D = 320, E = "cubic-bezier(.3,0,.1,1)", R = "24px 24px 0 0";
   const ov = $("ov"); ov.appendChild(L); const out = [L], fin = [];
-  L.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 150, easing: "linear", fill: "forwards" });
+  // старое гаснет быстро (0,12 с), новое проявляется чуть позже: текст двух экранов почти не накладывается
+  L.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, easing: "cubic-bezier(.2,0,.4,1)", fill: "forwards" });
   if (d > 1) {
     // лист стал ниже: фон старой высоты (под листом) плавно опускается к новому краю
     const ed = document.createElement("div"); ed.className = "sve";
@@ -55,7 +75,9 @@ function svPlay(sh, snap, ins) {
     // лист стал выше: верхний край открывается снизу вверх
     fin.push(sh.animate([{ clipPath: `inset(${-d}px 0 0 0 round ${R})` }, { clipPath: `inset(0 0 0 0 round ${R})` }], { duration: D, easing: E }).finished);
   }
-  ins.filter(Boolean).forEach(el => fin.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: 60, easing: "linear", fill: "backwards" }).finished));
+  ins.filter(Boolean).forEach(el => fin.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: 80, easing: "linear", fill: "backwards" }).finished));
+  // «ручка» листа тоже проявляется на новом краю, а не стоит поверх старого содержимого
+  if (Math.abs(d) > 1) try { sh.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: 80, easing: "linear", fill: "backwards", pseudoElement: "::before" }) } catch (e) { }
   svG = out; Promise.all(fin).catch(() => { }).then(() => { out.forEach(x => x.remove()); if (svG === out) svG = [] })
 }
 // содержимое того же экрана поменяло высоту (подсказка жеста появилась или ушла, другой вариант выбора):
@@ -64,7 +86,7 @@ function shResize(fn, watch) {
   const sh = shEl(); if (!isOpen || RM() || !sh.animate || vtx.on) { fn(); return }
   svKill(); const r0 = sh.getBoundingClientRect(), bg = document.createElement("div");
   // блоки, которые могут появиться или пропасть (подсказка жеста): пропавший гаснет на старом месте, новый проявляется
-  const was = (watch || []).map(q => { const el = document.querySelector(q); if (!el) return null; const r = el.getBoundingClientRect(), g = el.cloneNode(true); g.removeAttribute("id");
+  const was = (watch || []).map(q => { const el = document.querySelector(q); if (!el) return null; const r = el.getBoundingClientRect(), g = noIds(el.cloneNode(true));
     Object.assign(g.style, { position: "fixed", left: r.left + "px", top: r.top + "px", width: r.width + "px", margin: 0, zIndex: 6, pointerEvents: "none" }); return [q, g] }).filter(Boolean);
   fn();
   const fresh = (watch || []).filter(q => document.querySelector(q) && !was.some(w => w[0] === q)).map(q => document.querySelector(q));
@@ -75,14 +97,16 @@ function shResize(fn, watch) {
     // лист стал ниже: шапка начинает выше нового края — на время пути лист её не обрезает (фон старой высоты — под ней)
     if (d > 1) sh.style.overflow = "visible";
     const an = [sh.querySelector(".hd"), shBody()].map(el => el.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }));
+    // «ручка» листа (::before) едет вместе с шапкой, а не стоит на новом краю поверх заголовка
+    try { sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E, pseudoElement: "::before" }) } catch (e) { }
     an[0].finished.catch(() => { }).then(() => { sh.style.overflow = "" })
   }
-  // пропавший блок уходит вниз вместе со всеми и гаснет
-  was.filter(w => !document.querySelector(w[0])).forEach(([, g]) => { $("ov").appendChild(g); g.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: `translateY(${Math.max(0, d)}px)` }], { duration: D, easing: E, fill: "forwards" }).finished.catch(() => { }).then(() => g.remove()) });
+  // пропавший блок уходит вниз вместе со всеми и гаснет — быстро, в первые 40 % пути, чтобы не наложиться на новый текст
+  was.filter(w => !document.querySelector(w[0])).forEach(([, g]) => { $("ov").appendChild(g); g.animate([{ opacity: 1, transform: "none" }, { opacity: 0, offset: .4 }, { opacity: 0, transform: `translateY(${Math.max(0, d)}px)` }], { duration: D, easing: E, fill: "forwards" }).finished.catch(() => { }).then(() => g.remove()) });
   if (d > 1) { bg.className = "sve"; Object.assign(bg.style, { left: r0.left + "px", top: r0.top + "px", width: r0.width + "px", height: d + 30 + "px" }); $("ov").insertBefore(bg, sh); svG = [bg];
     bg.animate([{ clipPath: `inset(0 0 0 0 round ${R})` }, { clipPath: `inset(${d}px 0 0 0 round ${R})` }], { duration: D, easing: E, fill: "forwards" }).finished.catch(() => { }).then(() => bg.remove()) }
   else if (d < -1) sh.animate([{ clipPath: `inset(${-d}px 0 0 0 round ${R})` }, { clipPath: `inset(0 0 0 0 round ${R})` }], { duration: D, easing: E });
-  fresh.forEach(el => el.animate([{ opacity: 0, transform: "scale(.97)" }, { opacity: 1, transform: "none" }], { duration: 240, delay: 60, easing: MO.E, fill: "backwards" }));
+  fresh.forEach(el => el.animate([{ opacity: 0, transform: "scale(.97)" }, { opacity: 1, transform: "none" }], { duration: 220, delay: 90, easing: MO.E, fill: "backwards" }));
 }
 // шапка: «‹ назад» — если «Назад» ведёт на шаг внутри листа; у календаря и статистики — стрелки месяца
 function shHead(n) {

@@ -14,7 +14,8 @@ function stepTo() {
   if ((on(13) || on(14) || on(4) || on(5)) && SUB) return () => sets(1);
   return null;
 }
-function step() { const t = stepTo(); if (!t) return 0; t(); return 1 }
+// снимок экрана — до шага: сам шаг может успеть что-то спрятать (кнопку, клавиатуру), а переход должен начинаться с того, что было видно
+function step() { const t = stepTo(); if (!t) return 0; svPre(); try { t() } finally { svSnapPending = null } return 1 }
 addEventListener("popstate", async () => {
   if (popSkip) { popSkip--; return }
   if (!isOpen) return;

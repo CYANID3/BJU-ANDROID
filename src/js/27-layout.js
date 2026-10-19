@@ -23,7 +23,11 @@ function setNb(v) { S.set = Object.assign({}, S.set, { nb: v }); saveq(); applyL
 
 // ===== карточка дня: тройное касание по итогу дня (по умолчанию) или строка «Карточка дня ›» внизу итога =====
 const dcv = () => S.set && S.set.dc === "row" ? "row" : "tap";
-function setDc(v) { S.set = Object.assign({}, S.set, { dc: v }); saveq(); vib("ui"); vtx(() => { drawSet(); render() }) }
+function setDc(v) {
+  S.set = Object.assign({}, S.set, { dc: v }); saveq(); vib("ui"); drawSet();
+  // строка «Карточка дня» в итоге дня раскрывается или сжимается плавно
+  mainMorph(v === "row" ? [] : [document.querySelector("#app .crow")], render, () => v === "row" ? [document.querySelector("#app .crow")].filter(Boolean) : [])
+}
 
 // ===== пустые перекусы: «Ссылкой» — «＋ Перекус N» внизу карточки приёма; «По двойному касанию» — пустых не видно,
 // два касания по названию основного приёма показывают ссылку, ещё два — убирают. Открытый пустой перекус прячется при смене дня
@@ -35,7 +39,12 @@ function snToggle(mi) {
   if (snOpen.has(s)) { snOpen.delete(s); const b = q(); if (b && !b._sh) { b._sh = 1; moH(b, 0, rr) } else rr(); return }
   snOpen.add(s); rr(); const b = q(); if (b) moH(b, 1)
 }
-function setSn(v) { S.set = Object.assign({}, S.set, { sn: v }); saveq(); snOpen.clear(); vib("ui"); vtx(() => { drawSet(); render() }) }
+function setSn(v) {
+  S.set = Object.assign({}, S.set, { sn: v }); saveq(); snOpen.clear(); vib("ui"); drawSet();
+  // ссылки «＋ Перекус» плавно сжимаются (по двойному касанию) или раскрываются (ссылкой) — карточки подтягиваются вслед
+  const old = new Set([...document.querySelectorAll("#app .snk")].map(e => e.dataset.m));
+  mainMorph(v === "tap" ? [...document.querySelectorAll("#app .snk")] : [], render, () => [...document.querySelectorAll("#app .snk")].filter(e => !old.has(e.dataset.m)))
+}
 // двойное касание по шапке основного приёма (не по кнопкам)
 (() => {
   let t = 0, m = -1; addEventListener("pointerup", e => {

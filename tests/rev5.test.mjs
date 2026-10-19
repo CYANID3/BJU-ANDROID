@@ -51,7 +51,7 @@ test('смена темы и карточки дня — одним кадром
     await new Promise(r => setTimeout(r, 600));
     return { has, during, names, after: document.documentElement.classList.contains('notr'), left: [...document.querySelectorAll('[style*="view-transition-name"]')].length, bg: getComputedStyle(document.querySelector('.sum')).backgroundColor };
   });
-  assert.ok(r.has, 'в Chromium есть View Transitions'); assert.ok(r.during, 'во время смены переходы цвета выключены'); assert.ok(r.names, 'карточки переезжают сами');
+  assert.ok(r.has, 'в Chromium есть View Transitions'); assert.ok(r.during, 'во время смены переходы цвета выключены'); assert.equal(r.names, false, 'ревизия 6: один общий кадр — отдельные карточки больше не рисуются поверх панели');
   assert.equal(r.after, false); assert.equal(r.left, 0, 'имена убраны после смены'); assert.equal(r.bg, 'rgb(255, 255, 255)');
   // карточка дня — тоже сменой кадра
   await a.ev(() => togRep(true)); await a.wait(600);

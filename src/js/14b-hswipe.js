@@ -8,8 +8,10 @@ function hSwipe(zone, target, can, flip) {
     if (x0 === null) return; const t = e.touches[0], ddx = t.clientX - x0, ddy = t.clientY - y0, el = target();
     if (!md) { if (Math.abs(ddx) > 8 && Math.abs(ddx) > Math.abs(ddy) * 1.1) { md = 1; el.getAnimations().forEach(a => a.cancel()) } else if (Math.abs(ddy) > 10) { x0 = null; return } else return }
     dx = ddx; P.push([e.timeStamp, t.clientX]); while (P.length > 2 && e.timeStamp - P[0][0] > 100) P.shift();
+    // жест наш: браузер не начинает прокрутку (и не «съедает» следующее касание на её остановку)
+    if (e.cancelable) e.preventDefault();
     el.style.transform = `translateX(${dx}px)`; el.style.opacity = 1 - Math.min(.5, Math.abs(dx) / ((el.offsetWidth || 400) * 1.2))
-  }, { passive: true });
+  }, { passive: false });
   const end = () => {
     if (x0 === null) return; x0 = null; if (!md) return; md = 0;
     const el = target(), w = el.offsetWidth || 360, a = P[0], b = P[P.length - 1], v = (b[1] - a[1]) / Math.max(16, b[0] - a[0]);

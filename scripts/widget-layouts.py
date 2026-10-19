@@ -3,9 +3,9 @@
 Запуск: python3 scripts/widget-layouts.py
 
 Раскладки (ширина × высота в ячейках):
-  t1  1×1 — кольцо калорий;                       n2  2×1 — остаток калорий + Б / Ж / У строкой;
+  t1  1×1 — кольцо калорий;                       n2  2×1 — остаток калорий слева, Б / Ж / У столбиком справа;
   w3  3×1 — колонки «Осталось», Б, Ж, У с полосками; w4  4×1 — то же + «＋»;
-  s   2×2 — кольцо + Б / Ж / У + полоски (вытянутых узких раскладок нет: узкий высокий виджет показывает кольцо, как 1×1);
+  s   2×2 — кольцо + Б / Ж / У + полоски (вытянутых узких раскладок нет: узкий высокий виджет показывает квадрат 1×1);
   m   3×2 и низкий 4×2 — шапка с «＋», кольцо и строки Б / Ж / У;
   (без суффикса) высокий 4×2 — то же крупнее;     sx / lx — увеличенные (если лаунчер растянул выше двух строк).
 Цвета в разметке — только заглушки: виджет красит их сам (тема приложения, акцент, на Android 12+ — светлая и тёмная сразу).
@@ -31,11 +31,14 @@ def add(s, ms=8):
             f'<ImageView {A}id="@+id/bju_w_add_ic" {A}layout_width="{round(s*.52)}dp" {A}layout_height="{round(s*.52)}dp" {A}layout_gravity="center" {A}src="@drawable/bju_ic_plus" {A}importantForAccessibility="no"/></FrameLayout>')
 def ring(w="match_parent", h="match_parent", extra=""):
     return f'<ImageView {A}id="@+id/bju_w_ring" {A}layout_width="{w}" {A}layout_height="{h}" {A}scaleType="fitCenter" {A}adjustViewBounds="true" {A}contentDescription="Калории" {extra}/>'
-def root(inner, orient, pad):
+def pads(pad):
+    h, v = (pad.split() + [pad])[:2] if ' ' in pad else (pad, pad)
+    return f'{A}paddingLeft="{h}" {A}paddingRight="{h}" {A}paddingTop="{v}" {A}paddingBottom="{v}"' if h != v else f'{A}padding="{pad}"'
+def root(inner, orient, pad, bg=None):
     return ('<?xml version="1.0" encoding="utf-8"?>\n<!-- Сгенерировано scripts/widget-layouts.py -->\n'
       f'<FrameLayout {NS} {A}id="@+id/bju_w_root" {A}layout_width="match_parent" {A}layout_height="match_parent">'
-      f'<ImageView {A}id="@+id/bju_w_bg" {A}layout_width="match_parent" {A}layout_height="match_parent" {A}scaleType="fitXY" {A}src="@drawable/bju_widget_shape" {A}importantForAccessibility="no"/>'
-      f'<LinearLayout {A}layout_width="match_parent" {A}layout_height="match_parent" {A}orientation="{orient}" {A}gravity="center" {A}padding="{pad}">' + inner + '</LinearLayout></FrameLayout>\n')
+      + (bg or f'<ImageView {A}id="@+id/bju_w_bg" {A}layout_width="match_parent" {A}layout_height="match_parent" {A}scaleType="fitXY" {A}src="@drawable/bju_widget_shape" {A}importantForAccessibility="no"/>') +
+      f'<LinearLayout {A}layout_width="match_parent" {A}layout_height="match_parent" {A}orientation="{orient}" {A}gravity="center" ' + pads(pad) + '>' + inner + '</LinearLayout></FrameLayout>\n')
 def LL(inner, orient="vertical", w="match_parent", h="wrap_content", weight=None, gravity=None, extra=""):
     return (f'<LinearLayout {A}layout_width="{w}" {A}layout_height="{h}" {A}orientation="{orient}"' + (f' {A}layout_weight="{weight}"' if weight else '')
             + (f' {A}gravity="{gravity}"' if gravity else '') + f' {extra}>' + inner + '</LinearLayout>')
@@ -68,14 +71,18 @@ def mline(k=1.0):
                          w="0dp", weight="1", gravity="center_vertical", extra=end(m, 6)) for m in M3), "horizontal")
 
 out = {}
-# 1×1 — кольцо
-out['bju_widget_t1'] = root(ring(), "vertical", "6dp")
-# 2×1 — остаток калорий + Б / Ж / У строкой
-out['bju_widget_n2'] = root(LL(val("bju_k_val", "—", 18, 10) + tv("bju_k_lbl", "осталось", 10.5, MU), h="0dp", weight="1", gravity="center_vertical")
-                            + LL(mline(.9), "horizontal", extra=f'{A}layout_marginTop="2dp"'), "vertical", "10dp")
+# 1×1 — кольцо на квадратной плашке. Плашка всегда квадратная (по меньшей стороне): если лаунчер растянул виджет
+# в узкий высокий (1×2, 1×3…), это выглядит как обычный 1×1 посередине ячеек, а не как вытянутая белая полоса
+TILE = f'<ImageView {A}id="@+id/bju_w_bg" {A}layout_width="match_parent" {A}layout_height="match_parent" {A}scaleType="fitCenter" {A}src="@drawable/bju_widget_tile" {A}importantForAccessibility="no"/>'
+out['bju_widget_t1'] = root(ring(), "vertical", "6dp", TILE)
+# 2×1 — слева остаток калорий крупно, справа столбик Б / Ж / У (буква и число в строку) — две равные половины
+def mstack(k=1.0):
+    return ''.join(LL(tv(f"bju_{m}_lbl", SHORT[m], round(12.5 * k), COL[m], True, extra=f'{A}layout_marginEnd="6dp"')
+                      + val(f"bju_{m}_val", "0", round(13.5 * k), 9, w="0dp", grav="end", extra=W1), "horizontal", h="0dp", weight="1", gravity="center_vertical") for m in M3)
+out['bju_widget_n2'] = root(kcol(weight="1", mr=14, bar_=False) + LL(mstack(), w="0dp", h="match_parent", weight="1"), "horizontal", "12dp 10dp")
 # 3×1 и 4×1 — колонки: калории, Б, Ж, У (только «съедено» — норма есть в больших); 4×1 — ещё «＋»
-out['bju_widget_w3'] = root(kcol() + ''.join(mcol(m) for m in M3), "horizontal", "14dp")
-out['bju_widget_w4'] = root(kcol() + ''.join(mcol(m) for m in M3) + add(40, 12), "horizontal", "14dp")
+out['bju_widget_w3'] = root(kcol(weight="1.45") + ''.join(mcol(m) for m in M3), "horizontal", "14dp")
+out['bju_widget_w4'] = root(kcol(weight="1.45") + ''.join(mcol(m) for m in M3) + add(40, 12), "horizontal", "14dp")
 def s(k, pad):
     bars = LL(''.join(LL(mbar(m, round(5 * k), 0), w="0dp", weight="1", extra=end(m, 6)) for m in M3), "horizontal", extra=f'{A}layout_marginTop="{round(6*k)}dp"')
     return root(ring("match_parent", "0dp", W1) + LL(mline(k), "horizontal", extra=f'{A}layout_marginTop="{round(8*k)}dp"') + bars, "vertical", pad)
@@ -96,7 +103,7 @@ pv = pv.replace(f'<ImageView {A}id="@+id/bju_w_ring" {A}layout_width="112dp" {A}
     f'<LinearLayout {A}layout_width="wrap_content" {A}layout_height="wrap_content" {A}layout_gravity="center" {A}orientation="vertical" {A}gravity="center_horizontal">'
     + tv("bju_pv_num", "964", 26, TX, True) + tv("bju_pv_lbl", "осталось", 11.5, MU, extra=f'{A}layout_marginTop="3dp"') + '</LinearLayout></FrameLayout>')
 pv = pv.replace(f'{A}src="@drawable/bju_widget_add" {A}importantForAccessibility="no"/>', f'{A}src="@drawable/bju_widget_add" {A}tint="#7C70F0" {A}importantForAccessibility="no"/>')
-pv = pv.replace(f'{A}src="@drawable/bju_widget_shape"', f'{A}src="@drawable/bju_widget_shape_preview"').replace(f'{A}text="Сегодня"', f'{A}text="Сегодня · съедено 1146 из 2110"')
+pv = pv.replace(f'{A}src="@drawable/bju_widget_shape"', f'{A}src="@drawable/bju_widget_shape_preview"').replace(f'{A}text="Сегодня"', f'{A}text="Съедено 1146 из 2110"')
 for m, v, g, pr in [('p', '102', ' / 120', 850), ('f', '36', ' / 70', 514), ('c', '104', ' / 250', 416)]:
     pv = re.sub(rf'({A}id="@\+id/bju_{m}_val"[^>]*?{A}text=)"0"', rf'\1"{v}"', pv)
     pv = re.sub(rf'({A}id="@\+id/bju_{m}_goal"[^>]*?{A}text=)" / 0"', rf'\1"{g}"', pv)

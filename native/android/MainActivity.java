@@ -22,4 +22,27 @@ public class MainActivity extends BridgeActivity {
             }
         } catch (Exception ignored) { }
     }
+
+    // После блокировки экрана WebView иногда не рисует новый кадр, пока его не коснутся: виден только фон.
+    // При возврате (и когда окно снова получило фокус) просим WebView перерисоваться — сразу и ещё раз чуть позже.
+    @Override
+    public void onResume() {
+        super.onResume();
+        redraw();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) redraw();
+    }
+
+    private void redraw() {
+        try {
+            final WebView w = getBridge() != null ? getBridge().getWebView() : null;
+            if (w == null) return;
+            w.invalidate();
+            w.postDelayed(() -> { w.requestLayout(); w.invalidate(); }, 120);
+        } catch (Exception ignored) { }
+    }
 }

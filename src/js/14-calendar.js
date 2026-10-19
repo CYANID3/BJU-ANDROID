@@ -1,6 +1,8 @@
 // Календарь: месяцы, годы, свайп за пальцем
 let cm=[0,0];const cap=s=>s[0].toUpperCase()+s.slice(1);
 let cv=0,cb=0;
+// форматтер создаётся один раз: toLocaleDateString на каждую из 31 даты заметно тормозил листание
+const CDF=new Intl.DateTimeFormat("ru-RU",{day:"numeric",month:"long",year:"numeric"});
 const MN=Array.from({length:12},(_,i)=>cap(new Date(2000,i,1).toLocaleDateString("ru-RU",{month:"long"})));
 function cal(){const d=new Date(cur+"T12:00:00");cm=[d.getFullYear(),d.getMonth()];cv=0;SUB=0;sv(6,"","");drawCal();show()}
 function vw(v){cb=cv;cv=v;drawCal();fade($("cg"))}
@@ -17,7 +19,7 @@ function drawCal(){const[y,m]=cm,gk=kc(S.g.p,S.g.f,S.g.c),g=$("cg"),ty=+today.sl
  if(cv===0){const n=new Date(y,m+1,0).getDate(),off=(new Date(y,m,1).getDay()+6)%7,cnt={ok:0,o:0,lo:0};
   for(let i=0;i<off;i++)h+='<div class="cd e"></div>';
   for(let d=1;d<=n;d++){const k=y+"-"+mm(m)+"-"+String(d).padStart(2,"0"),E=S.d[k]||[],s=dk(E),st=E.length?dayStat(s,gk):"";if(st)cnt[st]++;
-   h+=`<button class="cd${st?" "+st:""}${!E.length&&k>today?" n0":""}${k===today?" t":""}${k===cur?" s":""}" onclick="pd('${k}')" aria-label="${new Date(y,m,d).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"})}${k===today?", сегодня":""}${E.length?", "+s+" ккал"+(st==="ok"?", в норме":st==="o"?", перебор":st==="lo"?", недобор":""):", без записей"}"${k===cur?' aria-current="date"':""}>${d}<small>${E.length?s:"&nbsp;"}</small></button>`}
+   h+=`<button class="cd${st?" "+st:""}${!E.length&&k>today?" n0":""}${k===today?" t":""}${k===cur?" s":""}" onclick="pd('${k}')" aria-label="${CDF.format(new Date(y,m,d))}${k===today?", сегодня":""}${E.length?", "+s+" ккал"+(st==="ok"?", в норме":st==="o"?", перебор":st==="lo"?", недобор":""):", без записей"}"${k===cur?' aria-current="date"':""}>${d}<small>${E.length?s:"&nbsp;"}</small></button>`}
   // строк столько, сколько недель в месяце (4–6): без пустой шестой строки под датами
   const rows=Math.ceil((off+n)/7);for(let i=off+n;i<rows*7;i++)h+='<div class="cd e"></div>';g.style.gridTemplateRows=`repeat(${rows},1fr)`;g.style.height=rows*56-4+"px";
   $("st").textContent=MN[m]+" "+y;

@@ -3,7 +3,7 @@
 const wtm=()=>S.set&&S.set.wt==="off"?"off":"on",wton=()=>wtm()!=="off";
 // последняя запись веса строго до дня k
 function wPrev(k){let b=null;for(const d in S.wt||{})if(d<k&&(!b||d>b))b=d;return b?[b,S.wt[b]]:null}
-const wFmt=v=>String(r1(v)).replace(".",","),wDate=k=>new Date(k+"T12:00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"short"});
+const wFmt=v=>String(r1(v)).replace(".",","),WDF=new Intl.DateTimeFormat("ru-RU",{day:"numeric",month:"short"}),wDate=k=>WDF.format(new Date(k+"T12:00:00"));
 const wSg=d=>(d>0?"+":d<0?"−":"±")+wFmt(Math.abs(d));
 // чип «Вес» под итогом дня: записан за этот день — «72,4 кг» и разница с прошлой записью;
 // не записан — «Записать» (и прошлый вес мелко). Если вес пишется жестом «потянуть вверх» — пустого чипа нет.
@@ -23,7 +23,16 @@ function wPv() {
 }
 function wSave() { const v = wIn(); if (!(v >= 20 && v <= 400)) return badField("wv", "Введите вес в кг"); S.wt = Object.assign({}, S.wt, { [cur]: Math.round(v * 100) / 100 }); vib("save"); save(); cl(); render() }
 async function wDel() { if (!await ask("Запись веса за этот день будет удалена.", "Удалить", 1, 0, "Удалить вес?")) return; const w = Object.assign({}, S.wt); delete w[cur]; S.wt = w; vib("del"); save(); cl(); render() }
-function setWt(v) { S.set = Object.assign({}, S.set, { wt: v }); saveq(); vib("ui"); vtx(() => { drawSet(); render() }); scSync() }
+function setWt(v) {
+  S.set = Object.assign({}, S.set, { wt: v }); saveq(); vib("ui"); drawSet(); scSync();
+  // чип веса появляется или уходит плавно; соседний чип недели — на месте, меняет ширину плавно (FLIP)
+  const duo = document.querySelector("#app .duo"), wk = duo && duo.querySelector(".dtl:not(.wtl)"), r0 = wk && wk.getBoundingClientRect(), wl = duo && duo.querySelector(".wtl");
+  const fix = () => { const d2 = document.querySelector("#app .duo"), w2 = d2 && d2.querySelector(".dtl:not(.wtl)"); if (!w2 || !r0 || !moOk(w2)) return; const r1 = w2.getBoundingClientRect();
+    w2.animate([{ transform: `translateX(${r0.left - r1.left}px)`, width: r0.width + "px" }, { transform: "none", width: r1.width + "px" }], { duration: MO.t3, easing: MO.E }) };
+  if (v === "off") mainMorph(wk ? [] : [duo], () => { render(); fix() }); else mainMorph([], () => { render(); fix() }, () => { const d2 = document.querySelector("#app .duo"); return d2 && !duo ? [d2] : [] });
+  if (v === "off" && wl && wk) { const r = wl.getBoundingClientRect(), g = noIds(wl.cloneNode(true)); Object.assign(g.style, { position: "fixed", left: r.left + "px", top: r.top + "px", width: r.width + "px", height: r.height + "px", margin: 0, zIndex: 2, pointerEvents: "none" }); document.body.appendChild(g); moOut(g, () => g.remove()) }
+  if (v !== "off") { const w = document.querySelector("#app .wtl"); if (w && duo) moIn(w) }
+}
 // ярлык «Вес» у иконки приложения — по настройке (вызывается при запуске и при переключении)
 // (вызывается и из applyAc — в том числе до объявления let-переменных, поэтому состояние хранится в window)
 function scSync(){const N=window.BJU_NATIVE;if(!N||!N.native||!N.shortcuts)return;const w=wton();if(window.__scL===w)return;window.__scL=w;N.shortcuts({weight:w})}

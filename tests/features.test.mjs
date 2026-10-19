@@ -80,7 +80,7 @@ test('вес: чип под итогом дня, запись своей кла�
   // отключение
   await a.ev(() => sets()); await a.wait(300);
   assert.equal(await a.ev(() => $('wtm').getAttribute('aria-checked')), 'true', 'переключатель «Отслеживать вес» включён');
-  await a.pg.click('#wtm'); await a.wait(100);
+  await a.pg.click('#wtm'); await a.wait(500); // чип сжимается плавно, затем убирается
   assert.equal(await a.ev(() => $('wtm').getAttribute('aria-checked')), 'false');
   assert.equal(await a.pg.locator('#app .wtl').count(), 0);
   assert.equal(await a.ev(() => S.wt[cur]), 72.4, 'записи не удаляются');

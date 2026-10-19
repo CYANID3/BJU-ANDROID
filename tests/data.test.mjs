@@ -106,7 +106,7 @@ test('виджет: превью с числом в кольце и «＋» цв
   const info = fs.readFileSync('native/android/res/xml/bju_widget_info.xml', 'utf8');
   assert.match(info, /previewLayout="@layout\/bju_widget_preview"/);
   const x = fs.readFileSync('native/android/res/layout/bju_widget_preview.xml', 'utf8');
-  for (const t of ['Белки', 'Жиры', 'Углеводы', 'Сегодня · съедено 1146 из 2110', '102', ' / 120', '964', 'осталось']) assert.ok(x.includes(`"${t}"`), t);
+  for (const t of ['Белки', 'Жиры', 'Углеводы', 'Съедено 1146 из 2110', '102', ' / 120', '964', 'осталось']) assert.ok(x.includes(`"${t}"`), t);
   assert.match(x, /bju_widget_shape_preview/); assert.match(x, /bju_widget_ring_preview/, 'кольцо в превью');
   assert.match(x, /bju_widget_add"[^>]*tint="#7C70F0"/, '«＋» в превью — цветом акцента, а не белым квадратом');
   assert.match(fs.readFileSync('native/android/res/drawable/bju_widget_shape_preview.xml', 'utf8'), /#F5282B31/, 'графит тёмной темы');

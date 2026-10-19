@@ -12,12 +12,12 @@
 .hd .ht small{display:block;font-size:var(--fs-sm);color:var(--mu);font-weight:500;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hd .ht small:empty{display:none}
 .hd .hb{margin-left:-8px}.hd.mn .ht{text-align:center}.hd.mn .ht b{cursor:pointer}
 .hd>.x{border-radius:50%;background:var(--sub);color:var(--tx)}.hd>.x svg.i{width:18px;height:18px}
-.shb{flex:0 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;padding:4px 16px 16px}
+.shb{flex:0 1 auto;min-height:0;overflow:hidden auto;overscroll-behavior:contain;padding:4px 16px 16px}
 .sh.full .shb{flex:1 1 auto}
 .shf{flex:none;padding:0 16px calc(16px + var(--sab))}.shf:not(:has(.ft:not([hidden]),.kpd:not([hidden]))){padding-bottom:var(--sab)}
 .shf .ft{display:flex;gap:8px}.shf .ft.two>*{flex:1}
 /* с клавиатурой низ листа — панель своего тона на всю ширину */
-.sh.kpo .shf{background:var(--kbg);padding:10px 10px calc(12px + var(--sab));box-shadow:0 -1px 0 var(--bd)}
+.sh.kpo .shf,.svl.kpo .shf{background:var(--kbg);padding:10px 10px calc(12px + var(--sab));box-shadow:0 -1px 0 var(--bd)}
 /* поля ввода */
 input{width:100%;font:inherit;caret-color:var(--ac);font-size:16px;font-weight:600;height:var(--h-ctl);padding:0 16px;border-radius:var(--r-ctl);border:0;background:var(--sub);color:var(--tx);margin:0;box-shadow:inset 0 0 0 1.5px transparent;transition:box-shadow var(--t1),background-color var(--t1)}
 input:focus{outline:0;box-shadow:inset 0 0 0 2px var(--ac);background:var(--acs)}input::placeholder{color:var(--mu);opacity:.8;font-weight:500}
@@ -30,7 +30,7 @@ label{font-size:var(--fs-sm);font-weight:600;color:var(--mu);display:block;margi
 .pb{width:100%;height:var(--h-ctl);border-radius:var(--r-ctl);background:var(--ac);color:var(--on);font-weight:700;font-size:15.5px;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center}
 .pb:active{transform:scale(.98);filter:brightness(1.08)}.pb svg.i{width:20px;height:20px}
 .pb.g{background:var(--sub);color:var(--tx)}.pb.t{background:var(--acs);color:var(--act,var(--ac))}.pb.dg{background:color-mix(in srgb,var(--dg) 12%,transparent);color:var(--dg)}
-.sh.kpo .pb.g{background:var(--keyp)}
+.sh.kpo .pb.g,.svl.kpo .pb.g{background:var(--keyp)}
 .ln{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin-top:10px;padding:0 14px;border-radius:var(--r-ctl);background:var(--acs);color:var(--act,var(--ac));font-weight:700;font-size:14.5px;text-align:center}
 .ln:active{background:color-mix(in srgb,var(--ac) 26%,transparent)}.ln svg.i{width:19px;height:19px}
 .ln.g{background:var(--sub)}.ln.lft{justify-content:flex-start}.ln small{color:var(--mu);font-weight:500;font-size:var(--fs-sm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -89,7 +89,7 @@ input.rp{caret-color:transparent;color:var(--act,var(--ac));background:var(--acs
 input.bad{box-shadow:inset 0 0 0 2px var(--dg)!important;background:color-mix(in srgb,var(--dg) 10%,var(--sub))!important;animation:shk .32s var(--ease)}
 @keyframes shk{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
 /* смена экрана листа: снимок старого экрана поверх и фон старой высоты под листом (см. sv / svPlay) */
-.svl{position:fixed;z-index:2;pointer-events:none}.sve{position:fixed;pointer-events:none;background:var(--card);border-radius:24px 24px 0 0}
+.svl{position:fixed;z-index:2;pointer-events:none}.svl *{content-visibility:visible!important;animation:none!important;transition:none!important}.sve{position:fixed;pointer-events:none;background:var(--card);border-radius:24px 24px 0 0}
 /* календарь: заголовок «Октябрь 2026 ⌄» — кнопка-таблетка: видно, что по ней можно нажать (выбор месяца и года) */
 .hd.cal .ht b{display:inline-flex;align-items:center;gap:6px;padding:7px 12px 7px 16px;border-radius:var(--r-pill);background:var(--sub);font-size:17px}
 .hd.cal .ht b::after{content:"";width:7px;height:7px;border:solid var(--mu);border-width:0 2px 2px 0;transform:translateY(-2px) rotate(45deg)}

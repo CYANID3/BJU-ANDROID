@@ -34,13 +34,15 @@ function flipPlay(){const app=$("app"),old=flipPos,E=S.d[cur]||[];flipPos=null;c
  app.querySelectorAll(":scope>[data-fk]").forEach(el=>{const o=old.get(el.dataset.fk);if(o){seen.add(el.dataset.fk);dly.set(el,move(el,o))}else moIn(el)});
  app.querySelectorAll(".it[data-i]").forEach(el=>{const e=E[+el.dataset.i],o=e&&old.get(e),sec=el.closest("[data-fk]");if(o){seen.add(e);move(el,o,dly.get(sec)||0)}else if(born++<12)moIn(el,{delay:Math.min(born-1,6)*30})});
  // удалённые записи и карточки: «призрак» на старом месте плавно исчезает
- old.forEach((o,k)=>{if(seen.has(k)||!o.el.classList.contains("it"))return;const g=o.el.cloneNode(true),r=o.r;
+ old.forEach((o,k)=>{if(seen.has(k)||!o.el.classList.contains("it"))return;const g=noIds(o.el.cloneNode(true)),r=o.r;
   Object.assign(g.style,{position:"fixed",left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px",margin:0,zIndex:3,pointerEvents:"none",background:"var(--sub)"});
   document.body.appendChild(g);moOut(g,()=>g.remove())})}
 
 // Сегменты (тема, вибрация, граммы / штуки…): общая «таблетка» под выбранной кнопкой. Подложка сегмента живёт дольше
 // своих кнопок (их перерисовывают), поэтому таблетка переезжает со старого места на новое сама — переходом в CSS.
-function segSync(){document.querySelectorAll(".seg").forEach(s=>{const b=s.querySelector("button.on");
+// копия, которая гаснет на месте ушедшего блока: без id — $() и поиск по id всегда находят настоящий элемент, а не копию
+function noIds(g){g.removeAttribute("id");g.querySelectorAll("[id]").forEach(x=>x.removeAttribute("id"));return g}
+function segSync(){document.querySelectorAll(".seg").forEach(s=>{if(s.closest(".svl"))return;const b=s.querySelector("button.on");
  if(!b||!s.offsetWidth){if(!b)s.classList.remove("sk");return}
  const v=[b.offsetLeft+"px",b.offsetTop+"px",b.offsetWidth+"px",b.offsetHeight+"px"],k=v.join();if(s._sk===k&&s.classList.contains("sk"))return;
  const first=!s.classList.contains("sk")||!s._sk;if(first)s.classList.add("sn");
@@ -52,19 +54,35 @@ function segSync(){document.querySelectorAll(".seg").forEach(s=>{const b=s.query
  addEventListener("resize",()=>{document.querySelectorAll(".seg.sk").forEach(s=>{s._sk="";s.classList.remove("sk")});go()})})();
 
 
-// Смена всего кадра (тема, цвет, карточка дня, вид главного экрана) — плавно, через View Transitions:
-// старый кадр растворяется в новом, карточки главного экрана переезжают и меняют высоту сами.
-// На время смены CSS-переходы выключены, чтобы все элементы сменились одновременно, а не с запозданием.
-// Без поддержки в WebView или при «Уменьшить движение» — сразу, как раньше.
+// Смена всего кадра — только там, где меняется весь экран (тема, карточка дня): старый кадр растворяется в новом
+// через View Transitions. Оба кадра непрозрачны и меняются за одно время (смешение «plus-lighter»), поэтому
+// ничего не мигает. На время смены CSS-переходы выключены — все элементы меняются одновременно.
+// Пока идёт смена, касания не доходят до кнопок — поэтому смена короткая (0,26 с) и только для редких действий.
+// Без View Transitions (старый WebView) или при «Уменьшить движение» — сразу, но тоже одновременно.
 function vtx(fn) {
   const d = document.documentElement;
-  if (vtx.on) { fn(); return }
-  // без View Transitions (старый WebView) или при «Уменьшить движение» — сразу, но тоже одновременно (без запоздалых переходов цвета)
-  if (!document.startViewTransition || RM()) { d.classList.add("notr"); fn(); requestAnimationFrame(() => requestAnimationFrame(() => d.classList.remove("notr"))); return }
-  // свои имена у карточек (переезжают), у шапки, нижней панели и листа (остаются поверх карточек)
-  const names = on => { document.querySelectorAll("#app>[data-fk]").forEach(el => el.style.viewTransitionName = on ? "c-" + el.dataset.fk.replace(/[^\w-]/g, "_") : "");
-    [[".nav", "nav"], [".bt", "bar"], ["#ov.on", "ov"]].forEach(([q, n]) => { const el = document.querySelector(q); if (el) el.style.viewTransitionName = on ? n : "" }) };
-  vtx.on = 1; d.classList.add("notr"); names(1);
-  let t; try { t = document.startViewTransition(() => { fn(); names(1) }) } catch (e) { vtx.on = 0; d.classList.remove("notr"); names(0); fn(); return }
-  t.finished.catch(() => { }).then(() => { vtx.on = 0; d.classList.remove("notr"); names(0) })
+  if (vtx.t) { fn(); return }
+  if (!document.startViewTransition || RM() || document.hidden) { allAtOnce(fn); return }
+  d.classList.add("notr");
+  let t; try { t = document.startViewTransition(fn) } catch (e) { d.classList.remove("notr"); fn(); return }
+  vtx.t = t; t.finished.catch(() => { }).then(() => { vtx.t = null; d.classList.remove("notr") })
 }
+// мгновенная смена, но одновременно: без запоздалых переходов цвета у отдельных элементов (цвет акцента, оттенок фона)
+function allAtOnce(fn) { const d = document.documentElement; d.classList.add("notr"); fn(); requestAnimationFrame(() => requestAnimationFrame(() => d.classList.remove("notr"))) }
+// экран погас или приложение свёрнуто посреди смены кадра — смена завершается сразу (иначе после разблокировки мог остаться пустой кадр)
+// возврат после блокировки экрана: незаконченная смена кадра завершается сразу, а страница перерисовывается целиком
+// (прозрачность 0,999 на два кадра — незаметно, но заставляет WebView нарисовать новый кадр; transform тут нельзя — сдвинул бы закреплённые панели)
+document.addEventListener("visibilitychange", () => { if (vtx.t) try { vtx.t.skipTransition() } catch (e) { } if (!document.hidden) { const b = document.body; b.style.opacity = ".999"; requestAnimationFrame(() => requestAnimationFrame(() => { b.style.opacity = "" })) } });
+
+// Главный экран: блок появляется (раскрывается по высоте) или исчезает (сжимается) плавно — для настроек, меняющих вид
+// главного экрана: пустые перекусы, строка «Карточка дня», чип веса. Без View Transitions: касания не теряются.
+// out — элементы, которые исчезнут (сначала сжимаются, потом перерисовка); after() возвращает новые — они раскрываются.
+function mainMorph(out, redraw, after) {
+  const go = () => { flipSkip = 1; try { redraw() } finally { flipSkip = 0 } const add = after ? after() : []; add.forEach(el => moH(el, 1)) };
+  const els = out.filter(el => el && el.isConnected && el.offsetHeight); if (!els.length || RM()) { go(); return }
+  let n = els.length; els.forEach(el => moH(el, 0, () => { if (--n === 0) go() }))
+}
+// переключатели «да / нет» после перерисовки строки: бегунок доезжает с прежнего положения, а не прыгает
+function tgSnap(root) { const m = new Map(); (root || document).querySelectorAll(".row[id] .tg").forEach(t => m.set(t.closest(".row").id, t.classList.contains("on"))); return m }
+function tgPlay(prev, root) { (root || document).querySelectorAll(".row[id] .tg").forEach(t => { const id = t.closest(".row").id, was = prev.get(id), on = t.classList.contains("on"); if (was == null || was === on) return;
+  const k = t.querySelector("i"); if (moOk(k)) { k.animate([{ transform: was ? "translateX(18px)" : "none" }, { transform: on ? "translateX(18px)" : "none" }], { duration: MO.t2, easing: MO.E }); t.animate([{ backgroundColor: getComputedStyle(t).backgroundColor, opacity: .7 }, { opacity: 1 }], { duration: MO.t2 }) } }) }

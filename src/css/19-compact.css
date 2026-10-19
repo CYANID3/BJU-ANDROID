@@ -1,7 +1,7 @@
 /* Небольшие экраны. Отдельной частью в конце — эти правила должны перекрывать основные */
 /* невысокие экраны: клавиши и поле значения ниже — поле, быстрые значения и кнопка остаются на виду */
 @media (max-height:740px){:root{--h-key:44px}.kpd{gap:5px;margin-top:6px}.vf input{height:60px;font-size:30px}.vf .pm{top:6px;width:48px;height:48px}.qc{margin-top:8px}.qp{margin-top:8px}.seg.mg button{min-height:32px}.seg.mg button:nth-child(n+4){min-height:32px}}
-@media (max-height:620px){:root{--h-key:40px}.sh.kpo .shf{padding-top:8px}.sh.kpo .pb{height:46px}}
+@media (max-height:620px){:root{--h-key:40px}.sh.kpo .shf,.svl.kpo .shf{padding-top:8px}.sh.kpo .pb,.svl.kpo .pb{height:46px}}
 /* узкие экраны: подписи панели мельче, не наезжают друг на друга */
 @media (max-width:360px){.bt{grid-template-columns:1fr 1fr 72px 1fr 1fr}.bt>button{font-size:10px;letter-spacing:-.02em}.bt .fab{width:54px;height:54px;border-radius:18px}.dtl{padding:0 10px;gap:8px}}
 /* чип «В среднем за 7 дн.»: рядом с чипом веса на узком экране — подпись короче, белок прячется (он есть в статистике) */

@@ -9,6 +9,11 @@ addEventListener("blur",()=>undrag(1));document.addEventListener("visibilitychan
  s.addEventListener("touchmove",e=>{if(y0===null)return;const t=e.touches[0],ddy=t.clientY-y0,ddx=t.clientX-x0;
   if(!on){if(Math.abs(ddx)>10&&Math.abs(ddx)>Math.abs(ddy)){y0=null;return}
    if(ddy>8&&st0<=0&&shBody().scrollTop<=0){on=1;y0=t.clientY;s.style.transition="none"}else if(Math.abs(ddy)>8){y0=null;return}else return}
-  dy=Math.max(0,t.clientY-y0);const n=performance.now();v=(t.clientY-ly)/Math.max(1,n-lt);ly=t.clientY;lt=n;s.style.transform=`translateY(${dy}px)`},{passive:true});
- const end=()=>{y0=null;if(!on)return;on=0;s.style.transition="";s.style.transform="";if(dy>110*GF()||(v>SL(1)&&dy>110*GF()*SL(2))){vib("pull");xcl()}};
+  if(e.cancelable)e.preventDefault(); // лист тянем мы: прокрутка не запускается, следующее касание не уходит на её остановку
+  dy=Math.max(0,t.clientY-y0);const n=performance.now();v=(t.clientY-ly)/Math.max(1,n-lt);ly=t.clientY;lt=n;s.style.transform=`translateY(${dy}px)`},{passive:false});
+ // отпустили: не закрываем — лист плавно возвращается; закрываем — уезжает вниз с того места, где палец его отпустил (без возврата наверх)
+ const end=()=>{y0=null;if(!on)return;on=0;s.style.transition="";
+  if(!(dy>110*GF()||(v>SL(1)&&dy>110*GF()*SL(2)))){s.style.transform="";return}
+  vib("pull");const ms=Math.round(Math.max(160,Math.min(320,(s.offsetHeight-dy)/Math.max(.8,v)))),done=()=>{if(!isOpen)s.style.transform=""};
+  Promise.resolve(xcl()).then(()=>{if(isOpen){s.style.transform="";return}s.style.transition=`transform ${ms}ms cubic-bezier(.2,0,0,1)`;s.style.transform="translateY(100%)";setTimeout(()=>{s.style.transition="";done()},ms+60)})};
  s.addEventListener("touchend",end);s.addEventListener("touchcancel",()=>{dy=0;v=0;end()})})();

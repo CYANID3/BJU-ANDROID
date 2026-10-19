@@ -27,7 +27,7 @@ function repHTML(dense){const E=S.d[cur]||[],t=sumE(E),G=S.g,gk=kc(G.p,G.f,G.c),
  // кольцо долей калорий Б / Ж / У — дугами SVG (сглаживаются чисто, в отличие от conic-gradient): ровные узкие зазоры между цветами
  const R=44.5,SW=11,arc=(len,off,c)=>`<circle cx="50" cy="50" r="${R}" pathLength="100" fill="none" stroke="${c}" stroke-width="${SW}" stroke-dasharray="${len.toFixed(3)} ${(100-len).toFixed(3)}" stroke-dashoffset="${(-off).toFixed(3)}"/>`;
  let arcs=arc(100,0,"var(--sub)");
- if(ks>0){const seg=kp.map((v,i)=>[v/ks*100,col[i]]).filter(x=>x[0]>0);if(seg.length===1)arcs=arc(100,0,seg[0][1]);else{const gap=.9;let st=0;arcs="";
+ if(ks>0){const seg=kp.map((v,i)=>[v/ks*100,col[i]]).filter(x=>x[0]>0);if(seg.length===1)arcs=arc(100,0,seg[0][1]);else{const gap=.5;let st=0;arcs="";
   seg.forEach(([w,c])=>{arcs+=arc(Math.max(.5,w-gap),st+gap/2,c);st+=w})}}
  const ring=`<div class="rp-ring"><svg viewBox="0 0 100 100" aria-hidden="true"><g transform="rotate(-90 50 50)">${arcs}</g></svg><div class="rp-rc"><b>${gk?Math.round(k/gk*100):0}%</b><span>нормы</span></div></div>`;
  // Б / Ж / У — те же плитки, что на главном экране (съедено / норма, полоска, остаток, доля калорий)
