@@ -85,8 +85,10 @@ out['bju_widget_t1'] = root(ring(), "vertical", "6dp", TILE)
 def vrow(m, lab=12, num=13, bh=4, bm=3):
     return LL(LL(tv(f"bju_{m}_lbl", SHORT[m], lab, COL[m], True, extra=f'{A}layout_marginEnd="4dp"') + val(f"bju_{m}_val", "0", num, 9, w="0dp", grav="end", extra=W1),
                  "horizontal", gravity="center_vertical") + mbar(m, bh, bm))
-def SPw(w): return f'<View {A}layout_width="match_parent" {A}layout_height="0dp" {A}layout_weight="{w}"/>'
-def SPd(h): return f'<View {A}layout_width="match_parent" {A}layout_height="{h}dp"/>'
+# распорки — пустые FrameLayout: RemoteViews (виджет) раскладывает только классы с пометкой @RemoteView; простой <View> туда
+# не входит, и виджет с ним показывает «Не удаётся загрузить виджет»
+def SPw(w): return f'<FrameLayout {A}layout_width="match_parent" {A}layout_height="0dp" {A}layout_weight="{w}"/>'
+def SPd(h): return f'<FrameLayout {A}layout_width="match_parent" {A}layout_height="{h}dp"/>'
 def RING_W(w): return ring("match_parent", "0dp", f'{A}layout_weight="{w}"')
 # 1×2 (высота 160–229 dp): кольцо и три строки
 out['bju_widget_v2'] = root(RING_W(1) + SPd(6) + vrow('p') + SPd(7) + vrow('f') + SPd(7) + vrow('c') + SPw(.1), "vertical", "12dp")

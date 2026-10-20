@@ -27,12 +27,12 @@ test('виджет 1×2 и 1×3: кольцо — в слоте с весом (�
   for (const n of ['bju_widget_v2', 'bju_widget_v3']) {
     const x = fs.readFileSync(`native/android/res/layout/${n}.xml`, 'utf8');
     assert.match(x, /android:id="@\+id\/bju_w_ring" android:layout_width="match_parent" android:layout_height="0dp"[^>]*android:layout_weight=/, n);
-    const sp = [...x.matchAll(/<View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="([\d.]+)"\/>/g)].map(m => +m[1]);
+    const sp = [...x.matchAll(/<FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="([\d.]+)"\/>/g)].map(m => +m[1]);
     assert.ok(sp.length >= 1, n);
   }
   // в 1×3 распорки есть и между строками, а не только по краям
   const v3 = fs.readFileSync('native/android/res/layout/bju_widget_v3.xml', 'utf8');
-  assert.equal((v3.match(/<View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight=/g) || []).length, 4);
+  assert.equal((v3.match(/<FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight=/g) || []).length, 4);
   assert.match(v3, /bju_w_cap/);
 });
 
@@ -54,4 +54,15 @@ test('иконка: адаптивная — векторные слои без 
   assert.match(patch, /<monochrome android:drawable="@drawable\/bju_ic_mono" \/>/);
   assert.doesNotMatch(patch.slice(patch.indexOf('const ADAPTIVE'), patch.indexOf('</adaptive-icon>')), /inset/);
   assert.match(patch, /drawable-v24\/ic_launcher_foreground\.xml', 'drawable\/ic_launcher_background\.xml/);
+});
+
+// Виджет показывал «Не удаётся загрузить виджет»: распорки в раскладках 1×2 / 1×3 были простым <View>, а RemoteViews
+// раскладывает только классы с пометкой @RemoteView (проверено по android.jar: у View её нет, у FrameLayout есть)
+test('виджет: в раскладках только элементы, которые умеет показывать RemoteViews', () => {
+  const OK = new Set(['FrameLayout', 'LinearLayout', 'RelativeLayout', 'GridLayout', 'TextView', 'ImageView', 'ImageButton', 'Button', 'ProgressBar',
+    'ViewFlipper', 'ListView', 'GridView', 'StackView', 'AdapterViewFlipper', 'AnalogClock', 'TextClock', 'Chronometer']);
+  const bad = [];
+  for (const f of fs.readdirSync('native/android/res/layout').filter(f => f.startsWith('bju_widget')))
+    for (const m of fs.readFileSync(`native/android/res/layout/${f}`, 'utf8').matchAll(/<([A-Za-z.]+)[\s>/]/g)) if (!OK.has(m[1])) bad.push(`${f}: <${m[1]}>`);
+  assert.deepEqual(bad, []);
 });

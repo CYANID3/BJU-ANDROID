@@ -3,7 +3,8 @@
 //  - EI  — уход: плавный разгон (скрытие)
 //  - EIO — плавно в обе стороны (сжатие по высоте)
 // темп анимаций: короткие и «упругие» в начале (быстрый старт, мягкая остановка) — отзывчиво, без тягучего хвоста
-const MO={E:"cubic-bezier(.2,0,0,1)",EI:"cubic-bezier(.3,0,.8,.15)",EIO:"cubic-bezier(.4,0,.2,1)",t1:140,t2:200,t3:280};
+// EV — продолжение движения пальца: старт на скорости жеста, мягкая остановка (без разгона с нуля, как у EI)
+const MO={E:"cubic-bezier(.2,0,0,1)",EI:"cubic-bezier(.3,0,.8,.15)",EIO:"cubic-bezier(.4,0,.2,1)",EV:"cubic-bezier(.25,.6,.5,1)",t1:140,t2:200,t3:280};
 function moOk(el){return el&&el.animate&&!RM()}
 function mo(el,kf,o){if(!moOk(el))return null;try{return el.animate(kf,Object.assign({duration:MO.t2,easing:MO.E},typeof o==="number"?{duration:o}:o))}catch(e){return null}}
 // появление: из прозрачности, чуть снизу и чуть меньше

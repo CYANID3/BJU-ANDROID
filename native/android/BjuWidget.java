@@ -132,6 +132,21 @@ public class BjuWidget extends AppWidgetProvider {
     }
 
     static void render(Context ctx, AppWidgetManager mgr, int id) {
+        // ошибка при сборке вида (повреждённые данные, нехватка памяти под картинку кольца) не должна оставлять на экране
+        // «Не удаётся загрузить виджет»: тогда показывается простая раскладка 1×1, при следующем обновлении — снова полная
+        try {
+            renderFull(ctx, mgr, id);
+        } catch (RuntimeException | OutOfMemoryError e) {
+            android.util.Log.w("BjuWidget", "widget render failed", e);
+            try {
+                mgr.updateAppWidget(id, build(ctx, T1, new Data(ctx)));
+            } catch (RuntimeException | OutOfMemoryError e2) {
+                android.util.Log.w("BjuWidget", "fallback render failed", e2);
+            }
+        }
+    }
+
+    private static void renderFull(Context ctx, AppWidgetManager mgr, int id) {
         Data d = new Data(ctx);
         if (Build.VERSION.SDK_INT >= 31) {
             // Android 12+: система сама переключает раскладки при изменении размера

@@ -60,8 +60,13 @@ const onMv=e=>{if(e._m)return;e._m=1;if(isOpen)return;const t=e.touches[0],dx=t.
  if(up>0){if(!(pZ===1&&!pAct&&up<16)){pull(up);if(pAct&&pZ===1)pNoClick=1}}else if(dn>0&&dwOn())pull(dn,1);else if(pAct)pull(0,pDn);
  // пока тянется индикатор, страница под пальцем не прокручивается (иначе при отмене она едет вместе с пальцем и всё дёргается)
  if(pAct&&e.cancelable)e.preventDefault()};addEventListener("touchmove",onMv,{passive:false});
+// решение «листать день»: dx — сдвиг пальца, v — скорость в конце жеста (px/мс), dt — длительность жеста (мс)
+function dayCommit(dx,v,dt){const gf=GF(),ad=Math.abs(dx),same=v*dx>0,fl=Math.abs(v)>.35;
+ return !(fl&&!same)&&(ad>56*gf||(ad>56*gf*SL(2)&&dt<(gf<1?320:gf>1?200:260))||(fl&&same&&ad>18))}
 const onEn=e=>{if(e._e)return;e._e=1;const z=pZ;pZ=0;if(pNoClick)setTimeout(()=>pNoClick=0,400);if(isOpen||!gd){if(pAct)phide();return}const t=e.changedTouches[0],dx=t.clientX-sx,g=gd;gd=0;
- if(g===1){if(pAct)phide();const gf=GF();if(Math.abs(dx)>56*gf||(Math.abs(dx)>56*gf*SL(2)&&Date.now()-st<(gf<1?320:gf>1?200:260))){GQ=dgx;go(dx<0?1:-1);GQ=0;undrag(1)}else undrag();return}
+ // листать: дотянули до порога, коротко и быстро махнули, или палец уходит в сторону свайпа со скоростью взмаха.
+ // Если в конце жеста палец пошёл обратно (скорость против направления) — передумали, день остаётся
+ if(g===1){if(pAct)phide();const v=hvel();if(dayCommit(dx,v,Date.now()-st)){SWV=v*dx>0?Math.abs(v):0;GQ=dgx;go(dx<0?1:-1);GQ=0;undrag(1)}else undrag();return}
  if(!pAct)return;
  const ve=pDn?(ptY!==null?t.clientY-ptY:0):(pbY!==null?pbY-t.clientY:0);PS.push([e.timeStamp,ve]);
  // сработало: дотянули до порога или резко дёрнули (почти половина пути и > 0.45 px/мс).

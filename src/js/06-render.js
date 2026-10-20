@@ -21,8 +21,10 @@ const HDW = new Intl.DateTimeFormat("ru-RU", { weekday: "short" }), HDM = new In
 function head(c) { c = c || cur; const dd = new Date(c + "T12:00:00"), df = Math.round((dd - new Date(today + "T12:00:00")) / 864e5), dt = $("dt"), h = cap(HDW.format(dd)) + ", " + HDM.format(dd) + "<small>" + (df !== 0 ? "<span data-t=\"1\">К сегодня</span> · " : "") + (df === 0 ? "Сегодня" : df === -1 ? "Вчера" : df === 1 ? "Завтра" : dd.getFullYear() !== new Date().getFullYear() ? dd.getFullYear() : "&nbsp;") + "</small>"; if (dt._h !== h) { dt.innerHTML = h; dt._h = h } }
 // строка записи: название; «60 г · Б · Ж · У» (цветные буквы); ккал; «×». Изменить — двойное касание строки
 const entRow = (e, i) => `<div class="it" data-i="${i}"><div><div class="n">${esc(e.n)}</div><div class="mu">${e.ul ? e.q + " " + esc(e.ul) + " · " : ""}${f1(e.g)} г · ${mxl(e.p, e.f, e.c)}</div></div><b>${kc(e.p, e.f, e.c)}<small>ккал</small></b><button class="x" onclick="del(${i})" aria-label="Удалить: ${esc(e.n)}">${ic("close")}</button></div>`;
-// шапка приёма: название, сумма, «копировать в другой день», «＋»
-const mealHead = (mi, sk, n) => `<div class="mh"><div class="mt"><b>${LBL[mi]}</b>${sk ? `<span class="kp">${sk} ккал</span>` : ""}</div><div class="ma">${n ? `<button class="x" onclick="cm1(${mi})" aria-label="Копировать «${LBL[mi]}» в другой день">${ic("copy")}</button>` : ""}<button class="add" onclick="op(${mi})" aria-label="Добавить: ${LBL[mi]}">${ic("plus")}</button></div></div>`;
+// шапка приёма: значок, название, сумма, «копировать в другой день», «＋»
+// значок приёма: восход — завтрак, солнце — обед, луна — ужин, яблоко — перекус (узнаётся раньше, чем читается название)
+const MIC = ["rise", "snack", "sun", "snack", "moon", "snack"];
+const mealHead = (mi, sk, n) => `<div class="mh"><div class="mt"><span class="mi">${ic(MIC[mi])}</span><b>${LBL[mi]}</b>${sk ? `<span class="kp">${sk} ккал</span>` : ""}</div><div class="ma">${n ? `<button class="x" onclick="cm1(${mi})" aria-label="Копировать «${LBL[mi]}» в другой день">${ic("copy")}</button>` : ""}<button class="add" onclick="op(${mi})" aria-label="Добавить: ${LBL[mi]}">${ic("plus")}</button></div></div>`;
 function render() {
   if (RDEF) return; if (REP) { head(); $("app").innerHTML = repHTML(); repFit(); wUpd(); return }
   const E = S.d[cur] || [], t = sumE(E), G = S.g, gk = kc(G.p, G.f, G.c), k = kc(t.p, t.f, t.c), left = gk - k;
