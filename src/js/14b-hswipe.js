@@ -20,7 +20,10 @@ function hSwipe(zone, target, can, flip) {
     const from = { transform: el.style.transform, opacity: el.style.opacity || 1 }; el.style.transform = el.style.opacity = "";
     if (moOk(el)) el.animate([from, { transform: "none", opacity: 1 }], { duration: MO.t2, easing: MO.E })
   };
-  zone.addEventListener("touchend", end); zone.addEventListener("touchcancel", () => { dx = 0; end() })
+  zone.addEventListener("touchend", end); zone.addEventListener("touchcancel", () => { dx = 0; end() });
+  // касание оборвалось без touchend (приложение свернули посреди взмаха) — содержимое не остаётся сдвинутым и полупрозрачным
+  const lost = () => { if (x0 !== null && md) { const el = target(); el.style.transform = el.style.opacity = "" } x0 = null; md = 0 };
+  addEventListener("blur", lost); document.addEventListener("visibilitychange", lost)
 }
 // смена вкладки одним движением, без пустого кадра: копия видимых строк уходит в сторону и гаснет,
 // новый список в то же время въезжает с другой стороны. from — где сейчас палец (0 — касание вкладки)

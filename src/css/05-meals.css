@@ -18,12 +18,14 @@
 .it b{font-size:16px;font-weight:800;white-space:nowrap}.it b small{font-size:11px;font-weight:600;color:var(--mu);margin-left:2px}
 .it .x{opacity:.6}.it .x svg.i{width:18px;height:18px}.it .x:active{opacity:1}
 .it.pr{background:color-mix(in srgb,var(--ac) 9%,transparent);transition-duration:.06s;margin-left:-16px;padding-left:16px;margin-right:-4px;padding-right:4px}
-/* перекус внутри карточки: подраздел со своей суммой и «＋» */
-/* перекус с записями — вложенный подраздел на своей подложке во всю ширину карточки: видно, где кончился приём и начался перекус */
-.sns{margin:4px -4px -6px -16px;padding:0 4px 6px 16px;background:var(--snb);border-top:1px solid var(--bd);border-radius:0 0 var(--r-card) var(--r-card)}
-.sns .mh{min-height:48px}.sns .mt{gap:8px}.sns .mt b{font-size:var(--fs-body);font-weight:700;color:var(--mu)}.sns .kp{font-weight:500}
-/* перекус — вторичная категория: значок меньше, «＋» без заливки (заливка — только у основных приёмов) */
+/* перекус — отдельная вторичная категория внутри карточки своего приёма: вставленный блок на своей подложке со скруглением
+   (не продолжение списка приёма), подпись прописными мелко, значок меньше, «＋» без заливки */
+.sns{margin:6px 4px 6px -8px;padding:0 4px 2px 12px;background:var(--snb);border-radius:var(--r-block)}
+.sns .mh{min-height:44px}.sns .mt{gap:8px}.sns .mt b{font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+.mt b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+@media (max-width:359px){.sns .mt b{letter-spacing:.03em}.mt{gap:8px}.sns .mt{gap:6px}}.sns .kp{font-weight:500;margin-top:0}
 .sns .mi{width:26px;height:26px;border-radius:8px;background:var(--card)}.sns .mi svg.i{width:16px;height:16px}
+.sns .it{min-height:54px}.sns .it.pr{margin-left:-12px;padding-left:12px;border-radius:12px}
 .sns .add{background:transparent}.sns .add:active{background:color-mix(in srgb,var(--ac) 14%,transparent)}
 /* пустой перекус — ссылка «＋ Перекус N» внизу карточки */
 .snk{display:flex;align-items:center;gap:8px;width:100%;height:46px;border-top:1px solid var(--bd);color:var(--act,var(--ac));font-size:14px;font-weight:700;text-align:left}

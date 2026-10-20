@@ -156,7 +156,7 @@ let ei = -1, lastDel = null, tmr, isOpen = false;
 // (анимация закрытия уже отыграла) содержимое листа выключается из расчёта (класс idle → content-visibility:hidden),
 // при открытии — включается до всего остального.
 let ovIdleT = 0; const ovWake = () => { clearTimeout(ovIdleT); ovIdleT = 0; $("ov").classList.remove("idle") };
-function show() { ovWake(); if (!isOpen) { isOpen = true; oa = Date.now(); if (!NATIVE) try { history.pushState({ o: 1 }, "") } catch (e) { } } $("ov").classList.add("on"); document.documentElement.classList.add("lk") }
+function show() { ovWake(); if (!isOpen) shDragReset(); if (!isOpen) { isOpen = true; oa = Date.now(); if (!NATIVE) try { history.pushState({ o: 1 }, "") } catch (e) { } } $("ov").classList.add("on"); document.documentElement.classList.add("lk") }
 function closeUI() { if (!isOpen) return; svKill(); cpm = -1; isOpen = false; SUB = 0; if (mode === "ing") mode = pmode; ik = -1; $("ov").classList.remove("on"); document.documentElement.classList.remove("lk"); clearTimeout(ovIdleT); ovIdleT = setTimeout(() => { ovIdleT = 0; if (!isOpen) $("ov").classList.add("idle") }, 400); ei = -1; kpF = null; try { document.activeElement.blur() } catch (e) { } }
 async function xcl() {
   if (!v3ok && !$("v3").hidden && v3sig() !== v3snap && !await ask("Продукт не сохранён. Закрыть без сохранения?", "Закрыть", 1)) return;

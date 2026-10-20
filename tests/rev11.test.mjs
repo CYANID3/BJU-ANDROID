@@ -10,10 +10,12 @@ for (const scheme of ['light', 'dark']) test(`перекус — подразд�
   const a = await openApp({ scheme, data: DATA });
   const r = await a.ev(() => {
     const sn = document.querySelector('.meal .sns'), card = sn.closest('.meal'), cs = getComputedStyle(sn), rc = card.getBoundingClientRect(), rs = sn.getBoundingClientRect();
-    return { bg: cs.backgroundColor, card: getComputedStyle(card).backgroundColor, full: Math.abs(rs.left - rc.left) < 1 && Math.abs(rs.right - rc.right) < 1, bottom: Math.abs(rs.bottom - rc.bottom) < 1, nav0: document.querySelector('header.nav').classList.contains('sc') };
+    // ревизия 14: перекус — вставленный блок со скруглением внутри карточки (отступ от краёв карточки 4–12 px)
+    const inset = [rs.left - rc.left, rc.right - rs.right, rc.bottom - rs.bottom];
+    return { bg: cs.backgroundColor, card: getComputedStyle(card).backgroundColor, full: inset.every(d => d >= 4 && d <= 12) && parseFloat(cs.borderTopLeftRadius) >= 12, bottom: inset[2] <= 12, nav0: document.querySelector('header.nav').classList.contains('sc') };
   });
   assert.notEqual(r.bg, r.card, 'подложка перекуса отличается от карточки');
-  assert.ok(r.full, 'подложка во всю ширину карточки'); assert.ok(r.bottom, 'и до её низа');
+  assert.ok(r.full, 'подложка — блок со скруглением внутри карточки'); assert.ok(r.bottom, 'у низа карточки');
   assert.equal(r.nav0, false, 'вверху страницы линии под шапкой нет');
   await a.ev(() => scrollTo(0, 300)); await a.wait(150);
   assert.equal(await a.ev(() => document.querySelector('header.nav').classList.contains('sc')), true, 'записи под шапкой — линия есть');
