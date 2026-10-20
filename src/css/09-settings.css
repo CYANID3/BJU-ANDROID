@@ -12,7 +12,6 @@
 .row .ch{flex:none;color:var(--mu);opacity:.7}.row .ch svg.i{width:18px;height:18px}
 /* выбор варианта: выбранный — акцентом и галочкой */
 .row>.ok{flex:none;color:var(--act,var(--ac));visibility:hidden;opacity:0;transform:scale(.6);transition:opacity var(--t2) var(--ease),transform var(--t2) var(--ease),visibility 0s var(--t2)}.row.on>.ok{visibility:visible;opacity:1;transform:none;transition:opacity var(--t2) var(--ease),transform var(--t2) var(--ease)}.row.on .tx{color:var(--act,var(--ac))}
-.row.dis{opacity:.45;pointer-events:none}
 /* выключатель «да / нет» */
 .tg{flex:none;position:relative;width:46px;height:28px;border-radius:var(--r-pill);background:var(--bd);transition:background-color var(--t2)}
 .tg i{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--mu);transition:transform var(--t2) var(--spring),background-color var(--t2)}
@@ -47,7 +46,6 @@
 #cpok{transition:transform var(--t1) var(--ease)}
 /* «Похожие продукты» при слиянии баз: пара «из файла / у вас» и выбор */
 #mgl{display:flex;flex-direction:column;gap:var(--gap)}
-.mgp{background:var(--sub);border-radius:var(--r-block);padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .mgr{min-width:0;display:flex;flex-direction:column;gap:2px;padding:2px 4px}.mgr small{font-size:var(--fs-xs);color:var(--mu);font-weight:600}
 .mgr b{font-size:var(--fs-body);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mgr span{font-size:var(--fs-xs);color:var(--mu);font-variant-numeric:tabular-nums}
 .mgp .seg{grid-column:1/-1;background:var(--card)}

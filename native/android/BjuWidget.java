@@ -319,10 +319,11 @@ public class BjuWidget extends AppWidgetProvider {
         t.setTextAlign(Paint.Align.CENTER);
         t.setTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD));
         t.setColor(over ? p.danger : p.tx);
-        float ts = Math.min(26 * dens, inner * 0.27f);
+        boolean lab = inner >= 70 * dens && label != null && !label.isEmpty();
+        // без подписи число занимает центр кольца крупнее (малые кольца 1×1 и 1×2 читались мелко); длинное «+9021» ужимается по ширине
+        float ts = Math.min(26 * dens, inner * (lab ? 0.27f : 0.42f));
         t.setTextSize(ts);
         while (t.measureText(num) > inner * 0.84f && ts > 8 * dens) t.setTextSize(ts -= dens);
-        boolean lab = inner >= 70 * dens && label != null && !label.isEmpty();
         if (lab) {
             Paint l = new Paint(Paint.ANTI_ALIAS_FLAG);
             l.setTextAlign(Paint.Align.CENTER);

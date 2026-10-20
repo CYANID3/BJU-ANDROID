@@ -1,4 +1,4 @@
-// Генерирует все иконки приложения из исходника scripts/icon-svg.mjs (кольцо Б / Ж / У).
+// Генерирует все иконки приложения из исходника scripts/icon-svg.mjs (миска со слоями Б / Ж / У).
 // Запуск: npm run icons   (выполняется автоматически в GitHub Actions)
 // Вариант оформления: "icon" в package.json → dark (по умолчанию) | light | accent; можно задать ICON_VARIANT.
 //  - public/icon-*.png, favicon.png        — иконки PWA / favicon / apple-touch-icon / подвал карточки дня
@@ -28,12 +28,13 @@ await png(full(variant, 0.9), 48, path.join(pub, 'favicon.png'));
 await png(foreground(variant), 1024, path.join(assets, 'icon-foreground.png'));
 await png(background(variant), 1024, path.join(assets, 'icon-background.png'));
 await png(full(variant, 0.78), 1024, path.join(assets, 'icon-only.png'));
-// Splash: кольцо поменьше по центру
+// Splash: рисунок поменьше по центру
 for (const f of ['splash.png', 'splash-dark.png']) await png(full(variant, 0.3), 2732, path.join(assets, f));
 
-// Заставка при запуске: само кольцо (без фона, обрезано по краям) — Android ставит его по центру фиксированного размера,
+// Заставка при запуске: сам рисунок (без фона, обрезано по краям) — Android ставит его по центру фиксированного размера,
 // поэтому на любых экранах и версиях оно не растягивается (раньше растягивалась картинка splash.png на весь экран)
-const ring = foreground(variant).replace('viewBox="0 0 1024 1024"', 'viewBox="296 296 432 432"').replace('width="1024" height="1024"', 'width="432" height="432"');
+// квадрат вокруг рисунка (миска с горкой занимает x 226–798, y 318–818)
+const ring = foreground(variant).replace('viewBox="0 0 1024 1024"', 'viewBox="200 256 624 624"').replace('width="1024" height="1024"', 'width="624" height="624"');
 await mkdir(path.join(root, 'native/android/res/drawable-nodpi'), { recursive: true });
 await png(ring, 480, path.join(root, 'native/android/res/drawable-nodpi/bju_splash_logo.png'));
 await writeFile(path.join(root, 'native/android/res/values/bju_splash.xml'),

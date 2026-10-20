@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Сгенерировано scripts/icons.mjs: фон заставки (как у иконки) -->
 <resources>
-    <color name="bju_splash_bg">#0F1724</color>
+    <color name="bju_splash_bg">#4B3FC6</color>
 </resources>

@@ -61,5 +61,13 @@ function adopt(o, apply = true) {
 // в APK после этого ещё сверяются внутренний и основной файлы (02-storage-native.js)
 let LOCAL_BAD = 0;
 try { const r = localStorage.getItem("bju2"); if (r) adopt(chk(JSON.parse(r)), false) } catch (e) { LOCAL_BAD = 1 }
-let serr = 0; const store = () => { try { localStorage.setItem("bju2", JSON.stringify(S)); serr = 0 } catch (e) { if (!serr) try { toast("Не удалось сохранить данные!") } catch (x) { } serr = 1 } };
+let serr = 0, stT = 0; const store = () => { stCancel(); try { localStorage.setItem("bju2", JSON.stringify(S)); serr = 0 } catch (e) { if (!serr) try { toast("Не удалось сохранить данные!") } catch (x) { } serr = 1 } };
+// Копия в памяти браузера после правки — не в кадре нажатия: за год записей это ~250 КБ JSON, на слабом телефоне 20–40 мс.
+// Несколько правок подряд дают одну запись; при уходе из приложения отложенная запись делается сразу. Основное хранилище APK —
+// файл (queueNativeSave), его это не касается.
+// Запись — после того как отыграют анимации нажатия (лист, смена темы — до 0,35 с), в свободное время браузера.
+const stCancel = () => { if (stT) { clearTimeout(stT.t); if (stT.i && window.cancelIdleCallback) cancelIdleCallback(stT.i); stT = 0 } };
+const storeSoon = () => { if (stT) return; const run = () => { stT = 0; store() }; stT = { t: setTimeout(() => { if (window.requestIdleCallback) stT.i = requestIdleCallback(run, { timeout: 400 }); else run() }, 380) } };
+const storeNow = () => { if (stT) store() };
+document.addEventListener("visibilitychange", () => { if (document.hidden) storeNow() }); addEventListener("pagehide", storeNow);
 let H = null, perm = true, tm, mode = "add", ed = -1, IX = [], am = 0, sel = null;

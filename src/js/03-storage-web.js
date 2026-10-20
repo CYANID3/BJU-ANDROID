@@ -1,6 +1,6 @@
 // Сохранение; браузерная версия: File System Access, импорт/экспорт; раздел «Файл»
 function save(){S.dirty=(S.dirty||0)+1;saveq()}
-function saveq(){store();queueNativeSave();if(H){clearTimeout(tm);tm=setTimeout(wr,400)}}
+function saveq(){storeSoon();queueNativeSave();if(H){clearTimeout(tm);tm=setTimeout(wr,400)}}
 async function wr(){try{if((await H.queryPermission({mode:"readwrite"}))!=="granted"){perm=false;render();return}const w=await H.createWritable();S.saved=Date.now();await w.write(ser());await w.close();perm=true;S.dirty=0;store();render()}catch(e){perm=false;render()}}
 let rq=0;async function resume(){if(rq)return;rq=1;try{if((await H.requestPermission({mode:"readwrite"}))==="granted"){perm=true;await wr()}}catch(e){}rq=0}
 const idb=(m,v)=>new Promise((ok,no)=>{const q=indexedDB.open("bju",1);q.onupgradeneeded=()=>q.result.createObjectStore("h");q.onsuccess=()=>{const s=q.result.transaction("h",m==="get"?"readonly":"readwrite").objectStore("h"),r=m==="get"?s.get("f"):s.put(v,"f");r.onsuccess=()=>ok(r.result);r.onerror=()=>no()};q.onerror=()=>no()});

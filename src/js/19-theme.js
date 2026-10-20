@@ -64,9 +64,10 @@ function applyAc() {
   const r = document.documentElement, c = S.set && S.set.ac, cu = c && /^#[0-9a-f]{6}$/i.test(c), dark = isDark(), a = acCur();
   if (cu) r.style.setProperty("--ac", a); else r.style.removeProperty("--ac");
   const cs = getComputedStyle(r), gv_ = (k, d) => { const v = cs.getPropertyValue(k).trim(); return /^#[0-9a-f]{6}$/i.test(v) ? v : d }, card = gv_("--card", dark ? "#1a202b" : "#ffffff"), sub = gv_("--sub", dark ? "#232a37" : "#f2f4f8"),
-    bar = dark ? hexMix("#ffffff", card, .03) : card; r.style.setProperty("--bar", bar);
+    bar = dark ? hexMix("#ffffff", card, .03) : card, bg = cs.getPropertyValue("--bg").trim(); r.style.setProperty("--bar", bar);
   r.style.setProperty("--act", ensC(a, [card, sub, bar].map(b => hexMix(a, b, dark ? .18 : .14)), 4.5, dark));
-  const P_ = palette(dark); r.style.setProperty("--on", P_.on); r.style.setProperty("--ons", P_.ons); tc()
+  const P_ = palette(dark); r.style.setProperty("--on", P_.on); r.style.setProperty("--ons", P_.ons); tc(bg)
 }
 // цвет строки состояния и стиль значков системных панелей (снизу под панелью приложения — её же тон)
-function tc() { const m = document.querySelector('meta[name="theme-color"]'), cs = getComputedStyle(document.documentElement), bg = cs.getPropertyValue("--bg").trim() || "#eef1f5"; if (m) m.setAttribute("content", bg); const N = NX(); if (N && /^#[0-9a-f]{6}$/i.test(bg)) N.bars(bg, lum(bg) > .5); try { wUpd() } catch (e) { } }
+// bg — уже прочитанный фон (applyAc): второе чтение стилей после смены переменных заставило бы браузер пересчитать их ещё раз
+function tc(bg) { const m = document.querySelector('meta[name="theme-color"]'); bg = bg || getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#eef1f5"; if (m) m.setAttribute("content", bg); const N = NX(); if (N && /^#[0-9a-f]{6}$/i.test(bg)) N.bars(bg, lum(bg) > .5); try { wUpd() } catch (e) { } }
