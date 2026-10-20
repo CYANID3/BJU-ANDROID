@@ -1,58 +1,48 @@
-// Исходник иконки приложения: вилка, у которой три зубца — Б, Ж и У (зелёный, жёлтый, синий — цвета нутриентов на экранах).
-// Вилка — «еда», три цветных зубца — «белки, жиры, углеводы»: один простой силуэт без мелких деталей, узнаётся и в 32 px.
-// Зубцы — те же капсулы, что полоски Б / Ж / У в приложении.
+// Исходник иконки приложения: три кольца-шкалы — белки, жиры, углеводы (зелёный, жёлтый, синий — цвета нутриентов на экранах).
+// Иконка про подсчёт: каждое кольцо — шкала «съедено из нормы», как кольца прогресса в приложениях здоровья и фитнеса.
 // Всё рисуется кодом: правьте цвета и пропорции здесь, `npm run icons` пересоберёт все размеры.
-//   variant: 'accent' (индиго — акцент приложения, выбран в package.json) | 'dark' (графит) | 'light' (белый)
+//   variant: 'dark' (графит, выбран в package.json) | 'accent' (индиго — акцент приложения) | 'light' (белый)
 export const VARIANTS = {
-  accent: { bg: '#4034BC', bg2: '#5F53DF', fork: '#FFFFFF', tines: ['#3DD68C', '#FFC24D', '#7DB0FF'] },
-  dark:   { bg: '#171A27', bg2: '#2B2F45', fork: '#FFFFFF', tines: ['#3DD68C', '#FFC24D', '#7DB0FF'] },
-  light:  { bg: '#EEF1F6', bg2: '#FFFFFF', fork: '#1F2433', tines: ['#22A565', '#EDA21C', '#3A7FF0'] }
+  dark:   { bg: '#0F121B', bg2: '#313A57', rings: ['#3DD68C', '#FFC24D', '#6AA6FF'], track: 0.2 },
+  accent: { bg: '#221A78', bg2: '#4C41D6', rings: ['#3DD68C', '#FFC24D', '#8CBBFF'], track: 0.24 },
+  light:  { bg: '#E9EDF4', bg2: '#FFFFFF', rings: ['#1FA463', '#E9A11B', '#3A7FF0'], track: 0.16 }
 };
 
 // Геометрия в квадрате 1024×1024. Весь квадрат — видимая часть значка: лаунчер обрезает его своей маской (круг, «капля»,
-// скруглённый квадрат). Вилка — около 58 % высоты: крупно, но с запасом до края круга. В векторных слоях Android
-// (fgVector, monoVector) квадрат ставится в видимую середину слоя 108 dp.
-const C = 512, K = 0.96, CY = 520;
-const TW = 58, GAP = 38, TOP = 210, TB = 468, HEAD_B = 606, NECK = 52, H_END = 80, HB = 830;
+// скруглённый квадрат). Внешнее кольцо с толщиной доходит до радиуса 350 — с запасом до края круга (512).
+// В векторных слоях Android (fgVector, monoVector) квадрат ставится в видимую середину слоя 108 dp.
+const C = 512, SW = 76;
+// радиус и заполнение каждого кольца (Б — внешнее, Ж — среднее, У — внутреннее); шкала начинается сверху, по часовой
+export const RINGS = [{ r: 312, p: 0.78 }, { r: 220, p: 0.62 }, { r: 128, p: 0.86 }];
 const f = n => (Math.round(n * 10) / 10).toString();
-// точка исходного рисунка → в квадрат иконки (уменьшение относительно центра)
-const X = x => f(C + (x - C) * K), Y = y => f(C + (y - CY) * K), S = v => f(v * K);
+const pt = (deg, r) => [C + r * Math.cos(deg * Math.PI / 180), C + r * Math.sin(deg * Math.PI / 180)];
 
-/** Три зубца-капсулы (снизу заходят в голову вилки, чтобы между ними и головой не было щели). */
-function tinePaths() {
-  const r = TW / 2;
-  return [-1, 0, 1].map(i => {
-    const x = C + i * (TW + GAP);
-    return `M${X(x - r)} ${Y(TB + 30)}V${Y(TOP + r)}A${S(r)} ${S(r)} 0 0 1 ${X(x + r)} ${Y(TOP + r)}V${Y(TB + 30)}Z`;
-  });
-}
-/** Голова (чаша, плавно сходящаяся в шейку) и ручка, расширяющаяся к скруглённому концу. */
-function headPath() {
-  const L = C - (TW + GAP) - TW / 2, R = C + (TW + GAP) + TW / 2, n = NECK / 2, e = H_END / 2;
-  return `M${X(L)} ${Y(TB)}H${X(R)}V${Y(TB + 24)}C${X(R)} ${Y(HEAD_B - 20)} ${X(C + n)} ${Y(HEAD_B - 10)} ${X(C + n)} ${Y(HEAD_B + 60)}` +
-    `L${X(C + e)} ${Y(HB - e)}A${S(e)} ${S(e)} 0 0 1 ${X(C - e)} ${Y(HB - e)}L${X(C - n)} ${Y(HEAD_B + 60)}` +
-    `C${X(C - n)} ${Y(HEAD_B - 10)} ${X(L)} ${Y(HEAD_B - 20)} ${X(L)} ${Y(TB + 24)}Z`;
-}
-/** Квадрат вокруг вилки (для заставки): x, y, сторона — в координатах иконки. */
-export const BOUNDS = (() => { const top = +Y(TOP), bottom = +Y(HB), side = Math.ceil((bottom - top) * 1.08), y = Math.round((top + bottom) / 2 - side / 2); return { x: Math.round(C - side / 2), y, side } })();
+/** Полная окружность (дорожка шкалы) — две полуокружности. */
+function circlePath(r) { return `M${C} ${f(C - r)}A${r} ${r} 0 1 1 ${C} ${f(C + r)}A${r} ${r} 0 1 1 ${C} ${f(C - r)}`; }
+/** Дуга шкалы от верха по часовой на долю p. */
+function arcPath(r, p) { const [x, y] = pt(-90 + 360 * p, r); return `M${C} ${f(C - r)}A${r} ${r} 0 ${p > 0.5 ? 1 : 0} 1 ${f(x)} ${f(y)}`; }
 
-/** Слой переднего плана (прозрачный фон). mono — одноцветный силуэт вилки. */
-export function foreground(variant = 'accent', { mono = false } = {}) {
-  const V = VARIANTS[variant], t = tinePaths();
-  const open = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">`;
-  if (mono) return open + `<path fill="#FFFFFF" d="${headPath()} ${t.join(' ')}"/></svg>`;
-  return open + `<path fill="${V.fork}" d="${headPath()}"/>` + t.map((p, i) => `<path fill="${V.tines[i]}" d="${p}"/>`).join('') + `</svg>`;
+/** Квадрат вокруг колец (для заставки): x, y, сторона — в координатах иконки. */
+export const BOUNDS = (() => { const side = Math.ceil((RINGS[0].r + SW / 2) * 2 * 1.04); return { x: Math.round(C - side / 2), y: Math.round(C - side / 2), side } })();
+
+const stroke = (d, color, op = 1) => `<path d="${d}" fill="none" stroke="${color}" stroke-width="${SW}" stroke-linecap="round"${op < 1 ? ` stroke-opacity="${op}"` : ''}/>`;
+
+/** Слой переднего плана (прозрачный фон). mono — одноцветный силуэт (только шкалы). */
+export function foreground(variant = 'dark', { mono = false } = {}) {
+  const V = VARIANTS[variant], open = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">`;
+  if (mono) return open + RINGS.map(R => stroke(arcPath(R.r, R.p), '#FFFFFF')).join('') + `</svg>`;
+  return open + RINGS.map((R, i) => stroke(circlePath(R.r), V.rings[i], V.track) + stroke(arcPath(R.r, R.p), V.rings[i])).join('') + `</svg>`;
 }
 
 /** Фон: мягкий вертикальный градиент (сверху светлее). */
-export function background(variant = 'accent') {
+export function background(variant = 'dark') {
   const V = VARIANTS[variant];
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">` +
     `<stop offset="0" stop-color="${V.bg2}"/><stop offset="1" stop-color="${V.bg}"/></linearGradient></defs><rect width="1024" height="1024" fill="url(#g)"/></svg>`;
 }
 
-/** Готовая квадратная иконка (фон + вилка), рисунок уменьшен до k (для web/legacy). */
-export function full(variant = 'accent', k = 1) {
+/** Готовая квадратная иконка (фон + кольца), рисунок уменьшен до k (для web/legacy). */
+export function full(variant = 'dark', k = 1) {
   const fg = foreground(variant).replace(/^<svg[^>]*>|<\/svg>$/g, ''), o = 512 * (1 - k);
   return background(variant).replace('</svg>', `<g transform="translate(${o} ${o}) scale(${k})">${fg}</g></svg>`);
 }
@@ -64,20 +54,21 @@ function layerVector(comment, paths) {
 <!-- ${comment}. Создаётся scripts/icons.mjs из scripts/icon-svg.mjs -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="1024" android:viewportHeight="1024">
     <group android:pivotX="512" android:pivotY="512" android:scaleX="0.6667" android:scaleY="0.6667">
-${paths.map(([c, d]) => `        <path android:fillColor="${c}" android:pathData="${d}" />`).join('\n')}
+${paths.map(([c, d, a]) => `        <path android:strokeColor="${c}" android:strokeWidth="${SW}" android:strokeLineCap="round"${a != null && a < 1 ? ` android:strokeAlpha="${a}"` : ''} android:pathData="${d}" />`).join('\n')}
     </group>
 </vector>
 `;
 }
 const argb = c => '#FF' + c.slice(1).toUpperCase();
 
-/** Передний план адаптивной иконки (Android 8+): вилка цветом варианта. */
-export function fgVector(variant = 'accent') {
+/** Передний план адаптивной иконки (Android 8+): дорожки и шкалы трёх колец. */
+export function fgVector(variant = 'dark') {
   const V = VARIANTS[variant];
-  return layerVector('Передний план иконки приложения (вилка с зубцами Б / Ж / У)', [[argb(V.fork), headPath()], ...tinePaths().map((d, i) => [argb(V.tines[i]), d])]);
+  return layerVector('Передний план иконки приложения (кольца-шкалы Б / Ж / У)',
+    RINGS.flatMap((R, i) => [[argb(V.rings[i]), circlePath(R.r), V.track], [argb(V.rings[i]), arcPath(R.r, R.p)]]));
 }
 /** Фон адаптивной иконки: вертикальный градиент (сверху светлее), как background(). */
-export function bgShape(variant = 'accent') {
+export function bgShape(variant = 'dark') {
   const V = VARIANTS[variant];
   return `<?xml version="1.0" encoding="utf-8"?>
 <!-- Фон иконки приложения. Создаётся scripts/icons.mjs из scripts/icon-svg.mjs -->
@@ -86,7 +77,7 @@ export function bgShape(variant = 'accent') {
 </shape>
 `;
 }
-/** Монохромный слой для Android 13+ («тематические значки»): тот же силуэт вилки; система сама красит его в цвета обоев и темы. */
+/** Монохромный слой для Android 13+ («тематические значки»): три шкалы без дорожек; система сама красит его в цвета обоев и темы. */
 export function monoVector() {
-  return layerVector('Монохромный слой иконки (Android 13+, «Тематические значки»)', [['#FFFFFFFF', headPath()], ...tinePaths().map(d => ['#FFFFFFFF', d])]);
+  return layerVector('Монохромный слой иконки (Android 13+, «Тематические значки»)', RINGS.map(R => ['#FFFFFFFF', arcPath(R.r, R.p)]));
 }

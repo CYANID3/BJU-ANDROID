@@ -1,6 +1,6 @@
-// Генерирует все иконки приложения из исходника scripts/icon-svg.mjs (вилка с зубцами Б / Ж / У).
+// Генерирует все иконки приложения из исходника scripts/icon-svg.mjs (кольца-шкалы Б / Ж / У).
 // Запуск: npm run icons   (выполняется автоматически в GitHub Actions)
-// Вариант оформления: "icon" в package.json → accent | dark | light; можно задать ICON_VARIANT.
+// Вариант оформления: "icon" в package.json → dark | accent | light; можно задать ICON_VARIANT.
 //  - public/icon-*.png, favicon.png        — иконки PWA / favicon / apple-touch-icon / подвал карточки дня
 //  - assets/*.png                          — исходники для @capacitor/assets (иконка и splash Android)
 //  - native/android/res/drawable/bju_ic_fg.xml, bju_ic_bg.xml, bju_ic_mono.xml — слои адаптивной иконки Android 8+
@@ -13,7 +13,7 @@ import { foreground, background, full, monoVector, fgVector, bgShape, VARIANTS, 
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
-const variant = process.env.ICON_VARIANT || pkg.icon || 'accent';
+const variant = process.env.ICON_VARIANT || pkg.icon || 'dark';
 if (!VARIANTS[variant]) throw new Error(`неизвестный вариант иконки «${variant}» (можно: ${Object.keys(VARIANTS).join(', ')})`);
 const pub = path.join(root, 'public'), assets = path.join(root, 'assets');
 await mkdir(pub, { recursive: true });
@@ -21,7 +21,7 @@ await mkdir(assets, { recursive: true });
 
 const png = (svg, size, file) => sharp(Buffer.from(svg), { density: 300 }).resize(size, size).png({ compressionLevel: 9 }).toFile(file);
 
-// Web / PWA: квадрат с фоном (скругляет система / браузер); вилка внутри безопасной зоны maskable-иконки (круг 80 %)
+// Web / PWA: квадрат с фоном (скругляет система / браузер); кольца внутри безопасной зоны maskable-иконки (круг 80 %)
 for (const s of [180, 192, 512]) await png(full(variant, 1), s, path.join(pub, `icon-${s}.png`));
 await png(full(variant, 1.15), 48, path.join(pub, 'favicon.png'));
 
@@ -36,7 +36,7 @@ for (const f of ['splash.png', 'splash-dark.png']) await png(full(variant, 0.36)
 
 // Заставка при запуске: сам рисунок (без фона, обрезано по краям) — Android ставит его по центру фиксированного размера,
 // поэтому на любых экранах и версиях оно не растягивается (раньше растягивалась картинка splash.png на весь экран)
-// квадрат вокруг вилки (BOUNDS из icon-svg.mjs)
+// квадрат вокруг колец (BOUNDS из icon-svg.mjs)
 const B = BOUNDS, ring = foreground(variant).replace('viewBox="0 0 1024 1024"', `viewBox="${B.x} ${B.y} ${B.side} ${B.side}"`).replace('width="1024" height="1024"', `width="${B.side}" height="${B.side}"`);
 await mkdir(path.join(root, 'native/android/res/drawable-nodpi'), { recursive: true });
 await png(ring, 480, path.join(root, 'native/android/res/drawable-nodpi/bju_splash_logo.png'));

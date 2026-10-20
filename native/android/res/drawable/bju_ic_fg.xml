@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Передний план иконки приложения (вилка с зубцами Б / Ж / У). Создаётся scripts/icons.mjs из scripts/icon-svg.mjs -->
+<!-- Передний план иконки приложения (кольца-шкалы Б / Ж / У). Создаётся scripts/icons.mjs из scripts/icon-svg.mjs -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="1024" android:viewportHeight="1024">
     <group android:pivotX="512" android:pivotY="512" android:scaleX="0.6667" android:scaleY="0.6667">
-        <path android:fillColor="#FFFFFFFF" android:pathData="M392 462.1H632V485.1C632 575.4 537 585 537 652.2L550.4 771.2A38.4 38.4 0 0 1 473.6 771.2L487 652.2C487 585 392 575.4 392 485.1Z" />
-        <path android:fillColor="#FF3DD68C" android:pathData="M392 490.9V242.2A27.8 27.8 0 0 1 447.7 242.2V490.9Z" />
-        <path android:fillColor="#FFFFC24D" android:pathData="M484.2 490.9V242.2A27.8 27.8 0 0 1 539.8 242.2V490.9Z" />
-        <path android:fillColor="#FF7DB0FF" android:pathData="M576.3 490.9V242.2A27.8 27.8 0 0 1 632 242.2V490.9Z" />
+        <path android:strokeColor="#FF3DD68C" android:strokeWidth="76" android:strokeLineCap="round" android:strokeAlpha="0.2" android:pathData="M512 200A312 312 0 1 1 512 824A312 312 0 1 1 512 200" />
+        <path android:strokeColor="#FF3DD68C" android:strokeWidth="76" android:strokeLineCap="round" android:pathData="M512 200A312 312 0 1 1 205.5 453.5" />
+        <path android:strokeColor="#FFFFC24D" android:strokeWidth="76" android:strokeLineCap="round" android:strokeAlpha="0.2" android:pathData="M512 292A220 220 0 1 1 512 732A220 220 0 1 1 512 292" />
+        <path android:strokeColor="#FFFFC24D" android:strokeWidth="76" android:strokeLineCap="round" android:pathData="M512 292A220 220 0 1 1 361.4 672.4" />
+        <path android:strokeColor="#FF6AA6FF" android:strokeWidth="76" android:strokeLineCap="round" android:strokeAlpha="0.2" android:pathData="M512 384A128 128 0 1 1 512 640A128 128 0 1 1 512 384" />
+        <path android:strokeColor="#FF6AA6FF" android:strokeWidth="76" android:strokeLineCap="round" android:pathData="M512 384A128 128 0 1 1 413.4 430.4" />
     </group>
 </vector>

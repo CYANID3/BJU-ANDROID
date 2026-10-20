@@ -2,9 +2,8 @@
 <!-- Монохромный слой иконки (Android 13+, «Тематические значки»). Создаётся scripts/icons.mjs из scripts/icon-svg.mjs -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="1024" android:viewportHeight="1024">
     <group android:pivotX="512" android:pivotY="512" android:scaleX="0.6667" android:scaleY="0.6667">
-        <path android:fillColor="#FFFFFFFF" android:pathData="M392 462.1H632V485.1C632 575.4 537 585 537 652.2L550.4 771.2A38.4 38.4 0 0 1 473.6 771.2L487 652.2C487 585 392 575.4 392 485.1Z" />
-        <path android:fillColor="#FFFFFFFF" android:pathData="M392 490.9V242.2A27.8 27.8 0 0 1 447.7 242.2V490.9Z" />
-        <path android:fillColor="#FFFFFFFF" android:pathData="M484.2 490.9V242.2A27.8 27.8 0 0 1 539.8 242.2V490.9Z" />
-        <path android:fillColor="#FFFFFFFF" android:pathData="M576.3 490.9V242.2A27.8 27.8 0 0 1 632 242.2V490.9Z" />
+        <path android:strokeColor="#FFFFFFFF" android:strokeWidth="76" android:strokeLineCap="round" android:pathData="M512 200A312 312 0 1 1 205.5 453.5" />
+        <path android:strokeColor="#FFFFFFFF" android:strokeWidth="76" android:strokeLineCap="round" android:pathData="M512 292A220 220 0 1 1 361.4 672.4" />
+        <path android:strokeColor="#FFFFFFFF" android:strokeWidth="76" android:strokeLineCap="round" android:pathData="M512 384A128 128 0 1 1 413.4 430.4" />
     </group>
 </vector>

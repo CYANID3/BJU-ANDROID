@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Заставка при запуске (фон окна до загрузки страницы): сплошной фон и значок (вилка) по центру фиксированного размера — без растягивания -->
+<!-- Заставка при запуске (фон окна до загрузки страницы): сплошной фон и значок (кольца) по центру фиксированного размера — без растягивания -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/bju_splash_bg" />
     <item android:width="112dp" android:height="112dp" android:gravity="center" android:drawable="@drawable/bju_splash_logo" />

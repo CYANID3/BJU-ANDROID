@@ -1,4 +1,4 @@
-// Ревизия 12: новая иконка (вилка с зубцами Б / Ж / У) — векторные слои адаптивной иконки без растягивания;
+// Ревизия 12: новая иконка (три кольца-шкалы Б / Ж / У) — векторные слои адаптивной иконки без растягивания;
 // виджет 1×2 и новая раскладка 1×3 (что каждая раскладка содержит заполняемые элементы — проверяет data.test.mjs)
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -43,10 +43,11 @@ test('иконка: адаптивная — векторные слои без 
   const fg = fs.readFileSync('native/android/res/drawable/bju_ic_fg.xml', 'utf8'), mono = fs.readFileSync('native/android/res/drawable/bju_ic_mono.xml', 'utf8'), bg = fs.readFileSync('native/android/res/drawable/bju_ic_bg.xml', 'utf8');
   // файлы совпадают с исходником (npm run icons выполнен после правок)
   assert.equal(fg, fgVector(pkg.icon)); assert.equal(mono, monoVector()); assert.equal(bg, bgShape(pkg.icon));
-  for (const c of [v.fork, ...v.tines]) assert.ok(fg.includes('#FF' + c.slice(1).toUpperCase()), c);
+  for (const c of v.rings) assert.ok(fg.includes('#FF' + c.slice(1).toUpperCase()), c);
   // слой 108 dp, видна середина 72 dp: рисунок уменьшен до 2/3 в обоих слоях одинаково
   for (const x of [fg, mono]) { assert.match(x, /android:width="108dp"/); assert.match(x, /android:scaleX="0\.6667" android:scaleY="0\.6667"/) }
-  assert.equal((fg.match(/<path/g) || []).length, 4); assert.equal((mono.match(/<path/g) || []).length, 4);
+  // по кольцу на Б, Ж, У: дорожка (полупрозрачная) и шкала; в монохромном — только шкалы
+  assert.equal((fg.match(/<path/g) || []).length, 6); assert.equal((fg.match(/strokeAlpha=/g) || []).length, 3); assert.equal((mono.match(/<path/g) || []).length, 3);
   const patch = fs.readFileSync('scripts/patch-android.mjs', 'utf8');
   assert.match(patch, /<background android:drawable="@drawable\/bju_ic_bg" \/>/);
   assert.match(patch, /<foreground android:drawable="@drawable\/bju_ic_fg" \/>/);
