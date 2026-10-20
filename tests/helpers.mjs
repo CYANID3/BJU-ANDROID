@@ -54,11 +54,11 @@ export const nativeMock = () => {
 
 /**
  * Открыть приложение. opts.native — как в APK (мок), opts.data — содержимое localStorage «bju2»,
- * opts.scheme — dark/light. Возвращает помощники; ошибки страницы собираются в errors.
+ * opts.scheme — dark/light, opts.viewport — размер окна (по умолчанию Pixel 7). Возвращает помощники; ошибки страницы собираются в errors.
  */
 export async function openApp(opts = {}) {
   await start();
-  const ctx = await browser.newContext({ ...devices['Pixel 7'], colorScheme: opts.scheme || 'dark', serviceWorkers: 'block' });
+  const ctx = await browser.newContext({ ...devices['Pixel 7'], ...(opts.viewport ? { viewport: opts.viewport } : {}), colorScheme: opts.scheme || 'dark', serviceWorkers: 'block' });
   if (opts.native) await ctx.addInitScript(nativeMock);
   if (opts.data) await ctx.addInitScript(d => { if (!sessionStorage.getItem('seeded')) { localStorage.setItem('bju2', JSON.stringify(d)); sessionStorage.setItem('seeded', '1'); } }, opts.data);
   const pg = await ctx.newPage();

@@ -115,7 +115,9 @@ function shResize(fn, watch) {
     an[0].finished.catch(() => { }).then(() => { sh.style.overflow = "" })
   } else if (d < -1) {
     // лист стал выше: поднимается целиком со старой высоты (низ уходит за край экрана — там его не видно)
-    sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E })
+    sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E });
+    // низ листа (кнопки) стоит на месте: встречный сдвиг гасит подъём листа, растёт только верхний край
+    const f = sh.querySelector(".shf"); if (f) f.animate([{ transform: `translateY(${d}px)` }, { transform: "none" }], { duration: D, easing: E })
   }
   // пропавший блок уходит вниз вместе со всеми и гаснет — быстро, в первые 40 % пути, чтобы не наложиться на новый текст
   was.filter(w => !document.querySelector(w[0])).forEach(([, g]) => { $("ov").appendChild(g); g.animate([{ opacity: 1, transform: "none" }, { opacity: 0, offset: .4 }, { opacity: 0, transform: `translateY(${Math.max(0, d)}px)` }], { duration: D, easing: E, fill: "forwards" }).finished.catch(() => { }).then(() => g.remove()) });

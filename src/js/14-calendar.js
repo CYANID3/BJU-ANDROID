@@ -5,12 +5,12 @@ let cv=0,cb=0;
 const CDF=new Intl.DateTimeFormat("ru-RU",{day:"numeric",month:"long",year:"numeric"});
 const MN=Array.from({length:12},(_,i)=>cap(new Date(2000,i,1).toLocaleDateString("ru-RU",{month:"long"})));
 function cal(){const d=new Date(cur+"T12:00:00");cm=[d.getFullYear(),d.getMonth()];cv=0;SUB=0;sv(6,"","");drawCal();show()}
-function vw(v){cb=cv;cv=v;drawCal();fade($("cg"))}
+function vw(v){cb=cv;cv=v;shResize(drawCal);fade($("cg"))}
 // касание заголовка: дни → месяцы → годы → обратно к дням
-function calTitle(){vib("ui");if(cv===0)vw(1);else if(cv===1)vw(2);else{cv=cb===1?1:0;drawCal();fade($("cg"))}}
+function calTitle(){vib("ui");if(cv===0)vw(1);else if(cv===1)vw(2);else{cv=cb===1?1:0;shResize(drawCal);fade($("cg"))}}
 function mv(n){const el=$("cg");if(RM()||!el.animate){calStep(n);drawCal();return}calFlip(el,n,0)}
-function pm(i){cm[1]=i;cv=0;drawCal();fade($("cg"))}
-function py(y){cm[0]=y;cv=cb===1?1:0;drawCal();fade($("cg"))}
+function pm(i){cm[1]=i;cv=0;shResize(drawCal);fade($("cg"))}
+function py(y){cm[0]=y;cv=cb===1?1:0;shResize(drawCal);fade($("cg"))}
 // день: число и калории цветом — в норме ±10 % (зелёный), перебор (красный), недобор (жёлтый); внизу — счётчики месяца
 function drawCal(){const[y,m]=cm,gk=kc(S.g.p,S.g.f,S.g.c),g=$("cg"),ty=+today.slice(0,4),tmn=+today.slice(5,7)-1,mm=i=>String(i+1).padStart(2,"0");let h="";
  $("cwk").style.visibility=cv?"hidden":"";g.className="cg"+(cv?" m":"");

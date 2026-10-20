@@ -4,7 +4,7 @@
 .cd small{font-size:10.5px;min-height:13px;font-weight:700;color:var(--mu)}.cd.e{visibility:hidden}
 .cd.n0{background:transparent;color:var(--mu);font-weight:600}
 .cd.ok small{color:var(--okt)}.cd.o small{color:var(--dgt)}.cd.lo small{color:var(--wrt)}
-.cd.t{box-shadow:inset 0 0 0 2px var(--ac)}.cd.s{background:var(--ac);color:var(--on)}.cd.s small{color:var(--ons,var(--on))!important}.cd:active{background:var(--acs)}
+.cd.t{box-shadow:inset 0 0 0 2px var(--ac)}.cd.s{background:var(--acf,var(--ac));color:var(--on)}.cd.s small{color:var(--ons,var(--on))!important}.cd:active{background:var(--acs)}
 .cg.m{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:8px}.cg.m .cd{font-size:15px;border-radius:var(--r-ctl)}.cg.m .cd small{color:var(--mu)}
 /* легенда со счётчиками месяца */
 .leg{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:12.5px;color:var(--mu);font-weight:600;margin:0}.leg.c{justify-content:center;margin-top:16px;min-height:18px}

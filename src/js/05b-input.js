@@ -110,7 +110,7 @@ document.addEventListener("focusout", e => rpOff(e.target), true);
 // единица («г», «кг», «шт») стоит сразу за числом в крупном поле значения, а не у края поля
 const vfCtx = document.createElement("canvas").getContext("2d");
 function vfUnit(i) {
-  const f = i && i.closest(".vf"); if (!f || f.classList.contains("sm")) return; const u = f.querySelector("span"); if (!u) return;
+  const f = i && i.closest(".vf"); if (!f || f.classList.contains("sm")) return; const u = f.querySelector("span"); if (!u) return; if (f.classList.contains("un")) { u.style.left = u.style.right = u.style.transform = ""; return }
   const cs = getComputedStyle(i); vfCtx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
   const w = vfCtx.measureText(i.value || i.placeholder || "0").width + (parseFloat(cs.letterSpacing) || 0) * (i.value || "0").length;
   u.style.right = "auto"; u.style.left = Math.round(i.offsetLeft + i.offsetWidth / 2 + w / 2 + 6) + "px"; u.style.transform = "translateY(-30%)";

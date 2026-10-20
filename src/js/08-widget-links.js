@@ -2,7 +2,7 @@
 // Виджет рабочего стола: итог именно за сегодня, цвета и тема приложения
 // Виджет получает обе палитры (светлую и тёмную) и режим темы: при «Как в системе» он сам переключается вместе с телефоном
 let wSig="";function wUpd(){const N=NX();if(!N||!N.widget)return;const E=S.d[today]||[],t=sumE(E),G=S.g,th=(S.set&&S.set.th)||"auto";
- const pal=d=>{const T=palette(d);return{bg:T.card,tx:T.tx,mu:T.mu,trk:T.bd,ac:T.ac,on:T.on,acs:T.acs}};
+ const pal=d=>{const T=palette(d);return{bg:T.card,tx:T.tx,mu:T.mu,trk:T.bd,ac:T.ac,on:T.onw,acs:T.acs}};
  const o={date:today,eaten:kc(t.p,t.f,t.c),goal:kc(G.p,G.f,G.c),p:r1(t.p),f:r1(t.f),c:r1(t.c),gp:G.p,gf:G.f,gc:G.c,theme:th==="light"||th==="dark"?th:"auto",light:pal(false),dark:pal(true)},sig=JSON.stringify(o);
  if(sig!==wSig){wSig=sig;N.widget(o)}}
 // Ярлыки (долгое нажатие на иконку) и «+» на виджете: bju://add?m=0..5 | snack | auto

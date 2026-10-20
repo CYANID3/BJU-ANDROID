@@ -27,7 +27,7 @@ label{font-size:var(--fs-sm);font-weight:600;color:var(--mu);display:block;margi
 .sec{font-size:var(--fs-sm);font-weight:600;color:var(--mu);margin:16px 2px 8px}.sec:empty{display:none}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.g3 input{text-align:center;font-size:18px;font-weight:700;padding:0 8px}
 /* кнопки: главная (залитая, одна на экран), тонированная, нейтральная, опасная — высота 52, скругление 14 */
-.pb{width:100%;height:var(--h-ctl);border-radius:var(--r-ctl);background:var(--ac);color:var(--on);font-weight:700;font-size:15.5px;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center}
+.pb{width:100%;height:var(--h-ctl);border-radius:var(--r-ctl);background:var(--acf,var(--ac));color:var(--on);font-weight:700;font-size:15.5px;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center}
 .pb:active{transform:scale(.98);filter:brightness(1.08)}.pb svg.i{width:20px;height:20px}
 .pb.g{background:var(--sub);color:var(--tx)}.pb.t{background:var(--acs);color:var(--act,var(--ac))}.pb.dg{background:color-mix(in srgb,var(--dg) 12%,transparent);color:var(--dg)}
 .sh.kpo .pb.g,.svl.kpo .pb.g{background:var(--keyp)}
@@ -56,7 +56,7 @@ label{font-size:var(--fs-sm);font-weight:600;color:var(--mu);display:block;margi
 .seg{position:relative;isolation:isolate;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;background:var(--sub);border-radius:var(--r-ctl);padding:4px}
 .seg button{position:relative;min-height:var(--h-seg);padding:0 6px;border-radius:var(--r-in);font-size:14px;font-weight:600;color:var(--mu);transition:color var(--t3) var(--ease),background-color var(--t2),transform var(--t1) var(--ease)}
 .seg button:not(.on):active{color:var(--tx);background:color-mix(in srgb,var(--tx) 6%,transparent)}
-.seg button.on{background:var(--ac);color:var(--on);color:var(--ons,var(--on));font-weight:700}
+.seg button.on{background:var(--acf,var(--ac));color:var(--on);color:var(--ons,var(--on));font-weight:700}
 .seg.sk button.on{background:transparent}
 .seg.sk::before{content:"";position:absolute;left:0;top:0;z-index:-1;width:var(--skw);height:var(--skh);transform:translate(var(--skx),var(--sky));border-radius:var(--r-in);background:var(--ac);transition:transform var(--t3) var(--ease),width var(--t3) var(--ease),height var(--t3) var(--ease),background-color var(--t2)}
 .seg.sn::before{transition:none}
@@ -64,13 +64,16 @@ label{font-size:var(--fs-sm);font-weight:600;color:var(--mu);display:block;margi
 .seg.mg{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);margin-bottom:12px}.seg.mg button{min-height:36px;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.seg.mg button:nth-child(n+4){min-height:32px;font-size:12.5px}
 .seg.pf{margin:12px 0 0}.seg.pf button{min-height:36px}.seg.pf small{margin-left:5px;font-size:var(--fs-xs);font-weight:600;opacity:.75}
 /* экран количества */
-.seg.qu{margin-bottom:12px}.seg.qu button{display:flex;align-items:center;justify-content:center;gap:5px;line-height:1.15}.seg.qu small{font-size:var(--fs-xs);font-weight:500;opacity:.85}
-.seg.qu.wr{display:flex;flex-wrap:wrap}.seg.qu.wr button{flex:1 1 auto;padding:0 12px}.seg.qu:empty{display:none}
+/* единицы — ровная сетка (колонки задаёт 13-products.js): у всех ячеек одна высота, название в одну строку, граммы — второй строкой */
+.seg.qu{margin-bottom:12px;grid-auto-flow:row}.seg.qu button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.15;min-width:0;min-height:48px;padding:4px 10px}.seg.qu button>span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.seg.qu small{font-size:var(--fs-xs);font-weight:500;opacity:.85}
+.seg.qu:empty{display:none}.seg.qu.g1 button:first-child{grid-column:1/-1;min-height:40px}
 /* поле значения: крупное число по центру, единица справа от него; активное — подсвечено */
 .vf{position:relative;display:flex;align-items:center}
 .vf input{height:72px;text-align:center;font-size:36px;font-weight:800;letter-spacing:-.02em;padding:0 64px;border-radius:var(--r-ctl);background:var(--sub)}
 .vf input:focus{color:var(--act,var(--ac))}
 .vf span{position:absolute;right:20px;top:50%;transform:translateY(-50%);color:var(--mu);font-size:16px;font-weight:700;pointer-events:none;max-width:38%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* единица с названием (не «г»): под числом, во всю ширину поля — число всегда по центру и не наезжает на название */
+.vf.un input{padding-bottom:18px}.vf.un span{right:auto;left:16px;right:16px;top:auto;bottom:9px;transform:none;max-width:none;text-align:center;font-size:13.5px;font-weight:600}
 .vf.sm input{height:var(--h-ctl);font-size:18px;font-weight:700;text-align:left;padding:0 44px 0 16px}.vf.sm span{right:16px;font-size:14px}
 .vf .pm{position:absolute;top:10px;left:10px;z-index:1;width:52px;height:52px;border-radius:var(--r-key);background:var(--card);font-size:26px;font-weight:600;color:var(--tx);display:grid;place-items:center}.vf .pm.r{left:auto;right:10px}
 .vf .pm:active{background:var(--acs)}.vf.wv input{padding:0 92px}.vf.wv span{right:76px}

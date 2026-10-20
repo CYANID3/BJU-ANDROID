@@ -3,7 +3,7 @@
 .bn{background:var(--acs);border-radius:var(--r-block);padding:6px 6px 6px 16px;min-height:var(--h-row);margin-bottom:var(--gap);display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14.5px;font-weight:600}
 .bn button{color:var(--act,var(--ac));font-weight:700;white-space:nowrap;padding:0 14px;height:var(--h-ib);border-radius:var(--r-in)}
 .bn button:active{background:color-mix(in srgb,var(--ac) 20%,transparent)}
-.bn .bnb{display:flex;gap:4px;flex:none}.bn button.y{background:var(--ac);color:var(--on)}
+.bn .bnb{display:flex;gap:4px;flex:none}.bn button.y{background:var(--acf,var(--ac));color:var(--on)}
 .bn.er{background:color-mix(in srgb,var(--dg) 12%,transparent)}.bn.er button{color:var(--dg)}
 /* чипы «Вес» и «7 дней»: две в ряд (одна — на всю ширину) */
 .duo{display:flex;gap:var(--gap);margin-bottom:var(--gap)}

@@ -52,9 +52,14 @@ function gv(v, u) { uu = u == null ? -1 : u; $("gr").value = v ? nf(v) : ""; dra
 function drawU() {
   const nd = `onmousedown="event.preventDefault()"`;
   const us = sel[4] || [], lg = (S.lg || {})[sel[0]]; $("un").hidden = !us.length;
-  $("un").innerHTML = us.length ? [["Граммы"], ...us].map((x, i) => `<button class="${i - 1 === uu ? "on" : ""}" ${nd} onclick="su(${i - 1})">${esc(x[0])}${i ? `<small>${nf(r1(x[1]))} г</small>` : ""}</button>`).join("") : "";
-  $("un").classList.toggle("wr", us.length + 1 > 3);
-  $("gu").textContent = uu < 0 ? "г" : us[uu][0]; { const w = Math.min(innerWidth * .38, $("gu").textContent.length * 9); $("gr").style.paddingLeft = $("gr").style.paddingRight = Math.max(56, w + 28) + "px" }
+  $("un").innerHTML = us.length ? [["Граммы"], ...us].map((x, i) => `<button class="${i - 1 === uu ? "on" : ""}" ${nd} onclick="su(${i - 1})" title="${esc(x[0])}"><span>${esc(x[0])}</span>${i ? `<small>${nf(r1(x[1]))} г</small>` : ""}</button>`).join("") : "";
+  // ровная сетка, все ячейки одной ширины и высоты: до 3 вариантов — в один ряд; больше — «Граммы» отдельной строкой во всю
+  // ширину, единицы под ней по 2 (2, 4 единицы) или по 3 в ряд; неполный последний ряд — по центру (сетка из 6 долей, ячейка — 2 доли)
+  { const m = us.length, c = m + 1 <= 3 ? m + 1 : m % 3 === 0 ? 3 : m % 2 === 0 ? 2 : 3, el = $("un"), bs = [...el.children].slice(1);
+    el.style.gridTemplateColumns = `repeat(${c === 3 && m + 1 > 3 ? 6 : c},minmax(0,1fr))`; el.classList.toggle("g1", m + 1 > 3);
+    if (c === 3 && m + 1 > 3) { const r = m % 3; bs.forEach((b, i) => { b.style.gridColumn = "span 2"; if (r && i >= m - r) b.style.gridColumn = `${(r === 1 ? 3 : 2 + (i - (m - r)) * 2)} / span 2` }) } }
+  // единица с названием — подписью под числом (класс .un): число всегда по центру и целиком, название — целиком или с «…» во всю ширину
+  $("gu").textContent = uu < 0 ? "г" : us[uu][0]; $("gr").closest(".vf").classList.toggle("un", uu >= 0); $("gr").style.paddingLeft = $("gr").style.paddingRight = uu < 0 ? "56px" : "16px"; vfUnit($("gr"))
   // быстрые значения: прошлое количество (с галочкой), 50 / 100 / 150 / 200 г; в штуках — 0,5 / 1 / 2 / 3; при изменении — текущее
   const cur0 = ei >= 0 || ik >= 0 ? num($("gr").value) : 0;
   const qs = uu < 0 ? [...new Set([cur0, lg, 50, 100, 150, 200].filter(Boolean).map(r1))].slice(0, 4).sort((a, b) => a - b) : [.5, 1, 2, 3];

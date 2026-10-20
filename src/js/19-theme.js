@@ -44,9 +44,15 @@ function palette(dark) {
   // уведомление: в светлой теме — белая плашка с тенью, в тёмной — на ступень светлее карточек; кнопка — цветом акцента
   T.tst = dark ? okHex(.42, C || .011, H) : "#ffffff"; T.tsx = dark ? "#f1f2f5" : "#1a1c22";
   T.tsa = dark ? okHex(.84, Math.min(aC, .13), aH) : ensC(a, ["#ffffff"], 4.5, false);
-  T.ac = a; T.on = crt("#ffffff", a) >= 3.1 ? "#ffffff" : "#141922";
+  T.ac = a;
+  // заливка акцентом под текст (кнопки, выбранное): белый текст — не ниже 4,5 : 1. Светлые акценты (жёлтый, бирюзовый) —
+  // тёмный текст на исходном цвете; средние (синий, индиго, зелёный, розовый) — тот же оттенок чуть глубже, текст белый
+  { const [L0, C0, H0] = toOk(a); let f = a, L = L0; if (crt("#ffffff", a) < 4.5 && crt("#141922", a) < 7) { while (crt("#ffffff", f) < 4.5 && L > .2) { L -= .01; f = okHex(L, C0, H0) } }
+    T.acf = f; T.on = crt("#ffffff", f) >= 4.5 ? "#ffffff" : "#141922" }
+  // виджет красит «＋» самим акцентом (не --acf): значок на нём — по прежнему правилу
+  T.onw = crt("#ffffff", a) >= 3.1 ? "#ffffff" : "#141922";
   // мелкий текст на заливке акцентом (выбранная вкладка, калории в выбранном дне): нужен контраст 4,5 : 1, а не 3 : 1 как у кнопок
-  T.ons = crt("#ffffff", a) >= 4.5 ? "#ffffff" : crt("#141922", a) >= crt("#ffffff", a) ? "#141922" : "#ffffff";
+  T.ons = T.on;
   return T
 }
 function applyTint() {
@@ -66,7 +72,7 @@ function applyAc() {
   const cs = getComputedStyle(r), gv_ = (k, d) => { const v = cs.getPropertyValue(k).trim(); return /^#[0-9a-f]{6}$/i.test(v) ? v : d }, card = gv_("--card", dark ? "#1a202b" : "#ffffff"), sub = gv_("--sub", dark ? "#232a37" : "#f2f4f8"),
     bar = dark ? hexMix("#ffffff", card, .03) : card, bg = cs.getPropertyValue("--bg").trim(); r.style.setProperty("--bar", bar);
   r.style.setProperty("--act", ensC(a, [card, sub, bar].map(b => hexMix(a, b, dark ? .18 : .14)), 4.5, dark));
-  const P_ = palette(dark); r.style.setProperty("--on", P_.on); r.style.setProperty("--ons", P_.ons); tc(bg)
+  const P_ = palette(dark); r.style.setProperty("--on", P_.on); r.style.setProperty("--acf", P_.acf); r.style.setProperty("--ons", P_.ons); tc(bg)
 }
 // цвет строки состояния и стиль значков системных панелей (снизу под панелью приложения — её же тон)
 // bg — уже прочитанный фон (applyAc): второе чтение стилей после смены переменных заставило бы браузер пересчитать их ещё раз
