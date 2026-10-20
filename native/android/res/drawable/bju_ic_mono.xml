@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Монохромный слой иконки (Android 13+, «Тематические значки»): система сама красит его в цвета обоев и темы. Создаётся scripts/icons.mjs -->
+<!-- Монохромный слой иконки (Android 13+, «Тематические значки»). Создаётся scripts/icons.mjs из scripts/icon-svg.mjs -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="1024" android:viewportHeight="1024">
-    <path android:fillColor="#FFFFFFFF" android:fillType="evenOdd" android:pathData="M226 486H798A286 286 0 0 1 226 486Z M268 468A244 150 0 0 1 756 468Z M261.3 512.0H762.7A252 252 0 0 1 729.7 613.0H294.3A252 252 0 0 1 261.3 512.0Z M305.9 631.0H718.1A252 252 0 0 1 566.7 732.0H457.3A252 252 0 0 1 305.9 631.0Z" />
-    <path android:fillColor="#FFFFFFFF" android:pathData="M422 784H602A15 15 0 0 1 617 799A15 15 0 0 1 602 818H422A15 15 0 0 1 407 799A15 15 0 0 1 422 784Z" />
+    <group android:pivotX="512" android:pivotY="512" android:scaleX="0.6667" android:scaleY="0.6667">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M392 462.1H632V485.1C632 575.4 537 585 537 652.2L550.4 771.2A38.4 38.4 0 0 1 473.6 771.2L487 652.2C487 585 392 575.4 392 485.1Z" />
+        <path android:fillColor="#FFFFFFFF" android:pathData="M392 490.9V242.2A27.8 27.8 0 0 1 447.7 242.2V490.9Z" />
+        <path android:fillColor="#FFFFFFFF" android:pathData="M484.2 490.9V242.2A27.8 27.8 0 0 1 539.8 242.2V490.9Z" />
+        <path android:fillColor="#FFFFFFFF" android:pathData="M576.3 490.9V242.2A27.8 27.8 0 0 1 632 242.2V490.9Z" />
+    </group>
 </vector>

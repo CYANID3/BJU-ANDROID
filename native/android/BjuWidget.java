@@ -29,11 +29,12 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Виджет рабочего стола: БЖУ за сегодня. Девять раскладок под размер (ширина 1–4 × высота 1–2 ячейки):
- *   T1 1×1 — кольцо калорий (оно же — если виджет растянут в узкую высокую полоску: вытянутых раскладок нет);
+ * Виджет рабочего стола: БЖУ за сегодня. Раскладки под размер (ширина 1–4 × высота 1–2 ячейки и узкие высокие):
+ *   T1 1×1 — кольцо калорий на квадратной плашке;
  *   N2 2×1 — остаток калорий + Б / Ж / У строкой;   W3 3×1 — колонки «Осталось», Б, Ж, У с полосками;  W4 4×1 — то же + «＋»;
  *   S  2×2 — кольцо + Б / Ж / У + полоски;           M  3×2 и низкий 4×2 — шапка с «＋», кольцо, строки Б / Ж / У;
- *   L  высокий 4×2 — то же крупнее;                 Sx / Lx — увеличенные варианты, если лаунчер растянул виджет выше двух строк.
+ *   L  высокий 4×2 — то же крупнее;                 Sx / Lx — увеличенные варианты, если лаунчер растянул виджет выше двух строк;
+ *   V2 1×2 — кольцо и Б / Ж / У строками;          V3 1×3 и выше — то же с подписью под кольцом, строки крупнее.
  * Кольцо рисуется картинкой: размер числа считается от свободного места внутри, поэтому цифры не касаются кольца.
  * Цвета — из приложения: светлая и тёмная палитры сразу. При теме «Как в системе» на Android 12+ виджет
  * переключается вместе с телефоном сам (цвета «день / ночь» в RemoteViews), на старых — при каждом обновлении.
@@ -47,20 +48,22 @@ public class BjuWidget extends AppWidgetProvider {
     private static final int[] LAYOUT = {
         R.layout.bju_widget_t1, R.layout.bju_widget_n2, R.layout.bju_widget_w3, R.layout.bju_widget_w4,
         R.layout.bju_widget_s, R.layout.bju_widget_m, R.layout.bju_widget, R.layout.bju_widget_sx, R.layout.bju_widget_lx,
-        R.layout.bju_widget_v2
+        R.layout.bju_widget_v2, R.layout.bju_widget_v3
     };
-    // увеличенные варианты ведут себя как обычные; v2 (узкий высокий 1×2) — с Б / Ж / У, как 2×2
-    private static final int[] BASE = { 0, 1, 2, 3, 4, 5, 6, 4, 6, 4 };
+    // увеличенные варианты ведут себя как обычные; v2 (узкий высокий 1×2) и v3 (1×3 и выше) — с Б / Ж / У, как 2×2
+    private static final int[] BASE = { 0, 1, 2, 3, 4, 5, 6, 4, 6, 4, 4 };
     // минимальный размер (dp), с которого включается раскладка. Крупные (4×1 с «＋», высокая 4×2, увеличенная) — только
     // при полной ширине: в 3 колонки (≈270 dp) в них не помещались числа («Углев…», «съедено 28…»), там — средние раскладки
-    private static final float[][] MIN = { { 40, 40 }, { 95, 40 }, { 210, 40 }, { 290, 40 }, { 95, 115 }, { 240, 115 }, { 290, 165 }, { 95, 240 }, { 360, 240 }, { 40, 160 } };
+    private static final float[][] MIN = { { 40, 40 }, { 95, 40 }, { 210, 40 }, { 290, 40 }, { 95, 115 }, { 240, 115 }, { 290, 165 }, { 95, 240 }, { 360, 240 }, { 40, 160 }, { 40, 230 } };
     // кольцо: размер картинки (dp) и толщина линии; картинка масштабируется под место в разметке
-    private static final int[] RING = { 72, 0, 0, 0, 104, 92, 112, 132, 150, 64 };
+    private static final int[] RING = { 72, 0, 0, 0, 104, 92, 112, 132, 150, 64, 64 };
     // что есть в раскладке (по номеру раскладки): кольцо — RING > 0; колонка калорий, шапка с нормой «/ 200 г», полоски, «＋»
-    private static final boolean[] KCAL = { false, true, true, true, false, false, false, false, false, false };
-    private static final boolean[] HEAD = { false, false, false, false, false, true, true, false, true, false };
-    private static final boolean[] BARS = { false, false, true, true, true, true, true, true, true, true };
-    private static final boolean[] ADD = { false, false, false, true, false, true, true, false, true, false };
+    private static final boolean[] KCAL = { false, true, true, true, false, false, false, false, false, false, false };
+    private static final boolean[] HEAD = { false, false, false, false, false, true, true, false, true, false, false };
+    private static final boolean[] BARS = { false, false, true, true, true, true, true, true, true, true, true };
+    private static final boolean[] ADD = { false, false, false, true, false, true, true, false, true, false, false };
+    // подпись под кольцом («осталось» и «из 2920») — в высокой узкой раскладке, где в маленьком кольце подписи нет
+    private static final boolean[] CAP = { false, false, false, false, false, false, false, false, false, false, true };
 
     @Override
     public void onUpdate(Context ctx, AppWidgetManager mgr, int[] ids) {
@@ -242,6 +245,12 @@ public class BjuWidget extends AppWidgetProvider {
                 v.setImageViewBitmap(R.id.bju_w_ring, ring(now, size, stroke, frac, over, num, lab, dens));
             }
             v.setContentDescription(R.id.bju_w_ring, d.kcalGoal <= 0 ? "Съедено " + d.kcal + " ккал" : (over ? "Перебор " + (-left) : "Осталось " + left) + " ккал из " + d.kcalGoal);
+            if (CAP[layoutKind]) {
+                v.setTextViewText(R.id.bju_w_cap, lab);
+                v.setTextViewText(R.id.bju_w_cap2, d.kcalGoal > 0 ? "из " + d.kcalGoal : "за сегодня");
+                color(v, R.id.bju_w_cap, "setTextColor", d, now, p -> over ? p.danger : p.mu);
+                color(v, R.id.bju_w_cap2, "setTextColor", d, now, p -> p.mu);
+            }
         }
 
         if (hasKcal) {
@@ -295,7 +304,7 @@ public class BjuWidget extends AppWidgetProvider {
     }
 
     /**
-     * Кольцо калорий с числом внутри. Размер шрифта — от свободного места внутри кольца (около 27% диаметра),
+     * Кольцо калорий с числом внутри. Размер шрифта — от свободного места внутри кольца (около 27% диаметра с подписью, 42% без неё),
      * число при необходимости уменьшается, чтобы не доставать до линии; подпись — только если помещается.
      */
     static Bitmap ring(Pal p, int sizeDp, float strokeDp, float frac, boolean over, String num, String label, float dens) {

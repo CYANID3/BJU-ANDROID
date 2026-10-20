@@ -3,7 +3,7 @@
 Запуск: python3 scripts/widget-layouts.py
 
 Раскладки (ширина × высота в ячейках):
-  t1  1×1 — кольцо калорий;  v2  1×2 и выше в одну колонку — кольцо и Б / Ж / У строками с полосками;                       n2  2×1 — остаток калорий слева, Б / Ж / У столбиком справа;
+  t1  1×1 — кольцо калорий;  v2  1×2 в одну колонку — кольцо и Б / Ж / У строками с полосками;  v3  1×3 и выше — то же с подписью под кольцом;                       n2  2×1 — остаток калорий слева, Б / Ж / У столбиком справа;
   w3  3×1 — колонки «Осталось», Б, Ж, У с полосками; w4  4×1 — то же + «＋»;
   s   2×2 — кольцо + Б / Ж / У + полоски (вытянутых узких раскладок нет: узкий высокий виджет показывает квадрат 1×1);
   m   3×2 и низкий 4×2 — шапка с «＋», кольцо и строки Б / Ж / У;
@@ -75,14 +75,26 @@ out = {}
 # в узкий высокий (1×2, 1×3…), это выглядит как обычный 1×1 посередине ячеек, а не как вытянутая белая полоса
 TILE = f'<ImageView {A}id="@+id/bju_w_bg" {A}layout_width="match_parent" {A}layout_height="match_parent" {A}scaleType="fitCenter" {A}src="@drawable/bju_widget_tile" {A}importantForAccessibility="no"/>'
 out['bju_widget_t1'] = root(ring(), "vertical", "6dp", TILE)
-# 1×2 (узкий высокий): кольцо сверху на всю ширину, под ним Б / Ж / У строками — буква цветом, число справа, тонкая полоска.
-# Всё по центру и с одинаковыми отступами; при большей высоте кольцо растёт, строки остаются внизу
-def vrow(m):
-    return LL(LL(tv(f"bju_{m}_lbl", SHORT[m], 12, COL[m], True, extra=f'{A}layout_marginEnd="4dp"') + val(f"bju_{m}_val", "0", 13, 9, w="0dp", grav="end", extra=W1), "horizontal", gravity="center_vertical")
-              + mbar(m, 4, 3), extra=f'{A}layout_marginTop="7dp"')
-SP = f'<View {A}layout_width="match_parent" {A}layout_height="0dp" {A}layout_weight="1"/>'
-# кольцо — квадрат по ширине (не больше 96 dp); вся группа стоит по центру: в высоком виджете нет пустоты между кольцом и строками
-out['bju_widget_v2'] = root(SP + ring("match_parent", "wrap_content", f'{A}maxHeight="96dp"') + LL(''.join(vrow(m) for m in M3), extra=f'{A}layout_marginTop="4dp"') + SP, "vertical", "12dp 12dp")
+# Узкие высокие (1×2, 1×3 и выше): кольцо сверху, под ним Б / Ж / У строками — буква цветом, число справа, полоска.
+# Кольцо не бывает шире ячейки (≈50 dp). Раньше вся группа стояла по центру между двумя равными распорками, и в 1×3 весь
+# запас высоты (≈110 dp) уходил в пустые полосы сверху и снизу. Теперь запас делится так:
+#  - кольцо стоит в «слоте» с весом: при нехватке места оно уменьшается само (строки не обрезаются и при крупном шрифте
+#    в настройках телефона), а лишнее место слота ложится поровну над кольцом и под ним;
+#  - остальное — распорки между блоками (под подписью, между строками, снизу), поэтому отступы растут вместе с высотой
+#    равномерно, а не скапливаются по краям.
+def vrow(m, lab=12, num=13, bh=4, bm=3):
+    return LL(LL(tv(f"bju_{m}_lbl", SHORT[m], lab, COL[m], True, extra=f'{A}layout_marginEnd="4dp"') + val(f"bju_{m}_val", "0", num, 9, w="0dp", grav="end", extra=W1),
+                 "horizontal", gravity="center_vertical") + mbar(m, bh, bm))
+def SPw(w): return f'<View {A}layout_width="match_parent" {A}layout_height="0dp" {A}layout_weight="{w}"/>'
+def SPd(h): return f'<View {A}layout_width="match_parent" {A}layout_height="{h}dp"/>'
+def RING_W(w): return ring("match_parent", "0dp", f'{A}layout_weight="{w}"')
+# 1×2 (высота 160–229 dp): кольцо и три строки
+out['bju_widget_v2'] = root(RING_W(1) + SPd(6) + vrow('p') + SPd(7) + vrow('f') + SPd(7) + vrow('c') + SPw(.1), "vertical", "12dp")
+# 1×3 и выше (от 230 dp): под кольцом подпись «осталось» / «перебор» и норма «из 2920»; строки крупнее, полоски толще
+CAP = LL(tv("bju_w_cap", "осталось", 11, MU, True, extra=f'{A}gravity="center"') + tv("bju_w_cap2", "из 0", 10, MU, extra=f'{A}gravity="center" {A}layout_marginTop="1dp"'),
+         gravity="center_horizontal", extra=f'{A}layout_marginTop="4dp"')
+R3 = lambda m: vrow(m, 13, 15, 5, 4)
+out['bju_widget_v3'] = root(RING_W(2.2) + CAP + SPd(10) + SPw(.6) + R3('p') + SPd(10) + SPw(.35) + R3('f') + SPd(10) + SPw(.35) + R3('c') + SPw(.5), "vertical", "14dp")
 # 2×1 — слева остаток калорий крупно, справа столбик Б / Ж / У (буква и число в строку) — две равные половины
 def mstack(k=1.0):
     return ''.join(LL(tv(f"bju_{m}_lbl", SHORT[m], round(12.5 * k), COL[m], True, extra=f'{A}layout_marginEnd="6dp"')

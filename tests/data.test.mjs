@@ -114,14 +114,15 @@ test('виджет: превью с числом в кольце и «＋» цв
   const java = fs.readFileSync('native/android/BjuWidget.java', 'utf8');
   const L = [...java.match(/LAYOUT = \{([^}]*)\}/)[1].matchAll(/R\.layout\.bju_widget(?:_(\w+))?/g)].map(m => m[1] || '');
   const arr = n => java.match(new RegExp(n + ' = \\{([^}]*)\\}'))[1].split(',').map(v => v.trim()).map(v => v === 'true' ? 1 : v === 'false' ? 0 : +v);
-  const RING = arr('RING'), KCAL = arr('KCAL'), HEAD = arr('HEAD'), BARS = arr('BARS'), ADD = arr('ADD'), BASE = arr('BASE');
-  assert.deepEqual(L, ['t1', 'n2', 'w3', 'w4', 's', 'm', '', 'sx', 'lx', 'v2'], 'старых вытянутых (t2, t2x) нет; узкий высокий 1×2 — новая раскладка v2');
+  const RING = arr('RING'), KCAL = arr('KCAL'), HEAD = arr('HEAD'), BARS = arr('BARS'), ADD = arr('ADD'), BASE = arr('BASE'), CAP = arr('CAP');
+  assert.deepEqual(L, ['t1', 'n2', 'w3', 'w4', 's', 'm', '', 'sx', 'lx', 'v2', 'v3'], 'старых вытянутых (t2, t2x) нет; узкие высокие — v2 (1×2) и v3 (1×3 и выше)');
   // старые файлы раскладок (если остались в папке после распаковки поверх) ни откуда не используются
   for (const n of ['t2', 't2x']) assert.ok(!java.includes(`bju_widget_${n}`) && !info.includes(`bju_widget_${n}`), `bju_widget_${n} не используется`);
-  assert.equal(java.match(/MIN = \{(.*?)\};/s)[1].match(/\{[^}]*\}/g).length, L.length); for (const a of [RING, KCAL, HEAD, BARS, ADD, BASE]) assert.equal(a.length, L.length);
+  assert.equal(java.match(/MIN = \{(.*?)\};/s)[1].match(/\{[^}]*\}/g).length, L.length); for (const a of [RING, KCAL, HEAD, BARS, ADD, BASE, CAP]) assert.equal(a.length, L.length);
   L.forEach((n, i) => {
     const ids = new Set([...fs.readFileSync(`native/android/res/layout/bju_widget${n ? '_' + n : ''}.xml`, 'utf8').matchAll(/@\+id\/(\w+)/g)].map(m => m[1])), need = ['bju_w_bg', 'bju_w_root'];
     if (RING[i]) need.push('bju_w_ring');
+    if (CAP[i]) need.push('bju_w_cap', 'bju_w_cap2');
     if (KCAL[i]) { need.push('bju_k_lbl', 'bju_k_val'); if (BARS[i]) need.push('bju_w_bar') }
     if (HEAD[i]) need.push('bju_w_head');
     if (BASE[i]) for (const m of 'pfc') { need.push(`bju_${m}_lbl`, `bju_${m}_val`); if (HEAD[i]) need.push(`bju_${m}_goal`); if (BARS[i]) need.push(`bju_${m}_bar`) }

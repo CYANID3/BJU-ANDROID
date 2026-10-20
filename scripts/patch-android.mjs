@@ -2,7 +2,7 @@
 // Идемпотентно: можно запускать повторно.
 //   APP_VERSION_CODE — целое, растёт с каждой сборкой (иначе Android не даст обновиться)
 //   APP_VERSION_NAME — строка версии, видна в настройках Android
-import { readFile, writeFile, copyFile, readdir, mkdir, cp } from 'node:fs/promises';
+import { readFile, writeFile, copyFile, readdir, mkdir, cp, rm, rmdir } from 'node:fs/promises';
 
 const code = parseInt(process.env.APP_VERSION_CODE || '1', 10);
 const name = process.env.APP_VERSION_NAME || '1.0.' + code;
@@ -34,15 +34,28 @@ for (const f of await readdir('native/android')) {
 await cp('native/android/res', 'android/app/src/main/res', { recursive: true });
 console.log('copied  native/android/res -> android/app/src/main/res');
 
-// 3b. Тематический значок (Android 13+): монохромный слой в адаптивной иконке
-for (const f of ['ic_launcher.xml', 'ic_launcher_round.xml']) {
-  const file = `android/app/src/main/res/mipmap-anydpi-v26/${f}`;
-  try {
-    await patch(file, s => s.includes('<monochrome') ? s : s.replace('</adaptive-icon>', '    <monochrome android:drawable="@drawable/bju_ic_mono" />\n</adaptive-icon>'));
-  } catch (e) { if (e.code !== 'ENOENT') throw e; console.log('нет    ' + file); }
+// 3b. Адаптивная иконка (Android 8+): свои векторные слои вместо картинок @capacitor/assets. Его разметка ставит картинку
+// 48 dp в слой со сдвигом inset 16,7 % — лаунчер растягивал её в 1,5 раза, и значок был размытым; монохромный слой
+// (тематические значки Android 13+) подключён там же. Неиспользуемые векторы шаблона Capacitor (робот Android) удаляются
+const ADAPTIVE = `<?xml version="1.0" encoding="utf-8"?>
+<!-- Создано scripts/patch-android.mjs: слои — векторные (scripts/icons.mjs) -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/bju_ic_bg" />
+    <foreground android:drawable="@drawable/bju_ic_fg" />
+    <monochrome android:drawable="@drawable/bju_ic_mono" />
+</adaptive-icon>
+`;
+await mkdir('android/app/src/main/res/mipmap-anydpi-v26', { recursive: true });
+for (const f of ['ic_launcher.xml', 'ic_launcher_round.xml']) await patch(`android/app/src/main/res/mipmap-anydpi-v26/${f}`, () => ADAPTIVE).catch(async e => {
+  if (e.code !== 'ENOENT') throw e; await writeFile(`android/app/src/main/res/mipmap-anydpi-v26/${f}`, ADAPTIVE); console.log('created android/app/src/main/res/mipmap-anydpi-v26/' + f);
+});
+for (const f of ['drawable-v24/ic_launcher_foreground.xml', 'drawable/ic_launcher_background.xml']) {
+  const p = `android/app/src/main/res/${f}`;
+  try { await rm(p); console.log('removed ' + p) } catch (e) { if (e.code !== 'ENOENT') throw e }
 }
+try { await rmdir('android/app/src/main/res/drawable-v24') } catch (e) { } // только если пустая
 
-// 3c. Заставка: вместо растягиваемой картинки splash.png — фон и кольцо по центру (bju_splash); на Android 12+ — тот же значок и фон
+// 3c. Заставка: вместо растягиваемой картинки splash.png — фон и значок по центру (bju_splash); на Android 12+ — тот же значок и фон
 await patch('android/app/src/main/res/values/styles.xml', s => {
   s = s.replace(/(<style name="AppTheme\.NoActionBarLaunch"[^>]*>[\s\S]*?)@drawable\/splash</, '$1@drawable/bju_splash<');
   const m = s.match(/<style name="AppTheme\.NoActionBarLaunch"[^>]*parent="([^"]*)"[^>]*>/);
