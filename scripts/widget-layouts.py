@@ -33,7 +33,7 @@ def ring(w="match_parent", h="match_parent", extra=""):
     return f'<ImageView {A}id="@+id/bju_w_ring" {A}layout_width="{w}" {A}layout_height="{h}" {A}scaleType="fitCenter" {A}adjustViewBounds="true" {A}contentDescription="Калории" {extra}/>'
 def pads(pad):
     h, v = (pad.split() + [pad])[:2] if ' ' in pad else (pad, pad)
-    return f'{A}paddingLeft="{h}" {A}paddingRight="{h}" {A}paddingTop="{v}" {A}paddingBottom="{v}"' if h != v else f'{A}padding="{pad}"'
+    return f'{A}paddingLeft="{h}" {A}paddingRight="{h}" {A}paddingTop="{v}" {A}paddingBottom="{v}"' if h != v else f'{A}padding="{h}"'
 def root(inner, orient, pad, bg=None):
     return ('<?xml version="1.0" encoding="utf-8"?>\n<!-- Сгенерировано scripts/widget-layouts.py -->\n'
       f'<FrameLayout {NS} {A}id="@+id/bju_w_root" {A}layout_width="match_parent" {A}layout_height="match_parent">'

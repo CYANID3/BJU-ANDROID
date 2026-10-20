@@ -45,3 +45,20 @@ test('смена экрана в листе: шапка, содержимое и
   assert.deepEqual(a.errors, []);
   await a.close();
 });
+
+// Сборка APK падала на разметке виджета: «padding="12dp 12dp"» — в Android одно значение на атрибут (aapt2 здесь не запустить,
+// поэтому формат размеров во всех разметках и рисунках проверяется тестом)
+test('ресурсы Android: размеры во всех разметках и рисунках — в формате, который принимает aapt2', async () => {
+  const fs = await import('node:fs'), path = await import('node:path');
+  const DIM = /^(-?\d+(\.\d+)?(dp|sp|px)|match_parent|wrap_content|fill_parent|0|@[\w/+.]+|\?[\w:/.]+)$/;
+  const ATTR = /android:(layout_width|layout_height|layout_margin\w*|padding\w*|textSize|maxHeight|maxWidth|minHeight|minWidth|autoSize\w+TextSize|autoSizeStepGranularity|radius|width|height|\w*Radius)="([^"]*)"/g;
+  const bad = [];
+  for (const dir of ['native/android/res/layout', 'native/android/res/drawable', 'native/android/res/xml']) {
+    if (!fs.existsSync(dir)) continue;
+    for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.xml'))) {
+      const x = fs.readFileSync(path.join(dir, f), 'utf8');
+      for (const m of x.matchAll(ATTR)) if (!DIM.test(m[2])) bad.push(`${f}: ${m[1]}="${m[2]}"`);
+    }
+  }
+  assert.deepEqual(bad, []);
+});
