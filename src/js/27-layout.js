@@ -14,6 +14,7 @@ const NA = {
   goal: ["Норма на день", "Норма", "target", "go", "Изменить норму Б / Ж / У", "naRun('goal')"],
   card: ["Карточка дня", "Итог дня", "layout", "go", "Сводка дня для скриншота", "naRun('card')"],
   today: ["К сегодняшнему дню", "Сегодня", "today", "go", "Вернуться к сегодня из любого дня", "naRun('today')"],
+  xch: ["Обмен продуктами", "Обмен", "xch", "go", "С телефоном рядом, без интернета", "naRun('xch')"],
   prod: ["Продукты", "Продукты", "list", "req", "Список продуктов и блюд", "mng()"],
   set: ["Настройки", "Настройки", "sld", "req", "Все настройки приложения", "sets()"]
 };
@@ -26,6 +27,7 @@ function naRun(k) {
   else if (k === "dish") { mode = "mng"; drawMc(); dbt(); show() }
   else if (k === "wt") { if (cur > today) { cur = today; render() } wtOpen() }
   else if (k === "goal") goals();
+  else if (k === "xch") xOpen();
   else if (k === "card") { if (cur > today) { cur = today; head() } if (!REP) togRep(1) }
   else if (k === "today") { if (REP) togRep(0); if (cur !== today) { const d = today > cur ? 1 : -1; NABS = 1; slide($("app"), d, () => { cur = today }) } }
   else ({ cal, stat: stats, prod: mng, set: sets })[k]()

@@ -21,6 +21,13 @@ await patch('android/app/build.gradle', s => {
   return s.replace(/versionCode\s+\d+/, `versionCode ${code}`).replace(/versionName\s+"[^"]*"/, `versionName "${name}"`);
 });
 
+// 1b. Обмен продуктами с телефоном рядом: Google Nearby Connections (BjuExchangePlugin.java)
+await patch('android/app/build.gradle', s => {
+  if (s.includes('play-services-nearby')) return s;
+  if (!/\ndependencies\s*\{/.test(s)) throw new Error('блок dependencies не найден в build.gradle');
+  return s.replace(/\ndependencies\s*\{/, m => m + "\n    implementation 'com.google.android.gms:play-services-nearby:19.2.0'");
+});
+
 // 2. Нативный код (MainActivity + плагин BjuNative)
 const javaDir = `android/app/src/main/java/${appId.replace(/\./g, '/')}`;
 await mkdir(javaDir, { recursive: true });
@@ -71,6 +78,12 @@ await patch('android/app/src/main/AndroidManifest.xml', s => {
   if (!s.includes('screenOrientation')) s = s.replace('android:name=".MainActivity"', 'android:name=".MainActivity"\n            android:screenOrientation="portrait"');
   // Быстрые действия при долгом нажатии на иконку
   if (!s.includes('android.app.shortcuts')) s = s.replace('</activity>', '    <meta-data android:name="android.app.shortcuts" android:resource="@xml/bju_shortcuts" />\n        </activity>');
+  // Обмен с телефоном рядом (Nearby Connections): поиск по Bluetooth, передача по Wi‑Fi. Разрешения — по списку из документации Google;
+  // во время работы спрашивается только нужное для версии Android (BjuExchangePlugin.neededAliases)
+  const NEAR = [['ACCESS_WIFI_STATE', ''], ['CHANGE_WIFI_STATE', ''], ['BLUETOOTH', ' android:maxSdkVersion="30"'], ['BLUETOOTH_ADMIN', ' android:maxSdkVersion="30"'],
+    ['ACCESS_COARSE_LOCATION', ' android:maxSdkVersion="31"'], ['ACCESS_FINE_LOCATION', ' android:maxSdkVersion="31"'], ['BLUETOOTH_ADVERTISE', ''], ['BLUETOOTH_CONNECT', ''], ['BLUETOOTH_SCAN', ''],
+    ['NEARBY_WIFI_DEVICES', '']];
+  for (const [p, extra] of NEAR) if (!s.includes(`android.permission.${p}"`)) s = s.replace('<application', `<uses-permission android:name="android.permission.${p}"${extra} />\n    <application`);
   // Виджет рабочего стола
   if (!s.includes('.BjuWidget')) s = s.replace('</application>', `    <receiver android:name=".BjuWidget" android:exported="false" android:label="БЖУ за сегодня">
             <intent-filter>

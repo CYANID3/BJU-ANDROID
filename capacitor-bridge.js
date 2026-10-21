@@ -93,5 +93,26 @@ if (native) {
   App.getLaunchUrl().then(r => r && r.url && window.BJU_onUrl?.(r.url)).catch(() => {});
 }
 
-window.BJU_NATIVE = { native, readLocal, writeLocal, writeBackup, readLegacy, file, haptic, feedback, bars, widget, shortcuts };
+// Обмен продуктами с телефоном рядом (native/android/BjuExchangePlugin.java — Google Nearby Connections)
+const Ex = registerPlugin('BjuExchange');
+const hasEx = native && Capacitor.isPluginAvailable('BjuExchange');
+const exchange = hasEx ? {
+  available: true,
+  state: () => Ex.state(),
+  requestPerms: () => Ex.requestPerms(),
+  enableBt: () => Ex.enableBt(),
+  openSettings: () => Ex.openSettings(),
+  start: name => Ex.start({ name }),
+  pause: () => Ex.pause(),
+  stop: () => Ex.stop(),
+  connect: id => Ex.connect({ id }),
+  accept: id => Ex.accept({ id }),
+  reject: id => Ex.reject({ id }),
+  disconnect: id => Ex.disconnect({ id }),
+  send: (id, data) => Ex.send({ id, data }),
+  // события: found, lost, initiated, connected, rejected, disconnected, message, progress
+  on: (ev, fn) => Ex.addListener(ev, fn)
+} : null;
+
+window.BJU_NATIVE = { native, readLocal, writeLocal, writeBackup, readLegacy, file, haptic, feedback, bars, widget, shortcuts, exchange };
 window.BJU_NATIVE_READY_RESOLVE?.();

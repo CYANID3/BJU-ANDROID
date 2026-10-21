@@ -27,7 +27,7 @@ const MK=["breakfast","snack1","lunch","snack2","dinner","snack3"];
 // bottomBar больше не используется (панель всегда закреплена), но читается и сохраняется обратно без изменений —
 // файл остаётся совместимым со старой версией приложения на другом телефоне
 const STM={th:["theme",{}],tn:["backgroundTint",{}],ac:["accentColor",{}],sw:["pullUpAction",{prod:"product",stat:"stats",wt:"weight"}],dw:["pullDownAction",{cal:"calendar"}],hp:["vibration",{nodays:"exceptDays"}],sl:["swipeLength",{mid:"medium"}],wt:["weightTracking",{}],bb:["bottomBar",{fix:"fixed"}],nb:["newButtons",{}],sn:["snacks",{row:"row",tap:"doubleTap"}],mg:["productImport",{}],gh:["gestureHints",{}],sf:["pullUpFrom",{edge:"edge",end:"listEnd"}],lu:["rememberUnit",{}],
- dc:["dayCard",{tap:"tripleTap",row:"row"}],fa:["fabAction",{prod:"product",wt:"weight",hide:"hidden"}],vs:["vibrationStrength",{}],ve:["vibrationEvents",{}],nav:["navBar",{}]};
+ dc:["dayCard",{tap:"tripleTap",row:"row"}],fa:["fabAction",{prod:"product",wt:"weight",hide:"hidden"}],vs:["vibrationStrength",{}],ve:["vibrationEvents",{}],nav:["navBar",{}],pf:["profile",{}],xi:["exchangeIntroSeen",{}]};
 const r3=x=>Math.round(x*1000)/1000,fnum=(x,d)=>x==null||x===""?d:typeof x==="number"?x:parseFloat(String(x).replace(",","."));
 const entOut=e=>{const o={name:e.n,grams:r3(e.g),protein:r3(e.p),fat:r3(e.f),carbs:r3(e.c)};if(e.ul)o.unit={name:e.ul,count:e.q};return o};
 const entIn=(o,w)=>{if(!o||typeof o!=="object")throw Error(w+": запись должна быть объектом");if(!o.name)throw Error(w+": нет названия (name)");

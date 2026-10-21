@@ -38,15 +38,15 @@ function mgView(){const{th,plan,yes,skip,take,name}=mgS,G=t=>plan.map((x,i)=>x.t
  if(mb.length)h+=`<div class="gh">Похожие · ${mb.length}</div><div class="mgh">Это один продукт? Если да — у вашего появятся меры из файла, а новый не добавится.</div>`+mb.map(i=>`<div class="mgp"><div class="mgpr"><div class="mgr"><small>Из файла</small>${nm(th[i])}</div><div class="mgr"><small>У вас</small>${nm(S.db[plan[i].k])}</div></div><div class="seg"><button class="${yes.has(i)?"":"on"}" onclick="mgSet(${i},0)">Разные</button><button class="${yes.has(i)?"on":""}" onclick="mgSet(${i},1)">Это одно</button></div></div>`).join("");
  if(nw.length)h+=`<div class="gh mgg">Новые · ${nw.length}<button onclick="mgAll()">${skip.size?"Выбрать все":"Снять все"}</button></div><div class="grp">`+nw.map(i=>`<button class="row mgk${skip.has(i)?"":" on"}" onclick="mgSk(${i})"><span class="tx">${esc(th[i][0])}<small>${th[i][5]?"Блюдо · ":""}${mgMac(th[i])} · ${kc(th[i][1],th[i][2],th[i][3])} ккал</small></span><span class="cb">${ic("check")}</span></button>`).join("")+`</div>`;
  if(sm.length)h+=`<div class="gh">Уже есть · ${sm.length}</div><div class="mgh">${sm.slice(0,4).map(i=>esc(th[i][0])).join(", ")}${sm.length>4?" и ещё "+(sm.length-4):""}. Пропускаются; недостающие меры добавятся.</div>`;
- $("mgl").innerHTML=h;const na=nw.length-skip.size+mb.filter(i=>!yes.has(i)).length,nu=take.size;$("mgok").textContent=na||nu?["Добавить "+na,nu?"обновить "+nu:""].filter(x=>!/ 0$/.test(x)&&x).join(" · "):"Готово";
- if($("v12").hidden)sv(12,"Импорт продуктов",(name?name+" · ":"")+th.length+" "+plural(th.length,"продукт","продукта","продуктов")+" в файле");show()}
+ $("mgl").innerHTML=(mgS.top||"")+h;const na=nw.length-skip.size+mb.filter(i=>!yes.has(i)).length,nu=take.size;$("mgok").textContent=na||nu?["Добавить "+na,nu?"обновить "+nu:""].filter(x=>!/ 0$/.test(x)&&x).join(" · "):"Готово";
+ if($("v12").hidden)sv(12,mgS.title||"Импорт продуктов",mgS.sub||(name?name+" · ":"")+th.length+" "+plural(th.length,"продукт","продукта","продуктов")+" в файле");show()}
 function mgSet(i,v){if(v)mgS.yes.add(i);else mgS.yes.delete(i);vib("ui");mgView()}
 function mgTk(i,v){if(v)mgS.take.add(i);else mgS.take.delete(i);vib("ui");mgView()}
 function mgSk(i){if(mgS.skip.has(i))mgS.skip.delete(i);else mgS.skip.add(i);vib("ui");mgView()}
 function mgAll(){const nw=mgS.plan.map((x,i)=>x.t==="new"?i:-1).filter(i=>i>=0);if(mgS.skip.size)mgS.skip.clear();else nw.forEach(i=>mgS.skip.add(i));vib("ui");mgView()}
 function mgDone(){const s=mgS;mgS=null;if(!s)return;const r=mgApply(S.db,s.th,s.plan,s.yes,s.skip,s.take);
- if(!r.added.length&&!r.units&&!r.upd){if(!$("v12").hidden)fp();return say(`В файле${s.name?" «"+s.name+"»":""} нет новых продуктов: все ${s.th.length} уже есть в вашем списке.`)}
- lastDb=S.db;lastDel=lastAdd=null;S.db=r.db;save();if(!$("v12").hidden)fp();
+ if(!r.added.length&&!r.units&&!r.upd){if(!$("v12").hidden)(s.after||fp)();return say(s.none||`В файле${s.name?" «"+s.name+"»":""} нет новых продуктов: все ${s.th.length} уже есть в вашем списке.`)}
+ lastDb=S.db;lastDel=lastAdd=null;S.db=r.db;save();if(!$("v12").hidden)(s.after||fp)();
  const ex=r.added.slice(0,3).join(", ")+(r.added.length>3?" и ещё "+(r.added.length-3):"");
  toast((r.added.length?`Добавлено: ${r.added.length} (${ex})`:"Новых продуктов нет")+(r.upd?` · обновлено: ${r.upd}`:"")+(r.units?` · новых мер: ${r.units}`:""),1,7000)}
 async function mgPick(){const N=NX();if(!N||!N.file.available)return $("fmg").click();let r;try{r=await N.file.open()}catch(e){return}

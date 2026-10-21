@@ -1,0 +1,32 @@
+/* Профиль и обмен продуктами с телефоном рядом (30-exchange.js) */
+.xav{flex:none;display:grid;place-items:center;border-radius:50%;color:#fff;font-weight:800;width:var(--h-tile);height:var(--h-tile);font-size:15px}
+.row .xav{width:40px;height:40px;font-size:17px}
+.xav.l{width:64px;height:64px;font-size:26px}.xav.xl{width:96px;height:96px;font-size:38px}
+/* поиск: круги расходятся от своего кружка */
+.xr{position:relative;height:210px;display:grid;place-items:center;margin:4px 0 6px}
+.xr i{position:absolute;left:50%;top:50%;width:190px;height:190px;margin:-95px 0 0 -95px;border-radius:50%;border:2px solid var(--ac);opacity:0;animation:xring 2.4s cubic-bezier(.2,0,0,1) infinite}
+.xr i:nth-child(2){animation-delay:.8s}.xr i:nth-child(3){animation-delay:1.6s}
+.xr.st i{animation:none;opacity:.5}.xr.st i:nth-child(1){transform:scale(.55);opacity:.55}.xr.st i:nth-child(2){transform:scale(.78);opacity:.3}.xr.st i:nth-child(3){transform:scale(1);opacity:.14}
+@keyframes xring{0%{transform:scale(.4);opacity:.8}100%{transform:scale(1);opacity:0}}
+.xr .xav{position:relative;width:72px;height:72px;font-size:29px}
+.xt{text-align:center;margin:0 8px 6px}.xt b{display:block;font-size:var(--fs-h);font-weight:700}.xt small{display:block;color:var(--mu);font-size:14px;line-height:1.45;margin-top:4px}
+.row .xg{flex:none;height:40px;padding:0 14px;border-radius:var(--r-ctl);background:var(--acf,var(--ac));color:var(--on);font-weight:700;font-size:14px;display:flex;align-items:center}
+/* пара кружков «вы — он» */
+.xp{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0 14px}.xp>div{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;color:var(--mu);font-weight:600}
+.xp .ln_{width:70px;height:4px;margin-bottom:22px;background:radial-gradient(circle,var(--ac) 1.6px,transparent 2px) 0 50%/10px 4px repeat-x;opacity:.9}
+.xp .ln_.mv{animation:xdot .6s linear infinite}@keyframes xdot{to{background-position:10px 50%}}
+.xcd{display:flex;justify-content:center;gap:10px;margin:6px 0 16px}.xcd b{width:62px;height:76px;border-radius:var(--r-block);background:var(--sub);display:grid;place-items:center;font-size:40px;font-weight:800;font-variant-numeric:tabular-nums}
+.xst{display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;color:var(--mu);font-weight:600}.xst i{width:8px;height:8px;border-radius:50%;background:var(--wr);animation:xpl 1.2s infinite}@keyframes xpl{50%{opacity:.3}}
+.xst.ok i{background:var(--ok);animation:none}.xst.ok{color:var(--okt)}
+/* передача */
+.xb{padding:14px;background:var(--sub);border-radius:var(--r-block);display:flex;flex-direction:column;gap:16px}
+.xb .h{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--fs-body);font-weight:600;margin-bottom:8px}.xb .h span{font-size:14px;color:var(--mu);font-variant-numeric:tabular-nums}
+.xb .br{height:8px;border-radius:var(--r-pill);background:var(--bd);overflow:hidden}.xb .br i{display:block;height:100%;border-radius:inherit;background:var(--ac)}.xb .br i.in{background:var(--p)}
+.xn{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:var(--mu);margin:10px 4px 0;line-height:1.4}.xn svg.i{width:16px;height:16px;flex:none}
+/* профиль */
+.pfh{display:flex;flex-direction:column;align-items:center;gap:10px;margin:6px 0 4px}.pfh small{color:var(--mu);font-size:13.5px;text-align:center;line-height:1.45;max-width:290px}
+.pfc{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:14px 22px;background:var(--sub);border-radius:var(--r-block)}.pfc button{aspect-ratio:1;max-width:52px;justify-self:center;width:100%;border-radius:50%;display:grid;place-items:center;color:#fff}
+.pfc button svg{width:20px;height:20px;opacity:0}.pfc button.on{box-shadow:0 0 0 3px var(--sub),0 0 0 5px var(--tx)}.pfc button.on svg{opacity:1}
+.pfh .xav{transition:background-color var(--t2)}
+.xw{margin-top:var(--gap)}
+@media (prefers-reduced-motion:reduce){.xr i{animation:none;opacity:.3}.xp .ln_.mv,.xst i{animation:none}}

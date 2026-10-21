@@ -10,6 +10,7 @@ public class MainActivity extends BridgeActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         registerPlugin(BjuNativePlugin.class);
+        registerPlugin(BjuExchangePlugin.class);
         super.onCreate(savedInstanceState);
         // системная полоса прокрутки и «резиновый» эффект на краю страницы (растяжение в Android 12+) — их CSS не убирает:
         // растяжение сдвигает всю страницу под жестами «потянуть вверх/вниз», и индикатор жеста дёргается

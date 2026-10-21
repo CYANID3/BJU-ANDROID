@@ -9,7 +9,9 @@ function stepTo() {
   if (on(1) && mode === "ing") return () => drawDish();
   if (on(8) && dfrom) return () => { mode = pmode; listBack() };
   if (on(11)) return () => pick("ac");
-  if (on(12)) return () => { mgS = null; fp() };
+  if (on(12)) return () => { const a = mgS && mgS.after; mgS = null; (a || fp)() };
+  if (on(18)) return pfFrom ? () => xOpen(X.sub) : SUB ? () => sets(1) : null;
+  if (on(19) && SUB) return () => { xStop(); sets(1) };
   if (on(6) && cv) return () => { cv = cb === 1 && cv === 2 ? 1 : 0; drawCal(); fade($("cg")) };
   if (on(16)) return () => navBack();
   if ((on(13) || on(14) || on(15) || on(17) || on(4) || on(5)) && SUB) return () => sets(1);

@@ -46,6 +46,9 @@
  <div id="v15" hidden></div>
  <div id="v16" hidden></div>
  <div id="v17" hidden></div>
+ <!-- профиль; обмен продуктами с телефоном рядом -->
+ <div id="v18" hidden></div>
+ <div id="v19" hidden></div>
  <!-- файл данных -->
  <div id="v5" hidden><div id="fi" class="fst"></div><div class="gh">Основной файл</div><div class="grp"><button class="row" onclick="fc2()"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6M9 14h6"/></svg></span><span class="tx">Создать новый файл<small>Сохранить данные в файл и сделать его основным</small></span></button><button class="row" onclick="fo2()"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 8L12 4l7.5 4v8L12 20l-7.5-4z"/><path d="M12 12v8M4.5 8L12 12l7.5-4"/></svg></span><span class="tx">Открыть существующий файл<small>Например, после переустановки или с другого телефона. Текущие данные заменятся, перед этим — резервная копия</small></span></button></div><div class="gh">Импорт</div><div class="grp"><button id="mgb" class="row" onclick="mgPick()"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v6a5 5 0 0 0 5 5h5"/><path d="M14 12l3 3-3 3"/><path d="M7 20v-4"/></svg></span><span class="tx">Добавить продукты из файла<small>Из чужого файла или старой копии. Дневник не меняется, вы увидите, что добавится</small></span></button></div><input id="fmg" type="file" accept=".json,.txt,application/json,text/plain" hidden onchange="mgFile(this)"><input id="fin" type="file" accept=".json,.txt,application/json,text/plain" hidden onchange="im(this)"></div>
  </div>
@@ -60,6 +63,8 @@
   <div class="ft two" data-v="10"><button id="wdl" class="pb g" onclick="wDel()" hidden>Удалить</button><button id="wsb" class="pb" onmousedown="event.preventDefault()" onclick="wSave()">Сохранить</button></div>
   <div class="ft" data-v="11"><button id="cpok" class="pb" onclick="cpOk()">Готово</button></div>
   <div class="ft" data-v="12"><button id="mgok" class="pb" onclick="mgDone()">Готово</button></div>
+  <div class="ft" data-v="18"><button id="pfok" class="pb" onmousedown="event.preventDefault()" onclick="pfSave()">Сохранить</button></div>
+  <div class="ft two" data-v="19"><button id="x2" class="pb g" hidden></button><button id="x1" class="pb"></button></div>
   <div id="kp" class="kpd" role="group" aria-label="Цифровая клавиатура"></div>
  </div>
 </div></div>

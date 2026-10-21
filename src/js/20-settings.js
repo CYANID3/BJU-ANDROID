@@ -4,7 +4,7 @@
 // жест «потянуть вверх»: приём пищи по времени / новый продукт / новое блюдо / вес (если вес включён) / статистика / к сегодня / продукты / выкл.
 function swAct() { const v = (S.set && S.set.sw) || "off"; return v === "wt" && !wton() || !SWL.some(x => x[0] === v) ? "off" : v }
 // значения жеста — прежние (prod — «Новый продукт»), «Продукты» (список) — list; действие — то же, что у пунктов нижней панели
-const SW2N = { meal: "meal", prod: "pnew", dish: "dish", wt: "wt", stat: "stat", today: "today", list: "prod" };
+const SW2N = { meal: "meal", prod: "pnew", dish: "dish", wt: "wt", stat: "stat", today: "today", list: "prod", xch: "xch" };
 function swipeAct() { const a = swAct(); if (SW2N[a]) naRun(SW2N[a]) }
 
 // Длина свайпа: множитель расстояния для жестов в стороны (дни, календарь, месяцы статистики, смахивание листа) + порог рывка.
@@ -39,7 +39,7 @@ function setSl(v) { S.set = Object.assign({}, S.set, { sl: v }); saveq(); drawSe
 const PRE = ["", "#22a06b", "#14b8a6", "#3b82f6", "#8b5cf6", "#e5589a", "#e5484d", "#f08a24", "#f5c518", "#64748b"];
 const SWL = [["meal", "Приём пищи по времени", "plus", "Добавить в приём пищи по времени суток"], ["prod", "Новый продукт", "box", "Сразу открыть создание продукта"], ["dish", "Новое блюдо", "dish", "Сразу открыть создание блюда"],
   ["wt", "Записать вес", "scale", "Вес за открытый день"], ["stat", "Статистика", "chart", "Месяц: калории, БЖУ, вес"], ["today", "К сегодняшнему дню", "today", "Вернуться к сегодня из любого дня"],
-  ["list", "Продукты", "list", "Список продуктов и блюд"], ["off", "Выключено", "close", "Жест не используется"]],
+  ["list", "Продукты", "list", "Список продуктов и блюд"], ["xch", "Обмен продуктами", "xch", "Открыть обмен с телефоном рядом"], ["off", "Выключено", "close", "Жест не используется"]],
   DWL = [["cal", "Календарь", "cal", "Выбрать день в календаре"], ["today", "К сегодня", "today", "Вернуться к сегодняшнему дню"], ["off", "Выключено", "close", "Жест не используется"]];
 function setSw(v) { S.set = Object.assign({}, S.set, { sw: v }); saveq(); drawSet(); render(); vib("ui") }
 function setAc(h) { S.set = Object.assign({}, S.set, { ac: h }); saveq(); vib("ui"); themeFade(() => { applyAc(); drawSet() }) }
@@ -89,11 +89,12 @@ function drawSet(only) {
   const tg = tgSnap($("v7")), G = S.g, gk = kc(G.p, G.f, G.c), fs = fileState(), vn = VIB.filter(x => veOn(x[0])).length;
   // группы по смыслу, частое — выше: питание → панель и жесты → дневник и продукты → оформление → данные
   $("v7").innerHTML =
+    `<div class="grp">${(() => { const p = xpf(); return srow("", "", p ? esc(p.n) : "Профиль", p ? "Так вас видят при обмене" : "Имя и цвет — чтобы вас узнали при обмене", null, "pfOpen()").replace('<span class="tx">', (p ? xav(p.n, p.c) : `<span class="ic">${ic("user")}</span>`) + '<span class="tx">') })()}</div>` +
     `<div class="gh">Питание</div><div class="grp">${srow("", "target", "Норма на день", `Б ${G.p} · Ж ${G.f} · У ${G.c} г`, gk + " ккал", "goals(1)")}${srow("wtm", "scale", "Отслеживать вес", "Строка «Вес» в дне и в статистике", null, "setWt(wton()?'off':'on')", { sw: wton() })}</div>` +
     `<div class="gh">Панель и жесты</div><div class="grp">${srow("", "panel", "Нижняя панель", "", navMini(), "navOpen()")}${srow("", "down", "Потянуть вниз", "в начале дня", lbl("dw"), "pick('dw')")}${srow("", "up", "Потянуть вверх", "в конце дня или от панели", lbl("sw"), "pick('sw')")}${srow("", "swipe", "Длина свайпа", "", SLV[slv()][5], "pick('sl')")}${srow("", "vib", "Вибрация", "", vbOn() ? vn + " из " + VIB.length : "Выкл.", "vibOpen()")}</div>` +
     `<div class="gh">Дневник и продукты</div><div class="grp">${srow("", "layout", "Карточка дня", "", lbl("dc"), "pick('dc')")}${srow("", "snack", "Пустые перекусы", "", lbl("sn"), "pick('sn')")}${srow("", "btn", "Кнопки создания в списке", "«Новый продукт» и «Новое блюдо»", lbl("nb"), "pick('nb')")}${srow("lum", "ruler", "Запоминать единицу", "Продукт откроется в той же мере, что в прошлый раз", null, "setLu(luOn()?'off':'on')", { sw: luOn() })}</div>` +
     `<div class="gh">Оформление</div><div class="grp">${srow("", "moon", "Тема и фон", "", lookLbl(), "lookOpen()")}${srow("", "pal", "Цвет акцента", "", `<i style="background:var(--ac)"></i>`, "pick('ac')")}</div>` +
-    `<div class="gh">Данные</div><div class="grp">${srow("", "file", "Файл данных", fs[1], "", "fp(1)", { sc: fs[0] })}</div>` +
+    `<div class="gh">Данные</div><div class="grp">${srow("", "file", "Файл данных", fs[1], "", "fp(1)", { sc: fs[0] })}${srow("", "xch", "Обмен продуктами", "С телефоном рядом, без интернета", null, "xOpen(1)")}</div>` +
     `<div class="ver">Версия ${BUILD}</div>`;
   tgPlay(tg, $("v7")); if (!$("v17").hidden) drawLook(); if (only) return;
   if (!$("v13").hidden) shResize(drawPick, ["#dwh", "#sgh"]); if (!$("v14").hidden) shResize(drawVib, ["#vbx", "#vbx0"])
