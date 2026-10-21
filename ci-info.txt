@@ -1,0 +1,54 @@
+== aapt2 permissions
+package: kg.bju.app
+uses-permission: name='android.permission.ACCESS_WIFI_STATE'
+uses-permission: name='android.permission.CHANGE_WIFI_STATE'
+uses-permission: name='android.permission.BLUETOOTH' maxSdkVersion='30'
+uses-permission: name='android.permission.BLUETOOTH_ADMIN' maxSdkVersion='30'
+uses-permission: name='android.permission.ACCESS_COARSE_LOCATION' maxSdkVersion='31'
+uses-permission: name='android.permission.ACCESS_FINE_LOCATION' maxSdkVersion='31'
+uses-permission: name='android.permission.BLUETOOTH_ADVERTISE'
+uses-permission: name='android.permission.BLUETOOTH_CONNECT'
+uses-permission: name='android.permission.BLUETOOTH_SCAN'
+uses-permission: name='android.permission.NEARBY_WIFI_DEVICES'
+uses-permission: name='android.permission.INTERNET'
+uses-permission: name='android.permission.ACCESS_NETWORK_STATE'
+uses-permission: name='android.permission.VIBRATE'
+permission: kg.bju.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+uses-permission: name='kg.bju.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
+== badging
+package: name='kg.bju.app' versionCode='2' versionName='1.0.2' platformBuildVersionName='15' platformBuildVersionCode='35' compileSdkVersion='35' compileSdkVersionCodename='15'
+targetSdkVersion:'35'
+  uses-implied-feature: name='android.hardware.bluetooth' reason='requested android.permission.BLUETOOTH permission, requested android.permission.BLUETOOTH_ADMIN permission, and targetSdkVersion > 4'
+== nearby aar
+/home/runner/.gradle/caches/modules-2/files-2.1/com.google.android.gms/play-services-nearby/19.2.0/3bdf41071bafef2700e94f3f28f92f75aba111c/play-services-nearby-19.2.0.aar
+Compiled from "com.google.android.gms:play-services-nearby@@19.2.0"
+public final class com.google.android.gms.nearby.connection.ConnectionInfo {
+  public int getAuthenticationStatus();
+  public java.lang.String getAuthenticationDigits();
+  public java.lang.String getAuthenticationToken();
+  public java.lang.String getEndpointName();
+  public com.google.android.gms.nearby.connection.ConnectionInfo(java.lang.String, java.lang.String, boolean);
+  public boolean isConnectionVerified();
+  public boolean isIncomingConnection();
+  public byte[] getEndpointInfo();
+  public byte[] getRawAuthenticationToken();
+  com.google.android.gms.nearby.connection.ConnectionInfo(java.lang.String, java.lang.String, byte[], boolean, boolean, byte[], int, com.google.android.gms.nearby.connection.zzl);
+}
+== dex classes
+Lkg/bju/app/BjuExchangePlugin;
+Lkg/bju/app/BjuNativePlugin;
+Lkg/bju/app/BjuWidget$ColorOf;
+Lkg/bju/app/BjuWidget$Data;
+Lkg/bju/app/BjuWidget$Pal;
+Lkg/bju/app/BjuWidget;
+Lkg/bju/app/MainActivity;
+Lkg/bju/app/R$color;
+Lkg/bju/app/R$dimen;
+Lkg/bju/app/R$drawable;
+Lkg/bju/app/R$id;
+Lkg/bju/app/R$layout;
+Lkg/bju/app/R$mipmap;
+Lkg/bju/app/R$string;
+Lkg/bju/app/R$style;
+Lkg/bju/app/R$xml;
+Lkg/bju/app/R;
