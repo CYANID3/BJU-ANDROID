@@ -11,7 +11,8 @@ function stepTo() {
   if (on(11)) return () => pick("ac");
   if (on(12)) return () => { mgS = null; fp() };
   if (on(6) && cv) return () => { cv = cb === 1 && cv === 2 ? 1 : 0; drawCal(); fade($("cg")) };
-  if ((on(13) || on(14) || on(4) || on(5)) && SUB) return () => sets(1);
+  if (on(16)) return () => navBack();
+  if ((on(13) || on(14) || on(15) || on(17) || on(4) || on(5)) && SUB) return () => sets(1);
   return null;
 }
 // снимок экрана — до шага: сам шаг может успеть что-то спрятать (кнопку, клавиатуру), а переход должен начинаться с того, что было видно

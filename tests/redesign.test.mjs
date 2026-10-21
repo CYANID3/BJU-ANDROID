@@ -62,10 +62,8 @@ test('форма продукта: название — системной кл�
   await a.close();
 });
 
-test('кнопка «＋»: приём по времени, новый продукт, новое блюдо, вес, скрыть; значок и файл', async () => {
+test('большая кнопка (старый способ задать — setFa): приём по времени, новый продукт, новое блюдо, вес, скрыть; значок и файл', async () => {
   const a = await openApp();
-  await a.ev(() => pick('fa')); await a.wait(300);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#pko .row .tx')].map(e => e.firstChild.textContent)), ['Приём пищи по времени', 'Новый продукт', 'Новое блюдо', 'Вес', 'Скрыть кнопку']);
   const go = async v => { await a.ev(v => { setFa(v); cl() }, v); await a.wait(350); await a.pg.click('#fab'); await a.wait(400); };
   await go('prod'); assert.equal(await a.ev(() => isOpen && !$('v3').hidden), true, 'новый продукт');
   assert.equal(await a.ev(() => $('fab').getAttribute('aria-label')), 'Новый продукт');
@@ -73,9 +71,9 @@ test('кнопка «＋»: приём по времени, новый прод�
   await go('wt'); assert.equal(await a.ev(() => isOpen && !$('v10').hidden), true, 'вес');
   assert.equal(await a.ev(() => toFile(S).settings.fabAction), 'weight');
   await a.ev(() => { cl(); setWt('off') });
-  assert.equal(await a.ev(() => fabAct()), 'meal', 'вес выключен — «＋» снова добавляет еду');
+  assert.equal(await a.ev(() => fabAct()), 'meal', 'вес выключен — кнопка снова добавляет еду');
   await a.ev(() => { setWt('on'); setFa('hide'); cl() }); await a.wait(300);
-  assert.equal(await a.ev(() => [document.querySelector('.bt').classList.contains('nofab'), getComputedStyle($('fab')).display].join()), 'true,none', 'панель из четырёх пунктов');
+  assert.equal(await a.ev(() => [document.querySelector('.bt').classList.contains('nofab'), !!$('fab'), document.querySelectorAll('.bt>button').length].join()), 'true,false,4', 'панель из четырёх пунктов');
   assert.equal(await a.ev(() => parseData(ser()).set.fa), 'hide');
   assert.equal(await a.ev(() => JSON.parse(ser()).settings.fabAction), 'hidden');
   assert.deepEqual(a.errors, []);

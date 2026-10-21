@@ -10,6 +10,8 @@ function del(i) { const [e] = S.d[cur].splice(i, 1); lastAdd = lastDb = null; la
 let lastAdd = null;
 function undo() {
   vib("del");
+  // «Отменить» в уведомлении о нижней панели — только пока на экране именно оно (не старое)
+  if (navUndo && $("tm").textContent === navUndo.m) { const o = navUndo.v; navUndo = null; $("tt").classList.remove("on"); return navSave(o) }
   if (lastDb) { S.db = lastDb; lastDb = null; save(); if (isOpen && !$("v1").hidden) lst(); $("tt").classList.remove("on"); return }
   if (lastAdd) { const { o, k } = lastAdd, E = S.d[k] || [], j = E.indexOf(o); lastAdd = null; if (j >= 0) { E.splice(j, 1); save(); render() } $("tt").classList.remove("on"); return }
   if (!lastDel) return; const { e, i, k } = lastDel; (S.d[k] = S.d[k] || []).splice(i, 0, e); lastDel = null; save(); render(); $("tt").classList.remove("on")

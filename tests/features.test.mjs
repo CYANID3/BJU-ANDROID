@@ -151,15 +151,15 @@ test('жест вверх: статистика и вес; при жесте «�
   assert.equal(await a.ev(() => isOpen && !$('v9').hidden), true, 'открылась статистика');
   await a.ev(() => cl()); await a.wait(300);
   await a.ev(() => pick('sw')); await a.wait(300);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#pko .row .tx')].map(b => b.firstChild.textContent)), ['Приём пищи', 'Новый продукт', 'Статистика', 'Вес', 'Выключено']);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#pko .row .tx')].map(b => b.firstChild.textContent)), ['Приём пищи по времени', 'Новый продукт', 'Новое блюдо', 'Записать вес', 'Статистика', 'К сегодняшнему дню', 'Продукты', 'Выключено']);
   assert.equal(await a.ev(() => document.querySelector('#pko .row.on .tx').firstChild.textContent), 'Статистика', 'выбранный — с галочкой');
   await a.pg.click('#pko .row:nth-child(4)'); await a.wait(100);
-  assert.equal(await a.ev(() => document.querySelector('#pko .row.on .tx').firstChild.textContent), 'Вес');
+  assert.equal(await a.ev(() => document.querySelector('#pko .row.on .tx').firstChild.textContent), 'Записать вес');
   assert.equal(await a.ev(() => toFile(S).settings.pullUpAction), 'weight');
   assert.equal(await a.ev(() => parseData(ser()).set.sw), 'wt');
   assert.equal(await a.ev(() => BJU_onBack()), true); await a.wait(300);
-  assert.equal(await a.ev(() => isOpen && !$('v7').hidden), true, '«Назад» — в «Ещё»');
-  assert.match(await a.pg.textContent('#v7'), /Потянуть вверхв конце дня или от панелиВес/);
+  assert.equal(await a.ev(() => isOpen && !$('v7').hidden), true, '«Назад» — в «Настройки»');
+  assert.match(await a.pg.textContent('#v7'), /Потянуть вверхв конце дня или от панелиЗаписать вес/);
   await a.ev(() => cl()); await a.wait(300);
   assert.equal(await a.pg.locator('#app .wtl').count(), 0, '«Записать» скрыта, вес пишется жестом');
   await pullUp();
@@ -168,7 +168,7 @@ test('жест вверх: статистика и вес; при жесте «�
   assert.match(await a.pg.textContent('#app .wtl'), /70кг/, 'записанный вес виден');
   // вес выключен — пункта «Вес» нет, жест не срабатывает
   await a.ev(() => { S.set = { ...S.set, wt: 'off' }; pick('sw'); }); await a.wait(300);
-  assert.equal(await a.pg.locator('#pko .row').count(), 4);
+  assert.equal(await a.pg.locator('#pko .row').count(), 7);
   assert.equal(await a.ev(() => swAct()), 'off');
   await a.ev(() => cl()); await a.wait(300);
   assert.deepEqual(a.errors, []);
@@ -329,19 +329,19 @@ test('свой цвет: экран выбора — квадрат, оттен�
   await a.ev(() => BJU_onBack()); await a.wait(350);
   assert.equal(await a.ev(() => isOpen && !$('v13').hidden), true, '«Назад» возвращает к выбору цвета');
   await a.ev(() => BJU_onBack()); await a.wait(350);
-  assert.equal(await a.ev(() => isOpen && !$('v7').hidden), true, 'ещё раз — в «Ещё»');
+  assert.equal(await a.ev(() => isOpen && !$('v7').hidden), true, 'ещё раз — в «Настройки»');
   assert.deepEqual(a.errors, []);
   await a.close();
 });
-test('«Ещё»: все настройки одной страницей, в группах по порядку; крестик закрывает, «‹» возвращает', async () => {
+test('«Настройки»: все настройки одной страницей, в группах по порядку; крестик закрывает, «‹» возвращает', async () => {
   const a = await openApp();
   await a.ev(() => sets()); await a.wait(400);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v7 .gh')].map(e => e.textContent)), ['Норма', 'Данные', 'Оформление', 'Главный экран', 'Добавление', 'Жесты', 'Отклик']);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v7 .gh')].map(e => e.textContent)), ['Питание', 'Панель и жесты', 'Дневник и продукты', 'Оформление', 'Данные']);
   const rows = await a.ev(() => [...document.querySelectorAll('#v7 .row .tx')].map(e => e.firstChild.textContent));
-  for (const t of ['Норма на день', 'Файл данных', 'Тема', 'Цвет акцента', 'Оттенок фона', 'Кнопка «＋» в панели', 'Карточка дня', 'Кнопки «Новый продукт» и «Новое блюдо»', 'Пустые перекусы', 'Отслеживать вес', 'Потянуть вниз', 'Потянуть вверх', 'Длина свайпа', 'Запоминать единицу', 'Вибрация'])
+  for (const t of ['Норма на день', 'Отслеживать вес', 'Нижняя панель', 'Потянуть вниз', 'Потянуть вверх', 'Длина свайпа', 'Вибрация', 'Карточка дня', 'Пустые перекусы', 'Кнопки создания в списке', 'Запоминать единицу', 'Тема и фон', 'Цвет акцента', 'Файл данных'])
     assert.ok(rows.includes(t), 'есть «' + t + '»');
-  for (const t of ['Подсказки к жестам', 'Показывать «Добавить продукты из файла»', 'Добавить продукты из файла']) assert.ok(!rows.includes(t), 'нет «' + t + '»');
-  assert.equal(await a.ev(() => $('hb').hidden), true, 'у «Ещё» нет «назад»');
+  for (const t of ['Подсказки к жестам', 'Показывать «Добавить продукты из файла»', 'Добавить продукты из файла', 'Кнопка «＋» в панели', 'Тема', 'Оттенок фона']) assert.ok(!rows.includes(t), 'нет «' + t + '»');
+  assert.equal(await a.ev(() => $('hb').hidden), true, 'у «Настроек» нет «назад»');
   await a.ev(() => pick('dw')); await a.wait(300);
   assert.equal(await a.ev(() => !$('hb').hidden && $('st').textContent), 'Потянуть вниз');
   await a.pg.click('#hb'); await a.wait(400);

@@ -24,6 +24,10 @@ const ICP = {
   btn: '<rect x="3.5" y="7" width="17" height="10" rx="5"/><path d="M9 12h6"/>', snack: '<circle cx="12" cy="13" r="7"/><path d="M12 6c0-2 1-3 3-3"/>',
   hint: '<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M12 15V8M9.5 10.5L12 8l2.5 2.5"/>', fab: '<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M12 8.5v7M8.5 12h7"/>',
   ok: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>', warn: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01"/>',
+  sld: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+  grip: '<path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01" stroke-width="3.2"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  swap: '<path d="M7 4L4 7l3 3"/><path d="M4 7h12"/><path d="M17 14l3 3-3 3"/><path d="M20 17H8"/>',
+  panel: '<rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="M3.5 15h17"/><path d="M8 17.5h.01M12 17.5h.01M16 17.5h.01" stroke-width="2.6"/>',
   list: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="3"/>', import: '<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M5 19.5h14"/>'
 };
 const ic = (n, c) => `<svg class="${c || "i"}" viewBox="0 0 24 24" aria-hidden="true">${ICP[n]}</svg>`;

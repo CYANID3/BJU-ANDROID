@@ -15,6 +15,8 @@
 //                 "backgroundTint": "off|soft|strong", "weightTracking": "on|off",
 //                 "newButtons": "top|bottom", "snacks": "row|doubleTap", "dayCard": "tripleTap|row",
 //                 "fabAction": "meal|product|dish|weight|hidden", "vibrationStrength": "light|normal|strong",
+//                 "navBar": { "n": 5, "big": true, "s": ["cal","prod","meal","stat","set"] } — нижняя панель: места слева направо, большая кнопка в центре;
+//                           fabAction пишется по-прежнему (действие кнопки или hidden) — для старых версий приложения,
 //                 "vibrationEvents": { "kb": true, "save": true, "del": true, "days": false, "pull": true, "ui": true, "err": true } },
 //   "weight":   { "2026-10-16": 72.4 },                                    — вес по дням, кг
 //   "stats":    { "useCount": { "Яблоко": 12 }, "lastGrams": { "Яблоко": 55 }, "recent": [ "Яблоко" ] }   — для сортировки и подсказок
@@ -25,7 +27,7 @@ const MK=["breakfast","snack1","lunch","snack2","dinner","snack3"];
 // bottomBar больше не используется (панель всегда закреплена), но читается и сохраняется обратно без изменений —
 // файл остаётся совместимым со старой версией приложения на другом телефоне
 const STM={th:["theme",{}],tn:["backgroundTint",{}],ac:["accentColor",{}],sw:["pullUpAction",{prod:"product",stat:"stats",wt:"weight"}],dw:["pullDownAction",{cal:"calendar"}],hp:["vibration",{nodays:"exceptDays"}],sl:["swipeLength",{mid:"medium"}],wt:["weightTracking",{}],bb:["bottomBar",{fix:"fixed"}],nb:["newButtons",{}],sn:["snacks",{row:"row",tap:"doubleTap"}],mg:["productImport",{}],gh:["gestureHints",{}],sf:["pullUpFrom",{edge:"edge",end:"listEnd"}],lu:["rememberUnit",{}],
- dc:["dayCard",{tap:"tripleTap",row:"row"}],fa:["fabAction",{prod:"product",wt:"weight",hide:"hidden"}],vs:["vibrationStrength",{}],ve:["vibrationEvents",{}]};
+ dc:["dayCard",{tap:"tripleTap",row:"row"}],fa:["fabAction",{prod:"product",wt:"weight",hide:"hidden"}],vs:["vibrationStrength",{}],ve:["vibrationEvents",{}],nav:["navBar",{}]};
 const r3=x=>Math.round(x*1000)/1000,fnum=(x,d)=>x==null||x===""?d:typeof x==="number"?x:parseFloat(String(x).replace(",","."));
 const entOut=e=>{const o={name:e.n,grams:r3(e.g),protein:r3(e.p),fat:r3(e.f),carbs:r3(e.c)};if(e.ul)o.unit={name:e.ul,count:e.q};return o};
 const entIn=(o,w)=>{if(!o||typeof o!=="object")throw Error(w+": запись должна быть объектом");if(!o.name)throw Error(w+": нет названия (name)");

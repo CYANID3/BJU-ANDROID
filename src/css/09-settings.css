@@ -80,3 +80,28 @@
 .mgk .cb{flex:none;width:24px;height:24px;border-radius:7px;box-shadow:inset 0 0 0 2px var(--bd);display:grid;place-items:center;color:transparent}.mgk .cb svg.i{width:16px;height:16px;stroke-width:3}
 .mgk.on .cb{background:var(--ac);box-shadow:none;color:var(--on)}.mgk:not(.on) .tx{opacity:.55}
 .mgk.on .tx{color:var(--tx)}
+/* «Нижняя панель»: образец панели (прилипает сверху, на нём можно нажать место), состав, пункты с замком и перетаскиванием */
+.pbw{position:sticky;top:-2px;z-index:2;background:var(--card);padding:2px 0 10px}
+.pbv{display:grid;align-items:center;height:72px;padding:6px 4px;border-radius:var(--r-block);background:var(--bar,var(--sub));box-shadow:inset 0 0 0 1px var(--bd)}
+.pbv>button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:58px;min-width:0;border-radius:var(--r-ctl);font-size:11px;font-weight:600;color:var(--mu)}
+.pbv>button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 1px}
+.pbv>button svg.i{width:21px;height:21px}.pbv>button:active{background:color-mix(in srgb,var(--tx) 8%,transparent)}
+.pbv>button.f{width:50px;height:50px;margin:-12px auto 0;border-radius:16px;background:var(--acf,var(--ac));color:var(--on);display:grid;place-items:center;box-shadow:0 6px 16px color-mix(in srgb,var(--ac) 35%,transparent)}
+.pbv>button.f svg.i{width:24px;height:24px;stroke-width:2.4}
+.pbv>button.pop{animation:nvpop .38s var(--spring)}@keyframes nvpop{0%{transform:scale(.7);opacity:.3}100%{transform:none;opacity:1}}
+@media (max-width:380px){.pbv>button{font-size:10px}}
+.pbc{font-size:var(--fs-sm);color:var(--mu);text-align:center;margin-top:8px;line-height:1.35}
+.lyo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lyo button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px;border-radius:var(--r-block);background:var(--sub);text-align:left;box-shadow:inset 0 0 0 2px transparent;transition:box-shadow var(--t2),background-color var(--t2)}
+.lyo button.on{box-shadow:inset 0 0 0 2px var(--ac);background:color-mix(in srgb,var(--ac) 9%,var(--sub))}
+.lyo b{font-size:var(--fs-body);font-weight:700;margin-top:8px;color:var(--tx)}.lyo button.on b{color:var(--act,var(--ac))}.lyo small{font-size:var(--fs-sm);color:var(--mu);line-height:1.35}
+.lyp{display:grid;align-items:center;gap:4px;width:100%;height:30px;padding:0 6px;border-radius:9px;background:var(--card)}
+.lyp i{height:6px;border-radius:3px;background:var(--mu);opacity:.55;width:70%;justify-self:center}.lyp i.f{width:22px;height:22px;border-radius:7px;background:var(--acf,var(--ac));opacity:1}
+.row .gp{flex:none;color:var(--mu);opacity:.7;margin:0 -6px 0 -4px;padding:10px 4px;cursor:grab;touch-action:none}.row .gp svg.i{width:20px;height:20px}
+.row .lk{flex:none;color:var(--mu);width:24px;display:grid;place-items:center;opacity:.85}.row .lk svg.i{width:17px;height:17px}
+button.ch{display:grid;place-items:center;width:32px;height:32px;margin-right:-6px}
+.nrow{transition:transform var(--t2) var(--ease)}.nrow.drg{transition:none;background:var(--card);box-shadow:0 10px 26px rgba(0,0,0,.3);border-radius:var(--r-in);position:relative;z-index:1}
+.row.dis{opacity:.45;cursor:default}.row.used .tx small{color:var(--act,var(--ac))}.row .sw_{flex:none;color:var(--act,var(--ac))}.row .sw_ svg.i{width:19px;height:19px}
+/* мини-копия панели в строке «Нижняя панель» */
+.nmini{display:flex;align-items:center;gap:3px}.row .v .nmini i{width:18px;height:18px;border-radius:6px;display:grid;place-items:center;color:var(--mu)}
+.nmini i svg.i{width:13px;height:13px}.row .v .nmini i.f{background:var(--acf,var(--ac));color:var(--on)}

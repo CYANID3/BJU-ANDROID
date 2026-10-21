@@ -10,14 +10,8 @@
 <!-- Шапка: день, стрелки. Касание даты — календарь -->
 <header class="nav"><button class="ib" onclick="go(-1)" aria-label="Предыдущий день"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><b id="dt" role="button" tabindex="0" onkeydown="if(event.key==='Enter')cal()" onclick="dtTap(event)">&nbsp;</b><button class="ib" onclick="go(1)" aria-label="Следующий день"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></header>
 <main id="app"></main>
-<!-- Нижняя панель: всегда у нижнего края; «＋» в центре настраивается (Ещё › Главный экран) -->
-<nav class="bt" aria-label="Разделы">
- <button onclick="cal()"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>Календарь</button>
- <button onclick="mng()"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="3"/></svg>Продукты</button>
- <button id="fab" class="fab" onclick="fabDo()" aria-label="Добавить"></button>
- <button onclick="stats()"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5h15"/><path d="M7.5 16v-5M12 16V7M16.5 16v-3"/></svg>Статистика</button>
- <button onclick="sets()"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="18.5" cy="12" r="1.3" fill="currentColor"/></svg>Ещё</button>
-</nav>
+<!-- Нижняя панель: места и большая кнопка в центре настраиваются (Настройки › Нижняя панель), собирается в barSync() -->
+<nav class="bt" aria-label="Разделы"></nav>
 <!-- Нижний лист: шапка, прокручиваемое содержимое, низ (кнопки действия и своя клавиатура — всегда у нижнего края) -->
 <div id="ov"><div class="sh" role="dialog" aria-modal="true" aria-labelledby="st">
  <div class="hd"><button id="hb" class="ib hb" onclick="backStep()" aria-label="Назад" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><button id="hl" class="ib" aria-label="Предыдущий месяц" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="ht"><b id="st"></b><small id="ss"></small></div><button id="hr" class="ib" aria-label="Следующий месяц" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button><button class="x" onclick="xcl()" aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -34,7 +28,7 @@
  <div id="v6" hidden><div id="cwk" class="cw"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div></div><div id="cg" class="cg"></div><div id="cs" class="leg c"></div></div>
  <!-- блюдо -->
  <div id="v8" hidden><input id="dn" placeholder="Название блюда" autocomplete="off" enterkeyhint="done"><div id="dh" class="sec"></div><div id="di"></div><button class="ln" onclick="dring()"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Добавить ингредиент</button><div class="sec">Вес готового блюда</div><div class="vf sm"><input id="dw" class="num" type="text" inputmode="none" autocomplete="off" oninput="dsum()" aria-label="Вес готового блюда, г"><span>г</span></div><div id="ds" class="sumbox"></div><button id="ddl" class="ln dg" onclick="rm()">Удалить блюдо</button></div>
- <!-- «Ещё»: все настройки одной страницей -->
+ <!-- «Настройки»: все настройки одной страницей -->
  <div id="v7" hidden></div>
  <!-- статистика -->
  <div id="v9" hidden><div id="stc"></div></div>
@@ -48,6 +42,10 @@
  <div id="v13" hidden><div id="pko" class="grp"></div><div id="pkx"></div></div>
  <!-- вибрация -->
  <div id="v14" hidden></div>
+ <!-- нижняя панель: образец, кнопка, состав, места; выбор действия для места; тема и фон -->
+ <div id="v15" hidden></div>
+ <div id="v16" hidden></div>
+ <div id="v17" hidden></div>
  <!-- файл данных -->
  <div id="v5" hidden><div id="fi" class="fst"></div><div class="gh">Основной файл</div><div class="grp"><button class="row" onclick="fc2()"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6M9 14h6"/></svg></span><span class="tx">Создать новый файл<small>Сохранить данные в файл и сделать его основным</small></span></button><button class="row" onclick="fo2()"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 8L12 4l7.5 4v8L12 20l-7.5-4z"/><path d="M12 12v8M4.5 8L12 12l7.5-4"/></svg></span><span class="tx">Открыть существующий файл<small>Например, после переустановки или с другого телефона. Текущие данные заменятся, перед этим — резервная копия</small></span></button></div><div class="gh">Импорт</div><div class="grp"><button id="mgb" class="row" onclick="mgPick()"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v6a5 5 0 0 0 5 5h5"/><path d="M14 12l3 3-3 3"/><path d="M7 20v-4"/></svg></span><span class="tx">Добавить продукты из файла<small>Из чужого файла или старой копии. Дневник не меняется, вы увидите, что добавится</small></span></button></div><input id="fmg" type="file" accept=".json,.txt,application/json,text/plain" hidden onchange="mgFile(this)"><input id="fin" type="file" accept=".json,.txt,application/json,text/plain" hidden onchange="im(this)"></div>
  </div>
