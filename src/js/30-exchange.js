@@ -14,10 +14,10 @@ let pfDraft = null, pfFrom = 0, xModel = "";
 function pfOpen(from) {
   // from: 0 — из «Настроек», 1 — с экрана обмена (после «Сохранить» — снова туда)
   pfFrom = from ? 1 : 0; if (!$("v7").hidden) hubY = shBody().scrollTop; if (!pfFrom) SUB = 7; if (pfFrom) xStop();
-  pfDraft = { n: pfN(), c: pfC() }; drawPf(); sv(18, "Профиль", "Как вас увидят при обмене"); show();
+  pfDraft = { n: pfN(), c: pfC() }; drawProf(); sv(18, "Профиль", "Как вас увидят при обмене"); show();
   const N = XN(); if (N && !xModel) N.state().then(st => { xModel = st.model || ""; if (!$("v18").hidden) { const m = document.querySelector("#v18 .row small"); if (m) m.textContent = (xModel || "Ваш телефон") + " · " + nP(S.db.length, "продукт", "продукта", "продуктов") } }).catch(() => { })
 }
-function drawPf() {
+function drawProf() {
   const d = pfDraft;
   $("v18").innerHTML = `<div class="pfh">${xav(d.n || "?", d.c, "xl")}<small>Имя и цвет видит только тот, кто рядом и тоже открыл обмен. Хранится на этом телефоне, без регистрации.</small></div>
   <div class="gh">Имя</div><input id="pfn" value="${esc(d.n)}" placeholder="Например, Алексей" maxlength="20" autocomplete="off" enterkeyhint="done" oninput="pfDraft.n=this.value;pfLive()" onkeydown="if(event.key==='Enter')pfSave()">
@@ -115,7 +115,7 @@ function xBegin() {
 function xCheck() {
   if (X.s !== "go" || !X.data || !(X.out[1] > 0 && X.out[0] >= X.out[1])) return;
   const p = X.peer, th = X.data; xStop(); X.s = "done"; vib("save");
-  const banner = `<div class="fst ok">${ic("ok")}<div><b>Обмен завершён</b><small>${esc(p.n)}: отправлено ${nP(X.meReady ? X.meReady.p : 0, "продукт", "продукта", "продуктов")} и ${nP(X.meReady ? X.meReady.d : 0, "блюдо", "блюда", "блюд")}. Ниже — что пришло: отметьте, что добавить к себе.</small></div></div>`;
+  const banner = `<div class="fst ok">${ic("ok")}<div><b>Обмен завершён</b><small>Вы отправили ${nP(X.meReady ? X.meReady.p : 0, "продукт", "продукта", "продуктов")}${X.meReady && X.meReady.d ? " и " + nP(X.meReady.d, "блюдо", "блюда", "блюд") : ""}. Ниже — что пришло от собеседника «${esc(p.n)}»: отметьте, что добавить к себе.</small></div></div>`;
   if (!th.length) { cl(); return say(`${p.n} ничего не отправил(а) — выбрано «не отправлять».`) }
   mgS = { th, plan: mgPlan(S.db, th), yes: new Set(), skip: new Set(), take: new Set(), name: p.n, title: "Продукты: " + p.n, sub: nP(th.length, "продукт", "продукта", "продуктов") + " получено", top: banner, after: () => cl(), none: `${p.n}: всё полученное (${th.length}) уже есть в вашем списке.` };
   if (!mgS.plan.some(x => x.t === "new" || x.t === "diff" || x.t === "maybe")) { cl(); return mgDone() }
@@ -159,7 +159,7 @@ function xDraw() {
   } else if (X.s === "choose") {
     t = "Обмен: " + p.n; const r = X.peerReady;
     h = pair(0) + `<div class="xst ok" style="margin:-6px 0 6px"><i></i>Подключено · код совпал</div>
-    <div class="gh">Вы отправите</div><div class="grp">${srow("xop", "list", "Продукты", nP(myP(), "продукт", "продукта", "продуктов") + " с БЖУ и единицами", null, "xOpt('p')", { sw: !!X.opt.p })}${srow("xod", "dish", "Блюда", nP(myD(), "блюдо", "блюда", "блюд") + " с составом", null, "xOpt('d')", { sw: !!X.opt.d })}</div>
+    <div class="gh">Вы отправите</div><div class="grp${X.meReady ? " xlk" : ""}">${srow("xop", "list", "Продукты", nP(myP(), "продукт", "продукта", "продуктов") + " с БЖУ и единицами", null, "xOpt('p')", { sw: !!X.opt.p })}${myD() ? srow("xod", "dish", "Блюда", nP(myD(), "блюдо", "блюда", "блюд") + " с составом", null, "xOpt('d')", { sw: !!X.opt.d }) : ""}</div>
     <div class="xn">${ic("lock")}<span>Дневник, цели и настройки не передаются никогда</span></div>
     <div class="gh">${nm} отправит</div>${r ? `<div class="grp"><div class="row"><span class="ic">${ic("list")}</span><span class="tx">Продукты</span><span class="v">${r.p}</span></div><div class="row"><span class="ic">${ic("dish")}</span><span class="tx">Блюда</span><span class="v">${r.d}</span></div></div>` : `<div class="xst"><i></i>${nm} ещё выбирает</div>`}
     <div class="hint">Полученное сразу откроется на экране импорта: вы решите, что добавить.</div>`;
@@ -169,7 +169,7 @@ function xDraw() {
     h = pair(1) + `<div class="xt"><b>Обмениваемся</b><small>Держите телефоны рядом и не закрывайте приложение</small></div>
     <div class="xb"><div><div class="h">Отправляем: ${nm}<span data-t="out">0 %</span></div><div class="br"><i data-x="out" style="width:0"></i></div></div><div><div class="h">Получаем: ${nm}<span data-t="in">0 %</span></div><div class="br"><i class="in" data-x="in" style="width:0"></i></div></div></div>`;
     b1 = ["Отменить", () => { xStop(); cl(); toast("Обмен отменён — ничего не сохранено") }]
-  } else if (X.s === "lost") { h = pair(0) + `<div class="xt"><b>Связь прервалась</b><small>Ничего не сохранено — ваш список не изменился</small></div><div class="fst bad">${ic("warn")}<div><b>Обмен не завершён</b><small>Подойдите ближе и попробуйте ещё раз. У ${nm} полученное тоже не сохранится.</small></div></div>`; b2 = ["Закрыть", () => { xStop(); cl() }]; b1 = ["Повторить", () => { xStop(); xGo() }] }
+  } else if (X.s === "lost") { h = pair(0) + `<div class="xt"><b>Связь прервалась</b><small>Ничего не сохранено — ваш список не изменился</small></div><div class="fst bad">${ic("warn")}<div><b>Обмен не завершён</b><small>Подойдите ближе и попробуйте ещё раз. На втором телефоне полученное тоже не сохранится.</small></div></div>`; b2 = ["Закрыть", () => { xStop(); cl() }]; b1 = ["Повторить", () => { xStop(); xGo() }] }
   else if (X.s === "err") { h = `<div class="fst bad">${ic("warn")}<div><b>Не получилось</b><small>${esc(X.err)}</small></div></div>`; b1 = ["Ещё раз", () => { xStop(); xGo() }] }
   const btn = (el, b, cls) => { el.hidden = !b; if (b) { el.textContent = b[0]; el.onclick = b[1]; el.className = cls } };
   btn(x1, b1, X.s === "go" ? "pb g" : "pb"); btn(x2, b2, "pb g");
@@ -177,6 +177,6 @@ function xDraw() {
   el.dataset.s = X.s; const put = () => { el.innerHTML = h; xBars() };
   if (same) shResize(put); else { put(); sv(19, t, sub) } show()
 }
-function xOpt(k) { X.opt[k] = X.opt[k] ? 0 : 1; vib("ui"); xDraw() }
+function xOpt(k) { if (X.meReady) return; X.opt[k] = X.opt[k] ? 0 : 1; vib("ui"); xDraw() }
 // лист закрыли — обмен останавливается
 const closeUI0 = closeUI; closeUI = function () { if (X.on) xStop(); return closeUI0() };

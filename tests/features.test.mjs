@@ -151,7 +151,7 @@ test('жест вверх: статистика и вес; при жесте «�
   assert.equal(await a.ev(() => isOpen && !$('v9').hidden), true, 'открылась статистика');
   await a.ev(() => cl()); await a.wait(300);
   await a.ev(() => pick('sw')); await a.wait(300);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#pko .row .tx')].map(b => b.firstChild.textContent)), ['Приём пищи по времени', 'Новый продукт', 'Новое блюдо', 'Записать вес', 'Статистика', 'К сегодняшнему дню', 'Продукты', 'Выключено']);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#pko .row .tx')].map(b => b.firstChild.textContent)), ['Приём пищи по времени', 'Новый продукт', 'Новое блюдо', 'Записать вес', 'Статистика', 'К сегодняшнему дню', 'Продукты', 'Обмен продуктами', 'Выключено']);
   assert.equal(await a.ev(() => document.querySelector('#pko .row.on .tx').firstChild.textContent), 'Статистика', 'выбранный — с галочкой');
   await a.pg.click('#pko .row:nth-child(4)'); await a.wait(100);
   assert.equal(await a.ev(() => document.querySelector('#pko .row.on .tx').firstChild.textContent), 'Записать вес');
@@ -168,7 +168,7 @@ test('жест вверх: статистика и вес; при жесте «�
   assert.match(await a.pg.textContent('#app .wtl'), /70кг/, 'записанный вес виден');
   // вес выключен — пункта «Вес» нет, жест не срабатывает
   await a.ev(() => { S.set = { ...S.set, wt: 'off' }; pick('sw'); }); await a.wait(300);
-  assert.equal(await a.pg.locator('#pko .row').count(), 7);
+  assert.equal(await a.pg.locator('#pko .row').count(), 8);
   assert.equal(await a.ev(() => swAct()), 'off');
   await a.ev(() => cl()); await a.wait(300);
   assert.deepEqual(a.errors, []);
