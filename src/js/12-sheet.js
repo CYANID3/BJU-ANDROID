@@ -64,6 +64,10 @@ function sv(n, t, s) {
   queueMicrotask(() => svPlay(sh, snap))
 }
 // общий переход: верхний край листа переезжает со старой высоты на новую, старое гаснет, новое проявляется на своих местах
+// после сдвига шапки вместе с краем листа: заново посчитать её стиль. Если лист открыли и сразу сменили экран (за один кадр),
+// Chromium мог оставить шапке унаследованную от закрытого листа «невидимость» (visibility) — шапка пропадала до следующего
+// изменения. Найдено автотестом «быстрые переходы» на медленном процессоре; короткая смена inline-стиля сбрасывает это состояние
+function hdFresh(sh) { const h = sh && sh.querySelector(".hd"); if (!h) return; h.style.visibility = "visible"; void h.offsetWidth; h.style.visibility = "" }
 function svPlay(sh, snap) {
   const { L, r0 } = snap, r1 = sh.getBoundingClientRect(); svAlign(snap.fix || []); const d = r1.top - r0.top, D = 260, E = "cubic-bezier(.2,0,0,1)";
   const ov = $("ov"); ov.appendChild(L); const out = [L], fin = [];
@@ -86,7 +90,7 @@ function svPlay(sh, snap) {
     sh.style.overflow = "visible";
     const mv = [sh.querySelector(".hd"), shBody()].map(el => el.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }));
     try { sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E, pseudoElement: "::before" }) } catch (e) { }
-    fin.push(mv[0].finished); mv[0].finished.catch(() => { }).then(() => { sh.style.overflow = "" })
+    fin.push(mv[0].finished); mv[0].finished.catch(() => { }).then(() => { sh.style.overflow = ""; hdFresh(sh) })
   } else if (d < -1) {
     // лист стал выше: он поднимается целиком с прежней высоты (внизу он уходит за край экрана — там ничего не видно)
     fin.push(sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }).finished);
@@ -118,7 +122,7 @@ function shResize(fn, watch) {
     const an = [sh.querySelector(".hd"), shBody()].map(el => el.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }));
     // «ручка» листа (::before) едет вместе с шапкой, а не стоит на новом краю поверх заголовка
     try { sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E, pseudoElement: "::before" }) } catch (e) { }
-    an[0].finished.catch(() => { }).then(() => { sh.style.overflow = "" })
+    an[0].finished.catch(() => { }).then(() => { sh.style.overflow = ""; hdFresh(sh) })
   } else if (d < -1) {
     // лист стал выше: поднимается целиком со старой высоты (низ уходит за край экрана — там его не видно)
     sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E });
