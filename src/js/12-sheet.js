@@ -84,7 +84,7 @@ function svPlay(sh, snap) {
     // новые шапка и содержимое едут вниз вместе с краем — начинают там, где была старая шапка, а не появляются сразу
     // на новом месте (раньше заголовок «перепрыгивал» вниз до того, как край листа к нему подъедет). Лист их не обрезает на время пути
     sh.style.overflow = "visible";
-    const mv = [sh.querySelector(".hd"), shBody()].map(el => el.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }));
+    const mv = [shBody()].map(el => el.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }));
     try { sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E, pseudoElement: "::before" }) } catch (e) { }
     fin.push(mv[0].finished); mv[0].finished.catch(() => { }).then(() => { sh.style.overflow = "" })
   } else if (d < -1) {
