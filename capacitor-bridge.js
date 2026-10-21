@@ -102,6 +102,7 @@ const exchange = hasEx ? {
   requestPerms: () => Ex.requestPerms(),
   enableBt: () => Ex.enableBt(),
   openSettings: () => Ex.openSettings(),
+  openLocation: () => Ex.openLocation(),
   start: name => Ex.start({ name }),
   pause: () => Ex.pause(),
   stop: () => Ex.stop(),

@@ -81,7 +81,7 @@ await patch('android/app/src/main/AndroidManifest.xml', s => {
   // Обмен с телефоном рядом (Nearby Connections): поиск по Bluetooth, передача по Wi‑Fi. Разрешения — по списку из документации Google;
   // во время работы спрашивается только нужное для версии Android (BjuExchangePlugin.neededAliases)
   const NEAR = [['ACCESS_WIFI_STATE', ''], ['CHANGE_WIFI_STATE', ''], ['BLUETOOTH', ' android:maxSdkVersion="30"'], ['BLUETOOTH_ADMIN', ' android:maxSdkVersion="30"'],
-    ['ACCESS_COARSE_LOCATION', ' android:maxSdkVersion="31"'], ['ACCESS_FINE_LOCATION', ' android:maxSdkVersion="31"'], ['BLUETOOTH_ADVERTISE', ''], ['BLUETOOTH_CONNECT', ''], ['BLUETOOTH_SCAN', ''],
+    ['ACCESS_COARSE_LOCATION', ''], ['ACCESS_FINE_LOCATION', ''], ['BLUETOOTH_ADVERTISE', ''], ['BLUETOOTH_CONNECT', ''], ['BLUETOOTH_SCAN', ''],
     ['NEARBY_WIFI_DEVICES', '']];
   for (const [p, extra] of NEAR) if (!s.includes(`android.permission.${p}"`)) s = s.replace('<application', `<uses-permission android:name="android.permission.${p}"${extra} />\n    <application`);
   // Виджет рабочего стола

@@ -62,8 +62,9 @@ async function xGo() {
   if (!st.btExists) { X.s = "nobt"; return xDraw() }
   if (st.perm !== "granted") { let r = { granted: false }; try { r = await N.requestPerms() } catch (e) { } if (!r.granted) { X.s = "perm"; return xDraw() } }
   if (!st.bt) { X.s = "bt"; return xDraw() }
+  if (st.loc === false) { X.s = "loc"; return xDraw() }
   xListen(); xReset(); X.s = "search"; xDraw();
-  try { await N.start(xEp()); X.on = 1 } catch (e) { X.s = "err"; X.err = "Не удалось начать поиск" + (e && e.code && e.code !== "-1" ? ` (код ${e.code})` : "") + ". Проверьте, что Bluetooth включён, и попробуйте ещё раз"; return xDraw() }
+  try { await N.start(xEp()); X.on = 1 } catch (e) { if (e && String(e.code) === "8034") { X.s = "loc"; return xDraw() } X.s = "err"; X.err = "Не удалось начать поиск" + (e && e.code && e.code !== "-1" ? ` (код ${e.code})` : "") + ". Проверьте, что Bluetooth включён, и попробуйте ещё раз"; return xDraw() }
   // минута без находок — подсказка (поиск идёт дальше)
   X.t = setTimeout(() => { if (X.s === "search" && !X.found.size) { X.none = 1; xDraw() } }, 60000)
 }
@@ -139,9 +140,10 @@ function xDraw() {
   else if (X.s === "intro") {
     h = `<div class="xt" style="margin-top:4px"><small>Вы отправляете свои продукты, вам — чужие. Одновременно, прямо в приложении.</small></div>${meRow}
     <div class="gh">Как это работает</div><div class="grp"><div class="row"><span class="ic">${ic("bt")}</span><span class="tx">Bluetooth — чтобы найти<small>Телефоны видят друг друга в нескольких метрах</small></span></div><div class="row"><span class="ic">${ic("wifi")}</span><span class="tx">Wi‑Fi напрямую — чтобы передать<small>Между телефонами, без роутера и интернета</small></span></div><div class="row"><span class="ic">${ic("shield")}</span><span class="tx">Только продукты и блюда<small>Дневник, цели и настройки не передаются</small></span></div></div>
-    <div class="hint">Android один раз спросит разрешение «Устройства поблизости». Больше спрашивать не будет.</div>`;
+    <div class="hint">Android один раз спросит разрешения «Устройства поблизости» и «Местоположение» — без них Google не даёт искать телефоны рядом. Где вы находитесь, приложение не узнаёт и никуда не передаёт.</div>`;
     b1 = [pfN() ? "Продолжить" : "Указать имя", () => pfN() ? xGo() : pfOpen(1)]
-  } else if (X.s === "perm") { h = `<div class="fst no">${ic("shield")}<div><b>Нет разрешения</b><small>Без разрешения «Устройства поблизости» телефоны не найдут друг друга. Включите его в настройках приложения — это один переключатель.</small></div></div>`; b2 = ["Ещё раз", xGo]; b1 = ["Открыть настройки", () => XN().openSettings().catch(() => { })] }
+  } else if (X.s === "perm") { h = `<div class="fst no">${ic("shield")}<div><b>Нет разрешения</b><small>Нужны разрешения «Устройства поблизости» и «Местоположение» — без них телефоны не найдут друг друга. Включите их в настройках приложения › Разрешения.</small></div></div>`; b2 = ["Ещё раз", xGo]; b1 = ["Открыть настройки", () => XN().openSettings().catch(() => { })] }
+  else if (X.s === "loc") { h = `<div class="fst no">${ic("info")}<div><b>Включите геолокацию</b><small>Google ищет телефоны рядом только при включённой геолокации и разрешении «Местоположение» (можно «Приблизительно»). Где вы находитесь, приложение не узнаёт. Включите и вернитесь — затем «Ещё раз».</small></div></div>`; b2 = ["Ещё раз", () => { xStop(); xGo() }]; b1 = ["Открыть геолокацию", () => { const N = XN(); (N.openLocation ? N.openLocation() : N.openSettings()).catch(() => { }) }] }
   else if (X.s === "nobt") h = `<div class="fst bad">${ic("bt")}<div><b>На этом телефоне нет Bluetooth</b><small>Обмен с телефоном рядом недоступен. Можно обменяться файлом: «Настройки › Файл данных».</small></div></div>`;
   else if (X.s === "bt") { h = `<div class="fst no">${ic("bt")}<div><b>Bluetooth выключен</b><small>Без него телефоны не найдут друг друга. Android спросит «Включить Bluetooth?»</small></div></div><div class="xr st"><i></i><i></i><i></i>${xav(pfN(), pfC())}</div><div class="gh">Вас видят как</div>${meRow}`; b1 = ["Включить Bluetooth", xBt] }
   else if (X.s === "search") {
@@ -179,5 +181,7 @@ function xDraw() {
   if (same) shResize(put); else { put(); sv(19, t, sub) } show()
 }
 function xOpt(k) { if (X.meReady) return; X.opt[k] = X.opt[k] ? 0 : 1; vib("ui"); xDraw() }
+// вернулись из настроек Android (геолокация, разрешения) — сразу пробуем снова, без лишнего «Ещё раз»
+document.addEventListener("visibilitychange", () => { if (!document.hidden && isOpen && !$("v19").hidden && (X.s === "loc" || X.s === "perm")) xGo() });
 // лист закрыли — обмен останавливается
 const closeUI0 = closeUI; closeUI = function () { if (X.on) xStop(); return closeUI0() };

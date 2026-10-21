@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -55,7 +56,10 @@ import java.util.Map;
     permissions = {
         @Permission(alias = "bt", strings = { Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_ADVERTISE, Manifest.permission.BLUETOOTH_CONNECT }),
         @Permission(alias = "wifi", strings = { Manifest.permission.NEARBY_WIFI_DEVICES }),
-        @Permission(alias = "loc", strings = { Manifest.permission.ACCESS_FINE_LOCATION })
+        // местоположение: Nearby Connections на части телефонов с Android 13+ всё равно требует его для поиска (ошибка 8034 —
+        // MISSING_PERMISSION_ACCESS_COARSE_LOCATION), хотя по документации хватает «Устройств поблизости». Само местоположение не читается
+        @Permission(alias = "locc", strings = { Manifest.permission.ACCESS_COARSE_LOCATION }),
+        @Permission(alias = "locf", strings = { Manifest.permission.ACCESS_FINE_LOCATION })
     }
 )
 public class BjuExchangePlugin extends Plugin {
@@ -84,13 +88,28 @@ public class BjuExchangePlugin extends Plugin {
         List<String> a = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= 31) a.add("bt");
         if (Build.VERSION.SDK_INT >= 33) a.add("wifi");
-        if (Build.VERSION.SDK_INT <= 31) a.add("loc");
+        a.add("locc");
+        a.add("locf");
         return a.toArray(new String[0]);
     }
 
+    // хватает приблизительного местоположения (Android 12+ даёт выбрать «Приблизительно»); до Android 12 нужно точное
     private boolean permsGranted() {
-        for (String al : neededAliases()) if (getPermissionState(al) != PermissionState.GRANTED) return false;
+        for (String al : neededAliases()) {
+            if (al.equals("locf") && Build.VERSION.SDK_INT >= 31) continue;
+            if (getPermissionState(al) != PermissionState.GRANTED) return false;
+        }
         return true;
+    }
+
+    // геолокация в системе включена (без неё поиск не начинается — та же ошибка 8034)
+    private boolean locOn() {
+        try {
+            LocationManager lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+            if (lm == null) return true;
+            if (Build.VERSION.SDK_INT >= 28) return lm.isLocationEnabled();
+            return lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception e) { return true; }
     }
 
     private boolean btOn() {
@@ -121,6 +140,7 @@ public class BjuExchangePlugin extends Plugin {
         JSObject o = new JSObject();
         String perm = "granted";
         for (String al : neededAliases()) {
+            if (al.equals("locf") && Build.VERSION.SDK_INT >= 31) continue;
             PermissionState s = getPermissionState(al);
             if (s == PermissionState.DENIED) { perm = "denied"; break; }
             if (s != PermissionState.GRANTED) perm = "prompt";
@@ -129,6 +149,7 @@ public class BjuExchangePlugin extends Plugin {
         o.put("bt", btOn());
         o.put("btExists", btExists());
         o.put("wifi", wifiOn());
+        o.put("loc", locOn());
         o.put("model", deviceName());
         o.put("sdk", Build.VERSION.SDK_INT);
         call.resolve(o);
@@ -173,6 +194,16 @@ public class BjuExchangePlugin extends Plugin {
         JSObject o = new JSObject();
         o.put("enabled", btOn());
         call.resolve(o);
+    }
+
+    @PluginMethod
+    public void openLocation(PluginCall call) {
+        try {
+            Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(i);
+            call.resolve();
+        } catch (Exception e) { call.reject("Не удалось открыть настройки геолокации", "SETTINGS"); }
     }
 
     @PluginMethod

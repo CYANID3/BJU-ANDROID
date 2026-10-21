@@ -21,3 +21,23 @@ test('настройки из файла с неожиданными значе�
   assert.deepEqual(r, []);
   await a.close();
 });
+
+// имитация связи (как в rev17): геолокация выключена; поиск отклонён с кодом 8034 (Google требует местоположение)
+const FAKE = (st) => {
+  const S0 = Object.assign({ perm: 'granted', bt: true, btExists: true, wifi: true, loc: true, model: 'Pixel 8' }, st || {});
+  window.__x = { calls: [] }; const c = (k, r) => (...a) => { __x.calls.push(k); return Promise.resolve(r) };
+  window.BJU_NATIVE = Object.assign({}, window.BJU_NATIVE, { exchange: { available: true, state: c('state', S0), requestPerms: c('requestPerms', { granted: true }), openLocation: c('openLocation'), openSettings: c('openSettings'),
+    start: S0.fail ? (...a) => { __x.calls.push('start'); return Promise.reject(Object.assign(new Error('x'), { code: S0.fail })) } : c('start'), stop: c('stop'), pause: c('pause'), on: () => { } } });
+};
+test('обмен: геолокация выключена или поиск отклонён с кодом 8034 — экран «Включите геолокацию», кнопка открывает её настройки', async () => {
+  const a = await openApp({ data: { g: { p: 140, f: 70, c: 230 }, d: {}, db: [], set: { pf: { n: 'Алексей', c: '#6458dc' }, xi: 1 } } });
+  await a.ev(FAKE, { loc: false }); await a.ev(() => xOpen()); await a.wait(400);
+  assert.match(await a.pg.textContent('#v19'), /Включите геолокацию/); assert.equal(await a.ev(() => __x.calls.includes('start')), false, 'поиск не начинали');
+  await a.pg.click('#x1'); assert.equal(await a.ev(() => __x.calls.includes('openLocation')), true);
+  await a.ev(FAKE, { fail: '8034' }); await a.ev(() => xOpen()); await a.wait(400);
+  assert.match(await a.pg.textContent('#v19'), /Включите геолокацию/);
+  await a.ev(FAKE); await a.pg.click('#x2'); await a.wait(400);
+  assert.match(await a.pg.textContent('#v19'), /Ищем телефоны рядом/, '«Ещё раз» — поиск пошёл');
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});
