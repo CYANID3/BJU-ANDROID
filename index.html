@@ -2,7 +2,7 @@
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#10141c">
-<script>try{var s=JSON.parse(localStorage.getItem("bju2")).set||{};if(s.th==="light"||s.th==="dark")document.documentElement.dataset.theme=s.th;if(/^#[0-9a-f]{6}$/i.test(s.ac||""))document.querySelector('meta[name="theme-color"]').content=s.ac}catch(e){}</script>
+<script>try{var s=JSON.parse(localStorage.getItem("bju2")).set||{};if(s.th==="light"||s.th==="dark")document.documentElement.dataset.theme=s.th;var d=s.th==="dark"||s.th!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches;document.querySelector('meta[name="theme-color"]').content=d?"#10141c":"#eef1f5"}catch(e){}</script>
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="БЖУ"><link rel="apple-touch-icon" href="/icon-180.png"><link rel="icon" type="image/png" sizes="48x48" href="/favicon.png"><link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <meta name="build" content="%VITE_BUILD%">
 <title>БЖУ — дневник питания</title>

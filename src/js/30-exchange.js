@@ -47,26 +47,68 @@ function xPeer(id, name) { const a = String(name || "").split("|"); return a[0] 
 const xNm = () => X.peer ? X.peer.n : "";
 function xOpen(fromSet) {
   if (fromSet === 1 && !$("v7").hidden) { hubY = shBody().scrollTop; SUB = 7 } else if (fromSet !== 1) SUB = 0;
-  X.sub = SUB ? 1 : 0; xReset(); const N = XN();
+  X.sub = SUB ? 1 : 0; X.asked = 0; xReset(); const N = XN();
   if (!N) { X.s = "web"; return xDraw() }
   if (!pfN() || !(S.set && S.set.xi)) { X.s = "intro"; N.state().then(st => { xModel = st.model || xModel }).catch(() => { }); return xDraw() }
   xGo()
 }
-function xReset() { clearTimeout(X.t); X.found = new Map(); X.peer = null; X.code = ""; X.meOk = 0; X.meReady = null; X.peerReady = null; X.inp = [0, 0]; X.out = [0, 0]; X.data = null; X.err = ""; X.none = 0 }
+function xReset() { clearTimeout(X.t); X.denied = 0; X.found = new Map(); X.peer = null; X.code = ""; X.meOk = 0; X.meReady = null; X.peerReady = null; X.inp = [0, 0]; X.out = [0, 0]; X.data = null; X.err = ""; X.none = 0 }
 // по порядку: разрешение → Bluetooth → поиск
+// по порядку: разрешение → Bluetooth → геолокация → поиск. Работает только последний вызов (повторный — например, при возврате
+// из системного окна — отменяет предыдущий), экран не бывает пустым: пока идёт проверка — «Проверяем…»
+let xGoN = 0;
 async function xGo() {
   const N = XN(); if (!N) return; if (!pfN()) return pfOpen(1);
-  S.set = Object.assign({}, S.set, { xi: 1 }); saveq();
-  let st; try { st = await N.state() } catch (e) { X.s = "err"; X.err = "Обмен недоступен на этом телефоне"; return xDraw() }
-  xModel = st.model || xModel; X.wifi = st.wifi !== false;
+  const my = ++xGoN, gone = () => my !== xGoN;
+  if (!(S.set && S.set.xi)) { S.set = Object.assign({}, S.set, { xi: 1 }); saveq() } // без лишней записи файла при каждом «Ещё раз»
+  X.s = "check"; X.ecode = ""; xDraw();
+  // ответ телефона о состоянии — не дольше 8 с (иначе «Проверяем…» висело бы без конца)
+  const tmo = new Promise((_, no) => setTimeout(() => no(new Error("timeout")), 8000)); tmo.catch(() => { });
+  let st; try { st = await Promise.race([N.state(), tmo]) } catch (e) { if (gone()) return; X.s = "err"; X.err = e && e.message === "timeout" ? "Телефон не ответил. Попробуйте ещё раз" : "Обмен недоступен на этом телефоне"; return xDraw() }
+  if (gone()) return;
+  if (st.perm !== "granted") {
+    let r = { granted: false }; try { r = await N.requestPerms() } catch (e) { } if (gone()) return;
+    // после системных окон состояние другое (что разрешено, точное ли местоположение) — читаем заново
+    try { st = await N.state() } catch (e) { } if (gone()) return;
+    // Android 10–12: Google требует точное местоположение; выбрано «Приблизительно» — объясняем и просим точное
+    if (!r.granted || st.perm !== "granted") { X.st = st; X.s = st.sdk >= 29 && st.sdk <= 31 && st.coarse && !st.fine && st.nearby !== false ? "precise" : "perm"; return xDraw() }
+  }
+  X.st = st; xModel = st.model || xModel; X.wifi = st.wifi !== false;
   if (!st.btExists) { X.s = "nobt"; return xDraw() }
-  if (st.perm !== "granted") { let r = { granted: false }; try { r = await N.requestPerms() } catch (e) { } if (!r.granted) { X.s = "perm"; return xDraw() } }
   if (!st.bt) { X.s = "bt"; return xDraw() }
-  if (st.loc === false) { X.s = "loc"; return xDraw() }
+  // геолокация нужна для поиска только до Android 12 включительно (API ≤ 31); новее — проверяем лишь после отказа 8034
+  if (st.loc === false && !(st.sdk >= 32)) { X.s = "loc"; return xDraw() }
   xListen(); xReset(); X.s = "search"; xDraw();
-  try { await N.start(xEp()); X.on = 1 } catch (e) { if (e && String(e.code) === "8034") { X.s = "loc"; return xDraw() } X.s = "err"; X.err = "Не удалось начать поиск" + (e && e.code && e.code !== "-1" ? ` (код ${e.code})` : "") + ". Проверьте, что Bluetooth включён, и попробуйте ещё раз"; return xDraw() }
+  try { await N.start(xEp()); if (gone()) { N.stop().catch(() => { }); return } X.on = 1 }
+  catch (e) {
+    if (gone()) return; X.ecode = e && e.code && e.code !== "-1" ? String(e.code) : "";
+    // 8034 — Сервисы Google Play не дали искать из-за местоположения: выясняем, чего именно не хватает
+    if (X.ecode === "8034") {
+      try { X.st = st = await N.state() } catch (_) { } if (gone()) return;
+      // (старая сборка без полей coarse/fine — как раньше, экран геолокации)
+      X.s = st.loc === false || st.coarse == null ? "loc" : st.fine || (st.sdk <= 28 && st.coarse) ? "gms" : "precise";
+      if (X.s === "precise" && X.asked) X.denied = 1; return xDraw()
+    }
+    if (X.ecode === "PERM") { X.s = "perm"; return xDraw() } // разрешение отозвали, пока экран был открыт
+    X.s = "err"; X.err = "Не удалось начать поиск. Проверьте, что Bluetooth включён, и попробуйте ещё раз"; return xDraw()
+  }
   // минута без находок — подсказка (поиск идёт дальше)
   X.t = setTimeout(() => { if (X.s === "search" && !X.found.size) { X.none = 1; xDraw() } }, 60000)
+}
+// точное местоположение (Android 12+ покажет «Изменить на точное»). Если окно больше не показывается — путь в настройках
+async function xPrecise() {
+  const N = XN(), was = X.st || {}; try { await (N.requestPrecise ? N.requestPrecise() : N.requestPerms()) } catch (e) { }
+  let st = {}; try { st = await N.state() } catch (e) { }
+  // что-то выдали (точное или хотя бы приблизительное там, где его не было) — пробуем; иначе окно не показалось — путь в настройки
+  if (st.fine || st.coarse && !was.coarse) { X.asked = 1; return xGo() }
+  X.st = st; X.denied = 1; xDraw()
+}
+// какие разрешения нужны на этой версии Android (как в BjuExchangePlugin.neededAliases)
+function xPermNames() { const v = (X.st || {}).sdk || 0; return v >= 32 ? "«Устройства поблизости»" : v >= 31 ? "«Устройства поблизости» и точное «Местоположение»" : v >= 29 ? "точное «Местоположение»" : v ? "«Местоположение»" : "«Устройства поблизости» (на Android 10–12 — и «Местоположение»)" }
+// подробности для экрана ошибки: по ним видно, чего не хватает (и что прислать, если не помогло)
+function xDiag() {
+  const s = X.st || {}, yn = v => v == null ? "?" : v ? "да" : "нет";
+  return `<div class="xn">${ic("info")}<span>${[X.ecode ? "Код " + esc(X.ecode) : "", s.sdk ? "Android API " + s.sdk : "", "Bluetooth: " + yn(s.bt), "геолокация: " + yn(s.loc), "местоположение: " + (s.fine ? "точное" : s.coarse ? "приблизительное" : "нет"), "устройства поблизости: " + yn(s.nearby), s.gms ? "Сервисы Google Play " + esc(s.gms) : ""].filter(Boolean).join(" · ")}</span></div>`
 }
 async function xBt() { const N = XN(); let r = { enabled: false }; try { r = await N.enableBt() } catch (e) { } if (r.enabled) xGo(); else toast("Bluetooth выключен — без него телефоны не найдут друг друга") }
 function xStop() { clearTimeout(X.t); const N = XN(); if (N && X.on) N.stop().catch(() => { }); X.on = 0; if (X.s !== "web") X.s = "intro" }
@@ -130,7 +172,8 @@ function xBars() {
   const t = (k, v) => { const e = document.querySelector(`#v19 [data-t="${k}"]`); if (e) e.textContent = v }; t("out", f(X.out) + " %"); t("in", f(X.inp) + " %")
 }
 // ===== экран обмена =====
-function xDraw() {
+function xDraw() { try { xDraw1() } catch (e) { console.error(e); X.s = "err"; X.err = "Ошибка экрана обмена: " + (e && e.message || e); try { xDraw1() } catch (_) { } } }
+function xDraw1() {
   if ($("v19").hidden && X.s === "done") return;
   const x1 = $("x1"), x2 = $("x2"), me = xav(pfN() || "Я", pfC(), "l"), p = X.peer, ot = p ? xav(p.n, p.c, "l") : "", nm = p ? esc(p.n) : "";
   let h = "", t = "Обмен продуктами", sub = "", b1 = null, b2 = null;
@@ -140,10 +183,15 @@ function xDraw() {
   else if (X.s === "intro") {
     h = `<div class="xt" style="margin-top:4px"><small>Вы отправляете свои продукты, вам — чужие. Одновременно, прямо в приложении.</small></div>${meRow}
     <div class="gh">Как это работает</div><div class="grp"><div class="row"><span class="ic">${ic("bt")}</span><span class="tx">Bluetooth — чтобы найти<small>Телефоны видят друг друга в нескольких метрах</small></span></div><div class="row"><span class="ic">${ic("wifi")}</span><span class="tx">Wi‑Fi напрямую — чтобы передать<small>Между телефонами, без роутера и интернета</small></span></div><div class="row"><span class="ic">${ic("shield")}</span><span class="tx">Только продукты и блюда<small>Дневник, цели и настройки не передаются</small></span></div></div>
-    <div class="hint">Android один раз спросит разрешения «Устройства поблизости» и «Местоположение» — без них Google не даёт искать телефоны рядом. Где вы находитесь, приложение не узнаёт и никуда не передаёт.</div>`;
+    <div class="hint">Android один раз спросит разрешение «Устройства поблизости» (на Android 10–12 — ещё точное «Местоположение») — без него Google не даёт искать телефоны рядом. Где вы находитесь, приложение не узнаёт и никуда не передаёт.</div>`;
     b1 = [pfN() ? "Продолжить" : "Указать имя", () => pfN() ? xGo() : pfOpen(1)]
-  } else if (X.s === "perm") { h = `<div class="fst no">${ic("shield")}<div><b>Нет разрешения</b><small>Нужны разрешения «Устройства поблизости» и «Местоположение» — без них телефоны не найдут друг друга. Включите их в настройках приложения › Разрешения.</small></div></div>`; b2 = ["Ещё раз", xGo]; b1 = ["Открыть настройки", () => XN().openSettings().catch(() => { })] }
-  else if (X.s === "loc") { h = `<div class="fst no">${ic("info")}<div><b>Включите геолокацию</b><small>Google ищет телефоны рядом только при включённой геолокации и разрешении «Местоположение» (можно «Приблизительно»). Где вы находитесь, приложение не узнаёт. Включите и вернитесь — затем «Ещё раз».</small></div></div>`; b2 = ["Ещё раз", () => { xStop(); xGo() }]; b1 = ["Открыть геолокацию", () => { const N = XN(); (N.openLocation ? N.openLocation() : N.openSettings()).catch(() => { }) }] }
+  } else if (X.s === "perm") { h = `<div class="fst no">${ic("shield")}<div><b>Нет разрешения</b><small>Нужно разрешение ${xPermNames()} — без него телефоны не найдут друг друга. Включите их в настройках приложения › Разрешения.</small></div></div>` + xDiag(); b2 = ["Ещё раз", xGo]; b1 = ["Открыть настройки", () => XN().openSettings().catch(() => { })] }
+  else if (X.s === "check") h = `<div class="xr st"><i></i><i></i><i></i>${xav(pfN(), pfC())}</div><div class="xst"><i></i>Проверяем Bluetooth и разрешения…</div>`;
+  else if (X.s === "precise") { const s = X.st || {};
+    h = `<div class="fst no">${ic("info")}<div><b>${s.coarse ? "Нужно точное местоположение" : "Нужен доступ к местоположению"}</b><small>${s.coarse ? "Разрешено только «Приблизительно», а" : "Без доступа к местоположению"} Сервисы Google Play на этом телефоне не ищут телефоны рядом по Bluetooth${s.coarse ? " без точного" : ""}. Само приложение координаты не получает и никуда не передаёт.${X.denied ? " Окно разрешения не появилось: откройте настройки › Разрешения › Местоположение и выберите «Разрешить» и «Точное местоположение»." : ""}</small></div></div>` + xDiag();
+    b2 = ["Ещё раз", () => { xStop(); xGo() }]; b1 = X.denied ? ["Открыть настройки", () => XN().openSettings().catch(() => { })] : [s.coarse ? "Разрешить точное" : "Разрешить", xPrecise] }
+  else if (X.s === "gms") { h = `<div class="fst bad">${ic("warn")}<div><b>Сервисы Google Play не дают начать поиск</b><small>Разрешения выданы и геолокация включена, но поиск отклонён. Обычно помогает обновить «Сервисы Google Play» в Play Маркете и перезапустить телефон.</small></div></div>` + xDiag(); b1 = ["Ещё раз", () => { xStop(); xGo() }] }
+  else if (X.s === "loc") { h = `<div class="fst no">${ic("info")}<div><b>Включите геолокацию</b><small>Google ищет телефоны рядом только при включённой геолокации. Где вы находитесь, приложение не узнаёт. Включите и вернитесь — поиск начнётся сам.</small></div></div>` + xDiag(); b2 = ["Ещё раз", () => { xStop(); xGo() }]; b1 = ["Открыть геолокацию", () => { const N = XN(); (N.openLocation ? N.openLocation() : N.openSettings()).catch(() => { }) }] }
   else if (X.s === "nobt") h = `<div class="fst bad">${ic("bt")}<div><b>На этом телефоне нет Bluetooth</b><small>Обмен с телефоном рядом недоступен. Можно обменяться файлом: «Настройки › Файл данных».</small></div></div>`;
   else if (X.s === "bt") { h = `<div class="fst no">${ic("bt")}<div><b>Bluetooth выключен</b><small>Без него телефоны не найдут друг друга. Android спросит «Включить Bluetooth?»</small></div></div><div class="xr st"><i></i><i></i><i></i>${xav(pfN(), pfC())}</div><div class="gh">Вас видят как</div>${meRow}`; b1 = ["Включить Bluetooth", xBt] }
   else if (X.s === "search") {
@@ -173,7 +221,8 @@ function xDraw() {
     <div class="xb"><div><div class="h">Отправляем: ${nm}<span data-t="out">0 %</span></div><div class="br"><i data-x="out" style="width:0"></i></div></div><div><div class="h">Получаем: ${nm}<span data-t="in">0 %</span></div><div class="br"><i class="in" data-x="in" style="width:0"></i></div></div></div>`;
     b1 = ["Отменить", () => { xStop(); cl(); toast("Обмен отменён — ничего не сохранено") }]
   } else if (X.s === "lost") { h = pair(0) + `<div class="xt"><b>Связь прервалась</b><small>Ничего не сохранено — ваш список не изменился</small></div><div class="fst bad">${ic("warn")}<div><b>Обмен не завершён</b><small>Подойдите ближе и попробуйте ещё раз. На втором телефоне полученное тоже не сохранится.</small></div></div>`; b2 = ["Закрыть", () => { xStop(); cl() }]; b1 = ["Повторить", () => { xStop(); xGo() }] }
-  else if (X.s === "err") { h = `<div class="fst bad">${ic("warn")}<div><b>Не получилось</b><small>${esc(X.err)}</small></div></div>`; b1 = ["Ещё раз", () => { xStop(); xGo() }] }
+  else if (X.s === "err") { h = `<div class="fst bad">${ic("warn")}<div><b>Не получилось</b><small>${esc(X.err)}</small></div></div>` + (X.ecode ? xDiag() : ""); b1 = ["Ещё раз", () => { xStop(); xGo() }] }
+  if (!h) { h = `<div class="fst bad">${ic("warn")}<div><b>Не получилось</b><small>Неожиданное состояние обмена. Попробуйте ещё раз.</small></div></div>`; b1 = ["Ещё раз", () => { xStop(); xGo() }]; b2 = null }
   const btn = (el, b, cls) => { el.hidden = !b; if (b) { el.textContent = b[0]; el.onclick = b[1]; el.className = cls } };
   btn(x1, b1, X.s === "go" ? "pb g" : "pb"); btn(x2, b2, "pb g");
   const el = $("v19"), same = !el.hidden && el.dataset.s === X.s;
@@ -182,6 +231,6 @@ function xDraw() {
 }
 function xOpt(k) { if (X.meReady) return; X.opt[k] = X.opt[k] ? 0 : 1; vib("ui"); xDraw() }
 // вернулись из настроек Android (геолокация, разрешения) — сразу пробуем снова, без лишнего «Ещё раз»
-document.addEventListener("visibilitychange", () => { if (!document.hidden && isOpen && !$("v19").hidden && (X.s === "loc" || X.s === "perm")) xGo() });
+document.addEventListener("visibilitychange", () => { if (document.hidden || !isOpen || $("v19").hidden) return; if (["loc", "perm", "bt", "precise", "gms"].includes(X.s) && !X.denied) xGo(); else if (X.s !== "check") xDraw() });
 // лист закрыли — обмен останавливается
 const closeUI0 = closeUI; closeUI = function () { if (X.on) xStop(); return closeUI0() };

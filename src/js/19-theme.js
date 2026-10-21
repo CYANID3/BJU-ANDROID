@@ -3,7 +3,9 @@ function lum(h) { const n = parseInt(h.slice(1), 16), f = c => { c /= 255; retur
 // контраст по WCAG; цвет подтягивается к белому (тёмная тема) или к чёрному (светлая), пока не станет читаемым на всех фонах
 const crt = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05) };
 function ensC(c, bgs, t, dark) { let r = c; for (let k = 1; k <= 20 && Math.min(...bgs.map(b => crt(r, b))) < t; k++) r = hexMix(dark ? "#ffffff" : "#000000", c, k * .05); return r }
-const isDark = () => (document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light")) === "dark";
+// системная тема: в APK — от Android (WebView может не заметить смену темы без перезапуска), иначе — prefers-color-scheme
+const sysDark = () => typeof window.BJU_SYSDARK === "boolean" ? window.BJU_SYSDARK : matchMedia("(prefers-color-scheme:dark)").matches;
+const isDark = () => (document.documentElement.dataset.theme || (sysDark() ? "dark" : "light")) === "dark";
 // акцент по умолчанию — индиго (не совпадает с цветами Б / Ж / У); свой выбранный цвет сохраняется
 const AC0 = { dark: "#7c70f0", light: "#5b4fd6" }, acDef = () => AC0[isDark() ? "dark" : "light"];
 const acCur = () => (S.set && /^#[0-9a-f]{6}$/i.test(S.set.ac || "") && S.set.ac) || acDef();
@@ -61,7 +63,9 @@ function applyTint() {
   if (dark) r.style.setProperty("--mu", T.mu); else r.style.removeProperty("--mu");
 }
 function setTn(v) { S.set = Object.assign({}, S.set, { tn: v }); saveq(); vib("ui"); themeFade(() => { applyAc(); drawSet() }) }
-function applyTh() { const t = S.set && S.set.th, r = document.documentElement; if (t === "light" || t === "dark") r.dataset.theme = t; else delete r.dataset.theme }
+// «Как в системе»: если тему сообщает Android — ставим её явно (CSS не зависит от того, обновил ли WebView prefers-color-scheme)
+function applyTh() { const t = S.set && S.set.th, r = document.documentElement; if (t === "light" || t === "dark") r.dataset.theme = t; else if (typeof window.BJU_SYSDARK === "boolean") r.dataset.theme = window.BJU_SYSDARK ? "dark" : "light"; else delete r.dataset.theme }
+window.BJU_onSysTheme = () => { try { if (!(S.set && (S.set.th === "light" || S.set.th === "dark"))) applyAc() } catch (e) { } };
 function setTh(v) { S.set = Object.assign({}, S.set, { th: v }); saveq(); vib("ui"); themeFade(() => { applyAc(); drawSet() }) }
 // акцент и производные от него цвета: --act — значки и текст акцентом (на мягкой подложке --acs читаются на любом фоне),
 // --on — текст на заливке акцентом, --bar — тон нижней панели. Считаются для любого акцента и оттенка фона.

@@ -55,7 +55,7 @@ test('обмен целиком: поиск → код → выбор (без б
   const a = await openApp({ data: { ...DATA, set: { pf: { n: 'Алексей', c: '#6458dc' } } } });
   await a.ev(FAKE);
   await a.ev(() => naRun('xch')); await a.wait(400);
-  assert.match(await a.pg.textContent('#v19'), /Android один раз спросит разрешения «Устройства поблизости» и «Местоположение»/, 'первый раз — объяснение');
+  assert.match(await a.pg.textContent('#v19'), /Android один раз спросит разрешение «Устройства поблизости» \(на Android 10–12 — ещё точное «Местоположение»/, 'первый раз — объяснение');
   await a.pg.click('#x1'); await a.wait(400);
   const st = await calls(a, 'start'); assert.equal(st.length, 1); assert.equal(st[0][1], '1|Алексей|#6458dc|Pixel 8|3|1', 'имя для поиска: имя, цвет, модель, продукты, блюда');
   assert.match(await a.pg.textContent('#v19'), /Ищем телефоны рядом/);

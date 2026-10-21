@@ -41,3 +41,45 @@ test('обмен: геолокация выключена или поиск от
   assert.deepEqual(a.errors, []);
   await a.close();
 });
+
+test('обмен: 8034 при «Приблизительно» — экран «Нужно точное местоположение», запрос точного, подробности; при всех разрешениях — совет про Сервисы Google Play', async () => {
+  const a = await openApp({ data: { g: { p: 140, f: 70, c: 230 }, d: {}, db: [], set: { pf: { n: 'Алексей', c: '#6458dc' }, xi: 1 } } });
+  await a.ev(FAKE, { fail: '8034', coarse: true, fine: false, nearby: true, sdk: 34, gms: '24.40.33' });
+  await a.ev(() => { __x.fine = 0; BJU_NATIVE.exchange.requestPrecise = () => { __x.calls.push('requestPrecise'); return Promise.resolve({}) } });
+  await a.ev(() => xOpen()); await a.wait(400);
+  const t = await a.pg.textContent('#v19');
+  assert.match(t, /Нужно точное местоположение/); assert.match(t, /Код 8034/); assert.match(t, /приблизительное/); assert.match(t, /24\.40\.33/);
+  assert.equal(await a.pg.textContent('#x1'), 'Разрешить точное');
+  await a.pg.click('#x1'); await a.wait(300);
+  assert.equal(await a.ev(() => __x.calls.includes('requestPrecise')), true);
+  // пользователь не дал точное (окно не показалось) — путь через настройки
+  assert.equal(await a.pg.textContent('#x1'), 'Открыть настройки'); assert.match(await a.pg.textContent('#v19'), /Точное местоположение/);
+  await a.pg.click('#x1'); assert.equal(await a.ev(() => __x.calls.includes('openSettings')), true);
+  // всё разрешено и геолокация включена, но 8034 — не «включите геолокацию», а подсказка про Сервисы Google Play
+  await a.ev(FAKE, { fail: '8034', coarse: true, fine: true, nearby: true, sdk: 34 }); await a.ev(() => { xStop(); xGo() }); await a.wait(400);
+  assert.match(await a.pg.textContent('#v19'), /Сервисы Google Play не дают начать поиск/);
+  // точное получено — поиск начинается
+  await a.ev(FAKE, { coarse: true, fine: true, sdk: 34 }); await a.pg.click('#x1'); await a.wait(400);
+  assert.match(await a.pg.textContent('#v19'), /Ищем телефоны рядом/);
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});
+
+test('обмен: экран не бывает пустым — пока идёт проверка «Проверяем…», повторный запуск отменяет предыдущий, сбой отрисовки даёт «Ещё раз»', async () => {
+  const a = await openApp({ data: { g: { p: 140, f: 70, c: 230 }, d: {}, db: [], set: { pf: { n: 'Алексей', c: '#6458dc' }, xi: 1 } } });
+  // состояние «зависает» (как при системном окне разрешений)
+  await a.ev(() => { window.__rs = []; window.BJU_NATIVE = Object.assign({}, window.BJU_NATIVE, { exchange: { available: true, state: () => new Promise(r => __rs.push(r)), requestPerms: () => Promise.resolve({ granted: true }), start: () => Promise.resolve(), stop: () => Promise.resolve(), pause: () => Promise.resolve(), openSettings: () => Promise.resolve(), on: () => { } } }) });
+  await a.ev(() => { xOpen() }); await a.wait(400);
+  assert.match(await a.pg.textContent('#v19'), /Проверяем/);
+  // вернулись в приложение — второй запуск; первый (устаревший) ответ ничего не меняет
+  await a.ev(() => { xGo() }); await a.wait(100);
+  await a.ev(() => __rs[1]({ perm: 'granted', bt: true, btExists: true, loc: true, coarse: true, fine: true, sdk: 34 })); await a.wait(300);
+  assert.match(await a.pg.textContent('#v19'), /Ищем телефоны рядом/);
+  await a.ev(() => __rs[0]({ perm: 'denied', bt: false, btExists: true })); await a.wait(300);
+  assert.match(await a.pg.textContent('#v19'), /Ищем телефоны рядом/, 'устаревший ответ проигнорирован');
+  // неизвестное состояние — не пустой экран
+  await a.ev(() => { X.s = 'нечто'; xDraw() }); await a.wait(300);
+  assert.match(await a.pg.textContent('#v19'), /Не получилось/); assert.equal(await a.ev(() => !document.getElementById('x1').hidden), true);
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});

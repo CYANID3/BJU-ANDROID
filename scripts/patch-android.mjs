@@ -80,6 +80,8 @@ await patch('android/app/src/main/AndroidManifest.xml', s => {
   if (!s.includes('android.app.shortcuts')) s = s.replace('</activity>', '    <meta-data android:name="android.app.shortcuts" android:resource="@xml/bju_shortcuts" />\n        </activity>');
   // Обмен с телефоном рядом (Nearby Connections): поиск по Bluetooth, передача по Wi‑Fi. Разрешения — по списку из документации Google;
   // во время работы спрашивается только нужное для версии Android (BjuExchangePlugin.neededAliases)
+  // Местоположение объявлено без maxSdk: на Android 12L+ оно не нужно по документации и не спрашивается заранее, но если
+  // Сервисы Google Play всё же отклонят поиск с кодом 8034, приложение попросит его отдельно (BjuExchangePlugin.requestPrecise)
   const NEAR = [['ACCESS_WIFI_STATE', ''], ['CHANGE_WIFI_STATE', ''], ['BLUETOOTH', ' android:maxSdkVersion="30"'], ['BLUETOOTH_ADMIN', ' android:maxSdkVersion="30"'],
     ['ACCESS_COARSE_LOCATION', ''], ['ACCESS_FINE_LOCATION', ''], ['BLUETOOTH_ADVERTISE', ''], ['BLUETOOTH_CONNECT', ''], ['BLUETOOTH_SCAN', ''],
     ['NEARBY_WIFI_DEVICES', '']];

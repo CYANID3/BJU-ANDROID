@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.UriPermission;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
@@ -281,6 +282,42 @@ public class BjuNativePlugin extends Plugin {
             }
         } catch (Exception ignored) { }
         call.resolve();
+    }
+
+    // Системная тема (тёмная / светлая). Активность не пересоздаётся при её смене (uiMode в configChanges у Capacitor),
+    // и WebView не всегда обновляет prefers-color-scheme без перезапуска — поэтому сообщаем странице сами
+    private boolean sysDark(Configuration c) {
+        return c != null && (c.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+    }
+
+    @PluginMethod
+    public void sysTheme(PluginCall call) {
+        JSObject r = new JSObject();
+        r.put("dark", sysDark(getContext().getResources().getConfiguration()));
+        call.resolve(r);
+    }
+
+    private Boolean lastDark = null;
+
+    private void pushSysTheme(Configuration c) {
+        boolean d = sysDark(c);
+        if (lastDark != null && lastDark == d) return;
+        lastDark = d;
+        JSObject r = new JSObject();
+        r.put("dark", d);
+        notifyListeners("sysTheme", r);
+    }
+
+    @Override
+    protected void handleOnConfigurationChanged(Configuration newConfig) {
+        super.handleOnConfigurationChanged(newConfig);
+        pushSysTheme(newConfig);
+    }
+
+    @Override
+    protected void handleOnResume() {
+        super.handleOnResume();
+        pushSysTheme(getContext().getResources().getConfiguration());
     }
 
     @PluginMethod

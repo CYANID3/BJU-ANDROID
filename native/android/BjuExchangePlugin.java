@@ -84,21 +84,24 @@ public class BjuExchangePlugin extends Plugin {
         return client;
     }
 
+    // Разрешения — как в документации Nearby Connections (developers.google.com/nearby/connections/android/get-started):
+    //   Android 9 и ниже (API ≤ 28) — ACCESS_COARSE_LOCATION;
+    //   Android 10–12 (API 29–31)   — ACCESS_FINE_LOCATION, то есть ТОЧНОЕ: с «Приблизительно» поиск отклоняется с кодом 8034;
+    //   Android 12+ (API ≥ 31)      — BLUETOOTH_SCAN / ADVERTISE / CONNECT, Android 13+ — NEARBY_WIFI_DEVICES;
+    //   Android 12L+ (API ≥ 32)     — местоположение не нужно. Если Сервисы Google Play всё же отклонят поиск с 8034,
+    //   страница попросит местоположение отдельно (requestPrecise) — только тогда, когда без него не работает.
     private String[] neededAliases() {
         List<String> a = new ArrayList<>();
-        if (Build.VERSION.SDK_INT >= 31) a.add("bt");
-        if (Build.VERSION.SDK_INT >= 33) a.add("wifi");
-        a.add("locc");
-        a.add("locf");
+        int v = Build.VERSION.SDK_INT;
+        if (v >= 31) a.add("bt");
+        if (v >= 33) a.add("wifi");
+        if (v <= 28) a.add("locc");
+        else if (v <= 31) { a.add("locc"); a.add("locf"); }
         return a.toArray(new String[0]);
     }
 
-    // хватает приблизительного местоположения (Android 12+ даёт выбрать «Приблизительно»); до Android 12 нужно точное
     private boolean permsGranted() {
-        for (String al : neededAliases()) {
-            if (al.equals("locf") && Build.VERSION.SDK_INT >= 31) continue;
-            if (getPermissionState(al) != PermissionState.GRANTED) return false;
-        }
+        for (String al : neededAliases()) if (getPermissionState(al) != PermissionState.GRANTED) return false;
         return true;
     }
 
@@ -140,7 +143,6 @@ public class BjuExchangePlugin extends Plugin {
         JSObject o = new JSObject();
         String perm = "granted";
         for (String al : neededAliases()) {
-            if (al.equals("locf") && Build.VERSION.SDK_INT >= 31) continue;
             PermissionState s = getPermissionState(al);
             if (s == PermissionState.DENIED) { perm = "denied"; break; }
             if (s != PermissionState.GRANTED) perm = "prompt";
@@ -150,6 +152,11 @@ public class BjuExchangePlugin extends Plugin {
         o.put("btExists", btExists());
         o.put("wifi", wifiOn());
         o.put("loc", locOn());
+        // подробности для экрана ошибки: что именно разрешено (точное местоположение отдельно от приблизительного)
+        o.put("coarse", getPermissionState("locc") == PermissionState.GRANTED);
+        o.put("fine", getPermissionState("locf") == PermissionState.GRANTED);
+        o.put("nearby", Build.VERSION.SDK_INT < 31 || getPermissionState("bt") == PermissionState.GRANTED);
+        o.put("gms", gmsVersion());
         o.put("model", deviceName());
         o.put("sdk", Build.VERSION.SDK_INT);
         call.resolve(o);
@@ -163,6 +170,18 @@ public class BjuExchangePlugin extends Plugin {
             n = mod.toLowerCase().startsWith(man.toLowerCase()) ? mod : (man.isEmpty() ? mod : Character.toUpperCase(man.charAt(0)) + man.substring(1) + " " + mod);
         }
         return n.trim();
+    }
+
+    // версия Сервисов Google Play (Nearby Connections работает внутри них): для подсказки «обновите Сервисы Google Play»
+    private String gmsVersion() {
+        try { return getContext().getPackageManager().getPackageInfo("com.google.android.gms", 0).versionName; } catch (Exception e) { return ""; }
+    }
+
+    // попросить местоположение с точным (Android 12+ покажет «Изменить на точное», если приблизительное уже есть).
+    // Нужно на Android 10–12 и как запасной путь, если Сервисы Google Play отклонили поиск с 8034
+    @PluginMethod
+    public void requestPrecise(PluginCall call) {
+        requestPermissionForAliases(new String[] { "locc", "locf" }, call, "onPerms");
     }
 
     @PluginMethod

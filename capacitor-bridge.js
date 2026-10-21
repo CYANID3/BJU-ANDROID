@@ -75,6 +75,10 @@ if (hasBju) {
   document.documentElement.classList.add('native');
   Bju.addListener('insets', applyInsets);
   Bju.getInsets().then(applyInsets).catch(() => {});
+  // системная тема от Android (см. BjuNativePlugin.sysTheme): страница применяет её в режиме «Как в системе»
+  const sysTh = r => { if (!r || typeof r.dark !== 'boolean') return; window.BJU_SYSDARK = r.dark; window.BJU_onSysTheme?.(r.dark) };
+  Bju.addListener('sysTheme', sysTh);
+  if (Bju.sysTheme) Bju.sysTheme().then(sysTh).catch(() => {});
 }
 const bars = (color, light) => (hasBju ? Bju.setBars({ color, light }).catch(() => {}) : Promise.resolve());
 // Виджет рабочего стола: остаток калорий на сегодня
@@ -100,6 +104,7 @@ const exchange = hasEx ? {
   available: true,
   state: () => Ex.state(),
   requestPerms: () => Ex.requestPerms(),
+  requestPrecise: () => Ex.requestPrecise(),
   enableBt: () => Ex.enableBt(),
   openSettings: () => Ex.openSettings(),
   openLocation: () => Ex.openLocation(),
