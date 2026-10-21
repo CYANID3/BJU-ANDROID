@@ -1,0 +1,102 @@
+name: CI check (no release)
+
+on:
+  push:
+    branches: ['ci-check-*']
+
+# contents: write — нужно, чтобы создавать теги и релизы
+permissions:
+  contents: write
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    # фиксированная версия Ubuntu: ubuntu-latest переходит на Ubuntu 26, а установка Chromium для тестов
+    # (playwright install --with-deps) на новой версии может не работать
+    runs-on: ubuntu-24.04
+    env:
+      # Необязательные секреты для релизной подписи (Settings → Secrets → Actions).
+      # Если их нет, APK подписывается постоянным ключом из keystore/debug.keystore.
+      KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Автотесты в Chromium (эмуляция Pixel 7): если хоть один упал — APK не собирается и релиза нет
+      - name: Compute version
+        id: ver
+        run: |
+          BASE=$(node -p "require('./package.json').version.split('.').slice(0,2).join('.')")
+          NAME="$BASE.${{ github.run_number }}"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "code=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          echo "Version: $NAME (${{ github.run_number }})"
+
+      - name: Prepare Android project (web build, icons, splash, version)
+        env:
+          VITE_BUILD: ${{ steps.ver.outputs.name }}
+          APP_VERSION_NAME: ${{ steps.ver.outputs.name }}
+          APP_VERSION_CODE: ${{ steps.ver.outputs.code }}
+        run: npm run android:prepare
+
+      - name: Build APK (release key from secrets)
+        if: env.KEYSTORE_BASE64 != ''
+        working-directory: android
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon \
+            -Pandroid.injected.signing.store.file="$RUNNER_TEMP/release.keystore" \
+            -Pandroid.injected.signing.store.password="$KEYSTORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias="$KEY_ALIAS" \
+            -Pandroid.injected.signing.key.password="$KEY_PASSWORD"
+          cp app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/app.apk"
+
+      - name: Build APK (persistent debug key)
+        if: env.KEYSTORE_BASE64 == ''
+        working-directory: android
+        run: |
+          # Постоянный ключ: без него каждая сборка подписывалась бы новым случайным
+          # ключом, и Android не давал бы обновить приложение поверх старого.
+          mkdir -p ~/.android
+          cp ../keystore/debug.keystore ~/.android/debug.keystore
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/app.apk"
+
+      - name: Name APK
+        id: apk
+        run: |
+          FILE="BJU-${{ steps.ver.outputs.name }}.apk"
+          mv "$RUNNER_TEMP/app.apk" "$FILE"
+          echo "file=$FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BJU-${{ steps.ver.outputs.name }}
+          path: ${{ steps.apk.outputs.file }}
+          if-no-files-found: error
+          retention-days: 14
+
