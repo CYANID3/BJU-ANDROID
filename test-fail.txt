@@ -1,0 +1,87 @@
+  ...
+# Subtest: быстрые переходы (dark, процессор ×4): лист всегда приходит в целое состояние
+not ok 32 - быстрые переходы (dark, процессор ×4): лист всегда приходит в целое состояние
+  ---
+  duration_ms: 91715.520569
+  type: 'test'
+  location: '/home/runner/work/BJU-ANDROID/BJU-ANDROID/tests/fuzz.test.mjs:23:59'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   "pick('sn')+160 → if(!$('v1').hidden&&IX.length)pc(0)+40 → backStep()+160 → stats()+16 → nw()+300 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh",
+    +   "edit(0)+16 → pick('th')+90 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh",
+    +   "pick('ac')+300 → op(2)+16 → op(2)+300 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh full",
+    +   'op(2)+300 → sets()+300 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh',
+    +   'wtOpen()+0 → fp(1)+0 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh',
+    +   "backStep()+0 → pick('ac')+90 → pick('dw')+90 → mv(1)+16 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh",
+    +   "if(!$('v1').hidden&&IX.length)pc(0)+160 → sets()+90 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh",
+    +   "nw()+40 → stats()+40 → pick('dw')+16 → edit(0)+160 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh"
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: "pick('sn')+160 → if(!$('v1').hidden&&IX.length)pc(0)+40 → backStep()+160 → stats()+16 → nw()+300 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh"
+    1: "edit(0)+16 → pick('th')+90 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh"
+    2: "pick('ac')+300 → op(2)+16 → op(2)+300 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh full"
+    3: 'op(2)+300 → sets()+300 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh'
+    4: 'wtOpen()+0 → fp(1)+0 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh'
+    5: "backStep()+0 → pick('ac')+90 → pick('dw')+90 → mv(1)+16 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh"
+    6: "if(!$('v1').hidden&&IX.length)pc(0)+160 → sets()+90 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh"
+    7: "nw()+40 → stats()+40 → pick('dw')+16 → edit(0)+160 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh"
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/runner/work/BJU-ANDROID/BJU-ANDROID/tests/fuzz.test.mjs:35:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: нижняя панель всегда у нижнего края; тост — над ней; на карточке дня скрыта
+--
+  ...
+# Subtest: быстрые переходы (dark, процессор ×4): лист всегда приходит в целое состояние
+not ok 32 - быстрые переходы (dark, процессор ×4): лист всегда приходит в целое состояние
+  ---
+  duration_ms: 92362.849456
+  type: 'test'
+  location: '/home/runner/work/BJU-ANDROID/BJU-ANDROID/tests/fuzz.test.mjs:23:59'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   "pick('sn')+160 → if(!$('v1').hidden&&IX.length)pc(0)+40 → backStep()+160 → stats()+16 → nw()+300 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh",
+    +   "edit(0)+16 → pick('th')+90 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh",
+    +   "pick('ac')+300 → op(2)+16 → op(2)+300 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh full",
+    +   'op(2)+300 → sets()+300 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh',
+    +   'wtOpen()+0 → fp(1)+0 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh',
+    +   "backStep()+0 → pick('ac')+90 → pick('dw')+90 → mv(1)+16 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh",
+    +   "if(!$('v1').hidden&&IX.length)pc(0)+160 → sets()+90 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh",
+    +   "nw()+40 → stats()+40 → pick('dw')+16 → edit(0)+160 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh"
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: "pick('sn')+160 → if(!$('v1').hidden&&IX.length)pc(0)+40 → backStep()+160 → stats()+16 → nw()+300 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh"
+    1: "edit(0)+16 → pick('th')+90 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh"
+    2: "pick('ac')+300 → op(2)+16 → op(2)+300 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh full"
+    3: 'op(2)+300 → sets()+300 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh'
+    4: 'wtOpen()+0 → fp(1)+0 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh'
+    5: "backStep()+0 → pick('ac')+90 → pick('dw')+90 → mv(1)+16 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh"
+    6: "if(!$('v1').hidden&&IX.length)pc(0)+160 → sets()+90 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh"
+    7: "nw()+40 → stats()+40 → pick('dw')+16 → edit(0)+160 ⇒ шапка скрыта на hd op=1; крестик закрыт: sh"
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/runner/work/BJU-ANDROID/BJU-ANDROID/tests/fuzz.test.mjs:35:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: нижняя панель всегда у нижнего края; тост — над ней; на карточке дня скрыта
