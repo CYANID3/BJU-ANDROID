@@ -30,9 +30,8 @@ function naRun(k) {
   else if (k === "today") { if (REP) togRep(0); if (cur !== today) { const d = today > cur ? 1 : -1; NABS = 1; slide($("app"), d, () => { cur = today }) } }
   else ({ cal, stat: stats, prod: mng, set: sets })[k]()
 }
-// Настройка панели: { n — мест, big — большая кнопка в центре, s — действия слева направо, c — действие кнопки, когда она выключена,
-// x — пункты, убранные при переходе на компактную панель (вернутся при «Полная») }.
-// По бокам пункты идут парами: с кнопкой 3 или 5 мест, без кнопки — 2 или 4. «Продукты» и «Настройки» — всегда на панели, не в центре.
+// Настройка панели: { n — мест, big — большая кнопка в центре, s — действия слева направо, c — действие кнопки, когда она скрыта }.
+// С кнопкой — 2–4 пункта по бокам (всего 3–5 мест), без кнопки — 2–5 пунктов. «Продукты» и «Настройки» — всегда на панели, не в центре.
 // Старая настройка (только действие «＋» или «Скрыть кнопку») переводится без потерь: панель та же, что была.
 const FA2N = { meal: "meal", prod: "pnew", dish: "dish", wt: "wt" };
 function navGet() {
@@ -40,29 +39,30 @@ function navGet() {
   if (!v || typeof v !== "object" || !Array.isArray(v.s)) { const fa = S.set && S.set.fa; v = fa === "hide" ? { n: 4, big: false, s: ["cal", "prod", "stat", "set"], c: "meal" } : { n: 5, big: true, s: ["cal", "prod", FA2N[fa] || "meal", "stat", "set"] } }
   return navFix(v)
 }
+// пункты слева от кнопки: при нечётном числе пунктов слева на один больше
+const navLeft = k => Math.ceil(k / 2);
 // приведение к правильному виду — при чтении, после каждого изменения и после загрузки файла
 function navFix(v) {
-  const big = !!v.big, ok = big ? [3, 5] : [2, 4], n = ok.includes(v.n) ? v.n : ok[1], m = (n - 1) / 2, raw = Array.isArray(v.s) ? v.s : [];
+  const big = !!v.big, raw = Array.isArray(v.s) ? v.s : [], n0 = raw.length, m0 = big ? navLeft(n0 - 1) : -1;
   // центр: прежнее действие, если оно доступно и не обязательное; иначе — «Приём пищи» и дальше по списку
-  let c = null; if (big) { const r = raw[m]; c = nOk(r) && !NREQ.includes(r) ? r : NCEN.find(k => nOk(k) && (k === r || !raw.includes(k))) || NCEN.find(nOk) }
-  const side = []; raw.forEach((k, i) => { if (big && i === m) return; if (nOk(k) && k !== c && !side.includes(k)) side.push(k) });
+  let c = null; if (big) { const r = raw[m0]; c = nOk(r) && !NREQ.includes(r) ? r : NCEN.find(k => nOk(k) && (k === r || !raw.includes(k))) || NCEN.find(nOk) }
+  const side = []; raw.forEach((k, i) => { if (big && i === m0) return; if (nOk(k) && k !== c && !side.includes(k)) side.push(k) });
   NREQ.forEach(k => { if (!side.includes(k)) side.push(k) });
-  const need = n - (big ? 1 : 0);
-  while (side.length > need) { let i = -1; for (let j = side.length - 1; j >= 0; j--) if (!NREQ.includes(side[j])) { i = j; break } side.splice(i, 1) }
-  while (side.length < need) side.splice(side.length - 1, 0, NSUG.find(k => nOk(k) && !side.includes(k) && k !== c));
-  const h = side.length / 2, s = big ? [...side.slice(0, h), c, ...side.slice(h)] : side, o = { n, big, s };
-  if (NA[v.c]) o.c = v.c; if (Array.isArray(v.x)) o.x = v.x.filter(k => NA[k]).slice(0, 2); return o
+  const max = big ? 4 : 5;
+  while (side.length > max) { let i = -1; for (let j = side.length - 1; j >= 0; j--) if (!NREQ.includes(side[j])) { i = j; break } side.splice(i, 1) }
+  const L = navLeft(side.length), s = big ? [...side.slice(0, L), c, ...side.slice(L)] : side, o = { n: s.length, big, s };
+  if (NA[v.c]) o.c = v.c; return o
 }
-const navMid = v => v.big ? (v.n - 1) / 2 : -1;
-const navCols = (v, w) => v.big ? `repeat(${(v.n - 1) / 2},1fr) ${w || 84}px repeat(${(v.n - 1) / 2},1fr)` : `repeat(${v.n},1fr)`;
+const navMid = v => v.big ? navLeft(v.n - 1) : -1;
+const navCols = (v, w) => { if (!v.big) return `repeat(${v.n},1fr)`; const L = navLeft(v.n - 1), R = v.n - 1 - L, f = k => `${(L * R || 1) / k}fr`; return `repeat(${L},${f(L)}) ${w || 84}px repeat(${R},${f(R)})` };
 // старое поле fabAction пишется по-прежнему — файл открывается и в старой версии приложения
 function navSave(v, msg, old) {
   v = navFix(v); const m = navMid(v), fa = m >= 0 ? (Object.keys(FA2N).find(k => FA2N[k] === v.s[m]) || "meal") : "hide";
   S.set = Object.assign({}, S.set, { nav: v, fa }); saveq(); barSync(); vib("ui");
-  if (!$("v15").hidden) drawNav(); if (!$("v16").hidden) drawNavPick();
+  if (!$("v15").hidden) { if (navQuiet) drawNav(); else navRedraw() } if (!$("v16").hidden) drawNavPick();
   if (msg) { navUndo = old ? { v: old, m: msg } : null; toast(msg, !!old, old ? 6000 : 3000) }
 }
-let navUndo = null;
+let navUndo = null, navQuiet = 0;
 // панель на главном экране; пересобирается только при изменении
 function barSync() {
   const nav = document.querySelector(".bt"), v = navGet(), m = navMid(v), key = JSON.stringify(v.s) + m;
@@ -77,8 +77,18 @@ function fabDo() { const v = navGet(), m = navMid(v); naRun(m >= 0 ? v.s[m] : "m
 // старый способ задать кнопку (meal | prod | dish | wt | hide) — тоже работает
 function setFa(x) {
   const v = navGet(), m = navMid(v);
-  if (x === "hide") { if (v.big) navSave({ ...v, big: false, n: v.n - 1, s: v.s.filter((k, i) => i !== m), c: v.s[m] }) }
-  else { const k = FA2N[x] || "meal"; if (v.big) { const s = v.s.slice(), j = s.indexOf(k); if (j >= 0) s[j] = s[m]; s[m] = k; navSave({ ...v, s }) } else { const h = v.s.length / 2; navSave({ ...v, big: true, n: v.n + 1, s: [...v.s.slice(0, h), k, ...v.s.slice(h)] }) } }
+  if (x === "hide") { if (v.big) navSave({ ...v, big: false, s: v.s.filter((k, i) => i !== m), c: v.s[m] }); return }
+  navCenter(FA2N[x] || "meal")
+}
+// поставить действие на большую кнопку (показать её, если скрыта). Если действие стоит сбоку — переезжает в центр;
+// если по бокам уже 5 пунктов — крайний справа необязательный уходит (вернуть — «Отменить»)
+function navCenter(k, msg) {
+  const v = navGet(), m = navMid(v), old = JSON.parse(JSON.stringify(v));
+  if (v.big) { const s = v.s.slice(), j = s.indexOf(k); if (j === m) return; if (j >= 0) s[j] = s[m]; s[m] = k; return navSave({ ...v, s }, msg && (j >= 0 ? `«${NA[k][1]}» и «${NA[s[j]][1]}» поменялись местами` : `Большая кнопка: ${NA[k][1]}`), msg && old) }
+  const side = v.s.filter(x => x !== k), cut = [];
+  while (side.length > 4) { let i = -1; for (let j = side.length - 1; j >= 0; j--) if (!NREQ.includes(side[j])) { i = j; break } cut.push(side.splice(i, 1)[0]) }
+  const L = navLeft(side.length);
+  navSave({ ...v, big: true, s: [...side.slice(0, L), k, ...side.slice(L)] }, msg && (cut.length ? `Большая кнопка: ${NA[k][1]}. Убрано: ${cut.map(x => NA[x][1]).join(", ")}` : `Большая кнопка: ${NA[k][1]}`), msg && old)
 }
 
 // ===== кнопки «Новый продукт» / «Новое блюдо»: сверху (под поиском, по умолчанию) или снизу (под списком) =====

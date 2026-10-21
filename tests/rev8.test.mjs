@@ -35,7 +35,7 @@ test('темп: переход листа целиком ≤ 0,3 с, новое 
   const r = await a.ev(async () => { pick('th'); await Promise.resolve(); await Promise.resolve();
     const all = document.getAnimations().filter(x => x instanceof Animation && !(x instanceof CSSTransition) && !(x instanceof CSSAnimation)).map(x => { const t = x.effect.getComputedTiming(); return [t.delay || 0, t.endTime] });
     const L = [document.querySelector('#ov > .svl'), ...document.querySelectorAll('#ov > .svl .svl')].flatMap(e => e.getAnimations()).filter(x => x.effect.getKeyframes().some(k => k.opacity != null)).map(x => x.effect.getComputedTiming().endTime);
-    const v = $('v13').getAnimations().length, sh = shEl().querySelectorAll('.hd, .shf').length && [...shEl().querySelectorAll('.hd, .hd *, .shf')].reduce((n, e) => n + e.getAnimations().filter(x => !(x instanceof CSSTransition)).length, 0);
+    const v = $('v13').getAnimations().filter(x => x.effect.getKeyframes().some(k => k.opacity != null)).length, sh = shEl().querySelectorAll('.hd, .shf').length && [...shEl().querySelectorAll('.hd, .hd *, .shf')].reduce((n, e) => n + e.getAnimations().filter(x => !(x instanceof CSSTransition) && x.effect.getKeyframes().some(k => k.opacity != null)).length, 0);
     const Lbg = [...document.querySelectorAll('#ov .svl')].map(e => getComputedStyle(e).backgroundColor).find(c => c !== 'rgba(0, 0, 0, 0)') || 'rgba(0, 0, 0, 0)';
     return { end: Math.max(...all.map(x => x[1])), oldEnd: Math.max(...L), v, sh, Lbg } });
   assert.ok(r.end <= 300, `весь переход ${r.end} мс`); assert.ok(r.oldEnd <= 120, 'старое гаснет быстро');

@@ -36,7 +36,7 @@ test('смена экрана в листе: шапка, содержимое и
   const a = await openApp({ data: { g: { p: 200, f: 80, c: 350 }, d: {}, db: [['RedBull Zero', 0, 0, 0, [['Баночка', 250]]]] } });
   await a.ev(() => mng()); await a.wait(500);
   const r = await a.ev(async () => { edit(0); await Promise.resolve(); await Promise.resolve();
-    const sh = shEl(), n = [sh.querySelector('.hd'), ...sh.querySelectorAll('.hd *'), $('v3'), sh.querySelector('.shf')].reduce((k, e) => k + e.getAnimations().filter(x => !(x instanceof CSSTransition)).length, 0);
+    const sh = shEl(), n = [sh.querySelector('.hd'), ...sh.querySelectorAll('.hd *'), $('v3'), sh.querySelector('.shf')].reduce((k, e) => k + e.getAnimations().filter(x => !(x instanceof CSSTransition) && x.effect.getKeyframes().some(k => k.opacity != null)).length, 0); // ревизия 17: сдвиг вместе с краем листа можно, прозрачность — нет
     document.getAnimations().forEach(x => x.pause());
     const hd = sh.querySelector('.hd'), ops = [hd, hd.querySelector('.ht'), hd.querySelector('.x'), $('v3')].map(e => getComputedStyle(e).opacity);
     document.getAnimations().forEach(x => x.play()); return { n, ops, st: $('st').textContent } });

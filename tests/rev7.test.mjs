@@ -49,12 +49,12 @@ test('шапка листа не остаётся пустой: прерванн
   const r = await a.ev(async () => {
     fp(1); await Promise.resolve(); await Promise.resolve();
     // ревизия 10: новый экран (шапка, содержимое, низ) не анимируется — сверху гаснет непрозрачная копия старого
-    const hd = document.querySelector('#ov .hd'), ht = hd.querySelector('.ht'), was = ht.getAnimations().length, own = hd.getAnimations().length,
+    const hd = document.querySelector('#ov .hd'), ht = hd.querySelector('.ht'), was = ht.getAnimations().filter(x => x.effect.getKeyframes().some(k => k.opacity != null)).length, own = hd.getAnimations().filter(x => x.effect.getKeyframes().some(k => k.opacity != null)).length,
       fills = ht.getAnimations().map(x => x.effect.getTiming().fill);
     document.getAnimations().forEach(x => x.pause()); const paused = getComputedStyle(hd).opacity; svKill();
     return { was, own, fills, paused, op: getComputedStyle(ht).opacity, left: document.querySelectorAll('#ov > .svl').length };
   });
-  assert.equal(r.was + r.own, 0, 'ревизия 10: шапка не анимируется вовсе — её ничто не делает прозрачной'); assert.equal(r.paused, '1', 'даже застывший переход не прячет шапку');
+  assert.equal(r.was + r.own, 0, 'ревизия 10: шапку ничто не делает прозрачной (ревизия 17: только сдвиг вместе с краем)'); assert.equal(r.paused, '1', 'даже застывший переход не прячет шапку');
   assert.ok(r.fills.every(f => f === 'auto' || f === 'none'), 'без fill: backwards'); assert.equal(r.op, '1', 'после прерывания заголовок виден'); assert.equal(r.left, 0);
   // страница скрыта (системное окно выбора файла) — экран меняется сразу, без анимаций
   const h = await a.ev(() => { Object.defineProperty(document, 'hidden', { value: true, configurable: true }); backStep(); const n = document.querySelector('#ov .hd').getAnimations().length + document.querySelectorAll('#ov > .svl').length; delete document.hidden; return n });

@@ -15,7 +15,7 @@ test('совместимость: старые настройки «＋» даю
   }
 });
 
-test('правила панели: с кнопкой 3 или 5 мест, без — 2 или 4; без повторов; обязательные всегда; 10 000 случайных изменений', async () => {
+test('правила панели: с кнопкой 2–4 пункта по бокам, без кнопки 2–5; без повторов; обязательные всегда; 10 000 случайных изменений', async () => {
   const a = await openApp();
   const r = await a.ev(() => {
     const bad = []; let seed = 11, steps = 0; const rnd = n => (seed = (seed * 1103515245 + 12345) % 2147483648) % n;
@@ -23,10 +23,10 @@ test('правила панели: с кнопкой 3 или 5 мест, без
       S.set = { wt: rnd(2) ? 'on' : 'off', fa: ['meal', 'hide', 'prod', 'wt'][rnd(4)] }; barSync();
       for (let i = 0; i < 25; i++) {
         steps++; const op = rnd(6), v0 = navGet();
-        if (op === 0) navFull(!!rnd(2)); else if (op === 1) navBig(); else if (op === 2) { navSlot = rnd(v0.n); const ks = Object.keys(NA); navSet(ks[rnd(ks.length)]) }
+        const ks = Object.keys(NA); if (op === 0) (rnd(2) ? navRm : navAdd)(ks[rnd(ks.length)]); else if (op === 1) { navSlot = -1; navSet(rnd(4) ? ks[rnd(ks.length)] : '') } else if (op === 2) { navSlot = rnd(v0.n); navSet(ks[rnd(ks.length)]) }
         else if (op === 3) setWt(rnd(2) ? 'on' : 'off'); else if (op === 4) setFa(['meal', 'prod', 'dish', 'wt', 'hide'][rnd(5)]); else undo();
         const v = navGet(), m = navMid(v), dom = [...document.querySelectorAll('.bt>button')], e = [];
-        if (!(v.big ? [3, 5] : [2, 4]).includes(v.n) || v.s.length !== v.n) e.push('count');
+        const sides = v.n - (v.big ? 1 : 0); if (sides < 2 || sides > (v.big ? 4 : 5) || v.s.length !== v.n) e.push('count'); if (v.big && m !== Math.ceil(sides / 2)) e.push('mid');
         if (new Set(v.s).size !== v.n) e.push('dup'); if (!v.s.includes('prod') || !v.s.includes('set')) e.push('req');
         if (m >= 0 && ['prod', 'set'].includes(v.s[m])) e.push('center'); if (v.s.some(k => !nOk(k))) e.push('unavail');
         if (dom.length !== v.n || !!document.getElementById('fab') !== v.big) e.push('dom');
@@ -41,24 +41,33 @@ test('правила панели: с кнопкой 3 или 5 мест, без
   await a.close();
 });
 
-test('экран «Нижняя панель»: кнопка, состав, выбор действия с обменом местами, «Отменить»; панель меняется сразу', async () => {
+test('экран «Нижняя панель»: убрать и добавить пункт, кнопка в центре (выбор, скрыть), обмен местами, «Отменить»; панель меняется сразу', async () => {
   const a = await openApp();
   await a.ev(() => { sets(); navOpen() }); await a.wait(500);
-  assert.equal(await a.ev(() => [$('st').textContent, document.querySelectorAll('.pbv>button').length, document.querySelectorAll('#nvl .nrow').length].join()), 'Нижняя панель,5,4');
-  // компактная: остаются обязательные и кнопка; «Отменить» возвращает как было
-  await a.ev(() => navFull(false)); await a.wait(300);
-  assert.equal(await bar(a), 'Продукты | [Приём пищи по времени] | Настройки');
-  assert.match(await a.ev(() => $('tm').textContent), /Убрано: Календарь, Статистика/);
-  await a.pg.click('#tt button'); await a.wait(300);
+  assert.equal(await a.ev(() => [$('st').textContent, document.querySelectorAll('.pbv>button').length, document.querySelectorAll('#nvl .nrow').length, !!document.querySelector('#nvl .ctr'), !!document.querySelector('.lyo')].join()), 'Нижняя панель,5,4,true,false');
+  // убрать пункт: панель сразу меняется, кнопка остаётся точно в центре; «Отменить» возвращает
+  await a.ev(() => navRm('stat')); await a.wait(400);
+  assert.equal(await bar(a), 'Календарь | Продукты | [Приём пищи по времени] | Настройки');
+  const mid = await a.ev(() => { const f = $('fab').getBoundingClientRect(); return Math.abs(f.left + f.width / 2 - innerWidth / 2) });
+  assert.ok(mid < 1.5, `кнопка по центру и при трёх пунктах (${mid})`);
+  assert.equal(await a.ev(() => document.querySelector('#nva [data-a="stat"]') !== null), true, '«Статистика» — в «Можно добавить»');
+  await a.pg.click('#tt button'); await a.wait(400);
   assert.equal(await bar(a), 'Календарь | Продукты | [Приём пищи по времени] | Статистика | Настройки');
-  // выключить кнопку → 4 места; включить → её действие вернулось
-  await a.pg.click('#nbig'); await a.wait(300);
+  // с кнопкой — не больше четырёх пунктов
+  await a.ev(() => navAdd('today')); assert.match(await a.ev(() => $('tm').textContent), /не больше четырёх/);
+  // скрыть кнопку → 4 пункта, теперь можно пятый
+  await a.ev(() => { navPick(-1) }); await a.wait(400);
+  assert.equal(await a.ev(() => [...document.querySelectorAll('#v16 .gh')].map(g => g.textContent).join()), 'Добавить,Открыть', 'для кнопки — без обязательных');
+  await a.ev(() => navSet('')); await a.wait(400);
   assert.equal(await bar(a), 'Календарь | Продукты | Статистика | Настройки');
-  await a.ev(() => setFa('dish')); await a.wait(200);
+  assert.equal(await a.ev(() => !$('v15').hidden && document.querySelector('#nvl .ctr small').textContent.startsWith('Скрыта')), true);
+  await a.ev(() => navAdd('today')); await a.wait(300);
+  assert.equal(await bar(a), 'Календарь | Продукты | Статистика | Сегодня | Настройки');
+  // показать кнопку с действием «Новое блюдо»: пунктов 5 → крайний необязательный уходит, «Отменить»
+  await a.ev(() => { navPick(-1); navSet('dish') }); await a.wait(400);
   assert.equal(await bar(a), 'Календарь | Продукты | [Новое блюдо] | Статистика | Настройки');
-  await a.ev(() => navBig()); await a.ev(() => navBig()); await a.wait(200);
-  assert.equal(await bar(a), 'Календарь | Продукты | [Новое блюдо] | Статистика | Настройки', 'выключили и включили — то же действие');
-  // выбор для места 1: занятое действие — «поменяются местами»; обязательное в центр нельзя; вес выключен — неактивен
+  assert.match(await a.ev(() => $('tm').textContent), /Убрано: Сегодня/);
+  // выбор для места 1: занятое — «поменяются местами»; вес выключен — неактивен
   await a.ev(() => { setWt('off'); navPick(0) }); await a.wait(400);
   assert.equal(await a.ev(() => !$('v16').hidden && $('st').textContent), 'Место 1 из 5');
   assert.match(await a.ev(() => document.querySelector('#v16 .row.used').textContent), /поменяются местами/);
@@ -66,12 +75,30 @@ test('экран «Нижняя панель»: кнопка, состав, вы
   await a.ev(() => navSet('stat')); await a.wait(400);
   assert.equal(await bar(a), 'Статистика | Продукты | [Новое блюдо] | Календарь | Настройки');
   assert.equal(await a.ev(() => !$('v15').hidden), true, 'после выбора — снова экран панели');
-  await a.ev(() => navPick(2)); await a.wait(300);
-  assert.equal(await a.ev(() => [...document.querySelectorAll('#v16 .gh')].map(g => g.textContent).join()), 'Добавить,Открыть', 'для кнопки — без обязательных');
+  await a.ev(() => navPick(-1)); await a.wait(300);
   await a.ev(() => BJU_onBack()); await a.wait(300); assert.equal(await a.ev(() => !$('v15').hidden), true, '«Назад» — к панели');
   await a.ev(() => BJU_onBack()); await a.wait(300); assert.equal(await a.ev(() => !$('v7').hidden && $('st').textContent), 'Настройки');
   // обязательный пункт выбрать нельзя — подсказка
   await a.ev(() => navPick(1)); assert.match(await a.ev(() => $('tm').textContent), /обязательный пункт/);
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});
+
+test('переходы без рывков: заголовок нового экрана едет вместе с краем листа, строки панели — плавно', async () => {
+  const a = await openApp();
+  await a.ev(() => sets()); await a.wait(600);
+  // «Настройки» → «Норма» (лист становится ниже): в первом кадре заголовок там же, где был старый
+  const r = await a.ev(async () => { const y0 = $('st').getBoundingClientRect().top; goals(1); await new Promise(r => setTimeout(r, 0));
+    document.getAnimations().forEach(x => { try { x.pause(); x.currentTime = 0 } catch (e) { } }); await new Promise(r => requestAnimationFrame(r));
+    const y1 = $('st').getBoundingClientRect().top; document.getAnimations().forEach(x => { try { x.finish() } catch (e) { } }); await new Promise(r => setTimeout(r, 400));
+    return { y0, y1, y2: $('st').getBoundingClientRect().top } });
+  assert.ok(Math.abs(r.y1 - r.y0) < 12, `заголовок не прыгает (разница — только из-за подписи под ним): ${r.y0} → ${r.y1}`); assert.ok(r.y2 - r.y0 > 100, 'и доезжает до нового края');
+  // убрать пункт: строки ниже съезжают плавно, группа меняет высоту плавно
+  await a.ev(() => { cl(); sets(); navOpen() }); await a.wait(700);
+  const q = await a.ev(async () => { const s0 = document.querySelector('#nvl [data-k="set"]').getBoundingClientRect().top; navRm('stat'); await new Promise(r => setTimeout(r, 0));
+    const an = $('v15').getAnimations({ subtree: true }).length; document.getAnimations().forEach(x => { try { x.pause(); x.currentTime = 0 } catch (e) { } }); await new Promise(r => requestAnimationFrame(r));
+    const s1 = document.querySelector('#nvl [data-k="set"]').getBoundingClientRect().top; document.getAnimations().forEach(x => { try { x.finish() } catch (e) { } }); return { s0, s1, an } });
+  assert.ok(q.an >= 2, 'есть анимации строк и высоты'); assert.ok(Math.abs(q.s1 - q.s0) < 2, `«Настройки» начинает со старого места: ${q.s0} → ${q.s1}`);
   assert.deepEqual(a.errors, []);
   await a.close();
 });

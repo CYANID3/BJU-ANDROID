@@ -81,6 +81,12 @@ function svPlay(sh, snap) {
     L.style.position = "absolute"; L.style.left = L.style.top = "0px"; ov.insertBefore(cb, L); cb.appendChild(L); out.push(cb);
     cb.animate([{ transform: "none" }, { transform: `translateY(${d}px)` }], { duration: D, easing: E, fill: "forwards" });
     L.animate([{ transform: "none" }, { transform: `translateY(${-d}px)` }], { duration: D, easing: E, fill: "forwards" });
+    // новые шапка и содержимое едут вниз вместе с краем — начинают там, где была старая шапка, а не появляются сразу
+    // на новом месте (раньше заголовок «перепрыгивал» вниз до того, как край листа к нему подъедет). Лист их не обрезает на время пути
+    sh.style.overflow = "visible";
+    const mv = [sh.querySelector(".hd"), shBody()].map(el => el.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }));
+    try { sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E, pseudoElement: "::before" }) } catch (e) { }
+    fin.push(mv[0].finished); mv[0].finished.catch(() => { }).then(() => { sh.style.overflow = "" })
   } else if (d < -1) {
     // лист стал выше: он поднимается целиком с прежней высоты (внизу он уходит за край экрана — там ничего не видно)
     fin.push(sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }).finished);
