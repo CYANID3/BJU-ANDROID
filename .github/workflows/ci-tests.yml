@@ -19,7 +19,7 @@ jobs:
         run: |
           set +e
           npm run build
-          for i in 1 2; do RATE=4 node --test tests/_fz.test.mjs > test-out-$i.txt 2>&1; echo "EXIT $?" >> test-out-$i.txt; done
+          for i in 1 2; do npm test > test-out-$i.txt 2>&1; echo "EXIT $?" >> test-out-$i.txt; done
           grep -h -B2 -A40 "^not ok" test-out-*.txt > test-fail.txt || true
           git config user.name ci; git config user.email ci@example.com
           git add test-out-*.txt test-fail.txt && git commit -m "test report" && git push
