@@ -100,3 +100,17 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+
+      - name: Report (permissions, Nearby API) back to the branch
+        run: |
+          set +e
+          AAPT=$(ls $ANDROID_HOME/build-tools/*/aapt2 | tail -1)
+          {
+            echo "== aapt2 permissions"; $AAPT dump permissions "${{ steps.apk.outputs.file }}"
+            echo "== badging"; $AAPT dump badging "${{ steps.apk.outputs.file }}" | grep -E "sdkVersion|targetSdk|package:"
+            echo "== nearby aar"; AAR=$(find ~/.gradle/caches -name "play-services-nearby-*.aar" | head -1); echo "$AAR"
+            mkdir -p /tmp/nb && cd /tmp/nb && unzip -o -q "$AAR" classes.jar && javap -classpath classes.jar com.google.android.gms.nearby.connection.ConnectionInfo
+            echo "== dex classes"; cd "$GITHUB_WORKSPACE"; unzip -o -q "${{ steps.apk.outputs.file }}" 'classes*.dex' -d /tmp/dx; for f in /tmp/dx/*.dex; do strings "$f" | grep -o "Lkg/bju/app/[A-Za-z$]*;" ; done | sort -u
+          } > ci-info.txt 2>&1
+          git config user.name ci; git config user.email ci@example.com
+          git add ci-info.txt && git commit -m "ci-info" && git push
