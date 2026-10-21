@@ -17,6 +17,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Tests x2, output to branch
         run: |
+          set +e
           npm run build
           for i in 1 2; do npm test > test-out-$i.txt 2>&1; echo "EXIT $?" >> test-out-$i.txt; done
           grep -h -B2 -A40 "^not ok" test-out-*.txt > test-fail.txt || true
