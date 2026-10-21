@@ -28,7 +28,9 @@ test('профиль: строка вверху «Настроек», имя и 
   await a.ev(() => pfSave()); assert.match(await a.ev(() => $('tm').textContent), /Введите имя/);
   await a.pg.fill('#pfn', 'Алексей'); await a.ev(() => pfColor('#0d7f70'));
   assert.equal(await a.ev(() => [document.querySelector('#v18 .pfh .xav').textContent, document.querySelector('#v18 .pfh .xav').style.background, $('pfv').textContent].join()), 'А,rgb(13, 127, 112),Алексей');
-  assert.equal(await a.ev(() => document.activeElement.id), 'pfn', 'выбор цвета не закрывает клавиатуру');
+  assert.notEqual(await a.ev(() => document.activeElement.id), 'pfn', 'выбор цвета убирает фокус с имени — клавиатура не открывается снова');
+  await a.ev(() => { $('pfn').focus(); pfColor('#6458dc'); pfColor('#0d7f70') });
+  assert.notEqual(await a.ev(() => document.activeElement.id), 'pfn', 'и при повторных касаниях цвета');
   await a.pg.click('#pfok'); await a.wait(400);
   assert.equal(await view(a), 7, 'после «Сохранить» — снова «Настройки»');
   assert.match(await a.ev(() => document.querySelector('#v7 .grp .row').textContent), /^ААлексейТак вас видят при обмене/);

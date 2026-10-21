@@ -54,6 +54,10 @@ function fromFile(o){if(!o||typeof o!=="object"||o.format!=="bju-diary")return o
  if(o.weight!=null&&typeof o.weight!=="object")throw Error("«weight» должен быть объектом { \"ГГГГ-ММ-ДД\": кг }");
  for(const k in o.weight||{}){const v=fnum(o.weight[k],NaN);if(!/^\d{4}-\d{2}-\d{2}$/.test(k))throw Error("вес: неверная дата «"+k+"»");if(!(v>0&&v<1000))throw Error("вес за "+k+": нужно число в кг");D.wt[k]=v}
  const st=o.settings||{};for(const k in STM){const[nm,map]=STM[k];if(nm in st){const v=st[nm];D.set[k]=Object.keys(map).find(x=>map[x]===v)||v}}
+ // значения настроек — только своего вида (файл могла записать другая версия или его правили вручную): строки — строками,
+ // цвет акцента — #RRGGBB, нижняя панель и профиль — объектами; неподходящее отбрасывается, вместо него — значение по умолчанию
+ for(const k in D.set){const v=D.set[k];if(k==="ve"||k==="xi")continue;if(k==="nav"||k==="pf"){if(!v||typeof v!=="object"||Array.isArray(v))delete D.set[k];continue}
+  if(typeof v!=="string"||k==="ac"&&v&&!/^#[0-9a-f]{6}$/i.test(v))delete D.set[k]}
  // случаи вибрации — только «да / нет» по известным ключам; остальное отбрасывается
  if(D.set.ve!=null){const e=D.set.ve,ok={};if(e&&typeof e==="object")for(const k of ["kb","save","del","days","pull","ui","err"])if(typeof e[k]==="boolean")ok[k]=e[k];if(Object.keys(ok).length)D.set.ve=ok;else delete D.set.ve}
  return D}

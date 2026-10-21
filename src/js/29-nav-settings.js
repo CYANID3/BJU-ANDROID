@@ -119,7 +119,8 @@ function navDragBind() {
 }
 
 // ===== «Тема и фон»: тема и оттенок фона на одном экране; выбор — как во всех настройках: строка со значком и галочкой =====
-const lookLbl = () => { const t = PK.th.o().find(o => o[0] === PK.th.g()), n = PK.tn.o().find(o => o[0] === PK.tn.g()); return (t[0] === "auto" ? "Авто" : t[1]) + " · " + n[1].toLowerCase() };
+// подпись строки «Тема и фон»; неизвестное значение из файла (другая версия приложения) — как «Авто» / «Выключен»
+const lookLbl = () => { const t = PK.th.o().find(o => o[0] === PK.th.g()) || PK.th.o()[0], n = PK.tn.o().find(o => o[0] === PK.tn.g()) || PK.tn.o()[0]; return (t[0] === "auto" ? "Авто" : t[1]) + " · " + n[1].toLowerCase() };
 function lookOpen() { if (!$("v7").hidden) hubY = shBody().scrollTop; SUB = 7; drawLook(); sv(17, "Тема и фон", "Светлая или тёмная, оттенок фона"); show() }
 function drawLook() {
   const grp = (k, fn) => { const c = PK[k].g(); return `<div class="grp">${PK[k].o().map(([v, t, i, d]) => `<button class="row${v === c ? " on" : ""}" role="radio" data-v="${v}" aria-checked="${v === c}" onclick="${fn}('${v}')"><span class="ic">${ic(i)}</span><span class="tx">${t}${d ? `<small>${d}</small>` : ""}</span><span class="ok">${ic("check")}</span></button>`).join("")}</div>` };

@@ -26,7 +26,8 @@ function drawProf() {
 }
 // имя и цвет меняются на месте — поле ввода не пересоздаётся (клавиатура не закрывается)
 function pfLive() { const d = pfDraft; document.querySelectorAll("#v18 .xav").forEach(a => a.innerHTML = xini(d.n)); const v = $("pfv"); if (v) v.textContent = d.n.trim() || "Без имени" }
-function pfColor(c) { pfDraft.c = c; vib("ui"); document.querySelectorAll("#v18 .xav").forEach(a => a.style.background = c); document.querySelectorAll("#v18 .pfc button").forEach(b => { const on = b.style.background && b.getAttribute("onclick").includes(c); b.classList.toggle("on", on); b.setAttribute("aria-checked", on) }) }
+// выбор цвета убирает фокус с поля имени: иначе Android снова открывает клавиатуру после каждого касания цвета
+function pfColor(c) { pfDraft.c = c; vib("ui"); const a = document.activeElement; if (a && a.id === "pfn") a.blur(); document.querySelectorAll("#v18 .xav").forEach(a => a.style.background = c); document.querySelectorAll("#v18 .pfc button").forEach(b => { const on = b.style.background && b.getAttribute("onclick").includes(c); b.classList.toggle("on", on); b.setAttribute("aria-checked", on) }) }
 function pfSave() {
   const n = (pfDraft.n || "").replace(/\|/g, "").trim().slice(0, 20);
   if (!n) { vib("err"); $("pfn").focus(); return toast("Введите имя — его увидит второй телефон") }
