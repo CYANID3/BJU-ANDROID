@@ -86,7 +86,7 @@ function svPlay(sh, snap) {
     sh.style.overflow = "visible";
     const mv = [sh.querySelector(".hd"), shBody()].map(el => el.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }));
     try { sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E, pseudoElement: "::before" }) } catch (e) { }
-    fin.push(mv[0].finished); mv[0].finished.catch(() => { }).then(() => { sh.style.overflow = "" })
+    fin.push(mv[0].finished); mv[0].finished.catch(() => { }).then(() => { sh.style.overflow = ""; const h = sh.querySelector(".hd"); h.style.visibility = "visible"; void h.offsetWidth; h.style.visibility = "" })
   } else if (d < -1) {
     // лист стал выше: он поднимается целиком с прежней высоты (внизу он уходит за край экрана — там ничего не видно)
     fin.push(sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E }).finished);
