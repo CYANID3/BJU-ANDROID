@@ -63,20 +63,23 @@ test('смена темы: цвет строки состояния — фон �
   await a.close();
 });
 
-test('закрытый лист выключен из расчёта стилей, при открытии — сразу включён и с правильной высотой', async () => {
+test('лист после закрытия, смены темы и повторного открытия: всё содержимое видимо (не пустой лист), высота та же', async () => {
   const db = Array.from({ length: 300 }, (_, i) => ['Продукт ' + i, 10, 5, 20]);
   const a = await openApp({ data: { ...DATA, db } });
   await a.ev(() => mng()); await a.wait(500);
   const h0 = await a.ev(() => Math.round(shEl().getBoundingClientRect().height));
-  await a.ev(() => closeUI()); await a.wait(150);
-  assert.equal(await a.ev(() => $('ov').classList.contains('idle')), false, 'пока идёт закрытие — содержимое на месте');
-  await a.wait(400);
-  assert.equal(await a.ev(() => getComputedStyle($('ov')).contentVisibility), 'hidden');
-  const r = await a.ev(() => { mng(); return { idle: $('ov').classList.contains('idle'), h: Math.round(shEl().getBoundingClientRect().height) } });
-  assert.equal(r.idle, false); assert.equal(r.h, h0, 'высота листа при повторном открытии та же');
-  // быстрое повторное открытие до срабатывания таймера не выключает открытый лист
-  await a.ev(() => { closeUI(); cal() }); await a.wait(700);
-  assert.deepEqual(await a.ev(() => [$('ov').classList.contains('idle'), isOpen]), [false, true]);
+  await a.ev(() => closeUI()); await a.wait(800);
+  assert.equal(await a.ev(() => getComputedStyle($('ov')).contentVisibility), 'visible', 'закрытый лист не выключается из расчёта');
+  // тема телефона сменилась, пока лист был закрыт
+  await a.ev(() => { window.BJU_SYSDARK = false; window.BJU_onSysTheme(false) }); await a.wait(300);
+  const r = await a.ev(() => { mng(); return Math.round(shEl().getBoundingClientRect().height) });
+  assert.equal(r, h0, 'высота листа при повторном открытии та же');
+  await a.wait(600);
+  for (const op of ['sets()', 'lookOpen()', 'pfOpen()']) {
+    await a.ev(o => { cl(); eval(o); return 0 }, op); await a.wait(700);
+    const hid = await a.ev(() => [...document.querySelectorAll('#ov .shb > :not([hidden]) *')].filter(e => e.getBoundingClientRect().height > 0 && getComputedStyle(e).visibility !== 'visible' && !e.closest('.ok')).length);
+    assert.equal(hid, 0, op + ': скрытых элементов в открытом листе нет');
+  }
   assert.deepEqual(a.errors, []);
   await a.close();
 });
