@@ -88,3 +88,17 @@ test('обмен, Android 13+ (API 34): местоположение не спр
   assert.deepEqual(a.errors, []);
   await a.close();
 });
+
+test('обмен: 8036 (MISSING_PERMISSION_ACCESS_FINE_LOCATION, Android 17 с «Приблизительно») — экран «Нужно точное местоположение», не общая ошибка', async () => {
+  const a = await openApp({ data: PF });
+  await a.ev(FAKE, { s: { sdk: 37, coarse: true, fine: false, nearby: true, gms: '26.40.32' } });
+  await a.ev(() => { BJU_NATIVE.exchange.start = () => __x.st.fine ? Promise.resolve() : Promise.reject(Object.assign(new Error('8036: MISSING_PERMISSION_ACCESS_FINE_LOCATION'), { code: '8036' })) });
+  await a.ev(() => { xOpen() }); await a.wait(400);
+  const t = await a.pg.textContent('#v19');
+  assert.match(t, /Нужно точное местоположение/); assert.match(t, /Код 8036 \(MISSING_PERMISSION_ACCESS_FINE_LOCATION\)/);
+  assert.equal(await a.pg.textContent('#x1'), 'Разрешить точное');
+  await a.ev(() => { __x.onPrecise = { fine: true } }); await a.pg.click('#x1'); await a.wait(400);
+  assert.match(await a.pg.textContent('#v19'), /Ищем телефоны рядом/);
+  assert.deepEqual(a.errors, []);
+  await a.close();
+});

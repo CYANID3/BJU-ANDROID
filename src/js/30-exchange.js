@@ -52,8 +52,7 @@ function xOpen(fromSet) {
   if (!pfN() || !(S.set && S.set.xi)) { X.s = "intro"; N.state().then(st => { xModel = st.model || xModel }).catch(() => { }); return xDraw() }
   xGo()
 }
-function xReset() { clearTimeout(X.t); X.denied = 0; X.found = new Map(); X.peer = null; X.code = ""; X.meOk = 0; X.meReady = null; X.peerReady = null; X.inp = [0, 0]; X.out = [0, 0]; X.data = null; X.err = ""; X.none = 0 }
-// по порядку: разрешение → Bluetooth → поиск
+function xReset() { clearTimeout(X.t); X.denied = 0; X.emsg = ""; X.found = new Map(); X.peer = null; X.code = ""; X.meOk = 0; X.meReady = null; X.peerReady = null; X.inp = [0, 0]; X.out = [0, 0]; X.data = null; X.err = ""; X.none = 0 }
 // по порядку: разрешение → Bluetooth → геолокация → поиск. Работает только последний вызов (повторный — например, при возврате
 // из системного окна — отменяет предыдущий), экран не бывает пустым: пока идёт проверка — «Проверяем…»
 let xGoN = 0;
@@ -61,7 +60,7 @@ async function xGo() {
   const N = XN(); if (!N) return; if (!pfN()) return pfOpen(1);
   const my = ++xGoN, gone = () => my !== xGoN;
   if (!(S.set && S.set.xi)) { S.set = Object.assign({}, S.set, { xi: 1 }); saveq() } // без лишней записи файла при каждом «Ещё раз»
-  X.s = "check"; X.ecode = ""; xDraw();
+  X.s = "check"; X.ecode = ""; X.emsg = ""; xDraw();
   // ответ телефона о состоянии — не дольше 8 с (иначе «Проверяем…» висело бы без конца)
   const tmo = new Promise((_, no) => setTimeout(() => no(new Error("timeout")), 8000)); tmo.catch(() => { });
   let st; try { st = await Promise.race([N.state(), tmo]) } catch (e) { if (gone()) return; X.s = "err"; X.err = e && e.message === "timeout" ? "Телефон не ответил. Попробуйте ещё раз" : "Обмен недоступен на этом телефоне"; return xDraw() }
@@ -82,8 +81,11 @@ async function xGo() {
   try { await N.start(xEp()); if (gone()) { N.stop().catch(() => { }); return } X.on = 1 }
   catch (e) {
     if (gone()) return; X.ecode = e && e.code && e.code !== "-1" ? String(e.code) : "";
-    // 8034 — Сервисы Google Play не дали искать из-за местоположения: выясняем, чего именно не хватает
-    if (X.ecode === "8034") {
+    // имя ошибки от Сервисов Google Play (например «8036: MISSING_PERMISSION_ACCESS_FINE_LOCATION») — в подробности
+    X.emsg = (String(e && e.message || "").match(/[A-Z][A-Z_]{6,}/) || [""])[0];
+    // 8034 / 8036 — Сервисы Google Play не дали искать из-за местоположения (приблизительного / точного).
+    // Так бывает и на Android 13+ (Android 17, Сервисы Google Play 26.40, «Приблизительно» → 8036), хотя по документации там не нужно
+    if (X.ecode === "8034" || X.ecode === "8036" || /LOCATION/.test(X.emsg)) {
       try { X.st = st = await N.state() } catch (_) { } if (gone()) return;
       // (старая сборка без полей coarse/fine — как раньше, экран геолокации)
       X.s = st.loc === false || st.coarse == null ? "loc" : st.fine || (st.sdk <= 28 && st.coarse) ? "gms" : "precise";
@@ -108,7 +110,7 @@ function xPermNames() { const v = (X.st || {}).sdk || 0; return v >= 32 ? "«У�
 // подробности для экрана ошибки: по ним видно, чего не хватает (и что прислать, если не помогло)
 function xDiag() {
   const s = X.st || {}, yn = v => v == null ? "?" : v ? "да" : "нет";
-  return `<div class="xn">${ic("info")}<span>${[X.ecode ? "Код " + esc(X.ecode) : "", s.sdk ? "Android API " + s.sdk : "", "Bluetooth: " + yn(s.bt), "геолокация: " + yn(s.loc), "местоположение: " + (s.fine ? "точное" : s.coarse ? "приблизительное" : "нет"), "устройства поблизости: " + yn(s.nearby), s.gms ? "Сервисы Google Play " + esc(s.gms) : ""].filter(Boolean).join(" · ")}</span></div>`
+  return `<div class="xn">${ic("info")}<span>${[X.ecode ? "Код " + esc(X.ecode) + (X.emsg ? " (" + esc(X.emsg) + ")" : "") : "", s.sdk ? "Android API " + s.sdk : "", "Bluetooth: " + yn(s.bt), "геолокация: " + yn(s.loc), "местоположение: " + (s.fine ? "точное" : s.coarse ? "приблизительное" : "нет"), "устройства поблизости: " + yn(s.nearby), s.gms ? "Сервисы Google Play " + esc(s.gms) : ""].filter(Boolean).join(" · ")}</span></div>`
 }
 async function xBt() { const N = XN(); let r = { enabled: false }; try { r = await N.enableBt() } catch (e) { } if (r.enabled) xGo(); else toast("Bluetooth выключен — без него телефоны не найдут друг друга") }
 function xStop() { clearTimeout(X.t); const N = XN(); if (N && X.on) N.stop().catch(() => { }); X.on = 0; if (X.s !== "web") X.s = "intro" }
@@ -183,7 +185,7 @@ function xDraw1() {
   else if (X.s === "intro") {
     h = `<div class="xt" style="margin-top:4px"><small>Вы отправляете свои продукты, вам — чужие. Одновременно, прямо в приложении.</small></div>${meRow}
     <div class="gh">Как это работает</div><div class="grp"><div class="row"><span class="ic">${ic("bt")}</span><span class="tx">Bluetooth — чтобы найти<small>Телефоны видят друг друга в нескольких метрах</small></span></div><div class="row"><span class="ic">${ic("wifi")}</span><span class="tx">Wi‑Fi напрямую — чтобы передать<small>Между телефонами, без роутера и интернета</small></span></div><div class="row"><span class="ic">${ic("shield")}</span><span class="tx">Только продукты и блюда<small>Дневник, цели и настройки не передаются</small></span></div></div>
-    <div class="hint">Android один раз спросит разрешение «Устройства поблизости» (на Android 10–12 — ещё точное «Местоположение») — без него Google не даёт искать телефоны рядом. Где вы находитесь, приложение не узнаёт и никуда не передаёт.</div>`;
+    <div class="hint">Android один раз спросит разрешения «Устройства поблизости» и, на многих телефонах, точное «Местоположение» — без них Google не даёт искать телефоны рядом. Где вы находитесь, приложение не узнаёт и никуда не передаёт.</div>`;
     b1 = [pfN() ? "Продолжить" : "Указать имя", () => pfN() ? xGo() : pfOpen(1)]
   } else if (X.s === "perm") { h = `<div class="fst no">${ic("shield")}<div><b>Нет разрешения</b><small>Нужно разрешение ${xPermNames()} — без него телефоны не найдут друг друга. Включите их в настройках приложения › Разрешения.</small></div></div>` + xDiag(); b2 = ["Ещё раз", xGo]; b1 = ["Открыть настройки", () => XN().openSettings().catch(() => { })] }
   else if (X.s === "check") h = `<div class="xr st"><i></i><i></i><i></i>${xav(pfN(), pfC())}</div><div class="xst"><i></i>Проверяем Bluetooth и разрешения…</div>`;

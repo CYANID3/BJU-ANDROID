@@ -439,7 +439,12 @@ public class BjuExchangePlugin extends Plugin {
     private static String msg(Exception e) {
         int c = code(e);
         if (c == ConnectionsStatusCodes.STATUS_ALREADY_ADVERTISING || c == ConnectionsStatusCodes.STATUS_ALREADY_DISCOVERING) return "Уже идёт";
-        return e.getMessage() != null ? e.getMessage() : "Ошибка " + c;
+        String m = e.getMessage() != null ? e.getMessage() : "Ошибка " + c;
+        // имя кода от самой библиотеки (например MISSING_PERMISSION_ACCESS_FINE_LOCATION) — по нему страница понимает, чего не хватает
+        if (c > 0 && !m.contains("_")) {
+            try { m = m + " " + ConnectionsStatusCodes.getStatusCodeString(c); } catch (Exception ignored) { }
+        }
+        return m;
     }
 
     @Override
