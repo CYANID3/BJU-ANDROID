@@ -6,7 +6,7 @@ const navMini = () => { const v = navGet(), m = navMid(v); return `<span class="
 let navPop = -1, navY = 0, navSlot = 0;
 const NAVT = ["Нижняя панель", "Пункты и их порядок"];
 function navOpen() { if (!$("v7").hidden) hubY = shBody().scrollTop; SUB = 7; drawNav(); sv(15, ...NAVT); show() }
-const navMax = v => v.big ? 5 : 5, navSides = v => v.s.filter((k, i) => i !== navMid(v));
+const navSides = v => v.s.filter((k, i) => i !== navMid(v));
 function drawNav(lift) {
   const v = navGet(), m = navMid(v), side = navSides(v), L = navLeft(side.length), full = side.length >= (v.big ? 4 : 5);
   const prev = `<div class="pbv" style="grid-template-columns:${navCols(v, 60)}">${v.s.map((k, i) => `<button class="${i === m ? "f" : ""}${i === navPop ? " pop" : ""}" onclick="navPick(${i})" aria-label="${i === m ? "Кнопка в центре" : "Место " + (i + 1)}: ${NA[k][0]}">${ic(NA[k][2])}${i === m ? "" : `<span>${NA[k][1]}</span>`}</button>`).join("")}</div>`;

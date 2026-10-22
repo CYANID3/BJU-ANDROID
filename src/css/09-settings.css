@@ -90,7 +90,6 @@
 .pbv>button.f svg.i{width:24px;height:24px;stroke-width:2.4}
 .pbv>button.pop{animation:nvpop .38s var(--spring)}@keyframes nvpop{0%{transform:scale(.7);opacity:.3}100%{transform:none;opacity:1}}
 @media (max-width:380px){.pbv>button{font-size:10px}}
-.pbc{font-size:var(--fs-sm);color:var(--mu);text-align:center;margin-top:8px;line-height:1.35}
 .row .gp{flex:none;color:var(--mu);opacity:.7;margin:0 -6px 0 -4px;padding:10px 4px;cursor:grab;touch-action:none}.row .gp svg.i{width:20px;height:20px}
 .row .lk{flex:none;color:var(--mu);width:24px;display:grid;place-items:center;opacity:.85}.row .lk svg.i{width:17px;height:17px}
 button.ch{display:grid;place-items:center;width:32px;height:32px;margin-right:-6px}

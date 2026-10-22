@@ -44,7 +44,6 @@ const myP = () => S.db.filter(p => !p[5]).length, myD = () => S.db.filter(p => p
 // имя для поиска: версия|имя|цвет|модель|продукты|блюда (коротко — Bluetooth передаёт мало)
 const xEp = () => ["1", pfN(), pfC(), (xModel || "").replace(/\|/g, "").slice(0, 24), myP(), myD()].join("|");
 function xPeer(id, name) { const a = String(name || "").split("|"); return a[0] === "1" && a.length >= 6 ? { id, n: a[1] || "Без имени", c: a[2], m: a[3], p: +a[4] || 0, d: +a[5] || 0 } : { id, n: String(name || "Телефон").slice(0, 20), c: PFC[1], m: "", p: 0, d: 0 } }
-const xNm = () => X.peer ? X.peer.n : "";
 function xOpen(fromSet) {
   if (fromSet === 1 && !$("v7").hidden) { hubY = shBody().scrollTop; SUB = 7 } else if (fromSet !== 1) SUB = 0;
   X.sub = SUB ? 1 : 0; X.asked = 0; xReset(); const N = XN();
@@ -60,7 +59,9 @@ async function xGo() {
   const N = XN(); if (!N) return; if (!pfN()) return pfOpen(1);
   const my = ++xGoN, gone = () => my !== xGoN;
   if (!(S.set && S.set.xi)) { S.set = Object.assign({}, S.set, { xi: 1 }); saveq() } // без лишней записи файла при каждом «Ещё раз»
-  X.s = "check"; X.ecode = ""; X.emsg = ""; xDraw();
+  // «Проверяем…» — только если ответ задержался (окно разрешений и т. п.); быстрый ответ сразу даёт нужный экран, без
+  // лишней смены кадра (две смены подряд дёргали лист)
+  X.s = "check"; X.ecode = ""; X.emsg = ""; setTimeout(() => { if (!gone() && X.s === "check") xDraw() }, 150);
   // ответ телефона о состоянии — не дольше 8 с (иначе «Проверяем…» висело бы без конца)
   const tmo = new Promise((_, no) => setTimeout(() => no(new Error("timeout")), 8000)); tmo.catch(() => { });
   let st; try { st = await Promise.race([N.state(), tmo]) } catch (e) { if (gone()) return; X.s = "err"; X.err = e && e.message === "timeout" ? "Телефон не ответил. Попробуйте ещё раз" : "Обмен недоступен на этом телефоне"; return xDraw() }
@@ -227,7 +228,7 @@ function xDraw1() {
   if (!h) { h = `<div class="fst bad">${ic("warn")}<div><b>Не получилось</b><small>Неожиданное состояние обмена. Попробуйте ещё раз.</small></div></div>`; b1 = ["Ещё раз", () => { xStop(); xGo() }]; b2 = null }
   const btn = (el, b, cls) => { el.hidden = !b; if (b) { el.textContent = b[0]; el.onclick = b[1]; el.className = cls } };
   btn(x1, b1, X.s === "go" ? "pb g" : "pb"); btn(x2, b2, "pb g");
-  const el = $("v19"), same = !el.hidden && el.dataset.s === X.s;
+  const el = $("v19"), same = !el.hidden && (el.dataset.s === X.s || el.dataset.s === "check");
   el.dataset.s = X.s; const put = () => { el.innerHTML = h; xBars() };
   if (same) shResize(put); else { put(); sv(19, t, sub) } show()
 }

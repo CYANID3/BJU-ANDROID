@@ -430,9 +430,19 @@ public class BjuNativePlugin extends Plugin {
         Exception last = null;
         // "wt" — запись с обрезкой; некоторые провайдеры (облака) поддерживают только "w"
         for (String mode : new String[] { "wt", "rwt", "w" }) {
+            // режим "w" у части провайдеров не обрезает файл: если новые данные короче, в конце остался бы хвост старых
+            // и файл перестал бы читаться. Добиваем пробелами до прежнего размера — JSON с пробелами в конце читается
+            byte[] w = bytes;
+            if ("w".equals(mode)) {
+                long old = fileSize(uri);
+                if (old > bytes.length && old < 64L * 1024 * 1024) {
+                    w = java.util.Arrays.copyOf(bytes, (int) old);
+                    java.util.Arrays.fill(w, bytes.length, w.length, (byte) ' ');
+                }
+            }
             try (OutputStream out = getContext().getContentResolver().openOutputStream(uri, mode)) {
                 if (out == null) throw new Exception("Файл недоступен");
-                out.write(bytes);
+                out.write(w);
                 out.flush();
                 call.resolve();
                 return;
@@ -477,6 +487,13 @@ public class BjuNativePlugin extends Plugin {
             } catch (Exception ignored) {}
         }
         call.resolve();
+    }
+
+    private long fileSize(Uri uri) {
+        try (Cursor c = getContext().getContentResolver().query(uri, new String[] { OpenableColumns.SIZE }, null, null, null)) {
+            if (c != null && c.moveToFirst() && !c.isNull(0)) return c.getLong(0);
+        } catch (Exception ignored) {}
+        return -1;
     }
 
     private String displayName(Uri uri) {

@@ -39,7 +39,7 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,12 +72,12 @@ public class BjuExchangePlugin extends Plugin {
     private String myName = "";
     private int msgSeq = 1;
     // сборка входящих сообщений: ключ — endpoint + номер сообщения
-    private final Map<String, byte[][]> parts = new HashMap<>();
-    private final Map<String, Integer> partsGot = new HashMap<>();
-    private final Map<String, Integer> partsLen = new HashMap<>();
+    private final Map<String, byte[][]> parts = new ConcurrentHashMap<>();
+    private final Map<String, Integer> partsGot = new ConcurrentHashMap<>();
+    private final Map<String, Integer> partsLen = new ConcurrentHashMap<>();
     // исходящие части: id payload → [endpoint, байт]; для прогресса отправки
-    private final Map<Long, Object[]> outgoing = new HashMap<>();
-    private final Map<String, long[]> outTotals = new HashMap<>();
+    private final Map<Long, Object[]> outgoing = new ConcurrentHashMap<>();
+    private final Map<String, long[]> outTotals = new ConcurrentHashMap<>();
 
     private ConnectionsClient cc() {
         if (client == null) client = Nearby.getConnectionsClient(getContext());
@@ -361,11 +361,20 @@ public class BjuExchangePlugin extends Plugin {
 
         @Override
         public void onDisconnected(String endpointId) {
+            dropParts(endpointId);
             JSObject o = new JSObject();
             o.put("id", endpointId);
             notifyListeners("disconnected", o);
         }
     };
+
+    // недособранные сообщения от собеседника, который отключился, больше не нужны
+    private void dropParts(String endpointId) {
+        String pre = endpointId + "#";
+        parts.keySet().removeIf(k -> k.startsWith(pre));
+        partsGot.keySet().removeIf(k -> k.startsWith(pre));
+        partsLen.keySet().removeIf(k -> k.startsWith(pre));
+    }
 
     private final PayloadCallback payloads = new PayloadCallback() {
         @Override
@@ -380,19 +389,24 @@ public class BjuExchangePlugin extends Plugin {
             String key = endpointId + "#" + seq;
             byte[][] arr = parts.get(key);
             if (arr == null) { arr = new byte[n][]; parts.put(key, arr); partsGot.put(key, 0); partsLen.put(key, len); }
+            // части одного сообщения должны сходиться по числу и длине (иначе — испорченное сообщение, не падаем)
+            Integer total = partsLen.get(key);
+            if (total == null || arr.length != n || total != len) return; // сборку сбросили (стоп) или части не сходятся
             if (arr[i] == null) {
                 arr[i] = new byte[raw.length - 17];
                 System.arraycopy(raw, 17, arr[i], 0, raw.length - 17);
-                partsGot.put(key, partsGot.get(key) + 1);
+                partsGot.merge(key, 1, Integer::sum);
             }
-            int got = partsGot.get(key);
+            Integer gotN = partsGot.get(key);
+            if (gotN == null) return;
+            int got = gotN;
             JSObject pr = new JSObject();
             pr.put("id", endpointId); pr.put("dir", "in");
             long done = 0; for (byte[] x : arr) if (x != null) done += x.length;
-            pr.put("done", done); pr.put("total", (long) partsLen.get(key));
+            pr.put("done", done); pr.put("total", (long) len);
             notifyListeners("progress", pr);
             if (got == n) {
-                ByteBuffer all = ByteBuffer.allocate(partsLen.get(key));
+                ByteBuffer all = ByteBuffer.allocate(len);
                 for (byte[] x : arr) if (all.remaining() >= x.length) all.put(x);
                 parts.remove(key); partsGot.remove(key); partsLen.remove(key);
                 JSObject o = new JSObject();
