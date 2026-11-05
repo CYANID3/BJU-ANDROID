@@ -1,5 +1,6 @@
 // Иконки, база продуктов, приёмы пищи, состояние S, проверка данных и загрузка из localStorage
 const ICP = {
+  note: '<path d="M6 3.5h8.5L19 8v11a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19V5a1.5 1.5 0 0 1 1-1.5z"/><path d="M14 3.5V8h5M8.5 12.5h7M8.5 16h4.5"/>', pen: '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
   ruler: '<rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 8v3M11 8v4M15 8v3M19 8v2"/>',
   chevL: '<path d="M15 5l-7 7 7 7"/>', chevR: '<path d="M9 5l7 7-7 7"/>', close: '<path d="M6 6l12 12M18 6L6 18"/>', plus: '<path d="M12 5v14M5 12h14"/>',
   file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
@@ -55,6 +56,8 @@ function chk(o) {
   if (o.db && (!Array.isArray(o.db) || !o.db.every(p => Array.isArray(p) && typeof p[0] === "string" && [p[1], p[2], p[3]].every(isN) && (p[4] == null || Array.isArray(p[4]) && p[4].every(u => Array.isArray(u) && typeof u[0] === "string" && u[1] > 0)) && (p[5] == null || Array.isArray(p[5].i)))))
     throw Error("неверный список продуктов");
   if (o.set != null && typeof o.set !== "object") throw Error("неверные настройки");
+  // заметки к дню — необязательны; неподходящие значения отбрасываются, а не ломают загрузку
+  if (o.nt != null) { if (typeof o.nt !== "object" || Array.isArray(o.nt)) delete o.nt; else for (const k in o.nt) if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || typeof o.nt[k] !== "string") delete o.nt[k] }
   return o;
 }
 // принять данные как текущие (apply=false — без применения темы: при запуске тема применяется позже, один раз)

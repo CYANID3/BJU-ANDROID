@@ -26,9 +26,13 @@ function kpBuild() {
   $("kp").innerHTML = ["1", "2", "3", "4", "5", "6", "7", "8", "9"].map(k).join("") + `<button type="button" class="fn" data-k="," aria-label="Запятая">,</button>` + k("0") + `<button type="button" class="fn" data-k="bk" aria-label="Стереть (удерживать — стереть всё)">${ic("back")}</button>`;
   $("kp").hidden = true;
 }
-function kpShow(on) {
+// Своя клавиатура и системная при переходе между полями сменяют друг друга на одном месте: лист поднимается над
+// системной только на ту часть, что выше своей (--kph — высота своей панели). Системная уезжает поверх своей
+// (или наезжает на неё) — содержимое листа стоит на месте, а не прыгает вверх-вниз на высоту клавиатуры.
+function kpShow(on, still) {
   const sh = shEl(), was = sh.classList.contains("kpo"); sh.classList.toggle("kpo", !!on); $("kp").hidden = !on;
-  if (on && !was && isOpen && !RM()) { const k = $("kp"); k.classList.remove("in"); void k.offsetWidth; k.classList.add("in") }
+  if (on) { const k = $("kp"); sh.style.setProperty("--kph", (k.offsetHeight + (parseFloat(getComputedStyle(k).marginTop) || 0)) + "px") } else sh.style.removeProperty("--kph");
+  if (on && !was && isOpen && !RM() && !still) { const k = $("kp"); k.classList.remove("in"); void k.offsetWidth; k.classList.add("in") }
 }
 // при смене экрана: клавиатура сразу — где поле одно и числовое; в форме продукта и блюда — по касанию числа
 function kpView(n) { kpF = null; kpShow(KPV.has(n)); kpLabel() }
@@ -79,11 +83,13 @@ function kpKey(k) {
   // какое поле в фокусе — такая и клавиатура
   document.addEventListener("focusin", e => {
     const t = e.target; if (!t || t.tagName !== "INPUT" || !shEl().contains(t)) return;
-    if (isNum(t)) { clearTimeout(kpHide); kpF = t; kpShow(true); requestAnimationFrame(ensureVis) }
+    // своя клавиатура появляется, когда другой нет: лист дорастает плавно (край и шапка едут вместе), а не прыжком
+    if (isNum(t)) { clearTimeout(kpHide); kpF = t; const sh = shEl(); if (!sh.classList.contains("kpo") && !(kbH > 0)) shResize(() => kpShow(true, 1), null, 1); else kpShow(true); requestAnimationFrame(ensureVis) }
     else if (shEl().classList.contains("kpo")) {
       kpF = null;
       // текст: своя клавиатура уходит, когда системная начала подниматься (в APK) — низ листа не «проваливается» между ними
-      clearTimeout(kpHide); if (NATIVE && window.BJU_NATIVE && window.BJU_NATIVE.native) kpHide = setTimeout(() => kpShow(false), 320); else kpShow(false)
+      // в APK — когда системная клавиатура закрыла свою (BJU_onKeyboard), запасной таймер — если она так и не поднялась
+      clearTimeout(kpHide); if (NATIVE && window.BJU_NATIVE && window.BJU_NATIVE.native) kpHide = setTimeout(() => kpShow(false), 600); else kpShow(false)
     }
     kpLabel()
   }, true);

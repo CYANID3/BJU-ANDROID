@@ -50,5 +50,6 @@ function render() {
     else if (snv() === "row" || snOpen.has(s)) h += `<button class="snk${snv() === "tap" ? " tap" : ""}" data-m="${s}" data-fk="k${s}" onclick="op(${s})" aria-label="Добавить: ${LBL[s]}">${ic("plus")}<span>${LBL[s]}</span></button>`;
     h += `</section>`
   });
+  h += ntHTML();
   wUpd(); if (dgd) undrag(1); const y = scrollY, old = [...document.querySelectorAll("#app .bar i")].map(i => { const w = i.parentElement.getBoundingClientRect().width; return w ? i.getBoundingClientRect().width / w * 100 : 0 }); flipGrab(); $("app").innerHTML = h; scrollTo(0, y); flipPlay(); if (old.length) document.querySelectorAll("#app .bar i").forEach((el, k) => { const nw = parseFloat(el.style.width); if (old[k] != null && Math.abs(old[k] - nw) > .5) try { el.animate([{ width: old[k] + "%" }, { width: nw + "%" }], { duration: MO.t3, delay: NAV && !RM() ? 170 : 0, fill: "backwards", easing: MO.E }) } catch (e) { } })
 }

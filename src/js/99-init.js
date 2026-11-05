@@ -5,7 +5,7 @@ function ask(m, y, dg, one, title) {
     const e = $("dg"), Y = $("dgy"), N = $("dgn"), k = ev => { if (ev.key === "Escape") f(false) }, f = v => { e.classList.remove("on"); Y.onclick = N.onclick = null; document.removeEventListener("keydown", k); ok(v) };
     $("dgt").textContent = title || ""; $("dgm").textContent = m; Y.textContent = y || "ОК"; Y.classList.toggle("dg", !!dg); N.style.display = one ? "none" : "";
     Y.onclick = () => f(true); N.onclick = () => f(false); document.addEventListener("keydown", k); e.classList.add("on"); if (dg) vib("ui");
-    const a = document.activeElement; if (!(a && a.tagName === "INPUT")) Y.focus()
+    const a = document.activeElement; if (!isTxtF(a)) Y.focus()
   })
 }
 const say = m => ask(m, "ОК", 0, 1);

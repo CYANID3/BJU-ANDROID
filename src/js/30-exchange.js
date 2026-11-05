@@ -4,34 +4,53 @@
 // настройки — никогда. Полученное сразу открывается на экране импорта (28-merge.js); до «Добавить» ваш список не меняется.
 
 // ===== профиль: только на телефоне, без регистрации =====
-const PFC = ["#6458dc", "#0d7f70", "#2f6fd6", "#c23d7f", "#c43b3f", "#b8611a", "#24804f", "#55606f"];
-function xpf() { const p = S.set && S.set.pf; return p && typeof p === "object" && typeof p.n === "string" && p.n.trim() ? { n: p.n.trim().slice(0, 20), c: PFC.includes(p.c) ? p.c : PFC[0] } : null }
-const pfN = () => (xpf() || {}).n || "", pfC = () => (xpf() || {}).c || PFC[0];
+// pf = { n: имя, c: цвет, k: "l" буква | "w" белый значок | "c" цветная наклейка, i: значок } (картинки — 31-avatars.js)
+const PFC = AVS;
+function xpf() { const p = S.set && S.set.pf; if (!(p && typeof p === "object" && typeof p.n === "string" && p.n.trim())) return null; const a = avNorm(p); return { n: p.n.trim().slice(0, 20), c: a.c, k: a.k, i: a.i } }
+const pfN = () => (xpf() || {}).n || "", pfC = () => (xpf() || {}).c || PFC[0], pfAv = () => { const p = xpf(); return p ? { k: p.k, i: p.i } : null };
 const xini = n => esc(((n || "?").trim()[0] || "?").toUpperCase());
-const xav = (n, c, k) => `<span class="xav${k ? " " + k : ""}" style="background:${PFC.includes(c) ? c : PFC[1]}" aria-hidden="true">${xini(n)}</span>`;
+const xav = (n, c, k, av) => avCircle(n, c, k, av);
+const myAv = (k) => xav(pfN() || "Я", pfC(), k, pfAv());
 const nP = (n, a, b, c) => n + " " + plural(n, a, b, c);
 let pfDraft = null, pfFrom = 0, xModel = "";
 function pfOpen(from) {
   // from: 0 — из «Настроек», 1 — с экрана обмена (после «Сохранить» — снова туда)
   pfFrom = from ? 1 : 0; if (!$("v7").hidden) hubY = shBody().scrollTop; if (!pfFrom) SUB = 7; if (pfFrom) xStop();
-  pfDraft = { n: pfN(), c: pfC() }; drawProf(); sv(18, "Профиль", "Как вас увидят при обмене"); show();
-  const N = XN(); if (N && !xModel) N.state().then(st => { xModel = st.model || ""; if (!$("v18").hidden) { const m = document.querySelector("#v18 .row small"); if (m) m.textContent = (xModel || "Ваш телефон") + " · " + nP(S.db.length, "продукт", "продукта", "продуктов") } }).catch(() => { })
+  const p = xpf() || avNorm(null);
+  // у каждой вкладки свой цвет: насыщенный — для буквы и белого значка, светлый — под цветной наклейкой
+  pfDraft = { n: pfN(), k: p.k, i: p.i, cs: p.k === "c" ? PFC[0] : p.c, cl: p.k === "c" ? p.c : AVL[0] };
+  drawProf(); sv(18, "Профиль", "Как вас увидят при обмене"); show();
+  const N = XN(); if (N && !xModel) N.state().then(st => { xModel = st.model || ""; if (!$("v18").hidden) { const m = $("pfm"); if (m) m.textContent = (xModel || "Ваш телефон") + " · " + nP(S.db.length, "продукт", "продукта", "продуктов") } }).catch(() => { })
 }
+const pfCol = d => d.k === "c" ? d.cl : d.cs, pfA = d => ({ k: d.k, i: d.i });
 function drawProf() {
   const d = pfDraft;
-  $("v18").innerHTML = `<div class="pfh">${xav(d.n || "?", d.c, "xl")}<small>Имя и цвет видит только тот, кто рядом и тоже открыл обмен. Хранится на этом телефоне, без регистрации.</small></div>
-  <div class="gh">Имя</div><input id="pfn" value="${esc(d.n)}" placeholder="Например, Алексей" maxlength="20" autocomplete="off" enterkeyhint="done" oninput="pfDraft.n=this.value;pfLive()" onkeydown="if(event.key==='Enter')pfSave()">
-  <div class="gh">Цвет кружка</div><div class="pfc" role="radiogroup" aria-label="Цвет кружка">${PFC.map(c => `<button class="${c === d.c ? "on" : ""}" role="radio" aria-checked="${c === d.c}" style="background:${c}" onclick="pfColor('${c}')" aria-label="Цвет ${c}">${ic("check")}</button>`).join("")}</div>
-  <div class="gh">Так вас увидят</div><div class="grp"><div class="row">${xav(d.n || "?", d.c)}<span class="tx"><span id="pfv">${esc(d.n.trim() || "Без имени")}</span><small>${esc(xModel || "Ваш телефон")} · ${nP(S.db.length, "продукт", "продукта", "продуктов")}</small></span></div></div>`
+  $("v18").innerHTML = `<div class="pfh"><span id="pfa">${xav(d.n || "?", pfCol(d), "pfx", pfA(d))}</span><label class="pfl"><span class="gh">Имя</span><input id="pfn" value="${esc(d.n)}" placeholder="Например, Алексей" maxlength="20" autocomplete="off" enterkeyhint="done" oninput="pfDraft.n=this.value;pfLive()" onkeydown="if(event.key==='Enter')pfSave()"></label></div>
+  <div id="pfb"></div><small class="pfs">Имя и картинку видит только тот, кто рядом и тоже открыл обмен. Хранится на этом телефоне, без регистрации.</small>`;
+  drawPfb()
 }
-// имя и цвет меняются на месте — поле ввода не пересоздаётся (клавиатура не закрывается)
-function pfLive() { const d = pfDraft; document.querySelectorAll("#v18 .xav").forEach(a => a.innerHTML = xini(d.n)); const v = $("pfv"); if (v) v.textContent = d.n.trim() || "Без имени" }
-// выбор цвета убирает фокус с поля имени: иначе Android снова открывает клавиатуру после каждого касания цвета
-function pfColor(c) { pfDraft.c = c; vib("ui"); const a = document.activeElement; if (a && a.id === "pfn") a.blur(); document.querySelectorAll("#v18 .xav").forEach(a => a.style.background = c); document.querySelectorAll("#v18 .pfc button").forEach(b => { const on = b.style.background && b.getAttribute("onclick").includes(c); b.classList.toggle("on", on); b.setAttribute("aria-checked", on) }) }
+// всё ниже поля имени перерисовывается без него — клавиатура не закрывается и не открывается заново
+function drawPfb() {
+  const d = pfDraft, col = pfCol(d), pal = d.k === "c" ? AVL : PFC, T = [["l", "Буква"], ["w", "Значки"], ["c", "Цветные"]];
+  const grid = d.k === "l" ? `<div class="pfn0">В кружке — первая буква имени. Меняется вместе с именем.</div>`
+    : `<div class="pfg${d.k === "c" ? " cl" : ""}" role="radiogroup" aria-label="Картинка">${AVI.map(a => { const on = a.k === d.i; return `<button class="${on ? "on" : ""}" role="radio" aria-checked="${on}" aria-label="${a.n}" onclick="pfIcon('${a.k}')" style="background:${d.k === "c" ? a.s : on ? d.cs : "var(--keyp)"}">${avSvg(a.k, d.k, d.k === "c" ? "" : on ? d.cs : "#000")}</button>` }).join("")}</div>`;
+  $("pfb").innerHTML = `<div class="pft" role="tablist" aria-label="Что в кружке">${T.map(([k, t]) => `<button role="tab" aria-selected="${d.k === k}" class="${d.k === k ? "on" : ""}" onclick="pfMode('${k}')">${t}</button>`).join("")}</div>${grid}
+  <div class="gh">${d.k === "c" ? "Фон под наклейкой" : "Цвет кружка"}</div><div class="pfc" role="radiogroup" aria-label="Цвет">${pal.map(c => `<button class="${c === col ? "on" : ""}" role="radio" aria-checked="${c === col}" style="background:${c}" onclick="pfColor('${c}')" aria-label="${AVN[c] || c}"></button>`).join("")}</div>
+  <div class="gh">Так вас увидят</div><div class="grp"><div class="row">${xav(d.n || "?", col, "", pfA(d))}<span class="tx"><span id="pfv">${esc(d.n.trim() || "Без имени")}</span><small id="pfm">${esc(xModel || "Ваш телефон")} · ${nP(S.db.length, "продукт", "продукта", "продуктов")}</small></span></div></div>`
+}
+const pfAll = () => { const d = pfDraft; $("pfa").innerHTML = xav(d.n || "?", pfCol(d), "pfx", pfA(d)) };
+// имя меняется на месте — поле ввода не пересоздаётся (клавиатура не закрывается)
+function pfLive() { const d = pfDraft; if (d.k === "l") document.querySelectorAll("#v18 .xav").forEach(a => a.innerHTML = xini(d.n)); const v = $("pfv"); if (v) v.textContent = d.n.trim() || "Без имени" }
+// касание вкладки, значка или цвета убирает фокус с поля имени: иначе Android снова открывает клавиатуру после каждого касания
+const pfBlur = () => { const a = document.activeElement; if (a && a.id === "pfn") a.blur() };
+function pfMode(k) { if (pfDraft.k === k) return; pfDraft.k = k; vib("ui"); pfBlur(); shResize(() => { drawPfb(); pfAll() }) }
+function pfIcon(i) { pfDraft.i = i; vib("ui"); pfBlur(); drawPfb(); pfAll() }
+function pfColor(c) { const d = pfDraft; if (d.k === "c") d.cl = c; else d.cs = c; vib("ui"); pfBlur(); drawPfb(); pfAll() }
 function pfSave() {
-  const n = (pfDraft.n || "").replace(/\|/g, "").trim().slice(0, 20);
+  const n = (pfDraft.n || "").replace(/\|/g, "").trim().slice(0, 20), d = pfDraft;
   if (!n) { vib("err"); $("pfn").focus(); return toast("Введите имя — его увидит второй телефон") }
-  S.set = Object.assign({}, S.set, { pf: { n, c: pfDraft.c } }); saveq(); vib("save");
+  const pf = { n, c: pfCol(d) }; if (d.k !== "l") { pf.k = d.k; pf.i = d.i }
+  S.set = Object.assign({}, S.set, { pf }); saveq(); vib("save");
   try { document.activeElement.blur() } catch (e) { }
   if (pfFrom) xOpen(X.sub); else sets(1)
 }
@@ -42,8 +61,9 @@ const XN = () => (window.BJU_NATIVE && window.BJU_NATIVE.exchange) || null;
 const X = { s: "intro", sub: 0, on: 0, found: new Map(), peer: null, code: "", meOk: 0, meReady: null, peerReady: null, opt: { p: 1, d: 1 }, inp: [0, 0], out: [0, 0], data: null, err: "", t: 0, none: 0, subs: 0, wifi: true };
 const myP = () => S.db.filter(p => !p[5]).length, myD = () => S.db.filter(p => p[5]).length;
 // имя для поиска: версия|имя|цвет|модель|продукты|блюда (коротко — Bluetooth передаёт мало)
-const xEp = () => ["1", pfN(), pfC(), (xModel || "").replace(/\|/g, "").slice(0, 24), myP(), myD()].join("|");
-function xPeer(id, name) { const a = String(name || "").split("|"); return a[0] === "1" && a.length >= 6 ? { id, n: a[1] || "Без имени", c: a[2], m: a[3], p: +a[4] || 0, d: +a[5] || 0 } : { id, n: String(name || "Телефон").slice(0, 20), c: PFC[1], m: "", p: 0, d: 0 } }
+// 7-е поле — картинка («w.cat», «c.fox»; пусто — буква); старые версии читают первые шесть и показывают букву
+const xEp = () => { const a = pfAv(); return ["1", pfN(), pfC(), (xModel || "").replace(/\|/g, "").slice(0, 24), myP(), myD()].concat(a && a.k !== "l" ? [a.k + "." + a.i] : []).join("|") };
+function xPeer(id, name) { const a = String(name || "").split("|"), v = /^([wc])\.([a-z]+)$/.exec(a[6] || ""); return a[0] === "1" && a.length >= 6 ? { id, n: a[1] || "Без имени", c: a[2], m: a[3], p: +a[4] || 0, d: +a[5] || 0, av: v ? { k: v[1], i: v[2] } : null } : { id, n: String(name || "Телефон").slice(0, 20), c: PFC[1], m: "", p: 0, d: 0 } }
 function xOpen(fromSet) {
   if (fromSet === 1 && !$("v7").hidden) { hubY = shBody().scrollTop; SUB = 7 } else if (fromSet !== 1) SUB = 0;
   X.sub = SUB ? 1 : 0; X.asked = 0; xReset(); const N = XN();
@@ -178,9 +198,9 @@ function xBars() {
 function xDraw() { try { xDraw1() } catch (e) { console.error(e); X.s = "err"; X.err = "Ошибка экрана обмена: " + (e && e.message || e); try { xDraw1() } catch (_) { } } }
 function xDraw1() {
   if ($("v19").hidden && X.s === "done") return;
-  const x1 = $("x1"), x2 = $("x2"), me = xav(pfN() || "Я", pfC(), "l"), p = X.peer, ot = p ? xav(p.n, p.c, "l") : "", nm = p ? esc(p.n) : "";
+  const x1 = $("x1"), x2 = $("x2"), me = myAv("l"), p = X.peer, ot = p ? xav(p.n, p.c, "l", p.av) : "", nm = p ? esc(p.n) : "";
   let h = "", t = "Обмен продуктами", sub = "", b1 = null, b2 = null;
-  const meRow = `<div class="grp"><button class="row" onclick="pfOpen(1)">${pfN() ? xav(pfN(), pfC()) : `<span class="ic">${ic("user")}</span>`}<span class="tx">${pfN() ? esc(pfN()) : "Как вас назвать?"}<small>${pfN() ? "Так вас видят на другом телефоне" : "Имя и цвет увидит второй телефон"}</small></span><span class="ch">${ic("chevR")}</span></button></div>`;
+  const meRow = `<div class="grp"><button class="row" onclick="pfOpen(1)">${pfN() ? myAv() : `<span class="ic">${ic("user")}</span>`}<span class="tx">${pfN() ? esc(pfN()) : "Как вас назвать?"}<small>${pfN() ? "Так вас видят на другом телефоне" : "Имя и цвет увидит второй телефон"}</small></span><span class="ch">${ic("chevR")}</span></button></div>`;
   const pair = mv => `<div class="xp"><div>${me}Вы</div><span class="ln_${mv ? " mv" : ""}"></span><div>${ot}${nm}</div></div>`;
   if (X.s === "web") h = `<div class="fst no">${ic("info")}<div><b>Обмен работает в приложении на Android</b><small>Телефоны находят друг друга по Bluetooth и передают продукты по Wi‑Fi напрямую. В браузере это недоступно — откройте приложение БЖУ на телефоне.</small></div></div>`;
   else if (X.s === "intro") {
@@ -189,18 +209,18 @@ function xDraw1() {
     <div class="hint">Android один раз спросит разрешения «Устройства поблизости» и, на многих телефонах, точное «Местоположение» — без них Google не даёт искать телефоны рядом. Где вы находитесь, приложение не узнаёт и никуда не передаёт.</div>`;
     b1 = [pfN() ? "Продолжить" : "Указать имя", () => pfN() ? xGo() : pfOpen(1)]
   } else if (X.s === "perm") { h = `<div class="fst no">${ic("shield")}<div><b>Нет разрешения</b><small>Нужно разрешение ${xPermNames()} — без него телефоны не найдут друг друга. Включите их в настройках приложения › Разрешения.</small></div></div>` + xDiag(); b2 = ["Ещё раз", xGo]; b1 = ["Открыть настройки", () => XN().openSettings().catch(() => { })] }
-  else if (X.s === "check") h = `<div class="xr st"><i></i><i></i><i></i>${xav(pfN(), pfC())}</div><div class="xst"><i></i>Проверяем Bluetooth и разрешения…</div>`;
+  else if (X.s === "check") h = `<div class="xr st"><i></i><i></i><i></i>${myAv()}</div><div class="xst"><i></i>Проверяем Bluetooth и разрешения…</div>`;
   else if (X.s === "precise") { const s = X.st || {};
     h = `<div class="fst no">${ic("info")}<div><b>${s.coarse ? "Нужно точное местоположение" : "Нужен доступ к местоположению"}</b><small>${s.coarse ? "Разрешено только «Приблизительно», а" : "Без доступа к местоположению"} Сервисы Google Play на этом телефоне не ищут телефоны рядом по Bluetooth${s.coarse ? " без точного" : ""}. Само приложение координаты не получает и никуда не передаёт.${X.denied ? " Окно разрешения не появилось: откройте настройки › Разрешения › Местоположение и выберите «Разрешить» и «Точное местоположение»." : ""}</small></div></div>` + xDiag();
     b2 = ["Ещё раз", () => { xStop(); xGo() }]; b1 = X.denied ? ["Открыть настройки", () => XN().openSettings().catch(() => { })] : [s.coarse ? "Разрешить точное" : "Разрешить", xPrecise] }
   else if (X.s === "gms") { h = `<div class="fst bad">${ic("warn")}<div><b>Сервисы Google Play не дают начать поиск</b><small>Разрешения выданы и геолокация включена, но поиск отклонён. Обычно помогает обновить «Сервисы Google Play» в Play Маркете и перезапустить телефон.</small></div></div>` + xDiag(); b1 = ["Ещё раз", () => { xStop(); xGo() }] }
   else if (X.s === "loc") { h = `<div class="fst no">${ic("info")}<div><b>Включите геолокацию</b><small>Google ищет телефоны рядом только при включённой геолокации. Где вы находитесь, приложение не узнаёт. Включите и вернитесь — поиск начнётся сам.</small></div></div>` + xDiag(); b2 = ["Ещё раз", () => { xStop(); xGo() }]; b1 = ["Открыть геолокацию", () => { const N = XN(); (N.openLocation ? N.openLocation() : N.openSettings()).catch(() => { }) }] }
   else if (X.s === "nobt") h = `<div class="fst bad">${ic("bt")}<div><b>На этом телефоне нет Bluetooth</b><small>Обмен с телефоном рядом недоступен. Можно обменяться файлом: «Настройки › Файл данных».</small></div></div>`;
-  else if (X.s === "bt") { h = `<div class="fst no">${ic("bt")}<div><b>Bluetooth выключен</b><small>Без него телефоны не найдут друг друга. Android спросит «Включить Bluetooth?»</small></div></div><div class="xr st"><i></i><i></i><i></i>${xav(pfN(), pfC())}</div><div class="gh">Вас видят как</div>${meRow}`; b1 = ["Включить Bluetooth", xBt] }
+  else if (X.s === "bt") { h = `<div class="fst no">${ic("bt")}<div><b>Bluetooth выключен</b><small>Без него телефоны не найдут друг друга. Android спросит «Включить Bluetooth?»</small></div></div><div class="xr st"><i></i><i></i><i></i>${myAv()}</div><div class="gh">Вас видят как</div>${meRow}`; b1 = ["Включить Bluetooth", xBt] }
   else if (X.s === "search") {
     const L = [...X.found.values()];
-    h = `<div class="xr"><i></i><i></i><i></i>${xav(pfN(), pfC())}</div><div class="xt"><b>Ищем телефоны рядом</b><small>На втором телефоне откройте «Обмен продуктами» — он появится здесь</small></div>` +
-      (L.length ? `<div class="gh">Рядом</div><div class="grp">${L.map(q => `<button class="row" onclick="xConnect('${esc(q.id)}')">${xav(q.n, q.c)}<span class="tx">${esc(q.n)}<small>${q.m ? esc(q.m) + " · " : ""}${nP(q.p, "продукт", "продукта", "продуктов")}</small></span><span class="xg">Обменяться</span></button>`).join("")}</div>` : "") +
+    h = `<div class="xr"><i></i><i></i><i></i>${myAv()}</div><div class="xt"><b>Ищем телефоны рядом</b><small>На втором телефоне откройте «Обмен продуктами» — он появится здесь</small></div>` +
+      (L.length ? `<div class="gh">Рядом</div><div class="grp">${L.map(q => `<button class="row" onclick="xConnect('${esc(q.id)}')">${xav(q.n, q.c, "", q.av)}<span class="tx">${esc(q.n)}<small>${q.m ? esc(q.m) + " · " : ""}${nP(q.p, "продукт", "продукта", "продуктов")}</small></span><span class="xg">Обменяться</span></button>`).join("")}</div>` : "") +
       (X.none ? `<div class="fst no xw">${ic("info")}<div><b>Никого не нашли за минуту</b><small>Проверьте, что на втором телефоне открыт обмен и телефоны рядом. Поиск продолжается.</small></div></div>` : "") +
       (!X.wifi ? `<div class="hint">Wi‑Fi выключен — найти можно, но передача пойдёт медленнее.</div>` : "") +
       `<div class="gh">Вас видят как</div>${meRow}`

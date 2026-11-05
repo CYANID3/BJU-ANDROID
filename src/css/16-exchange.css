@@ -23,11 +23,22 @@
 .xb .h{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--fs-body);font-weight:600;margin-bottom:8px}.xb .h span{font-size:14px;color:var(--mu);font-variant-numeric:tabular-nums}
 .xb .br{height:8px;border-radius:var(--r-pill);background:var(--bd);overflow:hidden}.xb .br i{display:block;height:100%;border-radius:inherit;background:var(--ac)}.xb .br i.in{background:var(--p)}
 .xn{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:var(--mu);margin:10px 4px 0;line-height:1.4}.xn svg.i{width:16px;height:16px;flex:none}
-/* профиль */
-.pfh{display:flex;flex-direction:column;align-items:center;gap:10px;margin:6px 0 4px}.pfh small{color:var(--mu);font-size:13.5px;text-align:center;line-height:1.45;max-width:290px}
-.pfc{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:14px 22px;background:var(--sub);border-radius:var(--r-block)}.pfc button{aspect-ratio:1;max-width:52px;justify-self:center;width:100%;border-radius:50%;display:grid;place-items:center;color:#fff}
-.pfc button svg{width:20px;height:20px;opacity:0}.pfc button.on{box-shadow:0 0 0 3px var(--sub),0 0 0 5px var(--tx)}.pfc button.on svg{opacity:1}
-.pfh .xav{transition:background-color var(--t2)}
+/* профиль: кружок и имя в строку; вкладки «Буква · Значки · Цветные»; значки 5 в ряд; цвета 10 в ряд */
+.xav.pic svg{width:62%;height:62%}.xav.pic svg.avi{display:block}
+.pfh{display:flex;align-items:center;gap:14px;margin:4px 0 12px}.pfl{flex:1;min-width:0}.pfl .gh{margin:0 0 8px;text-align:left}
+.xav.pfx{width:84px;height:84px;font-size:34px;transition:background-color var(--t2)}
+.pft{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;background:var(--sub);border-radius:var(--r-ctl)}
+.pft button{height:40px;border-radius:calc(var(--r-ctl) - 4px);font-weight:700;font-size:15px;color:var(--mu);transition:background-color var(--t1),color var(--t1)}
+.pft button.on{background:var(--keyp);color:var(--tx)}
+.pfg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:12px;padding:12px;background:var(--sub);border-radius:var(--r-block)}
+.pfg button{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;transition:background-color var(--t1),box-shadow var(--t1)}
+.pfg button svg{width:58%;height:58%}.pfg.cl button svg{width:68%;height:68%}
+.pfg:not(.cl) button:not(.on) svg{stroke:var(--mu)}.pfg:not(.cl) button:not(.on) svg path:not([stroke="none"]){fill:var(--keyp)}.pfg:not(.cl) button:not(.on) svg path[stroke="none"]{fill:var(--mu)}.pfg:not(.cl) button:not(.on) svg path[fill="none"]{fill:none}
+.pfg button.on{box-shadow:0 0 0 2px var(--sub),0 0 0 4px var(--tx)}
+.pfn0{margin-top:12px;padding:16px;background:var(--sub);border-radius:var(--r-block);color:var(--mu);font-size:14px;line-height:1.45}
+.pfc{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:7px}.pfc button{aspect-ratio:1;border-radius:50%}
+.pfc button.on{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--tx)}
+.pfs{display:block;color:var(--mu);font-size:13px;text-align:center;line-height:1.45;margin:14px auto 4px;max-width:300px}
 .xw{margin-top:var(--gap)}
 @media (prefers-reduced-motion:reduce){.xr i{animation:none;opacity:.3}.xp .ln_.mv,.xst i{animation:none}}
 .grp.xlk{opacity:.55;pointer-events:none}

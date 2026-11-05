@@ -14,11 +14,12 @@
 //                 "pullDownAction": "calendar|today|off", "vibration": "on|exceptDays|off", "swipeLength": "short|medium|long",
 //                 "backgroundTint": "off|soft|strong", "weightTracking": "on|off",
 //                 "newButtons": "top|bottom", "snacks": "row|doubleTap", "dayCard": "tripleTap|row",
-//                 "fabAction": "meal|product|dish|weight|hidden", "vibrationStrength": "light|normal|strong",
+//                 "fabAction": "meal|product|dish|weight|hidden", "vibrationStrength": "light|normal|strong", "dayNotes": "on|off",
 //                 "navBar": { "n": 5, "big": true, "s": ["cal","prod","meal","stat","set"] } — нижняя панель: места слева направо, большая кнопка в центре;
 //                           fabAction пишется по-прежнему (действие кнопки или hidden) — для старых версий приложения,
 //                 "vibrationEvents": { "kb": true, "save": true, "del": true, "days": false, "pull": true, "ui": true, "err": true } },
 //   "weight":   { "2026-10-16": 72.4 },                                    — вес по дням, кг
+//   "notes":    { "2026-10-16": "В гостях, плов на глаз" },                — заметка к дню, необязательно
 //   "stats":    { "useCount": { "Яблоко": 12 }, "lastGrams": { "Яблоко": 55 }, "recent": [ "Яблоко" ] }   — для сортировки и подсказок
 // }
 // В products числа на 100 г можно не указывать (будет 0). Старые файлы (без "format") тоже открываются.
@@ -27,7 +28,7 @@ const MK=["breakfast","snack1","lunch","snack2","dinner","snack3"];
 // bottomBar больше не используется (панель всегда закреплена), но читается и сохраняется обратно без изменений —
 // файл остаётся совместимым со старой версией приложения на другом телефоне
 const STM={th:["theme",{}],tn:["backgroundTint",{}],ac:["accentColor",{}],sw:["pullUpAction",{prod:"product",stat:"stats",wt:"weight"}],dw:["pullDownAction",{cal:"calendar"}],hp:["vibration",{nodays:"exceptDays"}],sl:["swipeLength",{mid:"medium"}],wt:["weightTracking",{}],bb:["bottomBar",{fix:"fixed"}],nb:["newButtons",{}],sn:["snacks",{row:"row",tap:"doubleTap"}],mg:["productImport",{}],gh:["gestureHints",{}],sf:["pullUpFrom",{edge:"edge",end:"listEnd"}],lu:["rememberUnit",{}],
- dc:["dayCard",{tap:"tripleTap",row:"row"}],fa:["fabAction",{prod:"product",wt:"weight",hide:"hidden"}],vs:["vibrationStrength",{}],ve:["vibrationEvents",{}],nav:["navBar",{}],pf:["profile",{}],xi:["exchangeIntroSeen",{}]};
+ dc:["dayCard",{tap:"tripleTap",row:"row"}],fa:["fabAction",{prod:"product",wt:"weight",hide:"hidden"}],vs:["vibrationStrength",{}],ve:["vibrationEvents",{}],nav:["navBar",{}],pf:["profile",{}],xi:["exchangeIntroSeen",{}],nt:["dayNotes",{}]};
 const r3=x=>Math.round(x*1000)/1000,fnum=(x,d)=>x==null||x===""?d:typeof x==="number"?x:parseFloat(String(x).replace(",","."));
 const entOut=e=>{const o={name:e.n,grams:r3(e.g),protein:r3(e.p),fat:r3(e.f),carbs:r3(e.c)};if(e.ul)o.unit={name:e.ul,count:e.q};return o};
 const entIn=(o,w)=>{if(!o||typeof o!=="object")throw Error(w+": запись должна быть объектом");if(!o.name)throw Error(w+": нет названия (name)");
@@ -36,10 +37,12 @@ const entIn=(o,w)=>{if(!o||typeof o!=="object")throw Error(w+": запись д�
 function toFile(D){
  const diary={};for(const k of Object.keys(D.d).sort()){const E=D.d[k];if(!E.length)continue;const day={};E.forEach(e=>(day[MK[e.m]]=day[MK[e.m]]||[]).push(entOut(e)));const o={};MK.forEach(m=>{if(day[m])o[m]=day[m]});diary[k]=o}
  const settings={};for(const k in D.set||{}){const t=STM[k];if(t&&D.set[k]!=null)settings[t[0]]=t[1][D.set[k]]||D.set[k]}
+ // заметки к дню — только если есть (файл без них не меняет вид)
+ const nk=Object.keys(D.nt||{}).sort().filter(k=>typeof D.nt[k]==="string"&&D.nt[k]),notes=nk.length?{notes:Object.fromEntries(nk.map(k=>[k,D.nt[k]]))}:{};
  return{format:"bju-diary",version:3,savedAt:D.saved?new Date(D.saved).toISOString():null,
   goals:{protein:D.g.p,fat:D.g.f,carbs:D.g.c},
   products:D.db.map(p=>{const o={name:p[0],per100g:{protein:p[1],fat:p[2],carbs:p[3]}};if(D.fav&&D.fav[p[0]])o.favorite=true;if(p[4]&&p[4].length&&!p[5])o.units=p[4].map(u=>({name:u[0],grams:u[1]}));if(p[5])o.dish={cookedWeight:p[5].w,ingredients:p[5].i.map(entOut)};return o}),
-  diary,weight:Object.fromEntries(Object.keys(D.wt||{}).sort().map(k=>[k,D.wt[k]])),settings,stats:{useCount:D.uc||{},lastGrams:D.lg||{},lastUnit:Object.fromEntries(Object.entries(D.lu||{}).map(([k,v])=>[k,v[0]?{unit:v[0],amount:v[1]}:{unit:null}])),recent:D.rc||[]}}}
+  diary,weight:Object.fromEntries(Object.keys(D.wt||{}).sort().map(k=>[k,D.wt[k]])),settings,stats:{useCount:D.uc||{},lastGrams:D.lg||{},lastUnit:Object.fromEntries(Object.entries(D.lu||{}).map(([k,v])=>[k,v[0]?{unit:v[0],amount:v[1]}:{unit:null}])),recent:D.rc||[]},...notes}}
 function fromFile(o){if(!o||typeof o!=="object"||o.format!=="bju-diary")return o;
  if(o.version>3)throw Error("файл создан в более новой версии приложения");
  const g=o.goals||{},D={v:STATE_VER,g:{p:fnum(g.protein,0),f:fnum(g.fat,0),c:fnum(g.carbs,0)},db:[],d:{},saved:Date.parse(o.savedAt)||0,set:{},uc:(o.stats&&o.stats.useCount)||{},lg:(o.stats&&o.stats.lastGrams)||{},lu:Object.fromEntries(Object.entries((o.stats&&o.stats.lastUnit)||{}).filter(([,v])=>v&&typeof v==="object").map(([k,v])=>[k,v.unit?[String(v.unit),fnum(v.amount,0)]:[""]])),fav:{},wt:{}};if(o.stats&&Array.isArray(o.stats.recent))D.rc=o.stats.recent.map(String).slice(0,10);
@@ -53,6 +56,8 @@ function fromFile(o){if(!o||typeof o!=="object"||o.format!=="bju-diary")return o
   const E=[];MK.forEach((m,mi)=>(day[m]||[]).forEach((x,j)=>{const e=entIn(x,k+", "+m+" №"+(j+1));e.m=mi;E.push(e)}));D.d[k]=E}
  if(o.weight!=null&&typeof o.weight!=="object")throw Error("«weight» должен быть объектом { \"ГГГГ-ММ-ДД\": кг }");
  for(const k in o.weight||{}){const v=fnum(o.weight[k],NaN);if(!/^\d{4}-\d{2}-\d{2}$/.test(k))throw Error("вес: неверная дата «"+k+"»");if(!(v>0&&v<1000))throw Error("вес за "+k+": нужно число в кг");D.wt[k]=v}
+ // заметки к дню: { "ГГГГ-ММ-ДД": "текст" } — только строки по датам, не длиннее 1000 знаков; остальное отбрасывается
+ D.nt={};if(o.notes&&typeof o.notes==="object"&&!Array.isArray(o.notes))for(const k in o.notes){const v=o.notes[k];if(/^\d{4}-\d{2}-\d{2}$/.test(k)&&typeof v==="string"&&v.trim())D.nt[k]=v.trim().slice(0,1000)}
  const st=o.settings||{};for(const k in STM){const[nm,map]=STM[k];if(nm in st){const v=st[nm];D.set[k]=Object.keys(map).find(x=>map[x]===v)||v}}
  // значения настроек — только своего вида (файл могла записать другая версия или его правили вручную): строки — строками,
  // цвет акцента — #RRGGBB, нижняя панель и профиль — объектами; неподходящее отбрасывается, вместо него — значение по умолчанию

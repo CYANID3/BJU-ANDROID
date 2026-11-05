@@ -1,5 +1,5 @@
 // Нижний лист: экраны, шапка (заголовок, «‹ назад», стрелки месяца), низ с кнопками действия, открытие и закрытие
-const VWS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+const VWS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 // список продуктов — всегда на всю высоту: при поиске лист не «прыгает»; остальные экраны — по содержимому
 const FULL = new Set([1]);
 const shEl = () => document.querySelector("#ov .sh"), shBody = () => document.querySelector("#ov .shb");
@@ -104,7 +104,8 @@ function svPlay(sh, snap) {
 }
 // содержимое того же экрана поменяло высоту (подсказка жеста появилась или ушла, другой вариант выбора):
 // fn() перерисовывает, край листа плавно переезжает, изменившийся блок проявляется
-function shResize(fn, watch) {
+// up — низ (кнопки) едет вместе с листом: так появляется своя клавиатура внизу листа
+function shResize(fn, watch, up) {
   const sh = shEl(); if (!isOpen || RM() || !sh.animate || vtx.on || document.hidden) { fn(); return }
   svKill(); const r0 = sh.getBoundingClientRect(), bg = document.createElement("div");
   // блоки, которые могут появиться или пропасть (подсказка жеста): пропавший гаснет на старом месте, новый проявляется
@@ -127,7 +128,7 @@ function shResize(fn, watch) {
     // лист стал выше: поднимается целиком со старой высоты (низ уходит за край экрана — там его не видно)
     sh.animate([{ transform: `translateY(${-d}px)` }, { transform: "none" }], { duration: D, easing: E });
     // низ листа (кнопки) стоит на месте: встречный сдвиг гасит подъём листа, растёт только верхний край
-    const f = sh.querySelector(".shf"); if (f) f.animate([{ transform: `translateY(${d}px)` }, { transform: "none" }], { duration: D, easing: E })
+    const f = sh.querySelector(".shf"); if (f && !up) f.animate([{ transform: `translateY(${d}px)` }, { transform: "none" }], { duration: D, easing: E })
   }
   // пропавший блок уходит вниз вместе со всеми и гаснет — быстро, в первые 40 % пути, чтобы не наложиться на новый текст
   was.filter(w => !document.querySelector(w[0])).forEach(([, g]) => { $("ov").appendChild(g); g.animate([{ opacity: 1, transform: "none" }, { opacity: 0, offset: .4 }, { opacity: 0, transform: `translateY(${Math.max(0, d)}px)` }], { duration: D, easing: E, fill: "forwards" }).finished.catch(() => { }).then(() => g.remove()) });
