@@ -13,7 +13,7 @@
 <!-- Нижняя панель: места и большая кнопка в центре настраиваются (Настройки › Нижняя панель), собирается в barSync() -->
 <nav class="bt" aria-label="Разделы"></nav>
 <!-- Нижний лист: шапка, прокручиваемое содержимое, низ (кнопки действия и своя клавиатура — всегда у нижнего края) -->
-<div id="ov"><div class="sh" role="dialog" aria-modal="true" aria-labelledby="st">
+<div id="ov" inert><div class="sh" role="dialog" aria-modal="true" aria-labelledby="st">
  <div class="hd"><button id="hb" class="ib hb" onclick="backStep()" aria-label="Назад" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><button id="hl" class="ib" aria-label="Предыдущий месяц" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="ht"><b id="st"></b><small id="ss"></small></div><button id="hr" class="ib" aria-label="Следующий месяц" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button><button class="x" onclick="xcl()" aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
  <div class="shb">
  <!-- список продуктов: при добавлении, «Продукты», выбор ингредиента -->
@@ -75,7 +75,7 @@
   <div id="kp" class="kpd" role="group" aria-label="Цифровая клавиатура"></div>
  </div>
 </div></div>
-<div id="dg"><div class="dc" role="alertdialog" aria-modal="true" aria-labelledby="dgm"><div id="dgt"></div><div id="dgm"></div><div class="dbs"><button id="dgn">Отмена</button><button id="dgy">ОК</button></div></div></div>
+<div id="dg" inert><div class="dc" role="alertdialog" aria-modal="true" aria-labelledby="dgm"><div id="dgt"></div><div id="dgm"></div><div class="dbs"><button id="dgn">Отмена</button><button id="dgy">ОК</button></div></div></div>
 <div id="pu" class="pu" aria-hidden="true"><div class="pw"><div class="pc"><svg class="r" viewBox="0 0 50 50"><circle cx="25" cy="25" r="23"/></svg><span id="pa" class="pa"></span></div><div id="pt" class="pl"></div></div></div>
 <div id="tt" class="tt" role="status" aria-live="polite"><span id="tm"></span><button onclick="undo()">Отменить</button></div>
 <!-- @parts js src/js --></body></html>

@@ -167,8 +167,8 @@ let ei = -1, lastDel = null, tmr, isOpen = false;
 // Закрытый лист остаётся в странице (видимость скрыта). Раньше через 0,4 с после закрытия его содержимое выключалось из
 // расчёта (content-visibility:hidden), но Android WebView после этого мог не обновить унаследованную видимость: при
 // следующем открытии пустой лист — видны только шапка и элементы с собственной видимостью (галочки). Поэтому без этого.
-function show() { if (!isOpen) shDragReset(); if (!isOpen) { isOpen = true; oa = Date.now(); if (!NATIVE) try { history.pushState({ o: 1 }, "") } catch (e) { } } $("ov").classList.add("on"); document.documentElement.classList.add("lk") }
-function closeUI() { if (!isOpen) return; svKill(); cpm = -1; isOpen = false; SUB = 0; if (mode === "ing") mode = pmode; ik = -1; $("ov").classList.remove("on"); document.documentElement.classList.remove("lk"); ei = -1; kpF = null; try { document.activeElement.blur() } catch (e) { } }
+function show() { if (!isOpen) shDragReset(); if (!isOpen) { isOpen = true; oa = Date.now(); if (!NATIVE) try { history.pushState({ o: 1 }, "") } catch (e) { } } $("ov").inert = false; $("ov").classList.add("on"); document.documentElement.classList.add("lk") }
+function closeUI() { if (!isOpen) return; svKill(); cpm = -1; isOpen = false; SUB = 0; if (mode === "ing") mode = pmode; ik = -1; $("ov").classList.remove("on"); $("ov").inert = true; document.documentElement.classList.remove("lk"); ei = -1; kpF = null; try { document.activeElement.blur() } catch (e) { } }
 async function xcl() {
   if (!v3ok && !$("v3").hidden && v3sig() !== v3snap && !await ask("Продукт не сохранён. Закрыть без сохранения?", "Закрыть", 1)) return;
   if (!$("v8").hidden && dirtyDish() && !await ask("Закрыть без сохранения блюда?", "Закрыть", 1)) return;

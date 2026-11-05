@@ -2,9 +2,9 @@
 // ask(текст, кнопка, опасное действие, только одна кнопка, заголовок) → Promise<boolean>
 function ask(m, y, dg, one, title) {
   return new Promise(ok => {
-    const e = $("dg"), Y = $("dgy"), N = $("dgn"), k = ev => { if (ev.key === "Escape") f(false) }, f = v => { e.classList.remove("on"); Y.onclick = N.onclick = null; document.removeEventListener("keydown", k); ok(v) };
+    const e = $("dg"), Y = $("dgy"), N = $("dgn"), k = ev => { if (ev.key === "Escape") f(false) }, f = v => { e.classList.remove("on"); e.inert = true; Y.onclick = N.onclick = null; document.removeEventListener("keydown", k); ok(v) };
     $("dgt").textContent = title || ""; $("dgm").textContent = m; Y.textContent = y || "ОК"; Y.classList.toggle("dg", !!dg); N.style.display = one ? "none" : "";
-    Y.onclick = () => f(true); N.onclick = () => f(false); document.addEventListener("keydown", k); e.classList.add("on"); if (dg) vib("ui");
+    Y.onclick = () => f(true); N.onclick = () => f(false); document.addEventListener("keydown", k); e.inert = false; e.classList.add("on"); if (dg) vib("ui");
     const a = document.activeElement; if (!isTxtF(a)) Y.focus()
   })
 }
