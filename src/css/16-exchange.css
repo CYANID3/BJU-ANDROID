@@ -25,8 +25,9 @@
 .xn{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:var(--mu);margin:10px 4px 0;line-height:1.4}.xn svg.i{width:16px;height:16px;flex:none}
 /* профиль: кружок и имя в строку; вкладки «Буква · Значки · Цветные»; значки 5 в ряд; цвета 10 в ряд */
 .xav.pic svg{width:62%;height:62%}.xav.pic svg.avi{display:block}
-.pfh{display:flex;align-items:center;gap:14px;margin:4px 0 12px}.pfl{flex:1;min-width:0}.pfl .gh{margin:0 0 8px;text-align:left}
-.xav.pfx{width:84px;height:84px;font-size:34px;transition:background-color var(--t2)}
+/* кружок и поле имени — в одну строку, без подписи (компактно) */
+.pfh{display:flex;align-items:center;gap:12px;margin:2px 0 12px}.pfl{flex:1;min-width:0}.pfh #pfn{text-align:center;font-size:18px;font-weight:700}
+.xav.pfx{width:56px;height:56px;font-size:24px;transition:background-color var(--t2)}
 .pft{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;background:var(--sub);border-radius:var(--r-ctl)}
 .pft button{height:40px;border-radius:calc(var(--r-ctl) - 4px);font-weight:700;font-size:15px;color:var(--mu);transition:background-color var(--t1),color var(--t1)}
 .pft button.on{background:var(--keyp);color:var(--tx)}

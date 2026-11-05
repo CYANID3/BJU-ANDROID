@@ -14,6 +14,8 @@ document.addEventListener("visibilitychange", () => { if (document.hidden) retur
 let ovDown = 0; $("ov").addEventListener("pointerdown", e => { ovDown = e.target === $("ov") }); $("ov").addEventListener("click", e => { if (e.target === $("ov") && ovDown && Date.now() - oa > 450) xcl() }); addEventListener("keydown", e => { if (e.key === "Escape" && isOpen && !$("dg").classList.contains("on")) xcl() }, true);
 try { matchMedia("(prefers-color-scheme:dark)").addEventListener("change", () => applyAc()) } catch (e) { }
 // локальная копия была повреждена — восстановить резервную (в APK затем ещё сверяются файлы)
-if (LOCAL_BAD) { try { const b = localStorage.getItem("bju2bak"); if (b && adopt(parseData(b), false)) { store(); setTimeout(() => toast("Данные в памяти были повреждены — восстановлена резервная копия", 0, 6000), 800) } } catch (e) { } }
-applyAc(); render(); Promise.resolve(initH()).finally(() => scSync());
+if (LOCAL_BAD && !NATIVE) { try { const b = localStorage.getItem("bju2bak"); if (b && adopt(parseData(b), false)) { store(); setTimeout(() => toast("Данные в памяти были повреждены — восстановлена резервная копия", 0, 6000), 800) } } catch (e) { } }
+// APK: заставка держится, пока день не готов — данные прочитаны (initH), системные отступы применены, кадр нарисован
+function appUp() { const N = NX(); if (!N || !N.ready) return; const t0 = Date.now(), go = () => { if (!window.BJU_insetsOk && Date.now() - t0 < 1500) return setTimeout(go, 30); requestAnimationFrame(() => requestAnimationFrame(() => N.ready())) }; go() }
+applyAc(); render(); Promise.resolve(initH()).finally(() => { scSync(); appUp() });
 { const m = new URLSearchParams(location.search).get("m"); if (/^[0-5]$/.test(m || "")) { try { history.replaceState(history.state, "", location.pathname) } catch (e) { } op(+m) } }

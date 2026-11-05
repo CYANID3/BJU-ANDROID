@@ -31,7 +31,7 @@ const ICP = {
   minus: '<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>', plusc: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
   sld: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
   grip: '<path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01" stroke-width="3.2"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
-  swap: '<path d="M7 4L4 7l3 3"/><path d="M4 7h12"/><path d="M17 14l3 3-3 3"/><path d="M20 17H8"/>',
+  reset: '<path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5"/><path d="M4 4v4.5h4.5"/>', swap: '<path d="M7 4L4 7l3 3"/><path d="M4 7h12"/><path d="M17 14l3 3-3 3"/><path d="M20 17H8"/>',
   panel: '<rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="M3.5 15h17"/><path d="M8 17.5h.01M12 17.5h.01M16 17.5h.01" stroke-width="2.6"/>',
   list: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="3"/>', import: '<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M5 19.5h14"/>'
 };

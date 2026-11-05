@@ -102,3 +102,9 @@ button.ch{display:grid;place-items:center;width:32px;height:32px;margin-right:-6
 .row .rm{flex:none;width:40px;height:40px;margin-right:-8px;border-radius:50%;display:grid;place-items:center;color:var(--dgt)}.row .rm.ad{color:var(--okt)}.row .rm svg.i{width:22px;height:22px}
 .row .rm:active{background:color-mix(in srgb,var(--tx) 8%,transparent)}
 .row.ctr{background:color-mix(in srgb,var(--ac) 7%,transparent)}.row .gp0{flex:none;width:20px;margin:0 -6px 0 -4px}.row.ctr .ic.on{background:var(--acf,var(--ac));color:var(--on)}
+/* галочки (Начать дневник заново, Отключить файл): квадрат слева, отмечено — заливка акцентом; «опасная» — красным */
+.row .cb{flex:none;width:22px;height:22px;border-radius:7px;display:grid;place-items:center;box-shadow:inset 0 0 0 2px var(--bd);color:#fff;transition:background-color var(--t1),box-shadow var(--t1)}
+.row .cb svg.i{width:15px;height:15px;stroke-width:3;opacity:0;transform:scale(.6);transition:opacity var(--t1),transform var(--t1) var(--ease)}
+.row.ck .cb{background:var(--acf,var(--ac));box-shadow:none;color:var(--on)}.row.ck .cb svg.i{opacity:1;transform:none}
+.row.dgc.ck .cb{background:var(--dg);color:#fff}.row.dgc.ck .tx{color:var(--dg)}
+.ofp{border-top:1px solid color-mix(in srgb,var(--bd) 70%,var(--sub))}.ofp .row{padding-left:30px}

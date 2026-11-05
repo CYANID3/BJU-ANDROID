@@ -12,8 +12,9 @@ async function askRepl(o,name,lead){const a=dnc(S.d);if(!a)return true;
  if(!await ask((lead||"Заменить")+" текущие данные (дней с записями: "+a+") данными из файла"+(name?" «"+name+"»":"")+" (дней: "+dnc(o.d)+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return false;bk();return true}
 function setMF(f){const N=NX();if(MF&&N&&(!f||f.uri!==MF.uri))N.file.release(MF.uri).catch(()=>{});MF=f;mfOk=true;try{f?localStorage.setItem("bju_file",JSON.stringify(f)):localStorage.removeItem("bju_file")}catch(e){}}
 async function nativeFlush(){clearTimeout(nativeSaveTimer);nativeSaveTimer=0;const N=NX();if(!N)return;
- S.saved=Date.now();const t=ser();let ok=true;
- try{await N.writeLocal(t)}catch(e){ok=false}
+ // внутренний файл — без отступов (вдвое меньше), файл пользователя — читаемый, с отступами (его можно править вручную)
+ S.saved=Date.now();const F=toFile(S),t=JSON.stringify(F,null,2);let ok=true;
+ try{await N.writeLocal(JSON.stringify(F))}catch(e){ok=false}
  if(MF&&N.file.available){const was=mfOk;try{await N.file.write(MF.uri,t);mfOk=true}catch(e){mfOk=false;ok=false}if(was!==mfOk)render()}
  if(ok)S.dirty=0;store()}
 function queueNativeSave(){if(!NX())return;clearTimeout(nativeSaveTimer);nativeSaveTimer=setTimeout(nativeFlush,300)}
@@ -25,7 +26,9 @@ async function initNative(){const N=NX();if(!N)return;const cand=[];
  if(MF&&N.file.available){try{const c=await N.file.check(MF.uri);if(c.read){add(await N.file.read(MF.uri),"file");if(c.name)MF.name=c.name;mfOk=!!c.write}else mfOk=false}catch(e){mfOk=false}}
  if(!cand.length)add(await N.readLegacy(),"legacy");
  let best=null;for(const c of cand)if(!best||(c.o.saved||0)>(best.o.saved||0))best=c;
- if(best&&(best.o.saved||0)>(S.saved||0)){if(S.dirty&&dnc(S.d))bk();adopt(best.o);store()}
+ if(best&&(best.o.saved||0)>(S.saved||0)){if(S.dirty&&dnc(S.d))bk();adopt(best.o);store();if(LOCAL_BAD)setTimeout(()=>toast("Данные в памяти были повреждены — восстановлены из внутреннего файла",0,6000),800)}
+ // старая резервная копия в памяти WebView больше не нужна (теперь она во внутреннем файле) — освобождаем место
+ try{localStorage.removeItem("bju2bak")}catch(e){}
  // кто-то отстаёт (или файла ещё нет) — дописываем актуальные данные везде
  if(!cand.some(c=>c.src==="local")||cand.some(c=>(c.o.saved||0)!==(S.saved||0))||(MF&&mfOk&&!cand.some(c=>c.src==="file")))await nativeFlush();
  render()}
@@ -36,4 +39,3 @@ async function nfOpen(){const N=NX();if(!N||!N.file.available)return $("fin").cl
  if(JSON.stringify(o.d)!==JSON.stringify(S.d)&&!await askRepl(o,r.name))return;
  adopt(o);store();setMF(r.writable?{uri:r.uri,name:r.name}:null);await nativeFlush();cl();render();
  toast(r.writable?"Файл «"+r.name+"» подключён как основной · автосохранение включено":"Данные загружены, но файл доступен только для чтения")}
-async function nfOff(){if(!MF)return;if(!await ask("Отключить файл «"+MF.name+"»?\nДанные останутся в приложении, но файл перестанет обновляться.","Отключить"))return;setMF(null);fp();render()}

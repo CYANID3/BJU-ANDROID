@@ -106,10 +106,10 @@ test('палитра: на 10 цветах, в обеих темах и с лю�
   }
 });
 
-test('«Файл данных»: «Открыть существующий файл», импорт — отдельной группой', async () => {
+test('«Файл данных»: «Новый файл» и «Переключиться», импорт — отдельной группой', async () => {
   const a = await openApp();
   await a.ev(() => fp()); await a.wait(400);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v5 .gh')].map(e => e.textContent)), ['Основной файл', 'Импорт']);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v5 .row .tx')].map(e => e.firstChild.textContent)), ['Создать новый файл', 'Открыть существующий файл', 'Добавить продукты из файла']);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v5 .gh')].map(e => e.textContent)), ['Импорт']);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v5 .row:not([hidden]) .tx')].map(e => e.firstChild.textContent)), ['Новый файл', 'Переключиться на другой файл', 'Добавить продукты из файла']);
   await a.close();
 });

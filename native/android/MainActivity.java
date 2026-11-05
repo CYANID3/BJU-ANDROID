@@ -1,6 +1,8 @@
 package kg.bju.app;
 
 import android.os.Bundle;
+import android.os.SystemClock;
+import androidx.core.splashscreen.SplashScreen;
 import android.view.View;
 import android.webkit.WebView;
 import com.getcapacitor.BridgeActivity;
@@ -9,6 +11,15 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Заставка с логотипом держится, пока страница не скажет, что день готов (данные прочитаны, отступы пришли, кадр
+        // нарисован — BjuNativePlugin.appReady), но не дольше 2 с. Без этого после логотипа ~1 с виден пустой фон,
+        // а затем день появляется и съезжает вниз, когда приходят системные отступы
+        final long t0 = SystemClock.uptimeMillis();
+        BjuNativePlugin.ready = false;
+        try {
+            SplashScreen.installSplashScreen(this)
+                .setKeepOnScreenCondition(() -> !BjuNativePlugin.ready && SystemClock.uptimeMillis() - t0 < 2000);
+        } catch (Exception ignored) { }
         registerPlugin(BjuNativePlugin.class);
         registerPlugin(BjuExchangePlugin.class);
         super.onCreate(savedInstanceState);

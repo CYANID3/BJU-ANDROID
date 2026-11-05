@@ -38,7 +38,7 @@ export const nativeMock = () => {
   window.__P = P; window.__W = []; window.__H = [];
   const mock = {
     native: true, readLocal: async () => P.local, writeLocal: async t => { P.local = t; sv(); }, writeBackup: async () => {}, readLegacy: async () => null,
-    haptic: async ms => { window.__H.push(ms); return true; }, bars: async () => {}, widget: async o => { window.__W.push(o); },
+    haptic: async ms => { window.__H.push(ms); return true; }, ready: async () => { window.__R = (window.__R || 0) + 1; }, bars: async () => {}, widget: async o => { window.__W.push(o); },
     file: {
       available: true,
       create: async n => { const uri = 'content://x/' + n; P.files[uri] = ''; P.perm[uri] = 1; sv(); return { uri, name: n, writable: true }; },
@@ -46,7 +46,8 @@ export const nativeMock = () => {
       read: async u => { if (!P.perm[u]) throw Error('no access'); return P.files[u]; },
       write: async (u, t) => { if (!P.perm[u]) throw Error('no access'); P.files[u] = t; sv(); },
       check: async u => ({ read: !!P.perm[u], write: !!P.perm[u], name: u.split('/').pop() }),
-      release: async u => { delete P.perm[u]; sv(); }
+      release: async u => { delete P.perm[u]; sv(); },
+      remove: async u => { if (!P.perm[u]) return false; delete P.files[u]; delete P.perm[u]; sv(); return true; }
     }
   };
   Object.defineProperty(window, 'BJU_NATIVE', { get: () => mock, set: () => {}, configurable: true });

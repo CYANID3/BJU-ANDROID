@@ -68,6 +68,9 @@ await patch('android/app/src/main/res/values/styles.xml', s => {
   const m = s.match(/<style name="AppTheme\.NoActionBarLaunch"[^>]*parent="([^"]*)"[^>]*>/);
   if (m && /Theme\.SplashScreen/.test(m[1]) && !s.includes('windowSplashScreenAnimatedIcon'))
     s = s.replace(m[0], m[0] + '\n        <item name="windowSplashScreenBackground">@color/bju_splash_bg</item>\n        <item name="windowSplashScreenAnimatedIcon">@drawable/bju_splash_icon</item>');
+  // тема после заставки (SplashScreen.installSplashScreen в MainActivity): та же, что ставит Capacitor
+  if (m && !s.includes('postSplashScreenTheme'))
+    s = s.replace(/(<style name="AppTheme\.NoActionBarLaunch"[^>]*>)/, '$1\n        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>');
   return s;
 });
 

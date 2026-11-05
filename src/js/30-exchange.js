@@ -25,7 +25,7 @@ function pfOpen(from) {
 const pfCol = d => d.k === "c" ? d.cl : d.cs, pfA = d => ({ k: d.k, i: d.i });
 function drawProf() {
   const d = pfDraft;
-  $("v18").innerHTML = `<div class="pfh"><span id="pfa">${xav(d.n || "?", pfCol(d), "pfx", pfA(d))}</span><label class="pfl"><span class="gh">Имя</span><input id="pfn" value="${esc(d.n)}" placeholder="Например, Алексей" maxlength="20" autocomplete="off" enterkeyhint="done" oninput="pfDraft.n=this.value;pfLive()" onkeydown="if(event.key==='Enter')pfSave()"></label></div>
+  $("v18").innerHTML = `<div class="pfh"><span id="pfa">${xav(d.n || "?", pfCol(d), "pfx", pfA(d))}</span><label class="pfl"><input id="pfn" aria-label="Имя" value="${esc(d.n)}" placeholder="Ваше имя" maxlength="20" autocomplete="off" enterkeyhint="done" oninput="pfDraft.n=this.value;pfLive()" onkeydown="if(event.key==='Enter')pfSave()"></label></div>
   <div id="pfb"></div><small class="pfs">Имя и картинку видит только тот, кто рядом и тоже открыл обмен. Хранится на этом телефоне, без регистрации.</small>`;
   drawPfb()
 }

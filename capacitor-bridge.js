@@ -38,7 +38,8 @@ const file = {
   read: uri => Bju.readFile({ uri }).then(r => r.data),
   write: (uri, data) => Bju.writeFile({ uri, data }),
   check: uri => Bju.checkFile({ uri }),
-  release: uri => Bju.releaseFile({ uri })
+  release: uri => Bju.releaseFile({ uri }),
+  remove: uri => Bju.deleteFile({ uri }).then(r => !!(r && r.ok))
 };
 
 async function haptic(ms) {
@@ -70,6 +71,7 @@ function applyInsets(i) {
   const kb = window.BJU_kbFilter ? window.BJU_kbFilter(i.keyboard, i.mode) : i.keyboard;
   r.setProperty('--kb', kb + 'px');
   window.BJU_onKeyboard?.(i.keyboard, i.mode === 'live' ? -1 : live ? 0 : i.duration || 220);
+  window.BJU_insetsOk = true;
 }
 if (hasBju) {
   document.documentElement.classList.add('native');
@@ -84,6 +86,8 @@ const bars = (color, light) => (hasBju ? Bju.setBars({ color, light }).catch(() 
 // Виджет рабочего стола: остаток калорий на сегодня
 const widget = data => (hasBju ? Bju.updateWidget(data).catch(() => {}) : Promise.resolve());
 // Ярлык «Вес» в меню долгого нажатия на иконку (есть, только когда вес включён)
+// день готов (данные, отступы, кадр) — убрать заставку (MainActivity держит её до этого, но не дольше 2 с)
+const ready = () => (hasBju ? Bju.appReady().catch(() => {}) : Promise.resolve());
 const shortcuts = o => (hasBju ? Bju.setShortcuts(o).catch(() => {}) : Promise.resolve());
 
 // Системная кнопка / жест «Назад»
@@ -120,5 +124,5 @@ const exchange = hasEx ? {
   on: (ev, fn) => Ex.addListener(ev, fn)
 } : null;
 
-window.BJU_NATIVE = { native, readLocal, writeLocal, writeBackup, readLegacy, file, haptic, feedback, bars, widget, shortcuts, exchange };
+window.BJU_NATIVE = { native, readLocal, writeLocal, writeBackup, readLegacy, file, haptic, feedback, bars, widget, shortcuts, exchange, ready };
 window.BJU_NATIVE_READY_RESOLVE?.();

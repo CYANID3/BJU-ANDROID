@@ -13,6 +13,7 @@ function stepTo() {
   if (on(18)) return pfFrom ? () => xOpen(X.sub) : SUB ? () => sets(1) : null;
   if (on(19) && SUB) return () => { xStop(); sets(1) };
   if (on(6) && cv) return () => { cv = cb === 1 && cv === 2 ? 1 : 0; drawCal(); fade($("cg")) };
+  if (on(21) || on(22)) return () => fp();
   if (on(16)) return () => navBack();
   if ((on(13) || on(14) || on(15) || on(17) || on(4) || on(5)) && SUB) return () => sets(1);
   return null;

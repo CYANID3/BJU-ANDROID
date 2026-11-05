@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
@@ -53,6 +54,8 @@ public class BjuNativePlugin extends Plugin {
 
     private static final String MIME = "application/json";
     private JSObject lastInsets = null;
+    /** Страница готова: заставку можно убрать (см. MainActivity). */
+    static volatile boolean ready = false;
     private boolean imeAnimating = false;
 
     // ---------- Insets / клавиатура ----------
@@ -161,6 +164,12 @@ public class BjuNativePlugin extends Plugin {
         o.put("duration", "set".equals(mode) ? 250 : 0);
         lastInsets = o;
         notifyListeners("insets", o, !"live".equals(mode));
+    }
+
+    @PluginMethod
+    public void appReady(PluginCall call) {
+        ready = true;
+        call.resolve();
     }
 
     @PluginMethod
@@ -487,6 +496,27 @@ public class BjuNativePlugin extends Plugin {
             } catch (Exception ignored) {}
         }
         call.resolve();
+    }
+
+    /** Удалить файл пользователя («Начать дневник заново» с галочкой «Удалить старый файл»). ok=false — провайдер не дал удалить. */
+    @PluginMethod
+    public void deleteFile(PluginCall call) {
+        String u = call.getString("uri");
+        boolean ok = false;
+        if (u != null) {
+            Uri uri = Uri.parse(u);
+            try {
+                ok = DocumentsContract.deleteDocument(getContext().getContentResolver(), uri);
+            } catch (Exception ignored) {}
+            if (ok) {
+                try {
+                    getContext().getContentResolver().releasePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                } catch (Exception ignored) {}
+            }
+        }
+        JSObject o = new JSObject();
+        o.put("ok", ok);
+        call.resolve(o);
     }
 
     private long fileSize(Uri uri) {
