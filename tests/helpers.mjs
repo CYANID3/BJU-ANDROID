@@ -5,6 +5,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { after } from 'node:test';
 
+// стандартный набор прошлых версий (в приложении список теперь пуст): старые тесты рассчитаны на него, поэтому по умолчанию
+// он кладётся в данные; opts.empty — чистая установка, opts.b0 — проверить разовую уборку набора
+const SRC = fs.readFileSync(path.resolve('src/js/01-data.js'), 'utf8');
+export const SAMPLE = eval(SRC.match(/const BASE = (\[[^\n]*\]);/)[1]);
 const ROOT = path.resolve(process.env.BJU_WWW || 'www');
 if (!fs.existsSync(path.join(ROOT, 'index.html'))) throw new Error(`нет сборки ${ROOT}/index.html — сначала npm run build`);
 
@@ -61,7 +65,9 @@ export async function openApp(opts = {}) {
   await start();
   const ctx = await browser.newContext({ ...devices['Pixel 7'], ...(opts.viewport ? { viewport: opts.viewport } : {}), colorScheme: opts.scheme || 'dark', serviceWorkers: 'block' });
   if (opts.native) await ctx.addInitScript(nativeMock);
-  if (opts.data) await ctx.addInitScript(d => { if (!sessionStorage.getItem('seeded')) { localStorage.setItem('bju2', JSON.stringify(d)); sessionStorage.setItem('seeded', '1'); } }, opts.data);
+  if (!opts.b0) await ctx.addInitScript(() => localStorage.setItem('bju_b0', '1'));
+  const data = opts.empty ? opts.data : opts.data ? (opts.data.db ? opts.data : { ...opts.data, db: SAMPLE }) : { g: { p: 120, f: 70, c: 250 }, d: {}, db: SAMPLE };
+  if (data) await ctx.addInitScript(d => { if (!sessionStorage.getItem('seeded')) { localStorage.setItem('bju2', JSON.stringify(d)); sessionStorage.setItem('seeded', '1'); } }, data);
   const pg = await ctx.newPage();
   const errors = [];
   pg.on('pageerror', e => errors.push(e.message));

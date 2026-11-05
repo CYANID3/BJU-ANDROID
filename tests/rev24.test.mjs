@@ -52,7 +52,7 @@ test('«Начать дневник заново» без галочек: ста
   await a.ev(() => { BJU_NATIVE.file.create = BJU_NATIVE.file.create0; RS = { p: 0, g: 0, s: 1, del: 0 }; rsGo(); return 0 }); await a.wait(600);
   const r = await a.ev(() => ({ old: __P.files['content://x/old.json'], db: S.db.length, base: BASE.length, g: S.g, th: S.set.th, mf: MF.name }));
   assert.equal(r.old, before, 'старый файл не тронут');
-  assert.equal(r.db, r.base, 'продукты — как после установки'); assert.deepEqual(r.g, { p: 120, f: 70, c: 250 }); assert.equal(r.th, 'light'); assert.equal(r.mf, 'bju-data.json');
+  assert.equal(r.db, 0, 'продуктов нет — как после установки'); assert.deepEqual(r.g, { p: 120, f: 70, c: 250 }); assert.equal(r.th, 'light'); assert.equal(r.mf, 'bju-data.json');
   await a.close();
 });
 
@@ -67,7 +67,7 @@ test('«Отключить файл»: выбор — оставить данн�
     const r = await a.ev(() => ({ mf: MF, f: __P.files['content://x/old.json'], days: dnc(S.d), db: S.db.length, base: BASE.length, local: JSON.parse(__P.local), saved: localStorage.getItem('bju_file') }));
     assert.equal(r.mf, null); assert.equal(r.saved, null); assert.equal(r.f, before, 'файл не изменился');
     if (m === 'keep') { assert.equal(r.days, 2); assert.equal(r.db, 2) }
-    else { assert.equal(r.days, 0); assert.equal(r.db, p ? 2 : r.base); assert.deepEqual(r.local.diary, {}) }
+    else { assert.equal(r.days, 0); assert.equal(r.db, p ? 2 : 0); assert.deepEqual(r.local.diary, {}) }
     assert.deepEqual(a.errors, []);
     await a.close();
   }

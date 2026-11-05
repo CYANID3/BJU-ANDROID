@@ -2,16 +2,16 @@
 // и «Отключить файл» с выбором — оставить данные в приложении или очистить его (продукты можно оставить)
 let RS = null, OF = null;
 // новое состояние: дневник, вес и заметки — пустые; k.p — продукты и блюда (с избранным и статистикой выбора),
-// k.g — норма, k.s — настройки и профиль. Остальное — как в только что установленном приложении
+// k.g — норма, k.s — настройки и профиль. Остальное — как в только что установленном приложении (список продуктов пуст)
 function freshS(k) {
   const c = JSON.parse(JSON.stringify(S)), o = { v: STATE_VER, g: k.g ? c.g : { p: 120, f: 70, c: 250 }, d: {}, wt: {}, nt: {}, set: k.s ? c.set || {} : {}, saved: Date.now(), dirty: 0 };
-  if (k.p) Object.assign(o, { db: c.db, fav: c.fav || {}, uc: c.uc || {}, lg: c.lg || {}, lu: c.lu || {}, rc: c.rc || [] }); else o.db = BASE.map(x => x.slice());
+  if (k.p) Object.assign(o, { db: c.db, fav: c.fav || {}, uc: c.uc || {}, lg: c.lg || {}, lu: c.lu || {}, rc: c.rc || [] }); else o.db = [];
   return o;
 }
 const fsProd = () => { const n = S.db.filter(p => !p[5]).length, d = S.db.length - n; return n + " " + plural(n, "продукт", "продукта", "продуктов") + (d ? " · " + d + " " + plural(d, "блюдо", "блюда", "блюд") : "") };
 const fsDays = () => { const n = dnc(S.d); return n + " " + plural(n, "день", "дня", "дней") + " с записями" };
 // строка-галочка: выбор хранится в obj[k]; переключается на месте, без перерисовки листа
-const cbRow = (obj, nm, k, t, d, dg) => `<button class="row cbr${obj[k] ? " ck" : ""}${dg ? " dgc" : ""}" role="checkbox" aria-checked="${!!obj[k]}" onclick="cbT(this,${nm},'${k}')"><span class="cb">${ic("check")}</span><span class="tx">${t}${d ? `<small>${esc(d)}</small>` : ""}</span></button>`;
+const cbRow = (obj, nm, k, t, d, dg) => `<button class="row cbr${obj[k] ? " ck" : ""}${dg ? " dgc" : ""}" role="checkbox" aria-checked="${!!obj[k]}" onclick="cbT(this,${nm},'${k}')"><span class="ckb">${ic("check")}</span><span class="tx">${t}${d ? `<small>${esc(d)}</small>` : ""}</span></button>`;
 function cbT(el, obj, k) { obj[k] = obj[k] ? 0 : 1; el.classList.toggle("ck", !!obj[k]); el.setAttribute("aria-checked", !!obj[k]); vib("ui"); if (obj === OF) ofBtn() }
 
 function rsOpen() {

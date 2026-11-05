@@ -110,6 +110,6 @@ test('«Файл данных»: «Новый файл» и «Переключи
   const a = await openApp();
   await a.ev(() => fp()); await a.wait(400);
   assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v5 .gh')].map(e => e.textContent)), ['Импорт']);
-  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v5 .row:not([hidden]) .tx')].map(e => e.firstChild.textContent)), ['Новый файл', 'Переключиться на другой файл', 'Добавить продукты из файла']);
+  assert.deepEqual(await a.ev(() => [...document.querySelectorAll('#v5 .row:not([hidden]) .tx')].map(e => e.firstChild.textContent)), ['Новый файл', 'Выбрать существующий файл', 'Добавить продукты из файла']);
   await a.close();
 });

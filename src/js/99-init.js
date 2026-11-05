@@ -17,5 +17,16 @@ try { matchMedia("(prefers-color-scheme:dark)").addEventListener("change", () =>
 if (LOCAL_BAD && !NATIVE) { try { const b = localStorage.getItem("bju2bak"); if (b && adopt(parseData(b), false)) { store(); setTimeout(() => toast("Данные в памяти были повреждены — восстановлена резервная копия", 0, 6000), 800) } } catch (e) { } }
 // APK: заставка держится, пока день не готов — данные прочитаны (initH), системные отступы применены, кадр нарисован
 function appUp() { const N = NX(); if (!N || !N.ready) return; const t0 = Date.now(), go = () => { if (!window.BJU_insetsOk && Date.now() - t0 < 1500) return setTimeout(go, 30); requestAnimationFrame(() => requestAnimationFrame(() => N.ready())) }; go() }
-applyAc(); render(); Promise.resolve(initH()).finally(() => { scSync(); appUp() });
+// один раз после обновления: убрать стандартные продукты прежних версий, которыми не пользовались — не изменённые, не в
+// избранном, не в блюдах, ни разу не записанные. Остальное (и всё своё) остаётся. «Отменить» в уведомлении возвращает список
+function b0Clean() {
+  try { if (localStorage.getItem("bju_b0")) return; localStorage.setItem("bju_b0", "1") } catch (e) { return }
+  const B = new Set(BASE.map(x => JSON.stringify(x))), ing = new Set(), uc = S.uc || {}, fav = S.fav || {};
+  S.db.forEach(p => p[5] && (p[5].i || []).forEach(e => ing.add(e.n))); for (const k in S.d) S.d[k].forEach(e => ing.add(e.n));
+  const keep = S.db.filter(p => !B.has(JSON.stringify(p)) || fav[p[0]] || uc[p[0]] > 0 || ing.has(p[0]));
+  const n = S.db.length - keep.length; if (!n) return;
+  lastAdd = lastDel = null; lastDb = S.db; S.db = keep; save();
+  setTimeout(() => toast("Убраны стандартные продукты, которыми вы не пользовались: " + n, 1, 8000), 900)
+}
+applyAc(); render(); Promise.resolve(initH()).finally(() => { scSync(); b0Clean(); appUp() });
 { const m = new URLSearchParams(location.search).get("m"); if (/^[0-5]$/.test(m || "")) { try { history.replaceState(history.state, "", location.pathname) } catch (e) { } op(+m) } }
