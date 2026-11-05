@@ -48,3 +48,5 @@ hSwipe($("v6"), () => $("cg"), () => true, (dir, dx, el) => { calFlip(el, dir, d
 hSwipe($("v9"), () => $("stc"), e => !e.target.closest(".chw"), (dir, dx, el) => { hSlide(el, dir, dx, () => { stM[1] += dir; if (stM[1] < 0) { stM[1] = 11; stM[0]-- } if (stM[1] > 11) { stM[1] = 0; stM[0]++ } drawStats() }); return 1 });
 // вкладки продуктов: взмах в любом месте листа, и по пустому месту под коротким списком
 hSwipe(shBody(), () => $("ls"), e => !$("v1").hidden && !$("pf").hidden && !e.target.closest(".seg,#mc,.fs,.lr"), (dir, dx, el) => { const n = pFl + dir; if (n < 0 || n > 2) return 0; hSlide(el, dir, dx, () => { pFl = n; lst() }); return 1 });
+// вкладки картинки профиля: взмах по листу, кроме поля имени
+hSwipe($("v18"), () => $("pfw"), e => !!$("pfw") && !e.target.closest("#pfn,.pfh"), (dir, dx) => { const j = PFT.findIndex(t => t[0] === pfDraft.k) + dir; return j >= 0 && j < PFT.length && pfMode(PFT[j][0], dx) });

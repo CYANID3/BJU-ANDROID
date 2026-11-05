@@ -178,3 +178,7 @@ async function xcl() {
 // popstate от такого history.back() приходит позже и не должен закрыть лист, открытый сразу следом
 let popSkip = 0;
 function cl() { const was = isOpen; closeUI(); if (was && !NATIVE) { try { if (history.state && history.state.o) { popSkip++; history.back() } } catch (e) { } } }
+// есть ли в листе содержимое ниже видимого (затухание над кнопкой внизу): при прокрутке и при любом изменении размеров
+{ const b = shBody(), sh = shEl(); let q = 0; const chk = () => { q = 0; sh.classList.toggle("more", b.scrollHeight - b.scrollTop - b.clientHeight > 2) }, req = () => { if (!q) q = requestAnimationFrame(chk) };
+  b.addEventListener("scroll", req, { passive: true });
+  if (window.ResizeObserver) { const ro = new ResizeObserver(req); ro.observe(b); VWS.forEach(i => ro.observe($("v" + i))) } }

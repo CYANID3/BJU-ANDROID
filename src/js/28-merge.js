@@ -49,7 +49,7 @@ function mgDone(){const s=mgS;mgS=null;if(!s)return;const r=mgApply(S.db,s.th,s.
  lastDb=S.db;lastDel=lastAdd=null;S.db=r.db;save();if(!$("v12").hidden)(s.after||fp)();
  const ex=r.added.slice(0,3).join(", ")+(r.added.length>3?" и ещё "+(r.added.length-3):"");
  toast((r.added.length?`Добавлено: ${r.added.length} (${ex})`:"Новых продуктов нет")+(r.upd?` · обновлено: ${r.upd}`:"")+(r.units?` · новых мер: ${r.units}`:""),1,7000)}
-async function mgPick(){const N=NX();if(!N||!N.file.available)return $("fmg").click();let r;try{r=await N.file.open()}catch(e){return}
- let t;try{t=await N.file.read(r.uri)}catch(e){return say("Не удалось прочитать файл")}finally{if(!MF||MF.uri!==r.uri)N.file.release(r.uri).catch(()=>{})}mgRun(t,r.name)}
+const mgPick=once(async()=>{const N=NX();if(!N||!N.file.available)return $("fmg").click();let r;try{r=await N.file.open()}catch(e){return}
+ let t;try{t=await N.file.read(r.uri)}catch(e){return say("Не удалось прочитать файл")}finally{if(!MF||MF.uri!==r.uri)N.file.release(r.uri).catch(()=>{})}mgRun(t,r.name)});
 function mgFile(el){const f=el.files[0];el.value="";if(f)f.text().then(t=>mgRun(t,f.name))}
 

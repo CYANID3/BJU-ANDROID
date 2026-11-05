@@ -4,6 +4,9 @@
 let nativeSaveTimer=0,MF=null,mfOk=true;
 try{MF=JSON.parse(localStorage.getItem("bju_file"))||null}catch(e){}
 const NX=()=>window.BJU_NATIVE&&window.BJU_NATIVE.native?window.BJU_NATIVE:null;
+// действия с системным выбором файла: повторное касание, пока окно выбора открывается (или ждёт ответа в диалоге),
+// не запускает второй выбор — Android не умеет два сразу, и второй ответ потерялся бы
+let fBusy=0;const once=f=>async(...a)=>{if(fBusy)return;fBusy=1;try{return await f(...a)}finally{fBusy=0}};
 const dnc=d=>Object.keys(d).filter(k=>d[k].length).length;
 // чтение файла пользователя: данные или null (тогда уже показано, что не так)
 function pRead(t){try{return parseData(t)}catch(e){say("Не удалось прочитать файл: "+(e.message||"неверный формат"));return null}}
@@ -32,10 +35,10 @@ async function initNative(){const N=NX();if(!N)return;const cand=[];
  // кто-то отстаёт (или файла ещё нет) — дописываем актуальные данные везде
  if(!cand.some(c=>c.src==="local")||cand.some(c=>(c.o.saved||0)!==(S.saved||0))||(MF&&mfOk&&!cand.some(c=>c.src==="file")))await nativeFlush();
  render()}
-async function nfCreate(){const N=NX();if(!N||!N.file.available)return say("Выбор файла недоступен в этой сборке");let r;try{r=await N.file.create("bju-data.json")}catch(e){return}
- setMF({uri:r.uri,name:r.name});await nativeFlush();cl();render();toast(mfOk?"Файл «"+r.name+"» создан · автосохранение включено":"Не удалось записать в файл «"+r.name+"»")}
-async function nfOpen(){const N=NX();if(!N||!N.file.available)return $("fin").click();let r,o;try{r=await N.file.open()}catch(e){return}
+const nfCreate=once(async()=>{const N=NX();if(!N||!N.file.available)return say("Выбор файла недоступен в этой сборке");let r;try{r=await N.file.create("bju-data.json")}catch(e){return}
+ setMF({uri:r.uri,name:r.name});await nativeFlush();cl();render();toast(mfOk?"Файл «"+r.name+"» создан · автосохранение включено":"Не удалось записать в файл «"+r.name+"»")});
+const nfOpen=once(async()=>{const N=NX();if(!N||!N.file.available)return $("fin").click();let r,o;try{r=await N.file.open()}catch(e){return}
  try{o=pRead(await N.file.read(r.uri))}catch(e){o=pRead("")}if(!o)return;
  if(JSON.stringify(o.d)!==JSON.stringify(S.d)&&!await askRepl(o,r.name))return;
  adopt(o);store();setMF(r.writable?{uri:r.uri,name:r.name}:null);await nativeFlush();cl();render();
- toast(r.writable?"Файл «"+r.name+"» подключён как основной · автосохранение включено":"Данные загружены, но файл доступен только для чтения")}
+ toast(r.writable?"Файл «"+r.name+"» подключён как основной · автосохранение включено":"Данные загружены, но файл доступен только для чтения")});

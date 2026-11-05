@@ -30,11 +30,15 @@ function drawProf() {
   drawPfb()
 }
 // всё ниже поля имени перерисовывается без него — клавиатура не закрывается и не открывается заново
+// вкладки «Буква / Значки / Цветные» остаются на месте; всё под ними (#pfw) уезжает и въезжает при смене вкладки
+const PFT = [["l", "Буква"], ["w", "Значки"], ["c", "Цветные"]];
 function drawPfb() {
-  const d = pfDraft, col = pfCol(d), pal = d.k === "c" ? AVL : PFC, T = [["l", "Буква"], ["w", "Значки"], ["c", "Цветные"]];
+  const d = pfDraft, col = pfCol(d), pal = d.k === "c" ? AVL : PFC;
+  if (!$("pft")) $("pfb").innerHTML = `<div id="pft" class="pft" role="tablist" aria-label="Что в кружке"></div><div id="pfw"></div>`;
+  $("pft").innerHTML = PFT.map(([k, t]) => `<button role="tab" aria-selected="${d.k === k}" class="${d.k === k ? "on" : ""}" onclick="pfMode('${k}')">${t}</button>`).join("");
   const grid = d.k === "l" ? `<div class="pfn0">В кружке — первая буква имени. Меняется вместе с именем.</div>`
     : `<div class="pfg${d.k === "c" ? " cl" : ""}" role="radiogroup" aria-label="Картинка">${AVI.map(a => { const on = a.k === d.i; return `<button class="${on ? "on" : ""}" role="radio" aria-checked="${on}" aria-label="${a.n}" onclick="pfIcon('${a.k}')" style="background:${d.k === "c" ? a.s : on ? d.cs : "var(--keyp)"}">${avSvg(a.k, d.k, d.k === "c" ? "" : on ? d.cs : "#000")}</button>` }).join("")}</div>`;
-  $("pfb").innerHTML = `<div class="pft" role="tablist" aria-label="Что в кружке">${T.map(([k, t]) => `<button role="tab" aria-selected="${d.k === k}" class="${d.k === k ? "on" : ""}" onclick="pfMode('${k}')">${t}</button>`).join("")}</div>${grid}
+  $("pfw").innerHTML = `${grid}
   <div class="gh">${d.k === "c" ? "Фон под наклейкой" : "Цвет кружка"}</div><div class="pfc" role="radiogroup" aria-label="Цвет">${pal.map(c => `<button class="${c === col ? "on" : ""}" role="radio" aria-checked="${c === col}" style="background:${c}" onclick="pfColor('${c}')" aria-label="${AVN[c] || c}"></button>`).join("")}</div>
   <div class="gh">Так вас увидят</div><div class="grp"><div class="row">${xav(d.n || "?", col, "", pfA(d))}<span class="tx"><span id="pfv">${esc(d.n.trim() || "Без имени")}</span><small id="pfm">${esc(xModel || "Ваш телефон")} · ${nP(S.db.length, "продукт", "продукта", "продуктов")}</small></span></div></div>`
 }
@@ -43,7 +47,9 @@ const pfAll = () => { const d = pfDraft; $("pfa").innerHTML = xav(d.n || "?", pf
 function pfLive() { const d = pfDraft; if (d.k === "l") document.querySelectorAll("#v18 .xav").forEach(a => a.innerHTML = xini(d.n)); const v = $("pfv"); if (v) v.textContent = d.n.trim() || "Без имени" }
 // касание вкладки, значка или цвета убирает фокус с поля имени: иначе Android снова открывает клавиатуру после каждого касания
 const pfBlur = () => { const a = document.activeElement; if (a && a.id === "pfn") a.blur() };
-function pfMode(k) { if (pfDraft.k === k) return; pfDraft.k = k; vib("ui"); pfBlur(); shResize(() => { drawPfb(); pfAll() }) }
+// смена вкладки — касанием или взмахом по листу (from — где сейчас палец): как вкладки продуктов и месяцы календаря
+function pfMode(k, from) { const i = PFT.findIndex(t => t[0] === k), j = PFT.findIndex(t => t[0] === pfDraft.k); if (i < 0 || i === j) return 0; if (from == null) vib("ui"); pfBlur();
+  hSlide($("pfw"), Math.sign(i - j), from || 0, () => { pfDraft.k = k; shResize(() => { drawPfb(); pfAll() }) }); return 1 }
 function pfIcon(i) { pfDraft.i = i; vib("ui"); pfBlur(); drawPfb(); pfAll() }
 function pfColor(c) { const d = pfDraft; if (d.k === "c") d.cl = c; else d.cs = c; vib("ui"); pfBlur(); drawPfb(); pfAll() }
 function pfSave() {

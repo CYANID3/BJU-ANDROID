@@ -21,7 +21,7 @@ function rsOpen() {
     + `<div class="hint">Записи, вес и заметки в новый файл не попадут.${MF ? " Если старый файл не удалять — они останутся в нём." : ""} Перед этим сохранится резервная копия.</div>`;
   sv(21, "Начать дневник заново", "Новый файл · что взять с собой"); show()
 }
-async function rsGo() {
+const rsGo = once(async () => {
   const N = NX(); if (!N || !N.file.available) return say("Выбор файла недоступен в этой сборке");
   const o = freshS(RS), old = MF, del = RS.del; let r;
   try { r = await N.file.create("bju-data.json") } catch (e) { return }
@@ -30,7 +30,7 @@ async function rsGo() {
   if (del && old && old.uri !== r.uri) tail = (await N.file.remove(old.uri).catch(() => false)) ? " · старый файл удалён" : " · старый файл удалить не удалось";
   lastAdd = lastDel = lastDb = null; adopt(o); setMF({ uri: r.uri, name: r.name }); store(); await nativeFlush();
   cl(); render(); vib("save"); toast("Дневник начат заново · «" + r.name + "»" + tail, 0, 6000)
-}
+});
 
 // «Отключить файл»: что будет с данными в приложении. Сам файл не удаляется и не меняется
 function nfOff() {
@@ -43,9 +43,9 @@ function nfOff() {
 // галочка «Кроме продуктов» появляется и пропадает — лист меняет высоту плавно (край и шапка едут вместе)
 function ofSet(m) { if (OF.m === m) return; OF.m = m; vib("ui"); shResize(() => { $("v22").querySelectorAll("[data-m]").forEach(b => { const on = b.dataset.m === m; b.classList.toggle("on", on); b.setAttribute("aria-checked", on) }); ofBtn() }) }
 function ofBtn() { const c = OF.m === "clear"; $("ofp").hidden = !c; $("ofok").textContent = c ? "Отключить и очистить" : "Отключить" }
-async function offGo() {
+const offGo = once(async () => {
   if (!MF) return fp(); const n = MF.name, c = OF.m === "clear";
   if (c) { bk(); lastAdd = lastDel = lastDb = null; adopt(freshS({ p: OF.p })) }
   setMF(null); store(); await nativeFlush(); cl(); render(); vib("save");
   toast(c ? "Файл «" + n + "» отключён · приложение очищено" : "Файл «" + n + "» отключён · данные остались в приложении", 0, 5000)
-}
+});

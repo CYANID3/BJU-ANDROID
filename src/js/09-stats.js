@@ -75,7 +75,8 @@ const SDF=new Intl.DateTimeFormat("ru-RU",{day:"numeric",month:"short"}),stFmt=x
   const at=e=>{clearTimeout(tm);const r=sv_.getBoundingClientRect(),x=(e.clientX-r.left)*(W/r.width),i=Math.max(0,Math.min(days.length-1,Math.floor((x-c.L)/c.st)));const d=days[i];
    if(!has(d)){t.innerHTML=`${stFmt(d)} · записей нет`;t.classList.add("on");mark(-1);return}t.innerHTML=tip(d);t.classList.add("on");mark(i)};
   w.addEventListener("pointerdown",e=>{at(e)});w.addEventListener("pointermove",e=>{if(e.pressure||e.buttons)at(e)});
-  const off=()=>{clearTimeout(tm);tm=setTimeout(()=>{t.textContent=t.dataset.def;t.classList.remove("on");mark(-1)},1600)};w.addEventListener("pointerup",off);w.addEventListener("pointercancel",off)}
+  // подсказка гаснет через 1,6 с — если за это время месяц перелистнули или лист закрыли, графика уже нет: ничего не трогаем
+  const off=()=>{clearTimeout(tm);tm=setTimeout(()=>{if(!w.isConnected)return;t.textContent=t.dataset.def;t.classList.remove("on");mark(-1)},1600)};w.addEventListener("pointerup",off);w.addEventListener("pointercancel",off)}
 function bindWt(days,W,c){stBind(days,W,"ch3","rd3",c,d=>wTip(d,c),i=>{$("ch3").querySelectorAll("circle").forEach(p=>p.setAttribute("r",+p.dataset.i===i?"5":"3.4"));chMark("ch3",c.f,i)},d=>d.w)}
 // свайп по экрану статистики (кроме графиков) — соседний месяц
 
