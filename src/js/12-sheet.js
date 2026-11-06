@@ -154,7 +154,7 @@ function drawMc() {
   const nd = `onmousedown="event.preventDefault()"`;
   [["mc", mode === "add"], ["em", mode === "add" && ei < 0]].forEach(([id, on]) => {
     const el = $(id); el.hidden = !on;
-    if (on) el.innerHTML = MCO.map(i => `<button class="${i === am ? "on" : ""}" role="radio" aria-checked="${i === am}" ${nd} onclick="sm(${i})">${LBL[i]}</button>`).join("")
+    if (on) el.innerHTML = MCO.map(i => `<button class="${i === am ? "on" : ""}" role="radio" aria-checked="${i === am}" ${nd} onclick="sm(${i})"><span>${LBL[i]}</span></button>`).join("")
   })
 }
 function sm(i) { if (am === i) return; am = i; drawMc(); vib("ui"); if ($("v2").hidden) $("st").textContent = "Добавить в " + LBLIN[i]; else $("ss").textContent = amtSub() }

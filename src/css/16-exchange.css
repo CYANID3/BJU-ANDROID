@@ -1,7 +1,7 @@
 /* Профиль и обмен продуктами с телефоном рядом (30-exchange.js) */
 .xav{flex:none;display:grid;place-items:center;border-radius:50%;color:#fff;font-weight:800;width:var(--h-tile);height:var(--h-tile);font-size:15px}
 .row .xav{width:40px;height:40px;font-size:17px}
-.xav.l{width:64px;height:64px;font-size:26px}.xav.xl{width:96px;height:96px;font-size:38px}
+.xav.l{width:64px;height:64px;font-size:26px}
 /* поиск: круги расходятся от своего кружка */
 .xr{position:relative;height:210px;display:grid;place-items:center;margin:4px 0 6px}
 .xr i{position:absolute;left:50%;top:50%;width:190px;height:190px;margin:-95px 0 0 -95px;border-radius:50%;border:2px solid var(--ac);opacity:0;animation:xring 2.4s cubic-bezier(.2,0,0,1) infinite}
@@ -37,7 +37,10 @@
 .pfg:not(.cl) button:not(.on) svg{stroke:var(--mu)}.pfg:not(.cl) button:not(.on) svg path:not([stroke="none"]){fill:var(--keyp)}.pfg:not(.cl) button:not(.on) svg path[stroke="none"]{fill:var(--mu)}.pfg:not(.cl) button:not(.on) svg path[fill="none"]{fill:none}
 .pfg button.on{box-shadow:0 0 0 2px var(--sub),0 0 0 4px var(--tx)}
 .pfn0{margin-top:12px;padding:16px;background:var(--sub);border-radius:var(--r-block);color:var(--mu);font-size:14px;line-height:1.45}
-.pfc{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:7px}.pfc button{aspect-ratio:1;border-radius:50%}
+.pfc{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:7px}.pfc button{position:relative;aspect-ratio:1;border-radius:50%}
+/* касание ловится и в промежутках между кружками; на узких экранах (меньше ~390 px) — два ряда по пять, кружки не мельче 36 px */
+.pfc button::after{content:"";position:absolute;inset:-4px;border-radius:50%}
+@media (max-width:389px){.pfc{grid-template-columns:repeat(5,minmax(0,40px));justify-content:space-between;row-gap:10px}}
 .pfc button.on{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--tx)}
 .pfs{display:block;color:var(--mu);font-size:13px;text-align:center;line-height:1.45;margin:14px auto 4px;max-width:300px}
 .xw{margin-top:var(--gap)}

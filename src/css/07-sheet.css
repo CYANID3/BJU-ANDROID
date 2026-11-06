@@ -63,7 +63,9 @@ label{font-size:var(--fs-sm);font-weight:600;color:var(--mu);display:block;margi
 .seg.sk::before{content:"";position:absolute;left:0;top:0;z-index:-1;width:var(--skw);height:var(--skh);transform:translate(var(--skx),var(--sky));border-radius:var(--r-in);background:var(--ac);transition:transform var(--t3) var(--ease),width var(--t3) var(--ease),height var(--t3) var(--ease),background-color var(--t2)}
 .seg.sn::before{transition:none}
 /* выбор приёма пищи: сетка 3×2 (в столбце — основной приём и перекус после него) */
-.seg.mg{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);margin-bottom:12px}.seg.mg button{min-height:36px;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.seg.mg button:nth-child(n+4){min-height:32px;font-size:12.5px}
+.seg.mg{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);margin-bottom:12px}.seg.mg button{min-height:36px;font-size:13.5px;white-space:nowrap;min-width:0}.seg.mg button>span{display:block;overflow:hidden;text-overflow:ellipsis}.seg.mg button:nth-child(n+4){min-height:32px;font-size:12.5px}
+/* выбор приёма пищи плотный (6 кнопок): касание засчитывается и в промежутке между кнопками — мимо не промахнуться */
+.seg.mg button::after{content:"";position:absolute;inset:-3px}
 .seg.pf{margin:12px 0 0}.seg.pf button{min-height:36px}.seg.pf small{margin-left:5px;font-size:var(--fs-xs);font-weight:600;opacity:.75}
 /* экран количества */
 /* единицы — ровная сетка (колонки задаёт 13-products.js): у всех ячеек одна высота, название в одну строку, граммы — второй строкой */
