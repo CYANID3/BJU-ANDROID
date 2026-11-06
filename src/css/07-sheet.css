@@ -102,3 +102,4 @@ input.bad{box-shadow:inset 0 0 0 2px var(--dg)!important;background:color-mix(in
 /* ниже есть ещё содержимое — над кнопкой мягкое затухание, текст не обрезается о край кнопки (класс .more ставит 12-sheet.js) */
 .shf::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:18px;background:linear-gradient(color-mix(in srgb,var(--card) 0%,transparent),var(--card));pointer-events:none;opacity:0;transition:opacity var(--t1)}
 .sh.more .shf::before{opacity:1}.sh.kpo .shf::before{display:none}
+.pk .n .hl{color:var(--act,var(--ac));font-weight:800}

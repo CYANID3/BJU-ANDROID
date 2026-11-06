@@ -13,16 +13,21 @@ function drawPf() { const has = mode === "mng" && S.db.some(p => p[5]); if (!has
 const mxl = (p, f, c) => `<i class="mx p">Б</i>${f1(p)} · <i class="mx f">Ж</i>${f1(f)} · <i class="mx c">У</i>${f1(c)}`;
 let lstQ = 0;
 function lst() {
-  const q = W($("q").value); drawPf(); IX = []; S.db.forEach((p, i) => { if ((!pFl || (pFl === 2) === !!p[5]) && q.every(t => W(p[0]).some(w => w.startsWith(t)))) IX.push(i) }); let hd = null;
+  // поиск: точные совпадения выше примерных; «опечатки» — только если точных нет (pepsi не находит «Персик»)
+  const Q = srQ($("q").value), q = Q, SC = new Map(); drawPf(); IX = [];
+  S.db.forEach((p, i) => { if (!pFl || (pFl === 2) === !!p[5]) { const s = Q.length ? srScore(p[0], Q) : 0; if (s >= 0) { IX.push(i); SC.set(i, s) } } });
+  if (Q.length && IX.some(i => SC.get(i) < 400)) IX = IX.filter(i => SC.get(i) < 400);
+  if (Q.length && mode === "mng") IX.sort((a, b) => SC.get(a) - SC.get(b) || a - b);
+  let hd = null;
   if (mode !== "mng") {
-    const u = S.uc || {}, N = i => S.db[i][0]; IX.sort((a, b) => isFav(N(b)) - isFav(N(a)) || (u[N(b)] || 0) - (u[N(a)] || 0));
+    const u = S.uc || {}, N = i => S.db[i][0]; IX.sort((a, b) => SC.get(a) - SC.get(b) || isFav(N(b)) - isFav(N(a)) || (u[N(b)] || 0) - (u[N(a)] || 0));
     if (!q.length) {
       const F = IX.filter(i => isFav(N(i))), pos = new Map(S.db.map((p, i) => [p[0], i]).reverse()), R = rcList().filter(n => !isFav(n) && pos.has(n)).slice(0, 8).map(n => pos.get(n));
       if (F.length || R.length) { const rest = IX.filter(i => !isFav(N(i)) && !R.includes(i)); IX = [...F, ...R, ...rest]; hd = { 0: F.length ? "Избранное" : null, [F.length]: R.length ? "Недавние" : null, [F.length + R.length]: "Все продукты" } }
     }
   }
   IX = IX.slice(0, hd ? 100 : 80);
-  const row = (i, k) => { const p = S.db[i], f = isFav(p[0]); return (hd && hd[k] ? `<div class="lh">${hd[k]}</div>` : "") + `<button class="pk${p[5] ? " dish" : ""}" onclick="pc(${k})">${p[5] ? `<span class="dk">${ic("dish")}</span>` : ""}<div><div class="n">${esc(p[0])}</div><div class="mu">${p[5] ? `<span class="dt">Блюдо</span>` : ""}${mxl(p[1], p[2], p[3])} <span class="u">на 100 г</span></div></div><b>${kc(p[1], p[2], p[3])} <small>ккал</small></b><span class="fv${f ? " on" : ""}" role="button" aria-pressed="${f}" aria-label="${f ? "Убрать из избранного" : "В избранное"}" onclick="event.stopPropagation();fav(this,${i})">${ic("star")}</span></button>` };
+  const row = (i, k) => { const p = S.db[i], f = isFav(p[0]); return (hd && hd[k] ? `<div class="lh">${hd[k]}</div>` : "") + `<button class="pk${p[5] ? " dish" : ""}" onclick="pc(${k})">${p[5] ? `<span class="dk">${ic("dish")}</span>` : ""}<div><div class="n">${Q.length ? srHl(p[0], Q) : esc(p[0])}</div><div class="mu">${p[5] ? `<span class="dt">Блюдо</span>` : ""}${mxl(p[1], p[2], p[3])} <span class="u">на 100 г</span></div></div><b>${kc(p[1], p[2], p[3])} <small>ккал</small></b><span class="fv${f ? " on" : ""}" role="button" aria-pressed="${f}" aria-label="${f ? "Убрать из избранного" : "В избранное"}" onclick="event.stopPropagation();fav(this,${i})">${ic("star")}</span></button>` };
   // первый экран — сразу, остальное — когда браузер свободен (не позже 0,3 с): лист открывается без задержки даже на слабых телефонах
   lstQ++; const q0 = lstQ, el = $("ls"); el.innerHTML = IX.length ? IX.slice(0, 24).map(row).join("") : (pFl === 2 ? '<div class="mu">Блюд не найдено — создайте новое блюдо</div>' : (S.db.length || $("q").value.trim() ? '<div class="mu">Ничего не найдено — создайте новый продукт</div>' : '<div class="mu">Список пока пуст. Добавьте свой продукт кнопкой «Новый продукт» — или перенесите готовый список: Настройки → Файл данных → «Добавить продукты из файла»</div>'));
   if (IX.length > 24) (window.requestIdleCallback || requestAnimationFrame)(() => { if (q0 === lstQ) el.insertAdjacentHTML("beforeend", IX.slice(24).map((x, n) => row(x, n + 24)).join("")) }, { timeout: 300 })
