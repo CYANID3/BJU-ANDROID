@@ -17,7 +17,7 @@
 .tg i{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--mu);transition:transform var(--t2) var(--spring),background-color var(--t2)}
 .tg.on{background:var(--ac)}.tg.on i{transform:translateX(18px);background:#fff}
 .row:active .tg i{width:26px}.row:active .tg.on i{transform:translateX(14px)}
-.ver{font-size:var(--fs-xs);color:var(--mu);text-align:center;margin:14px 0 2px;opacity:.8}
+
 #pkx>*{margin-top:12px}#pkx .gh{margin-top:18px}
 /* ползунок «Длина свайпа»: точки по центрам трёх подписей, бегунок плавно переезжает */
 .sld{--slv:.5;background:var(--sub);border-radius:var(--r-block);padding:14px 0 6px}
@@ -108,3 +108,11 @@ button.ch{display:grid;place-items:center;width:32px;height:32px;margin-right:-6
 .row.ck .ckb{background:var(--acf,var(--ac));box-shadow:none;color:var(--on)}.row.ck .ckb svg.i{opacity:1;transform:none}
 .row.dgc.ck .ckb{background:var(--dg);color:#fff}.row.dgc.ck .tx{color:var(--dg)}
 .ofp{border-top:1px solid color-mix(in srgb,var(--bd) 70%,var(--sub))}.ofp .row{padding-left:30px}
+/* «Что нового»: пункты со значком; экран первого запуска: два крупных варианта, главный — залит акцентом */
+.wnl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}.wnl li{display:flex;gap:12px;align-items:flex-start}
+.wnl .ic,.wlo .ic{flex:none;width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac))}.wnl .tx{font-weight:700;font-size:var(--fs-body)}.wnl small{display:block;font-weight:500;color:var(--mu);font-size:var(--fs-sm);margin-top:2px}
+.wno{background:var(--sub);border-radius:var(--r-block);padding:10px 14px;color:var(--mu);font-size:var(--fs-sm);display:flex;flex-direction:column;gap:3px}
+#v24 .hint,#v23 .hint{margin-top:12px;text-align:center}
+.wlo{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--sub);border-radius:var(--r-block);padding:14px 16px;margin-top:var(--gap);min-height:var(--h-row)}
+.wlo .tx{font-weight:700;font-size:var(--fs-body)}.wlo small{display:block;font-weight:500;color:var(--mu);font-size:var(--fs-sm);margin-top:2px}
+.wlo.pri{background:var(--acf,var(--ac));color:var(--on)}.wlo.pri small{color:color-mix(in srgb,var(--on) 80%,transparent)}.wlo.pri .ic{background:color-mix(in srgb,var(--on) 18%,transparent);color:var(--on)}

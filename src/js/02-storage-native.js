@@ -41,4 +41,4 @@ const nfOpen=once(async()=>{const N=NX();if(!N||!N.file.available)return $("fin"
  try{o=pRead(await N.file.read(r.uri))}catch(e){o=pRead("")}if(!o)return;
  if(JSON.stringify(o.d)!==JSON.stringify(S.d)&&!await askRepl(o,r.name))return;
  adopt(o);store();setMF(r.writable?{uri:r.uri,name:r.name}:null);await nativeFlush();cl();render();
- toast(r.writable?"Файл «"+r.name+"» подключён как основной · автосохранение включено":"Данные загружены, но файл доступен только для чтения")});
+ toast(r.writable?"Данные из «"+r.name+"» · дней с записями: "+dnc(S.d)+" · автосохранение включено":"Данные загружены, но файл доступен только для чтения",0,5000)});

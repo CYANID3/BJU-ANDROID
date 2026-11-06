@@ -88,11 +88,29 @@ jobs:
         run: |
           # Постоянный ключ: без него каждая сборка подписывалась бы новым случайным
           # ключом, и Android не давал бы обновить приложение поверх старого.
-          mkdir -p ~/.android
-          cp ../keystore/debug.keystore ~/.android/debug.keystore
+          # Ключ передаётся явно: копия в ~/.android на сборщике GitHub не подхватывалась
+          # (до 1.0.86 каждый APK оказывался подписан новым ключом).
+          cp ../keystore/debug.keystore "$RUNNER_TEMP/debug.keystore"
+          echo "KS_FILE=$RUNNER_TEMP/debug.keystore" >> "$GITHUB_ENV"
+          echo "KS_PASS=android" >> "$GITHUB_ENV"
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleDebug --no-daemon \
+            -Pandroid.injected.signing.store.file="$RUNNER_TEMP/debug.keystore" \
+            -Pandroid.injected.signing.store.password=android \
+            -Pandroid.injected.signing.key.alias=androiddebugkey \
+            -Pandroid.injected.signing.key.password=android
           cp app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/app.apk"
+
+      - name: Check APK signature (same key every build)
+        run: |
+          # APK должен быть подписан тем же ключом, что и в хранилище, — иначе обновление
+          # поверх установленного приложения невозможно. Не совпало — сборка падает, релиза нет.
+          [ -n "$KS_FILE" ] || { KS_FILE="$RUNNER_TEMP/release.keystore"; KS_PASS="$KEYSTORE_PASSWORD"; }
+          WANT=$(keytool -list -v -keystore "$KS_FILE" -storepass "$KS_PASS" | grep -m1 'SHA256:' | sed 's/.*SHA256: //; s/://g' | tr 'A-F' 'a-f')
+          GOT=$(keytool -printcert -jarfile "$RUNNER_TEMP/app.apk" | grep -m1 'SHA256:' | sed 's/.*SHA256: //; s/://g' | tr 'A-F' 'a-f')
+          echo "Ключ хранилища: $WANT"
+          echo "Подпись APK:    $GOT"
+          [ -n "$WANT" ] && [ "$WANT" = "$GOT" ] || { echo "::error::APK подписан не тем ключом — обновление поверх старой версии не установится"; exit 1; }
 
       - name: Name APK
         id: apk

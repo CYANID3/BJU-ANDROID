@@ -28,5 +28,5 @@ function b0Clean() {
   lastAdd = lastDel = null; lastDb = S.db; S.db = keep; save();
   setTimeout(() => toast("Убраны стандартные продукты, которыми вы не пользовались: " + n, 1, 8000), 900)
 }
-applyAc(); render(); Promise.resolve(initH()).finally(() => { scSync(); b0Clean(); appUp() });
+applyAc(); render(); Promise.resolve(initH()).finally(() => { scSync(); b0Clean(); appUp(); wnStart() });
 { const m = new URLSearchParams(location.search).get("m"); if (/^[0-5]$/.test(m || "")) { try { history.replaceState(history.state, "", location.pathname) } catch (e) { } op(+m) } }

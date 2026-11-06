@@ -66,6 +66,8 @@ export async function openApp(opts = {}) {
   const ctx = await browser.newContext({ ...devices['Pixel 7'], ...(opts.viewport ? { viewport: opts.viewport } : {}), colorScheme: opts.scheme || 'dark', serviceWorkers: 'block' });
   if (opts.native) await ctx.addInitScript(nativeMock);
   if (!opts.b0) await ctx.addInitScript(() => localStorage.setItem('bju_b0', '1'));
+  // «Что нового» и экран первого запуска — только в своих тестах (opts.wn)
+  if (!opts.wn) await ctx.addInitScript(() => localStorage.setItem('bju_wn', '999'));
   const data = opts.empty ? opts.data : opts.data ? (opts.data.db ? opts.data : { ...opts.data, db: SAMPLE }) : { g: { p: 120, f: 70, c: 250 }, d: {}, db: SAMPLE };
   if (data) await ctx.addInitScript(d => { if (!sessionStorage.getItem('seeded')) { localStorage.setItem('bju2', JSON.stringify(d)); sessionStorage.setItem('seeded', '1'); } }, data);
   const pg = await ctx.newPage();
