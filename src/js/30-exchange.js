@@ -206,7 +206,7 @@ function xDraw1() {
   if ($("v19").hidden && X.s === "done") return;
   const x1 = $("x1"), x2 = $("x2"), me = myAv("l"), p = X.peer, ot = p ? xav(p.n, p.c, "l", p.av) : "", nm = p ? esc(p.n) : "";
   let h = "", t = "Обмен продуктами", sub = "", b1 = null, b2 = null;
-  const meRow = `<div class="grp"><button class="row" onclick="pfOpen(1)">${pfN() ? myAv() : `<span class="ic">${ic("user")}</span>`}<span class="tx">${pfN() ? esc(pfN()) : "Как вас назвать?"}<small>${pfN() ? "Так вас видят на другом телефоне" : "Имя и цвет увидит второй телефон"}</small></span><span class="ch">${ic("chevR")}</span></button></div>`;
+  const meRow = `<div class="grp"><button class="row" onclick="pfOpen(1)">${pfN() ? myAv() : `<span class="ic">${ic("user")}</span>`}<span class="tx">${pfN() ? esc(pfN()) : "Как вас назвать?"}<small>${pfN() ? "Так вас видят на другом телефоне" : "Имя и картинку увидит второй телефон"}</small></span><span class="ch">${ic("chevR")}</span></button></div>`;
   const pair = mv => `<div class="xp"><div>${me}Вы</div><span class="ln_${mv ? " mv" : ""}"></span><div>${ot}${nm}</div></div>`;
   if (X.s === "web") h = `<div class="fst no">${ic("info")}<div><b>Обмен работает в приложении на Android</b><small>Телефоны находят друг друга по Bluetooth и передают продукты по Wi‑Fi напрямую. В браузере это недоступно — откройте приложение БЖУ на телефоне.</small></div></div>`;
   else if (X.s === "intro") {

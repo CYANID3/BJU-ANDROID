@@ -135,7 +135,5 @@ test('старые настройки, которых больше нет в и�
   const a = await openApp({ data: { g: { p: 100, f: 60, c: 200 }, d: {}, set: { bb: 'fix', nb: 'bottom' } } });
   const st = await a.ev(() => JSON.parse(ser()).settings);
   assert.equal(st.bottomBar, 'fixed'); assert.equal(st.newButtons, 'bottom');
-  assert.equal(await a.ev(() => nbv()), 'bottom', 'явно выбранное «Снизу» сохраняется');
-  await a.ev(() => { S.set = {}; }); assert.equal(await a.ev(() => nbv()), 'top', 'по умолчанию — «Сверху»');
   await a.close();
 });

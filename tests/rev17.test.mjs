@@ -22,7 +22,7 @@ const view = a => a.ev(() => [19, 18, 12, 7].find(i => !$('v' + i).hidden) || 0)
 test('профиль: строка вверху «Настроек», имя и цвет, пустое имя не сохраняется; в файле — profile', async () => {
   const a = await openApp({ data: DATA });
   await a.ev(() => sets()); await a.wait(400);
-  assert.match(await a.ev(() => document.querySelector('#v7 .grp .row .tx').textContent), /^ПрофильИмя и цвет/);
+  assert.match(await a.ev(() => document.querySelector('#v7 .grp .row .tx').textContent), /^ПрофильИмя и картинка для обмена/);
   await a.ev(() => pfOpen()); await a.wait(400);
   assert.equal(await a.ev(() => $('st').textContent), 'Профиль');
   await a.ev(() => pfSave()); assert.match(await a.ev(() => $('tm').textContent), /Введите имя/);

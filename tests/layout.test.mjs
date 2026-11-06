@@ -28,24 +28,22 @@ test('нижняя панель всегда у нижнего края; тос�
   assert.deepEqual(a.errors, []);
   await a.close();
 });
-test('кнопки «Новый продукт»/«Новое блюдо»: сверху (по умолчанию) или снизу — во всех списках', async () => {
-  const a = await openApp();
+test('кнопки «Новый продукт»/«Новое блюдо» всегда сверху, под поиском — во всех списках, даже если в файле осталось старое «снизу»', async () => {
+  const a = await openApp({ data: { g: { p: 120, f: 70, c: 250 }, d: {}, set: { nb: 'bottom' } } });
   const where = () => a.ev(() => { const b = document.querySelector('#v1 .lr').getBoundingClientRect().top, q = $('q').getBoundingClientRect().top, l = $('ls').getBoundingClientRect().top; return q < b && b < l ? 'top' : b > l ? 'bottom' : '?'; });
   for (const open of [() => op(2), () => mng(), () => { dbt(); dring(); }]) {
     await a.ev(open); await a.wait(400);
     assert.equal(await a.ev(() => !$('v1').hidden), true);
-    assert.equal(await where(), 'top', 'по умолчанию — между поиском и списком');
+    assert.equal(await where(), 'top', 'между поиском и списком');
     await a.ev(() => closeUI()); await a.wait(300);
   }
-  await a.ev(() => setNb('bottom'));
-  await a.ev(() => op(0)); await a.wait(300);
-  assert.equal(await where(), 'bottom');
+  // в настройках такой строки больше нет; кнопки работают
+  await a.ev(() => sets()); await a.wait(400);
+  assert.equal(await a.ev(() => /Кнопки создания/.test($('v7').textContent)), false);
   await a.ev(() => closeUI()); await a.wait(300);
-  // кнопки работают
   await a.ev(() => mng()); await a.wait(300);
   await a.pg.click('#v1 .lr button:first-child'); await a.wait(300);
   assert.equal(await a.ev(() => !$('v3').hidden), true);
-  assert.equal(await a.ev(() => toFile(S).settings.newButtons), 'bottom');
   assert.deepEqual(a.errors, []);
   await a.close();
 });

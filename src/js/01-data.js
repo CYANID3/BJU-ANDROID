@@ -1,8 +1,7 @@
 // Иконки, база продуктов, приёмы пищи, состояние S, проверка данных и загрузка из localStorage
 const ICP = {
   note: '<path d="M6 3.5h8.5L19 8v11a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19V5a1.5 1.5 0 0 1 1-1.5z"/><path d="M14 3.5V8h5M8.5 12.5h7M8.5 16h4.5"/>', pen: '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
-  ruler: '<rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 8v3M11 8v4M15 8v3M19 8v2"/>',
-  chevL: '<path d="M15 5l-7 7 7 7"/>', chevR: '<path d="M9 5l7 7-7 7"/>', close: '<path d="M6 6l12 12M18 6L6 18"/>', plus: '<path d="M12 5v14M5 12h14"/>',
+  ruler: '<rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 8v3M11 8v4M15 8v3M19 8v2"/>', chevR: '<path d="M9 5l7 7-7 7"/>', close: '<path d="M6 6l12 12M18 6L6 18"/>', plus: '<path d="M12 5v14M5 12h14"/>',
   file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
   copy: '<rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   cal: '<rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>', today: '<path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>',
@@ -13,16 +12,14 @@ const ICP = {
   scale: '<rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="M8 9.2a5.6 5.6 0 0 1 8 0M12 9.6l1.3-2"/>',
   collapse: '<path d="M8 4l4 4 4-4M8 20l4-4 4 4M5 12h14"/>', expand: '<path d="M8 8l4-4 4 4M8 16l4 4 4-4M5 12h14"/>',
   back: '<path d="M20 7H9l-5 5 5 5h11a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1z"/><path d="M12.5 10l4 4M16.5 10l-4 4"/>',
-  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/>',
-  merge: '<path d="M7 4v6a5 5 0 0 0 5 5h5"/><path d="M14 12l3 3-3 3"/><path d="M7 20v-4"/>',
-  moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>', rise: '<path d="M3 18.5h18M7 18.5a5 5 0 0 1 10 0M12 6.5v3M5.6 10.6l1.6 1.6M18.4 10.6l-1.6 1.6"/>', sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/>', moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>', rise: '<path d="M3 18.5h18M7 18.5a5 5 0 0 1 10 0M12 6.5v3M5.6 10.6l1.6 1.6M18.4 10.6l-1.6 1.6"/>', sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
   auto: '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor"/>',
   pal: '<path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-1.2-1-1.6-1-2.6 0-1 .8-1.7 1.8-1.7H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1" fill="currentColor"/><circle cx="10" cy="7.2" r="1" fill="currentColor"/><circle cx="14.5" cy="7.2" r="1" fill="currentColor"/>',
   tint: '<path d="M12 3.5s6 6.2 6 10.5a6 6 0 0 1-12 0c0-4.3 6-10.5 6-10.5z"/>',
   vib: '<rect x="8" y="4" width="8" height="16" rx="2"/><path d="M4 9v6M20 9v6"/>', down: '<path d="M12 5v14M6 13l6 6 6-6"/>', up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
   swipe: '<path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
   tap: '<path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10l4.2.9a2 2 0 0 1 1.6 2.2l-.6 4.4A3 3 0 0 1 14.2 20H11a3 3 0 0 1-2.4-1.2L5.6 15a1.5 1.5 0 0 1 2.2-2L9 14"/>',
-  btn: '<rect x="3.5" y="7" width="17" height="10" rx="5"/><path d="M9 12h6"/>', snack: '<circle cx="12" cy="13" r="7"/><path d="M12 6c0-2 1-3 3-3"/>',
+  snack: '<circle cx="12" cy="13" r="7"/><path d="M12 6c0-2 1-3 3-3"/>',
   hint: '<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M12 15V8M9.5 10.5L12 8l2.5 2.5"/>', fab: '<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M12 8.5v7M8.5 12h7"/>',
   ok: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>', warn: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01"/>',
   xch: '<path d="M4 8h13l-3.5-3.5"/><path d="M20 16H7l3.5 3.5"/>', user: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1-3.6 3.8-5.5 7-5.5s6 1.9 7 5.5"/>',
@@ -30,10 +27,9 @@ const ICP = {
   shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
   minus: '<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>', plusc: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
   sld: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
-  grip: '<path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01" stroke-width="3.2"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
-  reset: '<path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5"/><path d="M4 4v4.5h4.5"/>', swap: '<path d="M7 4L4 7l3 3"/><path d="M4 7h12"/><path d="M17 14l3 3-3 3"/><path d="M20 17H8"/>',
+  grip: '<path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01" stroke-width="3.2"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>', swap: '<path d="M7 4L4 7l3 3"/><path d="M4 7h12"/><path d="M17 14l3 3-3 3"/><path d="M20 17H8"/>',
   panel: '<rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="M3.5 15h17"/><path d="M8 17.5h.01M12 17.5h.01M16 17.5h.01" stroke-width="2.6"/>',
-  list: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="3"/>', import: '<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M5 19.5h14"/>'
+  list: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="3"/>'
 };
 const ic = (n, c) => `<svg class="${c || "i"}" viewBox="0 0 24 24" aria-hidden="true">${ICP[n]}</svg>`;
 // Стандартный набор из прошлых версий: новые установки начинают с пустого списка (пользователь собирает свои продукты);

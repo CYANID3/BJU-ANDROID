@@ -1,4 +1,4 @@
-// Главный экран: кнопка «＋» в нижней панели, кнопки «Новый продукт» / «Новое блюдо» (сверху / снизу списка),
+// Главный экран: кнопка «＋» в нижней панели, кнопки «Новый продукт» / «Новое блюдо» (всегда сверху списка),
 // пустые перекусы (ссылкой / по двойному касанию), карточка дня (тройное касание / строка в итоге дня)
 
 // ===== нижняя панель: места и большая кнопка в центре (Настройки › Нижняя панель) =====
@@ -93,10 +93,9 @@ function navCenter(k, msg) {
   navSave({ ...v, big: true, s: [...side.slice(0, L), k, ...side.slice(L)] }, msg && (cut.length ? `Большая кнопка: ${NA[k][1]}. Убрано: ${cut.map(x => NA[x][1]).join(", ")}` : `Большая кнопка: ${NA[k][1]}`), msg && old)
 }
 
-// ===== кнопки «Новый продукт» / «Новое блюдо»: сверху (под поиском, по умолчанию) или снизу (под списком) =====
-const nbv = () => S.set && S.set.nb === "bottom" ? "bottom" : "top";
-function applyLay() { const lr = document.querySelector("#v1 .lr"); if (lr) { if (nbv() === "top") document.getElementById("q").parentElement.after(lr); else document.getElementById("ls").after(lr); lr.classList.toggle("top", nbv() === "top") } try { barSync() } catch (e) { } }
-function setNb(v) { S.set = Object.assign({}, S.set, { nb: v }); saveq(); applyLay(); drawSet(); vib("ui") }
+// ===== кнопки «Новый продукт» / «Новое блюдо» — всегда сверху, под поиском (рядом с поиском: не нашёл — создал).
+// Настройка «сверху / снизу» убрана; старое значение nb в файле сохраняется (как и другие убранные настройки), но не действует
+function applyLay() { const lr = document.querySelector("#v1 .lr"); if (lr) { $("q").parentElement.after(lr); lr.classList.add("top") } try { barSync() } catch (e) { } }
 
 // ===== карточка дня: тройное касание по итогу дня (по умолчанию) или строка «Карточка дня ›» внизу итога =====
 const dcv = () => S.set && S.set.dc === "row" ? "row" : "tap";

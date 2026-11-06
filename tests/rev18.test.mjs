@@ -11,7 +11,7 @@ test('настройки из файла с неожиданными значе�
       const st = {}; names.forEach(nm => { if (rnd(3)) st[nm] = vals[rnd(vals.length)] });
       let D; try { D = parseData(JSON.stringify({ format: 'bju-diary', version: 3, settings: st })) } catch (e) { continue }
       S.set = D.set;
-      for (const f of ['sets()', 'lookOpen()', 'navOpen()', 'navPick(-1)', 'pfOpen()', "pick('sw')", "pick('dw')", "pick('dc')", "pick('sn')", "pick('nb')", "pick('ac')", "pick('sl')", 'vibOpen()', 'render()', 'barSync()']) {
+      for (const f of ['sets()', 'lookOpen()', 'navOpen()', 'navPick(-1)', 'pfOpen()', "pick('sw')", "pick('dw')", "pick('dc')", "pick('sn')", "pick('ac')", "pick('sl')", 'vibOpen()', 'render()', 'barSync()']) {
         try { eval(f); svKill() } catch (e) { bad.push(f + ': ' + e.message + ' ' + JSON.stringify(st)); break }
       }
       try { sets(); if ($('v7').querySelectorAll('.row').length < 10) bad.push('пусто ' + JSON.stringify(st)) } catch (e) { bad.push('sets: ' + e.message + ' ' + JSON.stringify(st)) }

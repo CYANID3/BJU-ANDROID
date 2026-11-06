@@ -39,7 +39,7 @@ label{font-size:var(--fs-sm);font-weight:600;color:var(--mu);display:block;margi
 .ln.dg{background:transparent;color:var(--dg);margin-top:6px}.ln.dg:active{background:color-mix(in srgb,var(--dg) 12%,transparent)}
 /* поиск и кнопки «Новый продукт / Новое блюдо» (сверху — по умолчанию, или под списком) */
 .fs{position:relative}.fs svg.i{position:absolute;left:14px;top:50%;margin-top:-11px;color:var(--mu);pointer-events:none}.fs input{padding-left:46px}
-.lr{display:flex;gap:8px}.lr .ln{flex:1;margin-top:10px;min-height:46px}#v1 .lr.top .ln{margin-top:10px}#v1 .lr:not(.top){margin-top:4px}
+.lr{display:flex;gap:8px}.lr .ln{flex:1;margin-top:10px;min-height:46px}#v1 .lr.top .ln{margin-top:10px}
 /* списки: продукты, ингредиенты — строки через тонкую линию */
 #ls,#di{margin:8px 0 0}#ls:empty,#di:empty{display:none}#ls>.mu{padding:18px 4px;text-align:center}
 .pk{position:relative;content-visibility:auto;contain-intrinsic-size:auto 58px;display:flex;align-items:center;gap:10px;width:100%;min-height:58px;text-align:left;padding:6px 0;border-bottom:1px solid var(--bd);transition:background-color var(--t2)}
