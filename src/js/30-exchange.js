@@ -135,6 +135,15 @@ async function xPrecise() {
 // какие разрешения нужны на этой версии Android (как в BjuExchangePlugin.neededAliases)
 function xPermNames() { const v = (X.st || {}).sdk || 0; return v >= 32 ? "«Устройства поблизости»" : v >= 31 ? "«Устройства поблизости» и точное «Местоположение»" : v >= 29 ? "точное «Местоположение»" : v ? "«Местоположение»" : "«Устройства поблизости» (на Android 10–12 — и «Местоположение»)" }
 // подробности для экрана ошибки: по ним видно, чего не хватает (и что прислать, если не помогло)
+// мини-копия окна Android: отмечено то, что нужно выбрать (① точность, ② «При использовании приложения»)
+function xAdlg(up) {
+  const opt = `<div class="adr"><div class="ado on"><i class="adt"></i><b>Точно</b><em>1</em></div><div class="ado"><i class="adf"></i><b>Приблизительно</b></div></div>`;
+  return `<div class="adl" aria-hidden="true"><div class="adh">Разрешить приложению «БЖУ» доступ к ${up ? "точному местоположению" : "местоположению устройства"}?</div>${opt}`
+    + (up ? `<div class="adb on">Изменить на точное<em>2</em></div><div class="adb">Оставить приблизительное</div>`
+      : `<div class="adb on">При использовании приложения<em>2</em></div><div class="adb">Только в этот раз</div><div class="adb">Не разрешать</div>`) + `</div>`
+}
+// «Подробности» раскрываются плавно: лист дорастает вместе с ними
+const xDt = el => shResize(() => { el.parentElement.open = !el.parentElement.open });
 function xDiag() {
   const s = X.st || {}, yn = v => v == null ? "?" : v ? "да" : "нет";
   return `<div class="xn">${ic("info")}<span>${[X.ecode ? "Код " + esc(X.ecode) + (X.emsg ? " (" + esc(X.emsg) + ")" : "") : "", s.sdk ? "Android API " + s.sdk : "", "Bluetooth: " + yn(s.bt), "геолокация: " + yn(s.loc), "местоположение: " + (s.fine ? "точное" : s.coarse ? "приблизительное" : "нет"), "устройства поблизости: " + yn(s.nearby), s.gms ? "Сервисы Google Play " + esc(s.gms) : ""].filter(Boolean).join(" · ")}</span></div>`
@@ -217,7 +226,11 @@ function xDraw1() {
   } else if (X.s === "perm") { h = `<div class="fst no">${ic("shield")}<div><b>Нет разрешения</b><small>Нужно разрешение ${xPermNames()} — без него телефоны не найдут друг друга. Включите их в настройках приложения › Разрешения.</small></div></div>` + xDiag(); b2 = ["Ещё раз", xGo]; b1 = ["Открыть настройки", () => XN().openSettings().catch(() => { })] }
   else if (X.s === "check") h = `<div class="xr st"><i></i><i></i><i></i>${myAv()}</div><div class="xst"><i></i>Проверяем Bluetooth и разрешения…</div>`;
   else if (X.s === "precise") { const s = X.st || {};
-    h = `<div class="fst no">${ic("info")}<div><b>${s.coarse ? "Нужно точное местоположение" : "Нужен доступ к местоположению"}</b><small>${s.coarse ? "Разрешено только «Приблизительно», а" : "Без доступа к местоположению"} Сервисы Google Play на этом телефоне не ищут телефоны рядом по Bluetooth${s.coarse ? " без точного" : ""}. Само приложение координаты не получает и никуда не передаёт.${X.denied ? " Окно разрешения не появилось: откройте настройки › Разрешения › Местоположение и выберите «Разрешить» и «Точное местоположение»." : ""}</small></div></div>` + xDiag();
+    // что нажать в окне Android — картинкой до того, как оно появится; техническая строка свёрнута в «Подробности для поддержки»
+    h = `<div class="fst no">${ic("pin")}<div><b>Нужно точное местоположение</b><small>${s.coarse ? "Сейчас разрешено «Приблизительно» — с ним Google не находит телефоны рядом по Bluetooth." : "Только чтобы Google нашёл телефон рядом по Bluetooth."} Координаты приложение не получает и никуда не отправляет.</small></div></div>`
+      + (X.denied ? `<div class="gh">Окно Android больше не появляется — включите в настройках</div><div class="adp"><span>Разрешения</span>›<span>Местоположение</span>›<span>При использовании</span>›<span class="on">Точное местоположение</span></div>`
+        : `<div class="gh">В окне Android ${s.coarse ? "нажмите" : "выберите"}</div>` + xAdlg(s.coarse))
+      + `<details class="xdt"><summary onclick="event.preventDefault();xDt(this)">${ic("info")}Подробности для поддержки</summary>${xDiag()}</details>`;
     b2 = ["Ещё раз", () => { xStop(); xGo() }]; b1 = X.denied ? ["Открыть настройки", () => XN().openSettings().catch(() => { })] : [s.coarse ? "Разрешить точное" : "Разрешить", xPrecise] }
   else if (X.s === "gms") { h = `<div class="fst bad">${ic("warn")}<div><b>Сервисы Google Play не дают начать поиск</b><small>Разрешения выданы и геолокация включена, но поиск отклонён. Обычно помогает обновить «Сервисы Google Play» в Play Маркете и перезапустить телефон.</small></div></div>` + xDiag(); b1 = ["Ещё раз", () => { xStop(); xGo() }] }
   else if (X.s === "loc") { h = `<div class="fst no">${ic("info")}<div><b>Включите геолокацию</b><small>Google ищет телефоны рядом только при включённой геолокации. Где вы находитесь, приложение не узнаёт. Включите и вернитесь — поиск начнётся сам.</small></div></div>` + xDiag(); b2 = ["Ещё раз", () => { xStop(); xGo() }]; b1 = ["Открыть геолокацию", () => { const N = XN(); (N.openLocation ? N.openLocation() : N.openSettings()).catch(() => { }) }] }

@@ -108,11 +108,19 @@ button.ch{display:grid;place-items:center;width:32px;height:32px;margin-right:-6
 .row.ck .ckb{background:var(--acf,var(--ac));box-shadow:none;color:var(--on)}.row.ck .ckb svg.i{opacity:1;transform:none}
 .row.dgc.ck .ckb{background:var(--dg);color:#fff}.row.dgc.ck .tx{color:var(--dg)}
 .ofp{border-top:1px solid color-mix(in srgb,var(--bd) 70%,var(--sub))}.ofp .row{padding-left:30px}
-/* «Что нового»: пункты со значком; экран первого запуска: два крупных варианта, главный — залит акцентом */
-.wnl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}.wnl li{display:flex;gap:12px;align-items:flex-start}
-.wnl .ic,.wlo .ic{flex:none;width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac))}.wnl .tx{font-weight:700;font-size:var(--fs-body)}.wnl small{display:block;font-weight:500;color:var(--mu);font-size:var(--fs-sm);margin-top:2px}
-.wno{background:var(--sub);border-radius:var(--r-block);padding:10px 14px;color:var(--mu);font-size:var(--fs-sm);display:flex;flex-direction:column;gap:3px}
-#v24 .hint,#v23 .hint{margin-top:12px;text-align:center}
-.wlo{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--sub);border-radius:var(--r-block);padding:14px 16px;margin-top:var(--gap);min-height:var(--h-row)}
-.wlo .tx{font-weight:700;font-size:var(--fs-body)}.wlo small{display:block;font-weight:500;color:var(--mu);font-size:var(--fs-sm);margin-top:2px}
-.wlo.pri{background:var(--acf,var(--ac));color:var(--on)}.wlo.pri small{color:color-mix(in srgb,var(--on) 80%,transparent)}.wlo.pri .ic{background:color-mix(in srgb,var(--on) 18%,transparent);color:var(--on)}
+/* «Что нового» и приветствие — слой на весь экран поверх приложения (выше листа, ниже диалога и уведомлений).
+   Всё собрано по центру; длинный список прокручивается, кнопка остаётся под ним. Появление — проявление с подъёмом */
+#fs{position:fixed;inset:0;z-index:8;background:var(--bg);color:var(--tx);opacity:0;transform:translateY(14px);transition:opacity var(--t3) var(--ease),transform var(--t3) var(--ease)}
+#fs.on{opacity:1;transform:none}#fs[hidden]{display:none}
+.fsb{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;padding:calc(var(--sat) + 20px) 18px calc(var(--sab) + 20px);display:flex}
+.fsm{margin:auto;width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.fslogo{width:68px;height:68px;border-radius:50%;background:conic-gradient(var(--p) 0 33%,var(--f) 0 55%,var(--c) 0 100%);-webkit-mask:radial-gradient(circle,transparent 20px,#000 21px);mask:radial-gradient(circle,transparent 20px,#000 21px);margin-bottom:4px}
+.fsm h2{margin:6px 0 0;font-size:26px;line-height:1.15;font-weight:800;letter-spacing:-.01em}.fss{margin:0 0 6px;color:var(--mu);font-size:var(--fs-sm)}
+.fsl{width:100%;display:flex;flex-direction:column;gap:var(--gap)}
+.fsi{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--card);border-radius:var(--r-block);padding:12px 14px;min-height:var(--h-row)}
+.fsi .ic{flex:none;width:var(--h-tile);height:var(--h-tile);border-radius:var(--r-in);display:grid;place-items:center;background:var(--acs);color:var(--act,var(--ac))}
+.fsi .tx{font-weight:700;font-size:var(--fs-body)}.fsi small{display:block;font-weight:500;color:var(--mu);font-size:var(--fs-sm);margin-top:2px}
+.fsi.pri{background:var(--acf,var(--ac));color:var(--on)}.fsi.pri small{color:var(--on)}.fsi.pri .ic{background:color-mix(in srgb,var(--on) 18%,transparent);color:var(--on)}
+.fso{margin:4px 0 0;color:var(--mu);font-size:var(--fs-sm);text-align:center}.fso b{color:var(--tx)}
+.fsok{width:100%;margin-top:6px}
+.fsx{position:absolute;top:calc(var(--sat) + 12px);right:14px;width:var(--h-ib);height:var(--h-ib);border-radius:50%;background:var(--card);display:grid;place-items:center;color:var(--mu);z-index:1}

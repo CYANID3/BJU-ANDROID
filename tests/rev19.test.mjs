@@ -60,7 +60,7 @@ test('обмен, Android 12 (API 31): выбрано «Приблизитель
   await a.ev(FAKE, { s: { sdk: 31, perm: 'prompt', coarse: true, fine: false, nearby: true } });
   await a.ev(() => { xOpen() }); await a.wait(400);
   assert.match(await a.pg.textContent('#v19'), /Нужно точное местоположение/);
-  assert.match(await a.pg.textContent('#v19'), /координаты не получает/);
+  assert.match(await a.pg.textContent('#v19'), /Координаты приложение не получает/);
   assert.equal(await a.ev(() => __x.calls.includes('start')), false, 'поиск без точного не начинаем — он упал бы с 8034');
   await a.ev(() => { __x.onPrecise = { perm: 'granted', fine: true } }); await a.pg.click('#x1'); await a.wait(400);
   assert.equal(await a.ev(() => __x.calls.includes('requestPrecise')), true);
@@ -76,7 +76,7 @@ test('обмен, Android 13+ (API 34): местоположение не спр
   assert.match(await a.pg.textContent('#v19'), /Ищем телефоны рядом/, 'без местоположения поиск идёт');
   // Сервисы Google Play всё же отказали (8034) при включённой геолокации — нужен доступ к местоположению
   await a.ev(() => { Object.assign(__x.st, { loc: true, fail: '8034' }); xStop(); xGo() }); await a.wait(400);
-  assert.match(await a.pg.textContent('#v19'), /Нужен доступ к местоположению/);
+  assert.match(await a.pg.textContent("#v19"), /Нужно точное местоположение.*Только чтобы Google нашёл телефон/s);
   assert.equal(await a.pg.textContent('#x1'), 'Разрешить');
   // дали приблизительное — пробуем снова; Google снова отказал — путь в настройки, без бесконечных окон
   await a.ev(() => { __x.onPrecise = { coarse: true } }); await a.pg.click('#x1'); await a.wait(500);

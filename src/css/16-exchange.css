@@ -46,3 +46,16 @@
 .xw{margin-top:var(--gap)}
 @media (prefers-reduced-motion:reduce){.xr i{animation:none;opacity:.3}.xp .ln_.mv,.xst i{animation:none}}
 .grp.xlk{opacity:.55;pointer-events:none}
+/* «Нужно точное местоположение»: мини-копия окна Android (в цветах темы) и свёрнутые подробности */
+.adl{background:color-mix(in srgb,var(--tx) 6%,var(--card));border-radius:var(--r-block);padding:12px;display:flex;flex-direction:column;gap:7px}
+.adh{font-size:var(--fs-sm);font-weight:700;text-align:center;line-height:1.35;padding:0 6px}
+.adr{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ado{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 6px;border-radius:var(--r-in);background:var(--card)}
+.ado b{font-size:var(--fs-xs);font-weight:700;color:var(--mu)}.ado.on{box-shadow:inset 0 0 0 2px var(--ac)}.ado.on b{color:var(--act,var(--ac))}
+.adt,.adf{width:34px;height:34px;border-radius:50%}.adt{background:radial-gradient(circle,var(--ac) 0 5px,color-mix(in srgb,var(--ac) 22%,var(--card)) 6px)}
+.adf{background:radial-gradient(circle,color-mix(in srgb,var(--ac) 35%,transparent) 0 15px,color-mix(in srgb,var(--tx) 10%,var(--card)) 16px)}
+.adb{position:relative;text-align:center;font-size:var(--fs-xs);font-weight:700;padding:9px;border-radius:999px;background:var(--card);color:var(--mu)}
+.adb.on{background:var(--acf,var(--ac));color:var(--on)}
+.ado em,.adb em{position:absolute;top:-7px;right:-4px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;background:var(--wn,#f2b33d);color:#1c1f24}
+.adp{display:flex;flex-wrap:wrap;gap:5px;align-items:center;color:var(--mu)}.adp span{background:var(--sub);border-radius:var(--r-in);padding:6px 9px;color:var(--tx);font-size:var(--fs-xs);font-weight:600}.adp .on{background:var(--acf,var(--ac));color:var(--on)}
+.xdt{margin-top:10px}.xdt summary{display:flex;align-items:center;gap:6px;color:var(--mu);font-size:var(--fs-xs);cursor:pointer;list-style:none;min-height:36px}.xdt summary::-webkit-details-marker{display:none}.xdt summary svg.i{width:15px;height:15px}.xdt .xn{margin-top:4px}
